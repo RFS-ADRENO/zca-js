@@ -9,6 +9,7 @@ import { sendStickerFactory } from "./apis/sendSticker.js";
 
 import { sendMessageFactory } from "./apis/sendMessage.js";
 import { addReactionFactory } from "./apis/addReaction.js";
+import { findUserFactory } from "./apis/findUser.js";
 
 export type Credentials = {
     imei: string;
@@ -78,6 +79,7 @@ class API {
     public getOwnId: typeof getOwnId;
     public getStickers: ReturnType<typeof getStickersFactory>;
     public sendSticker: ReturnType<typeof sendStickerFactory>;
+    public findUser: ReturnType<typeof findUserFactory>;
 
     constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string) {
         this.secretKey = secretKey;
@@ -105,6 +107,12 @@ class API {
         );
         this.sendSticker = sendStickerFactory(
             makeURL(`${zpwServiceMap.chat[0]}/api/message/sticker`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+            })
+        );
+        this.findUser = findUserFactory(
+            makeURL(`${zpwServiceMap.friend[0]}/api/friend/profile/get`, {
                 zpw_ver: Zalo.API_VERSION,
                 zpw_type: Zalo.API_TYPE,
             })

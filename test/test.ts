@@ -57,6 +57,11 @@ listener.onMessage((message) => {
                         break;
                     }
                 }
+            } else {
+                const args = message.data.msg.split(/\s+/);
+                if (args[0] == "find" && args[1]) {
+                    api.findUser(args[1]).then(console.log);
+                }
             }
             break;
 
