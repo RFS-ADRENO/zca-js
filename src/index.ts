@@ -1,10 +1,12 @@
 import cryptojs from "crypto-js";
 import { login } from "./apis/login.js";
 import { ListenerBase, ListenerOptions } from "./apis/listen.js";
-import { sendMessageFactory } from "./apis/sendMessage.js";
 import { getOwnId } from "./apis/getOwnId.js";
 import { makeURL } from "./utils.js";
 import { appContext } from "./context.js";
+
+import { sendMessageFactory } from "./apis/sendMessage.js";
+import { addReactionFactory } from "./apis/addReaction.js";
 
 export type Credentials = {
     imei: string;
@@ -15,7 +17,7 @@ export type Credentials = {
 
 export class Zalo {
     public static readonly API_TYPE = 30;
-    public static readonly API_VERSION = 635;
+    public static readonly API_VERSION = 636;
 
     private enableEncryptParam = true;
 
@@ -70,6 +72,7 @@ class API {
 
     public Listener: ReturnType<typeof getListener>;
     public sendMessage: ReturnType<typeof sendMessageFactory>;
+    public addReaction: ReturnType<typeof addReactionFactory>;
     public getOwnId: typeof getOwnId;
 
     constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string) {
@@ -81,6 +84,12 @@ class API {
                 zpw_ver: Zalo.API_VERSION,
                 zpw_type: Zalo.API_TYPE,
                 nretry: 0,
+            })
+        );
+        this.addReaction = addReactionFactory(
+            makeURL(`https://reaction.chat.zalo.me/api/message/reaction`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE
             })
         );
         this.getOwnId = getOwnId;

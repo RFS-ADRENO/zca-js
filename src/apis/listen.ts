@@ -2,13 +2,20 @@ import { decodeBase64ToBuffer, decodeUnit8Array } from "../utils.js";
 import WebSocket from "ws";
 import pako from "pako";
 import { appContext } from "../context.js";
-import { Message, MessageType } from "../models/Message.js";
+import { Message, MessageType, GroupMessage } from "../models/Message.js";
 
 export type ListenerOptions = {
     selfListen: boolean;
 };
 
-export type OnMessageCallback = (message: Message) => void | Promise<void>;
+export type OnMessageCallback = (message:
+    {
+        type: "message",
+        data: Message
+    } | {
+        type: "group_message",
+        data: GroupMessage
+    }) => void | Promise<void>;
 
 export class ListenerBase {
     private options: ListenerOptions;
@@ -31,10 +38,10 @@ export class ListenerBase {
         this.cookie = appContext.cookie;
         this.userAgent = appContext.userAgent;
 
-        this.onConnectedCallback = () => {};
-        this.onClosedCallback = () => {};
-        this.onErrorCallback = () => {};
-        this.onMessageCallback = () => {};
+        this.onConnectedCallback = () => { };
+        this.onClosedCallback = () => { };
+        this.onErrorCallback = () => { };
+        this.onMessageCallback = () => { };
     }
 
     public onConnected(cb: Function) {
@@ -139,15 +146,91 @@ export class ListenerBase {
                             // console.log(msg);
                             if (msg.idTo == "0" && !this.options.selfListen) continue;
                             this.onMessageCallback(
-                                new Message(
-                                    msg.uidFrom == "0" ? appContext.uid : msg.uidFrom,
-                                    msg.msgId,
-                                    msg.cliMsgId,
-                                    MessageType.TEXT,
-                                    msg.ts,
-                                    msg.content,
-                                    msg.ttl
-                                )
+                                {
+                                    type: "message",
+                                    data: new Message(
+                                        msg.uidFrom == "0" ? appContext.uid : msg.uidFrom,
+                                        msg.msgId,
+                                        msg.cliMsgId,
+                                        MessageType.TEXT,
+                                        msg.ts,
+                                        msg.content,
+                                        msg.ttl
+                                    )
+                                }
+                            );
+                        }
+                    }
+                }
+
+                if (n == 1 && a == 521 && s == 0) {
+                    if (!this.cipherKey) return;
+
+                    const eventData = parsed.data;
+                    const decodedEventDataBuffer = decodeBase64ToBuffer(
+                        decodeURIComponent(eventData)
+                    );
+
+                    if (decodedEventDataBuffer.length >= 48) {
+                        const algorithm = {
+                            name: "AES-GCM",
+                            iv: decodedEventDataBuffer.subarray(0, 16),
+                            tagLength: 128,
+                            additionalData: decodedEventDataBuffer.subarray(16, 32),
+                        };
+                        const dataSource = decodedEventDataBuffer.subarray(32);
+
+                        const cryptoKey = await crypto.subtle.importKey(
+                            "raw",
+                            decodeBase64ToBuffer(this.cipherKey),
+                            algorithm,
+                            false,
+                            ["decrypt"]
+                        );
+                        const decryptedData = await crypto.subtle.decrypt(
+                            algorithm,
+                            cryptoKey,
+                            dataSource
+                        );
+                        const decompressedData = pako.inflate(decryptedData);
+                        const decodedData = decodeUnit8Array(decompressedData);
+
+                        if (!decodedData) return
+                        // console.log("Decoded data:", decodedData);
+                        // console.log("TRY PARSE:", JSON.parse(decodedData));
+                        const parsedData = JSON.parse(decodedData).data;
+                        const { groupMsgs } = parsedData;
+                        for (const msg of groupMsgs) {
+                            // console.log(msg);
+                            this.onMessageCallback(
+                                {
+                                    type: "group_message",
+                                    data: new GroupMessage(
+                                        msg.actionId,
+                                        msg.msgId,
+                                        msg.cliMsgId,
+                                        msg.msgType,
+                                        msg.uidFrom,
+                                        msg.idTo,
+                                        msg.dName,
+                                        msg.ts,
+                                        msg.status,
+                                        msg.content,
+                                        msg.notify,
+                                        msg.ttl,
+                                        msg.userId,
+                                        msg.uin,
+                                        msg.topOut,
+                                        msg.topOutTimeOut,
+                                        msg.topOutImprTimeOut,
+                                        msg.propertyExt,
+                                        msg.paramsExt,
+                                        msg.cmd,
+                                        msg.st,
+                                        msg.at,
+                                        msg.realMsgId
+                                    )
+                                }
                             );
                         }
                     }

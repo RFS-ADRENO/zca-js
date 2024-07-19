@@ -22,21 +22,31 @@ listener.onError((error: any) => {
 });
 
 listener.onMessage((message) => {
-    console.log("Message:", message.toJSON());
-    if (message.owner != api.getOwnId()) {
-        switch (message.msg) {
-            case "reply": {
-                api.sendMessage("reply", message.owner, message).then(console.log);
-                break;
+    console.log("Message:", message.data.toJSON());
+    switch (message.type) {
+        case "message":
+            api.addReaction(":>", message.data).then(console.log);
+            if (message.data.owner != api.getOwnId()) {
+                switch (message.data.msg) {
+                    case "reply": {
+                        api.sendMessage("reply", message.data.owner, message.data).then(console.log);
+                        break;
+                    }
+                    case "ping": {
+                        api.sendMessage("pong", message.data.owner).then(console.log);
+                        break;
+                    }
+                    default: {
+                        break;
+                    }
+                }
             }
-            case "ping": {
-                api.sendMessage("pong", message.owner).then(console.log);
-                break;
-            }
-            default: {
-                break;
-            }
-        }
+            break;
+        
+        case "group_message":
+            break;
+
+        default: break;
     }
 });
 
