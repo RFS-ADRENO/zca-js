@@ -212,18 +212,18 @@ export function encodeAES(secretKey: string, data: any, t = 0): string | null {
 export function decodeAES(secretKey: string, data: string, t = 0): string | null {
     try {
         data = decodeURIComponent(data);
-        let key = CryptoJS.enc.Base64.parse(secretKey);
-        return CryptoJS.AES.decrypt(
+        let key = cryptojs.enc.Base64.parse(secretKey);
+        return cryptojs.AES.decrypt(
             {
-                ciphertext: CryptoJS.enc.Base64.parse(data),
-            } as CryptoJS.lib.CipherParams,
+                ciphertext: cryptojs.enc.Base64.parse(data),
+            } as cryptojs.lib.CipherParams,
             key,
             {
-                iv: CryptoJS.enc.Hex.parse("00000000000000000000000000000000"),
-                mode: CryptoJS.mode.CBC,
-                padding: CryptoJS.pad.Pkcs7,
+                iv: cryptojs.enc.Hex.parse("00000000000000000000000000000000"),
+                mode: cryptojs.mode.CBC,
+                padding: cryptojs.pad.Pkcs7,
             }
-        ).toString(CryptoJS.enc.Utf8);
+        ).toString(cryptojs.enc.Utf8);
     } catch (n) {
         return t < 3 ? decodeAES(secretKey, data, t + 1) : null;
     }
