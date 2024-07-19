@@ -87,7 +87,7 @@ class API {
             })
         );
         this.addReaction = addReactionFactory(
-            makeURL(`https://reaction.chat.zalo.me/api/message/reaction`, {
+            makeURL(`${zpwServiceMap.reaction[0]}/api/message/reaction`, {
                 zpw_ver: Zalo.API_VERSION,
                 zpw_type: Zalo.API_TYPE
             })

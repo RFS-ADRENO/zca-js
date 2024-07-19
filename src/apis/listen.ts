@@ -155,7 +155,9 @@ export class ListenerBase {
                                         MessageType.TEXT,
                                         msg.ts,
                                         msg.content,
-                                        msg.ttl
+                                        msg.ttl,
+                                        msg.quote,
+                                        msg.dName
                                     )
                                 }
                             );
@@ -228,7 +230,9 @@ export class ListenerBase {
                                         msg.cmd,
                                         msg.st,
                                         msg.at,
-                                        msg.realMsgId
+                                        msg.realMsgId,
+                                        msg.mentions,
+                                        msg.quote
                                     )
                                 }
                             );
