@@ -4,6 +4,8 @@ import { ListenerBase, ListenerOptions } from "./apis/listen.js";
 import { getOwnId } from "./apis/getOwnId.js";
 import { makeURL } from "./utils.js";
 import { appContext } from "./context.js";
+import { getStickersFactory } from "./apis/getStickers.js";
+import { sendStickerFactory } from "./apis/sendSticker.js";
 
 import { sendMessageFactory } from "./apis/sendMessage.js";
 import { addReactionFactory } from "./apis/addReaction.js";
@@ -74,6 +76,8 @@ class API {
     public sendMessage: ReturnType<typeof sendMessageFactory>;
     public addReaction: ReturnType<typeof addReactionFactory>;
     public getOwnId: typeof getOwnId;
+    public getStickers: ReturnType<typeof getStickersFactory>;
+    public sendSticker: ReturnType<typeof sendStickerFactory>;
 
     constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string) {
         this.secretKey = secretKey;
@@ -93,6 +97,18 @@ class API {
             })
         );
         this.getOwnId = getOwnId;
+        this.getStickers = getStickersFactory(
+            makeURL(`${zpwServiceMap.sticker}/api/message/sticker`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+            })
+        );
+        this.sendSticker = sendStickerFactory(
+            makeURL(`${zpwServiceMap.chat[0]}/api/message/sticker`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+            })
+        );
     }
 }
 
