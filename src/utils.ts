@@ -275,8 +275,6 @@ export async function request(url: string, options?: RequestInit) {
     if (options) options.headers = mergeHeaders(options.headers || {}, getDefaultHeaders());
     else options = { headers: getDefaultHeaders() };
 
-    console.log("Requesting", new URL(url).pathname, options);
-
     const response = await fetch(url, options);
     if (response.headers.has("set-cookie")) {
         const newCookie = updateCookie(response.headers.get("set-cookie")!);
