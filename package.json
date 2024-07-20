@@ -1,28 +1,33 @@
 {
-  "name": "zca-js",
-  "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
-  "type": "module",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "dependencies": {
-    "crypto-js": "^4.2.0",
-    "pako": "^2.1.0",
-    "ws": "^8.18.0"
-  },
-  "devDependencies": {
-    "@types/crypto-js": "^4.2.2",
-    "@types/node": "^20.14.10",
-    "@types/pako": "^2.0.3",
-    "@types/ws": "^8.5.11",
-    "typescript": "^5.5.3"
-  }
+    "name": "zca-js",
+    "version": "0.0.1",
+    "description": "",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "keywords": [
+        "chatbot",
+        "zalo",
+        "api",
+        "javascript"
+    ],
+    "author": "RFS-ADRENO, truong9c2208",
+    "license": "MIT",
+    "dependencies": {
+        "crypto-js": "^4.2.0",
+        "pako": "^2.1.0",
+        "ws": "^8.18.0"
+    },
+    "devDependencies": {
+        "@types/crypto-js": "^4.2.2",
+        "@types/node": "^20.14.10",
+        "@types/pako": "^2.0.3",
+        "@types/ws": "^8.5.11",
+        "typescript": "^5.5.3"
+    }
 }
