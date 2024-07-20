@@ -1,5 +1,10 @@
 import { appContext } from "../context.js";
-import { decodeAES, encodeAES, makeURL, updateCookie } from "../utils.js";
+import {
+    decodeAES,
+    encodeAES,
+    makeURL,
+    request
+} from "../utils.js";
 
 interface StickerBasic {
     type: number;
@@ -44,29 +49,13 @@ export function getStickersFactory(serviceURL: string) {
         const finalServiceUrl = new URL(serviceURL);
         finalServiceUrl.pathname = finalServiceUrl.pathname + "/suggest/stickers";
 
-        const response = await fetch(
+        const response = await request(
             makeURL(finalServiceUrl.toString(), {
                 params: encryptedParams,
-            }),
-            {
-                headers: {
-                    Accept: "application/json, text/plain, */*",
-                    "Accept-Encoding": "gzip, deflate, br, zstd",
-                    "Accept-Language": "en-US,en;q=0.9",
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    Cookie: appContext.cookie,
-                    Origin: "https://chat.zalo.me",
-                    Referer: "https://chat.zalo.me/",
-                    "User-Agent": appContext.userAgent,
-                },
-            }
+            })
         );
 
         if (!response.ok) throw new Error("Failed to get stickers: " + response.statusText);
-        if (response.headers.has("set-cookie")) {
-            const newCookie = updateCookie(appContext.cookie, response.headers.get("set-cookie")!);
-            if (newCookie) appContext.cookie = newCookie;
-        }
 
         const rawSuggestions = decodeAES(appContext.secretKey, (await response.json()).data);
         if (!rawSuggestions) throw new Error("Failed to decrypt message");
@@ -89,8 +78,8 @@ export function getStickersFactory(serviceURL: string) {
                 sticker: stickerDetails,
                 // guggy: suggestions.sugg_guggy,
                 // gif: suggestions.sugg_gif,
-            }
-        }
+            },
+        };
     };
 
     async function getStickerDetail(stickerId: number): Promise<Sticker> {
@@ -104,30 +93,14 @@ export function getStickersFactory(serviceURL: string) {
         const finalServiceUrl = new URL(serviceURL);
         finalServiceUrl.pathname = finalServiceUrl.pathname + "/sticker_detail";
 
-        const response = await fetch(
+        const response = await request(
             makeURL(finalServiceUrl.toString(), {
                 params: encryptedParams,
-            }),
-            {
-                headers: {
-                    Accept: "application/json, text/plain, */*",
-                    "Accept-Encoding": "gzip, deflate, br, zstd",
-                    "Accept-Language": "en-US,en;q=0.9",
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    Cookie: appContext.cookie!,
-                    Origin: "https://chat.zalo.me",
-                    Referer: "https://chat.zalo.me/",
-                    "User-Agent": appContext.userAgent!,
-                },
-            }
+            })
         );
 
         if (!response.ok) throw new Error("Failed to get sticker detail: " + response.statusText);
-        if (response.headers.has("set-cookie")) {
-            const newCookie = updateCookie(appContext.cookie!, response.headers.get("set-cookie")!);
-            if (newCookie) appContext.cookie = newCookie;
-        }
-
+        
         const rawDetail = decodeAES(appContext.secretKey!, (await response.json()).data);
         if (!rawDetail) throw new Error("Failed to decrypt message");
 

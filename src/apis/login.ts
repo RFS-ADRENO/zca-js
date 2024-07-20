@@ -1,6 +1,6 @@
 import { appContext } from "../context.js";
 import { Zalo } from "../index.js";
-import { decryptResp, getSignKey, makeURL, ParamsEncryptor, updateCookie } from "../utils.js";
+import { decryptResp, getSignKey, makeURL, ParamsEncryptor, request } from "../utils.js";
 
 export async function login(encryptParams: boolean) {
     const encryptedParams = await getEncryptParam(
@@ -10,38 +10,19 @@ export async function login(encryptParams: boolean) {
     );
 
     try {
-        const response = await fetch(
+        const response = await request(
             makeURL("https://wpa.chat.zalo.me/api/login/getLoginInfo", {
                 ...encryptedParams.params,
                 nretry: 0,
-            }),
-            {
-                headers: {
-                    Accept: "application/json, text/plain, */*",
-                    "Accept-Encoding": "gzip, deflate, br, zstd",
-                    "Accept-Language": "en-US,en;q=0.9",
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    Cookie: appContext.cookie!,
-                    Origin: "https://chat.zalo.me",
-                    Referer: "https://chat.zalo.me/",
-                    "User-Agent": appContext.userAgent!,
-                },
-            }
+            })
         );
         if (!response.ok) throw new Error("Failed to fetch login info: " + response.statusText);
         const data = await response.json();
-
-        // console.log(response.headers);
-        if (response.headers.has("set-cookie")) {
-            const newCookie = updateCookie(appContext.cookie!, response.headers.get("set-cookie")!);
-            if (newCookie) appContext.cookie = newCookie;
-        }
 
         if (encryptedParams.enk) {
             const decryptedData = decryptResp(encryptedParams.enk, data.data);
             return decryptedData != null && typeof decryptedData != "string" ? decryptedData : null;
         }
-
 
         return null;
     } catch (error) {

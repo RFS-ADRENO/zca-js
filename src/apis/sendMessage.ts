@@ -1,6 +1,6 @@
 import { appContext } from "../context.js";
-import { decodeAES, encodeAES, updateCookie } from "../utils.js";
 import { Message } from "../models/Message.js";
+import { decodeAES, encodeAES, request } from "../utils.js";
 
 export function sendMessageFactory(serviceURL: string) {
     return async function sendMessage(message: string, recipientId: string, quote?: Message) {
@@ -39,29 +39,14 @@ export function sendMessageFactory(serviceURL: string) {
         const finalServiceUrl = new URL(serviceURL);
         finalServiceUrl.pathname = finalServiceUrl.pathname + "/" + (quote ? "quote" : "sms");
 
-        const response = await fetch(finalServiceUrl.toString(), {
+        const response = await request(finalServiceUrl.toString(), {
             method: "POST",
-            headers: {
-                Accept: "application/json, text/plain, */*",
-                "Accept-Encoding": "gzip, deflate, br, zstd",
-                "Accept-Language": "en-US,en;q=0.9",
-                "Content-Type": "application/x-www-form-urlencoded",
-                Cookie: appContext.cookie,
-                Origin: "https://chat.zalo.me",
-                Referer: "https://chat.zalo.me/",
-                "User-Agent": appContext.userAgent,
-            },
             body: new URLSearchParams({
                 params: encryptedParams,
             }),
         });
 
         if (!response.ok) throw new Error("Failed to send message: " + response.statusText);
-        if (response.headers.has("set-cookie")) {
-            const newCookie = updateCookie(appContext.cookie, response.headers.get("set-cookie")!);
-            if (newCookie) appContext.cookie = newCookie;
-        }
-
 
         return decodeAES(appContext.secretKey, (await response.json()).data);
     };

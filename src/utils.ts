@@ -1,4 +1,5 @@
 import cryptojs from "crypto-js";
+import { appContext } from "./context.js";
 
 export function getSignKey(type: string, params: Record<string, any>) {
     let n = [];
@@ -229,15 +230,18 @@ export function decodeAES(secretKey: string, data: string, t = 0): string | null
     }
 }
 
-export function updateCookie(cookie: string, input: unknown) {
+function updateCookie(input: string | string[]) {
+    if (!appContext.cookie) throw new Error("Cookie is not available");
+    if (typeof input !== "string" || !Array.isArray(input)) return null;
+
     const cookieMap = new Map<string, string>();
+    const cookie = appContext.cookie;
     cookie.split(";").forEach((cookie) => {
         const [key, value] = cookie.split("=");
         cookieMap.set(key.trim(), value.trim());
     });
 
     let newCookie: string;
-    if (typeof input !== "string" || !Array.isArray(input)) return null;
     if (Array.isArray(input)) newCookie = input.map((cookie) => cookie.split(";")[0]).join("; ");
     else newCookie = input;
 
@@ -249,4 +253,42 @@ export function updateCookie(cookie: string, input: unknown) {
     return Array.from(cookieMap.entries())
         .map(([key, value]) => `${key}=${value}`)
         .join("; ");
+}
+
+export function getDefaultHeaders() {
+    if (!appContext.cookie) throw new Error("Cookie is not available");
+    if (!appContext.userAgent) throw new Error("User agent is not available");
+
+    return {
+        Accept: "application/json, text/plain, */*",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Content-Type": "application/x-www-form-urlencoded",
+        Cookie: appContext.cookie,
+        Origin: "https://chat.zalo.me",
+        Referer: "https://chat.zalo.me/",
+        "User-Agent": appContext.userAgent,
+    };
+}
+
+export async function request(url: string, options?: RequestInit) {
+    if (options) options.headers = mergeHeaders(options.headers || {}, getDefaultHeaders());
+    else options = { headers: getDefaultHeaders() };
+
+    console.log("Requesting", new URL(url).pathname, options);
+
+    const response = await fetch(url, options);
+    if (response.headers.has("set-cookie")) {
+        const newCookie = updateCookie(response.headers.get("set-cookie")!);
+        if (newCookie) appContext.cookie = newCookie;
+    }
+
+    return response;
+}
+
+function mergeHeaders(headers: HeadersInit, defaultHeaders: Record<string, string>) {
+    return {
+        ...defaultHeaders,
+        ...headers,
+    };
 }

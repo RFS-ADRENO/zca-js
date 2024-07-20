@@ -1,5 +1,5 @@
 import { appContext } from "../context.js";
-import { decodeAES, encodeAES, makeURL, updateCookie } from "../utils.js";
+import { decodeAES, encodeAES, makeURL, request } from "../utils.js";
 
 export interface User {
     avatar: string;
@@ -40,29 +40,13 @@ export function findUserFactory(serviceURL: string) {
         const finalServiceUrl = new URL(serviceURL);
         finalServiceUrl.searchParams.append("params", encryptedParams);
 
-        const response = await fetch(
+        const response = await request(
             makeURL(finalServiceUrl.toString(), {
                 params: encryptedParams,
-            }),
-            {
-                headers: {
-                    Accept: "application/json, text/plain, */*",
-                    "Accept-Encoding": "gzip, deflate, br, zstd",
-                    "Accept-Language": "en-US,en;q=0.9",
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    Cookie: appContext.cookie,
-                    Origin: "https://chat.zalo.me",
-                    Referer: "https://chat.zalo.me/",
-                    "User-Agent": appContext.userAgent,
-                },
-            }
+            })
         );
 
         if (!response.ok) throw new Error("Failed to find user: " + response.statusText);
-        if (response.headers.has("set-cookie")) {
-            const newCookie = updateCookie(appContext.cookie, response.headers.get("set-cookie")!);
-            if (newCookie) appContext.cookie = newCookie;
-        }
 
         const rawUserData = decodeAES(appContext.secretKey, (await response.json()).data);
         if (!rawUserData) throw new Error("Failed to decrypt message");

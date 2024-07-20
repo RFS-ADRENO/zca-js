@@ -1,6 +1,6 @@
-import { Message } from "../models/Message.js"
 import { appContext } from "../context.js";
-import { encodeAES, decodeAES, updateCookie } from "../utils.js";
+import { Message } from "../models/Message.js";
+import { decodeAES, encodeAES, request } from "../utils.js";
 
 export function addReactionFactory(serviceURL: string) {
     return async function addReaction(icon: ":>" | "/-strong" | "/-heart" | ":o" | ":-(("  | ":-h" | "", message: Message) {
@@ -65,29 +65,14 @@ export function addReactionFactory(serviceURL: string) {
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new Error("Failed to encrypt message");
 
-        const response = await fetch(serviceURL, {
+        const response = await request(serviceURL, {
             method: "POST",
-            headers: {
-                Accept: "application/json, text/plain, */*",
-                "Accept-Encoding": "gzip, deflate, br, zstd",
-                "Accept-Language": "en-US,en;q=0.9",
-                "Content-Type": "application/x-www-form-urlencoded",
-                Cookie: appContext.cookie,
-                Origin: "https://chat.zalo.me",
-                Referer: "https://chat.zalo.me/",
-                "User-Agent": appContext.userAgent,
-            },
             body: new URLSearchParams({
                 params: encryptedParams,
             }),
         });
 
         if (!response.ok) throw new Error("Failed to send message: " + response.statusText);
-        if (response.headers.has("set-cookie")) {
-            const newCookie = updateCookie(appContext.cookie, response.headers.get("set-cookie")!);
-            if (newCookie) appContext.cookie = newCookie;
-        }
-
 
         return decodeAES(appContext.secretKey, (await response.json()).data);
     }
