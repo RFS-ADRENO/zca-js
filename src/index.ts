@@ -4,12 +4,14 @@ import { ListenerBase, ListenerOptions } from "./apis/listen.js";
 import { getOwnId } from "./apis/getOwnId.js";
 import { makeURL } from "./utils.js";
 import { appContext } from "./context.js";
+
 import { getStickersFactory } from "./apis/getStickers.js";
 import { sendStickerFactory } from "./apis/sendSticker.js";
-
 import { sendMessageFactory } from "./apis/sendMessage.js";
 import { addReactionFactory } from "./apis/addReaction.js";
 import { findUserFactory } from "./apis/findUser.js";
+import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
+import { sendMessageAttachmentFactory } from "./apis/sendMessageAttachment.js";
 
 export type Credentials = {
     imei: string;
@@ -69,7 +71,7 @@ export class Zalo {
     }
 }
 
-class API {
+export class API {
     private secretKey: string;
     private zpwServiceMap: Record<string, string[]>;
 
@@ -80,6 +82,8 @@ class API {
     public getStickers: ReturnType<typeof getStickersFactory>;
     public sendSticker: ReturnType<typeof sendStickerFactory>;
     public findUser: ReturnType<typeof findUserFactory>;
+    public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
+    public sendMessageAttachment: ReturnType<typeof sendMessageAttachmentFactory>;
 
     constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string) {
         this.secretKey = secretKey;
@@ -117,6 +121,13 @@ class API {
                 zpw_type: Zalo.API_TYPE,
             })
         );
+        this.uploadAttachment = uploadAttachmentFactory(
+            `${zpwServiceMap.file[0]}/api`
+        );
+        this.sendMessageAttachment = sendMessageAttachmentFactory(
+            `${zpwServiceMap.file[0]}/api`,
+            this
+        )
     }
 }
 

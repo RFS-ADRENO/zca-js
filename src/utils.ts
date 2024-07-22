@@ -1,5 +1,7 @@
 import cryptojs from "crypto-js";
 import { appContext } from "./context.js";
+import fs from "node:fs";
+import sharp from "sharp";
 
 export function getSignKey(type: string, params: Record<string, any>) {
     let n = [];
@@ -263,7 +265,7 @@ export function getDefaultHeaders() {
         Accept: "application/json, text/plain, */*",
         "Accept-Encoding": "gzip, deflate, br, zstd",
         "Accept-Language": "en-US,en;q=0.9",
-        "Content-Type": "application/x-www-form-urlencoded",
+        "content-type": "application/x-www-form-urlencoded",
         Cookie: appContext.cookie,
         Origin: "https://chat.zalo.me",
         Referer: "https://chat.zalo.me/",
@@ -289,4 +291,17 @@ function mergeHeaders(headers: HeadersInit, defaultHeaders: Record<string, strin
         ...defaultHeaders,
         ...headers,
     };
+}
+
+export async function handleImage(filePath: string) {
+    const fileData = fs.readFileSync(filePath);
+    const imageData = await sharp(fileData).metadata();
+    const fileName = filePath.split("/").pop()!;
+
+    return {
+        fileName,
+        totalSize: imageData.size,
+        width: imageData.width,
+        height: imageData.height,
+    }
 }
