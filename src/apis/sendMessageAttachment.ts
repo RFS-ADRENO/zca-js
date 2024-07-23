@@ -3,7 +3,18 @@ import { API } from "../index.js";
 import { Zalo } from "../index.js";
 import { decodeAES, encodeAES, request } from "../utils.js";
 
+const urlType = {
+    image: "photo_original/send?",
+    gif: "", // Gif has sent when upload
+    mp4: "asyncfile/msg?"
+}
+
 export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
+    let url = {
+        group: `${serviceURL}/group/`,
+        user: `${serviceURL}/message/`
+    }
+
     function getGroupLayoutId() {
         return new class {
             _lastClientId: number;
@@ -93,15 +104,13 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
         let requests = [];
         let results: any = [];
 
-        let url = `${serviceURL}/${type == "group" ? "group" : "message"}/`
-        let queryString = `zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}&type=${type == "group" ? "11" : "2"}`
+        let queryString = `zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}&nretry=0`
 
         for (const param of paramsData) {
             const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(param.param));
             if (!encryptedParams) throw new Error("Failed to encrypt message");
-            let urlType = `${param.fileData.fileType == "image" ? `photo_original/upload?` : null}`;
             requests.push(request(
-                url + urlType + queryString,
+                url[type] + urlType[param.fileData.fileType] + queryString,
                 {
                     method: "POST",
                     body: new URLSearchParams({

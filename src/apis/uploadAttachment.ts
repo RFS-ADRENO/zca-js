@@ -26,18 +26,43 @@ export type UploadResponseType = {
     };
 }
 
+type FileDataType = {
+    fileType: "image";
+    data: ImageData;
+} | {
+    fileType: "gif";
+    data: any;
+} | {
+    fileType: "mp4"
+    data: any;
+}
+
 export type UploadAttachmentType = {
-    fileData: {
-        fileType: "image";
-        data: ImageData;
-    } | {
-        fileType: "gif";
-        data: any;
-    } | {
-        fileType: "mp4"
-        data: any;
-    };
+    fileData: FileDataType;
     response: UploadResponseType;
+}
+
+type ParamType = {
+    fileType?: "image" | "gif" | "mp4";
+    chunkContent: FormData;
+    fileData?: ImageData;
+    data: {
+        totalChunk: number;
+        fileName: string;
+        clientId: number;
+        totalSize?: number | undefined;
+        imei: string;
+        toid: string;
+        isE2EE: number;
+        jxl: number;
+        chunkId: number;
+    }
+}
+
+const urlType = {
+    image: "photo_original/upload?",
+    gif: "gif?",
+    mp4: "asyncfile/upload?"
 }
 
 export function uploadAttachmentFactory(serviceURL: string) {
@@ -47,22 +72,7 @@ export function uploadAttachmentFactory(serviceURL: string) {
         if (!appContext.cookie) throw new Error("Cookie is not available");
         if (!appContext.userAgent) throw new Error("User agent is not available");
 
-        let params: {
-            fileType: "image" | "gif" | "mp4";
-            chunkContent: FormData;
-            fileData: ImageData;
-            data: {
-                totalChunk: number;
-                fileName: string;
-                clientId: number;
-                totalSize: number | undefined;
-                imei: string;
-                toid: string;
-                isE2EE: number;
-                jxl: number;
-                chunkId: number;
-            }
-        }[] = []
+        let params: ParamType[] = []
 
         for (const filePath of filePaths) {
             if (!fs.existsSync(filePath)) throw new Error("File not found");
@@ -70,59 +80,71 @@ export function uploadAttachmentFactory(serviceURL: string) {
             const extFile = filePath.split('.').pop();
             const fileName = filePath.split('/').pop()!;
 
+            let fileData: ImageData | undefined,
+                fileType: "image" | "gif" | "mp4" | undefined = undefined,
+                totalSize: number | undefined;
+
+            const formData = new FormData();
+            formData.append("chunkContent", fs.readFileSync(filePath), {
+                filename: fileName,
+                contentType: "application/octet-stream"
+            });
+
+            let param: ParamType = {
+                chunkContent: formData,
+                data: {
+                    totalChunk: 1,
+                    fileName,
+                    imei: appContext.imei,
+                    toid,
+                    isE2EE: 0,
+                    jxl: 0,
+                    chunkId: 1,
+                    clientId: Date.now(),
+                }
+            }
+
             switch (extFile) {
                 case "jpg":
                 case "jpeg":
                 case "png":
                 case "webp":
-                    const imageData = await handleImage(filePath);
-
-                    const formData = new FormData();
-                    formData.append("chunkContent", fs.readFileSync(filePath), {
-                        filename: fileName,
-                        contentType: "application/octet-stream"
-                    });
-
-                    params.push({
-                        fileType: "image",
-                        chunkContent: formData,
-                        fileData: imageData,
-                        data: {
-                            totalChunk: 1,
-                            fileName,
-                            totalSize: imageData.totalSize,
-                            imei: appContext.imei,
-                            toid,
-                            isE2EE: 0,
-                            jxl: 0,
-                            chunkId: 1,
-                            clientId: Date.now(),
-                        }
-                    })
+                    fileData = await handleImage(filePath);
+                    totalSize = fileData.totalSize;
+                    fileType = "image";
                     break;
                 case "gif":
-                    throw new Error("Gif file type is not support yet");
+                    param.fileType = "gif";
+                    fileData = undefined;
+                    fileType = "gif";
+                    break
                 case "mp4":
-                    throw new Error("Mp4 file type is not support yet");
+                    param.fileType = "mp4";
+                    break;
                 default:
                     throw new Error("Unsupported file type");
             }
+
+            param.data.totalSize = totalSize!;
+            param.fileData = fileData;
+            param.fileType = fileType;
+
+            params.push(param);
 
             await new Promise((resolve) => setTimeout(resolve, 1));
         }
 
         let url = `${serviceURL}/${type == "group" ? "group" : "message"}/`
         let queryString = `zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}&type=${type == "group" ? "11" : "2"}`
-        
+
         let requests = [];
         let results: UploadAttachmentType[] = [];
         for (const param of params) {
-            let urlType = `${param.fileType == "image" ? `photo_original/upload?` : null}`;
             const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(param.data));
             if (!encryptedParams) throw new Error("Failed to encrypt message");
 
             requests.push(request(
-                url + urlType + queryString + `&params=${encodeURIComponent(encryptedParams)}`,
+                url + urlType[param.fileType!] + queryString + `&params=${encodeURIComponent(encryptedParams)}`,
                 {
                     method: "POST",
                     headers: param.chunkContent.getHeaders(),
@@ -135,10 +157,11 @@ export function uploadAttachmentFactory(serviceURL: string) {
                 if (!resDecode) throw new Error("Failed to decode message");
                 if (!JSON.parse(resDecode).data) throw new Error("Failed to upload file");
 
+                if (param.fileType == "gif") return; // Gif has sent when upload
                 results.push({
                     fileData: {
-                        fileType: param.fileType,
-                        data: param.fileData
+                        fileType: param.fileType!,
+                        data: param.fileData!
                     },
                     response: JSON.parse(resDecode)
                 });

@@ -47,7 +47,7 @@ export function addReactionFactory(serviceURL: string) {
                     message: JSON.stringify({
                         rMsg: [
                             {
-                                gMsgID: message.id,
+                                gMsgID: message.msgId,
                                 cMsgID: message.ts,
                                 msgType: 1,
                             },
@@ -56,10 +56,10 @@ export function addReactionFactory(serviceURL: string) {
                         rType,
                         source
                     }),
-                    clientId: message.clientId, 
+                    clientId: message.cliMsgId, 
                 },
             ],
-            toid: message.owner,
+            toid: message.toid,
         }
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));

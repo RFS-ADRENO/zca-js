@@ -142,6 +142,7 @@ export class ListenerBase {
                         // console.log("TRY PARSE:", JSON.parse(decodedData));
                         const parsedData = JSON.parse(decodedData).data;
                         const { msgs } = parsedData;
+                        console.log(msgs);
                         for (const msg of msgs) {
                             // console.log(msg);
                             if (msg.idTo == "0" && !this.options.selfListen) continue;
@@ -149,15 +150,28 @@ export class ListenerBase {
                                 {
                                     type: "message",
                                     data: new Message(
-                                        msg.uidFrom == "0" ? appContext.uid : msg.uidFrom,
+                                        msg.actionId,
                                         msg.msgId,
                                         msg.cliMsgId,
-                                        MessageType.TEXT,
+                                        msg.msgType,
+                                        msg.uidFrom == "0" ? msg.idTo : msg.uidFrom,
+                                        msg.dName,
                                         msg.ts,
+                                        msg.status,
                                         msg.content,
+                                        msg.notify,
                                         msg.ttl,
-                                        msg.quote,
-                                        msg.dName
+                                        msg.userId,
+                                        msg.uin,
+                                        msg.topOut,
+                                        msg.topOutTimeOut,
+                                        msg.topOutImprTimeOut,
+                                        msg.propertyExt,
+                                        msg.paramsExt,
+                                        msg.cmd,
+                                        msg.st,
+                                        msg.at,
+                                        msg.realMsgId
                                     )
                                 }
                             );
@@ -212,8 +226,7 @@ export class ListenerBase {
                                         msg.msgId,
                                         msg.cliMsgId,
                                         msg.msgType,
-                                        msg.uidFrom,
-                                        msg.idTo,
+                                        msg.uidFrom == "0" ? msg.idTo : msg.uidFrom,
                                         msg.dName,
                                         msg.ts,
                                         msg.status,
