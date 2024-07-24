@@ -59,7 +59,7 @@ export function addReactionFactory(serviceURL: string) {
                     clientId: message.cliMsgId, 
                 },
             ],
-            toid: message.toid,
+            toid: message.idTo,
         }
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));

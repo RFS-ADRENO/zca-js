@@ -138,13 +138,9 @@ export class ListenerBase {
                         const decodedData = decodeUnit8Array(decompressedData);
 
                         if (!decodedData) return;
-                        // console.log("Decoded data:", decodedData);
-                        // console.log("TRY PARSE:", JSON.parse(decodedData));
                         const parsedData = JSON.parse(decodedData).data;
                         const { msgs } = parsedData;
-                        console.log(msgs);
                         for (const msg of msgs) {
-                            // console.log(msg);
                             if (msg.idTo == "0" && !this.options.selfListen) continue;
                             this.onMessageCallback(
                                 {
@@ -154,7 +150,8 @@ export class ListenerBase {
                                         msg.msgId,
                                         msg.cliMsgId,
                                         msg.msgType,
-                                        msg.uidFrom == "0" ? msg.idTo : msg.uidFrom,
+                                        msg.idTo == "0" ? appContext.uid : msg.idTo,
+                                        msg.uidFrom == "0" ? appContext.uid : msg.uidFrom,
                                         msg.dName,
                                         msg.ts,
                                         msg.status,
@@ -212,12 +209,9 @@ export class ListenerBase {
                         const decodedData = decodeUnit8Array(decompressedData);
 
                         if (!decodedData) return
-                        // console.log("Decoded data:", decodedData);
-                        // console.log("TRY PARSE:", JSON.parse(decodedData));
                         const parsedData = JSON.parse(decodedData).data;
                         const { groupMsgs } = parsedData;
                         for (const msg of groupMsgs) {
-                            // console.log(msg);
                             this.onMessageCallback(
                                 {
                                     type: "group_message",
@@ -226,7 +220,8 @@ export class ListenerBase {
                                         msg.msgId,
                                         msg.cliMsgId,
                                         msg.msgType,
-                                        msg.uidFrom == "0" ? msg.idTo : msg.uidFrom,
+                                        msg.idTo,
+                                        msg.uidFrom == "0" ? appContext.uid : msg.uidFrom,
                                         msg.dName,
                                         msg.ts,
                                         msg.status,

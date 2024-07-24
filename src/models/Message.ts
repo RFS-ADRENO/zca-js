@@ -26,7 +26,8 @@ export class Message {
     msgId: string;
     cliMsgId: string;
     msgType: string;
-    toid: string;
+    idTo: string;
+    uidFrom: string;
     dName: string;
     ts: string;
     status: number;
@@ -55,12 +56,13 @@ export class Message {
     at: number;
     realMsgId: string;
 
-    constructor(actionId: string, msgId: string, cliMsgId: string, msgType: string, toid: string, dName: string, ts: string, status: number, content: string, notify: string, ttl: number, userId: string, uin: string, topOut: string, topOutTimeOut: string, topOutImprTimeOut: string, propertyExt: { color: number; size: number; type: number; subType: number; ext: string; }, paramsExt: { countUnread: number; containType: number; platformType: number; }, cmd: number, st: number, at: number, realMsgId: string) {
+    constructor(actionId: string, msgId: string, cliMsgId: string, msgType: string, idTo: string, uidFrom: string, dName: string, ts: string, status: number, content: string, notify: string, ttl: number, userId: string, uin: string, topOut: string, topOutTimeOut: string, topOutImprTimeOut: string, propertyExt: { color: number; size: number; type: number; subType: number; ext: string; }, paramsExt: { countUnread: number; containType: number; platformType: number; }, cmd: number, st: number, at: number, realMsgId: string) {
         this.actionId = actionId;
         this.msgId = msgId;
         this.cliMsgId = cliMsgId;
         this.msgType = msgType;
-        this.toid = toid;
+        this.idTo = idTo;
+        this.uidFrom = uidFrom;
         this.dName = dName;
         this.ts = ts;
         this.status = status;
@@ -86,7 +88,8 @@ export class Message {
             msgId: this.msgId,
             cliMsgId: this.cliMsgId,
             msgType: this.msgType,
-            toid: this.toid,
+            idTo: this.idTo,
+            uidFrom: this.uidFrom,
             dName: this.dName,
             ts: this.ts,
             status: this.status,
@@ -113,7 +116,8 @@ export class GroupMessage {
     msgId: string;
     cliMsgId: string;
     msgType: string;
-    toid: string;
+    idTo: string;
+    uidFrom: string;
     dName: string;
     ts: string;
     status: number;
@@ -144,12 +148,13 @@ export class GroupMessage {
     mentions: MentionType[] | undefined;
     quote: QuoteType | undefined;
 
-    constructor(actionId: string, msgId: string, cliMsgId: string, msgType: string, toid: string, dName: string, ts: string, status: number, content: string, notify: string, ttl: number, userId: string, uin: string, topOut: string, topOutTimeOut: string, topOutImprTimeOut: string, propertyExt: { color: number; size: number; type: number; subType: number; ext: string; }, paramsExt: { countUnread: number; containType: number; platformType: number; }, cmd: number, st: number, at: number, realMsgId: string, mentions: MentionType[] | undefined, quote: QuoteType | undefined) {
+    constructor(actionId: string, msgId: string, cliMsgId: string, msgType: string, idTo: string, uidFrom: string, dName: string, ts: string, status: number, content: string, notify: string, ttl: number, userId: string, uin: string, topOut: string, topOutTimeOut: string, topOutImprTimeOut: string, propertyExt: { color: number; size: number; type: number; subType: number; ext: string; }, paramsExt: { countUnread: number; containType: number; platformType: number; }, cmd: number, st: number, at: number, realMsgId: string, mentions: MentionType[] | undefined, quote: QuoteType | undefined) {
         this.actionId = actionId;
         this.msgId = msgId;
         this.cliMsgId = cliMsgId;
         this.msgType = msgType;
-        this.toid = toid;
+        this.idTo = idTo;
+        this.uidFrom = uidFrom;
         this.dName = dName;
         this.ts = ts;
         this.status = status;
@@ -177,7 +182,8 @@ export class GroupMessage {
             msgId: this.msgId,
             cliMsgId: this.cliMsgId,
             msgType: this.msgType,
-            toid: this.toid,
+            idTo: this.idTo,
+            uidFrom: this.uidFrom,
             dName: this.dName,
             ts: this.ts,
             status: this.status,

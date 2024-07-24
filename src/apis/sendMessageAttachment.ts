@@ -6,34 +6,39 @@ import { decodeAES, encodeAES, request } from "../utils.js";
 const urlType = {
     image: "photo_original/send?",
     gif: "", // Gif has sent when upload
-    mp4: "asyncfile/msg?"
-}
+    mp4: "asyncfile/msg?",
+};
 
 export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
     let url = {
-        group: `${serviceURL}/group/`,
-        user: `${serviceURL}/message/`
-    }
+        group_message: `${serviceURL}/group/`,
+        message: `${serviceURL}/message/`,
+    };
 
     function getGroupLayoutId() {
-        return new class {
+        return new (class {
             _lastClientId: number;
-            getTimeServer: () => number
+            getTimeServer: () => number;
             constructor() {
-                this._lastClientId = Date.now(),
-                    this.getTimeServer = () => Date.now()
+                (this._lastClientId = Date.now()), (this.getTimeServer = () => Date.now());
             }
             next() {
                 let e = this.getTimeServer();
-                return e <= this._lastClientId && (this._lastClientId++,
-                    e = this._lastClientId),
-                    this._lastClientId = e,
+                return (
+                    e <= this._lastClientId && (this._lastClientId++, (e = this._lastClientId)),
+                    (this._lastClientId = e),
                     e
+                );
             }
-        }
+        })();
     }
 
-    return async function sendMessageAttachment(message: string = "", filePaths: string[], type: "group" | "user", toid: string) {
+    return async function sendMessageAttachment(
+        message: string = "",
+        filePaths: string[],
+        type: "group_message" | "message",
+        toid: string
+    ) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
         if (!appContext.imei) throw new Error("IMEI is not available");
         if (!appContext.cookie) throw new Error("Cookie is not available");
@@ -41,13 +46,14 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
 
         let uploadAttachment = await api.uploadAttachment(filePaths, type, toid);
 
-        let paramsData = [], indexInGroupLayout = uploadAttachment.length - 1;
+        let paramsData = [],
+            indexInGroupLayout = uploadAttachment.length - 1;
 
         let grid = getGroupLayoutId().next();
 
         for (const attachment of uploadAttachment) {
             if (filePaths.length === 1) {
-                console.log("Send single file")
+                console.log("Send single file");
                 paramsData.push({
                     fileData: attachment.fileData,
                     param: {
@@ -56,21 +62,29 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
                         desc: message,
                         width: attachment.fileData.data.width,
                         height: attachment.fileData.data.height,
-                        toid: toid,
+                        toid: type == "group_message" ? undefined : String(toid),
+                        grid: type == "group_message" ? String(toid) : undefined,
                         rawUrl: attachment.response.data.normalUrl,
                         hdUrl: attachment.response.data.hdUrl,
                         thumbUrl: attachment.response.data.thumbUrl,
-                        normalUrl: attachment.response.data.normalUrl,
+                        oriUrl:
+                            type == "group_message"
+                                ? attachment.response.data.normalUrl
+                                : undefined,
+                        normalUrl:
+                            type == "group_message"
+                                ? undefined
+                                : attachment.response.data.normalUrl,
                         thumbSize: "9815",
                         fileSize: String(attachment.fileData.data.totalSize),
                         hdSize: String(attachment.fileData.data.totalSize),
                         zsource: -1,
                         ttl: 0,
-                        imei: appContext.imei
-                    }
-                })
+                        imei: appContext.imei,
+                    },
+                });
             } else {
-                console.log("Send multiple files")
+                console.log("Send multiple files");
                 paramsData.push({
                     fileData: attachment.fileData,
                     param: {
@@ -83,51 +97,59 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
                         isGroupLayout: 1,
                         idInGroup: indexInGroupLayout--,
                         totalItemInGroup: filePaths.length,
-                        toid: toid,
+                        toid: type == "group_message" ? undefined : String(toid),
+                        grid: type == "group_message" ? String(toid) : undefined,
                         rawUrl: attachment.response.data.normalUrl,
                         hdUrl: attachment.response.data.hdUrl,
                         thumbUrl: attachment.response.data.thumbUrl,
-                        normalUrl: attachment.response.data.normalUrl,
+                        oriUrl:
+                            type == "group_message"
+                                ? attachment.response.data.normalUrl
+                                : undefined,
+                        normalUrl:
+                            type == "group_message"
+                                ? undefined
+                                : attachment.response.data.normalUrl,
                         thumbSize: "9815",
                         fileSize: String(attachment.fileData.data.totalSize),
                         hdSize: String(attachment.fileData.data.totalSize),
                         zsource: -1,
                         ttl: 0,
-                        imei: appContext.imei
-                    }
-                })
+                        imei: appContext.imei,
+                    },
+                });
             }
 
-            await new Promise(resolve => setTimeout(resolve, 1));
+            await new Promise((resolve) => setTimeout(resolve, 1));
         }
 
         let requests = [];
         let results: any = [];
 
-        let queryString = `zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}&nretry=0`
+        let queryString = `zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}&nretry=0`;
 
         for (const param of paramsData) {
             const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(param.param));
             if (!encryptedParams) throw new Error("Failed to encrypt message");
-            requests.push(request(
-                url[type] + urlType[param.fileData.fileType] + queryString,
-                {
+            requests.push(
+                request(url[type] + urlType[param.fileData.fileType] + queryString, {
                     method: "POST",
                     body: new URLSearchParams({
                         params: encryptedParams,
                     }),
-                }
-            ).then(async (response) => {
-                if (!response.ok) throw new Error("Failed to send message: " + response.statusText);
+                }).then(async (response) => {
+                    if (!response.ok)
+                        throw new Error("Failed to send message: " + response.statusText);
 
-                let resDecode = decodeAES(appContext.secretKey!, (await response.json()).data);
-                if (!resDecode) throw new Error("Failed to decode message");
-                results.push(JSON.parse(resDecode));
-            }))
+                    let resDecode = decodeAES(appContext.secretKey!, (await response.json()).data);
+                    if (!resDecode) throw new Error("Failed to decode message");
+                    results.push(JSON.parse(resDecode));
+                })
+            );
         }
 
         await Promise.all(requests);
 
         return results;
-    }
+    };
 }
