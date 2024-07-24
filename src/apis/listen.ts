@@ -3,21 +3,32 @@ import WebSocket from "ws";
 import pako from "pako";
 import { appContext } from "../context.js";
 import { Message, MessageType, GroupMessage } from "../models/Message.js";
+import EventEmitter from "events";
+
+type MessageEventData =
+    | {
+          type: "message";
+          data: Message;
+      }
+    | {
+          type: "group_message";
+          data: GroupMessage;
+      };
 
 export type ListenerOptions = {
     selfListen: boolean;
 };
 
-export type OnMessageCallback = (message:
-    {
-        type: "message",
-        data: Message
-    } | {
-        type: "group_message",
-        data: GroupMessage
-    }) => void | Promise<void>;
+export type OnMessageCallback = (message: MessageEventData) => void | Promise<void>;
 
-export class ListenerBase {
+interface ListenerBaseEvents {
+    connected: [];
+    closed: [];
+    error: [error: any];
+    message: [message: MessageEventData];
+}
+
+export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
     private options: ListenerOptions;
     private url: string;
     private cookie: string;
@@ -30,6 +41,7 @@ export class ListenerBase {
     private cipherKey?: string;
 
     constructor(url: string, options?: ListenerOptions) {
+        super();
         if (!appContext.cookie) throw new Error("Cookie is not available");
         if (!appContext.userAgent) throw new Error("User agent is not available");
 
@@ -38,10 +50,10 @@ export class ListenerBase {
         this.cookie = appContext.cookie;
         this.userAgent = appContext.userAgent;
 
-        this.onConnectedCallback = () => { };
-        this.onClosedCallback = () => { };
-        this.onErrorCallback = () => { };
-        this.onMessageCallback = () => { };
+        this.onConnectedCallback = () => {};
+        this.onClosedCallback = () => {};
+        this.onErrorCallback = () => {};
+        this.onMessageCallback = () => {};
     }
 
     public onConnected(cb: Function) {
@@ -80,10 +92,12 @@ export class ListenerBase {
 
         ws.onopen = () => {
             this.onConnectedCallback();
+            this.emit("connected");
         };
 
         ws.onclose = () => {
             this.onClosedCallback();
+            this.emit("closed");
         };
 
         ws.onmessage = async (event) => {
@@ -142,36 +156,36 @@ export class ListenerBase {
                         const { msgs } = parsedData;
                         for (const msg of msgs) {
                             if (msg.idTo == "0" && !this.options.selfListen) continue;
-                            this.onMessageCallback(
-                                {
-                                    type: "message",
-                                    data: new Message(
-                                        msg.actionId,
-                                        msg.msgId,
-                                        msg.cliMsgId,
-                                        msg.msgType,
-                                        msg.idTo == "0" ? appContext.uid : msg.idTo,
-                                        msg.uidFrom == "0" ? appContext.uid : msg.uidFrom,
-                                        msg.dName,
-                                        msg.ts,
-                                        msg.status,
-                                        msg.content,
-                                        msg.notify,
-                                        msg.ttl,
-                                        msg.userId,
-                                        msg.uin,
-                                        msg.topOut,
-                                        msg.topOutTimeOut,
-                                        msg.topOutImprTimeOut,
-                                        msg.propertyExt,
-                                        msg.paramsExt,
-                                        msg.cmd,
-                                        msg.st,
-                                        msg.at,
-                                        msg.realMsgId
-                                    )
-                                }
-                            );
+                            const messageEventData = {
+                                type: "message",
+                                data: new Message(
+                                    msg.actionId,
+                                    msg.msgId,
+                                    msg.cliMsgId,
+                                    msg.msgType,
+                                    msg.idTo == "0" ? appContext.uid : msg.idTo,
+                                    msg.uidFrom == "0" ? appContext.uid : msg.uidFrom,
+                                    msg.dName,
+                                    msg.ts,
+                                    msg.status,
+                                    msg.content,
+                                    msg.notify,
+                                    msg.ttl,
+                                    msg.userId,
+                                    msg.uin,
+                                    msg.topOut,
+                                    msg.topOutTimeOut,
+                                    msg.topOutImprTimeOut,
+                                    msg.propertyExt,
+                                    msg.paramsExt,
+                                    msg.cmd,
+                                    msg.st,
+                                    msg.at,
+                                    msg.realMsgId
+                                ),
+                            } as const;
+                            this.onMessageCallback(messageEventData);
+                            this.emit("message", messageEventData);
                         }
                     }
                 }
@@ -208,47 +222,48 @@ export class ListenerBase {
                         const decompressedData = pako.inflate(decryptedData);
                         const decodedData = decodeUnit8Array(decompressedData);
 
-                        if (!decodedData) return
+                        if (!decodedData) return;
                         const parsedData = JSON.parse(decodedData).data;
                         const { groupMsgs } = parsedData;
                         for (const msg of groupMsgs) {
-                            this.onMessageCallback(
-                                {
-                                    type: "group_message",
-                                    data: new GroupMessage(
-                                        msg.actionId,
-                                        msg.msgId,
-                                        msg.cliMsgId,
-                                        msg.msgType,
-                                        msg.idTo,
-                                        msg.uidFrom == "0" ? appContext.uid : msg.uidFrom,
-                                        msg.dName,
-                                        msg.ts,
-                                        msg.status,
-                                        msg.content,
-                                        msg.notify,
-                                        msg.ttl,
-                                        msg.userId,
-                                        msg.uin,
-                                        msg.topOut,
-                                        msg.topOutTimeOut,
-                                        msg.topOutImprTimeOut,
-                                        msg.propertyExt,
-                                        msg.paramsExt,
-                                        msg.cmd,
-                                        msg.st,
-                                        msg.at,
-                                        msg.realMsgId,
-                                        msg.mentions,
-                                        msg.quote
-                                    )
-                                }
-                            );
+                            const messageEventData = {
+                                type: "group_message",
+                                data: new GroupMessage(
+                                    msg.actionId,
+                                    msg.msgId,
+                                    msg.cliMsgId,
+                                    msg.msgType,
+                                    msg.idTo,
+                                    msg.uidFrom == "0" ? appContext.uid : msg.uidFrom,
+                                    msg.dName,
+                                    msg.ts,
+                                    msg.status,
+                                    msg.content,
+                                    msg.notify,
+                                    msg.ttl,
+                                    msg.userId,
+                                    msg.uin,
+                                    msg.topOut,
+                                    msg.topOutTimeOut,
+                                    msg.topOutImprTimeOut,
+                                    msg.propertyExt,
+                                    msg.paramsExt,
+                                    msg.cmd,
+                                    msg.st,
+                                    msg.at,
+                                    msg.realMsgId,
+                                    msg.mentions,
+                                    msg.quote
+                                ),
+                            } as const;
+                            this.onMessageCallback(messageEventData);
+                            this.emit("message", messageEventData);
                         }
                     }
                 }
             } catch (error) {
                 this.onErrorCallback(error);
+                this.emit("error", error);
             }
         };
     }
