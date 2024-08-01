@@ -18,6 +18,7 @@ export type Credentials = {
     cookie: string;
     userAgent: string;
     language?: string;
+    options?: ListenerOptions;
 };
 
 export class Zalo {
@@ -25,6 +26,7 @@ export class Zalo {
     public static readonly API_VERSION = 636;
 
     private enableEncryptParam = true;
+    private listenerOptions?: ListenerOptions;
 
     constructor(credentials: Credentials) {
         this.validateParams(credentials);
@@ -35,6 +37,8 @@ export class Zalo {
         appContext.language = credentials.language || "vi";
 
         appContext.secretKey = null;
+
+        this.listenerOptions = credentials.options;
     }
 
     private validateParams(credentials: Credentials) {
@@ -66,7 +70,8 @@ export class Zalo {
                 zpw_ver: Zalo.API_VERSION,
                 zpw_type: Zalo.API_TYPE,
                 t: Date.now(),
-            })
+            }),
+            this.listenerOptions
         );
     }
 }
@@ -75,7 +80,7 @@ export class API {
     private secretKey: string;
     private zpwServiceMap: Record<string, string[]>;
 
-    public Listener: ReturnType<typeof getListener>;
+    public listen: ListenerBase;
     public sendMessage: ReturnType<typeof sendMessageFactory>;
     public addReaction: ReturnType<typeof addReactionFactory>;
     public getOwnId: typeof getOwnId;
@@ -85,10 +90,10 @@ export class API {
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
     public sendMessageAttachment: ReturnType<typeof sendMessageAttachmentFactory>;
 
-    constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string) {
+    constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string, options?: ListenerOptions) {
         this.secretKey = secretKey;
         this.zpwServiceMap = zpwServiceMap;
-        this.Listener = getListener(wsUrl);
+        this.listen = new ListenerBase(wsUrl, options);
         this.sendMessage = sendMessageFactory(
             makeURL(`${zpwServiceMap.chat[0]}/api/message`, {
                 zpw_ver: Zalo.API_VERSION,
@@ -122,21 +127,12 @@ export class API {
             })
         );
         this.uploadAttachment = uploadAttachmentFactory(
-            `${zpwServiceMap.file[0]}/api`
+            `${zpwServiceMap.file[0]}/api`,
+            this
         );
         this.sendMessageAttachment = sendMessageAttachmentFactory(
             `${zpwServiceMap.file[0]}/api`,
             this
         )
     }
-}
-
-function getListener(url: string) {
-    class Listener extends ListenerBase {
-        constructor(options?: ListenerOptions) {
-            super(url, options);
-        }
-    }
-
-    return Listener;
 }

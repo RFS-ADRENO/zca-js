@@ -7,7 +7,7 @@ const zalo = new Zalo({
 });
 
 const api = await zalo.login();
-const listener = new api.Listener({ selfListen: true });
+const listener = api.listen;
 
 listener.onConnected(() => {
     console.log("Connected");
@@ -26,20 +26,20 @@ listener.onMessage((message) => {
     switch (message.type) {
         case "message":
             api.addReaction(":>", message.data).then(console.log);
-            if (message.data.owner != api.getOwnId()) {
-                switch (message.data.msg) {
+            if (message.data.idTo != api.getOwnId()) {
+                switch (message.data.content) {
                     case "reply": {
-                        api.sendMessage("reply", message.data.owner, message.data).then(
+                        api.sendMessage("reply", message.data.idTo, message.data).then(
                             console.log
                         );
                         break;
                     }
                     case "ping": {
-                        api.sendMessage("pong", message.data.owner).then(console.log);
+                        api.sendMessage("pong", message.data.idTo).then(console.log);
                         break;
                     }
                     default: {
-                        const args = message.data.msg.split(/\s+/);
+                        const args = message.data.content.split(/\s+/);
                         if (args[0] == "sticker" && args[1]) {
                             api.getStickers(args[1]).then((stickers) => {
                                 const { sticker } = stickers.suggestions;
@@ -47,9 +47,9 @@ listener.onMessage((message) => {
                                 console.log("Sending sticker:", random);
 
                                 if (random)
-                                    api.sendSticker(random, message.data.owner).then(console.log);
+                                    api.sendSticker(random, message.data.idTo).then(console.log);
                                 else
-                                    api.sendMessage("No sticker found", message.data.owner).then(
+                                    api.sendMessage("No sticker found", message.data.idTo).then(
                                         console.log
                                     );
                             });
@@ -58,7 +58,7 @@ listener.onMessage((message) => {
                     }
                 }
             } else {
-                const args = message.data.msg.split(/\s+/);
+                const args = message.data.content.split(/\s+/);
                 if (args[0] == "find" && args[1]) {
                     api.findUser(args[1]).then(console.log);
                 }

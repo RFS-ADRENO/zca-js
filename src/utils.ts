@@ -2,6 +2,8 @@ import cryptojs from "crypto-js";
 import { appContext } from "./context.js";
 import fs from "node:fs";
 import sharp from "sharp";
+import pako from "pako";
+import SparkMD5 from "spark-md5"
 
 export function getSignKey(type: string, params: Record<string, any>) {
     let n = [];
@@ -88,10 +90,10 @@ export class ParamsEncryptor {
     getParams() {
         return this.zcid
             ? {
-                  zcid: this.zcid,
-                  zcid_ext: this.zcid_ext,
-                  enc_ver: this.enc_ver,
-              }
+                zcid: this.zcid,
+                zcid_ext: this.zcid_ext,
+                enc_ver: this.enc_ver,
+            }
             : null;
     }
 
@@ -114,7 +116,7 @@ export class ParamsEncryptor {
         let s = Math.floor(Math.random() * (a - n + 1)) + n;
         if (s > 12) {
             let e = "";
-            for (; s > 0; )
+            for (; s > 0;)
                 (e += Math.random()
                     .toString(16)
                     .substr(2, s > 12 ? 12 : s)),
@@ -304,4 +306,90 @@ export async function handleImage(filePath: string) {
         width: imageData.width,
         height: imageData.height,
     }
+}
+
+export function handleVideo(filePath: string) {
+    return fs.statSync(filePath).size;
+}
+
+export async function handleGif(filePath: string) {
+    const fileData = fs.readFileSync(filePath);
+    const gifData = await sharp(fileData).metadata();
+    const fileName = filePath.split("/").pop()!;
+
+    return {
+        fileName,
+        totalSize: gifData.size,
+        width: gifData.width,
+        height: gifData.height,
+    }
+}
+
+export async function decodeEventData(parsed: any, cipherKey?: string) {
+    if (!cipherKey) return;
+
+    const eventData = parsed.data;
+    const decodedEventDataBuffer = decodeBase64ToBuffer(
+        decodeURIComponent(eventData)
+    );
+
+    if (decodedEventDataBuffer.length >= 48) {
+        const algorithm = {
+            name: "AES-GCM",
+            iv: decodedEventDataBuffer.subarray(0, 16),
+            tagLength: 128,
+            additionalData: decodedEventDataBuffer.subarray(16, 32),
+        };
+        const dataSource = decodedEventDataBuffer.subarray(32);
+
+        const cryptoKey = await crypto.subtle.importKey(
+            "raw",
+            decodeBase64ToBuffer(cipherKey),
+            algorithm,
+            false,
+            ["decrypt"]
+        );
+        const decryptedData = await crypto.subtle.decrypt(
+            algorithm,
+            cryptoKey,
+            dataSource
+        );
+        const decompressedData = pako.inflate(decryptedData);
+        const decodedData = decodeUnit8Array(decompressedData);
+
+        if (!decodedData) return;
+        return JSON.parse(decodedData);
+    }
+}
+
+export function getMd5LargeFileObject(filePath: string, fileSize: number) {
+    return new Promise<{
+        currentChunk: number;
+        data: string;
+    }>((resolve, reject) => {
+        let chunkSize = 2097152, // Read in chunks of 2MB
+            chunks = Math.ceil(fileSize / chunkSize),
+            currentChunk = 0,
+            spark = new SparkMD5.ArrayBuffer(),
+            buffer = fs.readFileSync(filePath);
+
+        function loadNext() {
+            let start = currentChunk * chunkSize,
+                end = ((start + chunkSize) >= fileSize) ? fileSize : start + chunkSize;
+
+            spark.append(buffer.subarray(start, end));
+            currentChunk++;
+
+            if (currentChunk < chunks) {
+                loadNext();
+            } else {
+                resolve({
+                    currentChunk,
+                    data: spark.end()
+                });
+            }
+        }
+
+        loadNext();
+    })
 }
