@@ -13,9 +13,26 @@ import { findUserFactory } from "./apis/findUser.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 import { sendMessageAttachmentFactory } from "./apis/sendMessageAttachment.js";
 
+export type J2Cookies = {
+    url: string;
+    cookies: {
+        domain: string;
+        expirationDate: number;
+        hostOnly: boolean;
+        httpOnly: boolean;
+        name: string;
+        path: string;
+        sameSite: string;
+        secure: boolean;
+        session: boolean;
+        storeId: string;
+        value: string;
+    }[]
+}
+
 export type Credentials = {
     imei: string;
-    cookie: string;
+    cookie: string | J2Cookies;
     userAgent: string;
     language?: string;
     options?: ListenerOptions;
@@ -32,13 +49,20 @@ export class Zalo {
         this.validateParams(credentials);
 
         appContext.imei = credentials.imei;
-        appContext.cookie = credentials.cookie;
+        appContext.cookie = this.parseCookies(credentials.cookie);
         appContext.userAgent = credentials.userAgent;
         appContext.language = credentials.language || "vi";
 
         appContext.secretKey = null;
 
         this.listenerOptions = credentials.options;
+    }
+
+    private parseCookies(cookie: string | J2Cookies) {
+        if (typeof cookie === "string") return cookie;
+
+        const cookieString = cookie.cookies.map((c) => `${c.name}=${c.value}`).join("; ");
+        return cookieString;
     }
 
     private validateParams(credentials: Credentials) {
@@ -80,7 +104,7 @@ export class API {
     private secretKey: string;
     private zpwServiceMap: Record<string, string[]>;
 
-    public listen: ListenerBase;
+    public listener: ListenerBase;
     public sendMessage: ReturnType<typeof sendMessageFactory>;
     public addReaction: ReturnType<typeof addReactionFactory>;
     public getOwnId: typeof getOwnId;
@@ -93,7 +117,7 @@ export class API {
     constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string, options?: ListenerOptions) {
         this.secretKey = secretKey;
         this.zpwServiceMap = zpwServiceMap;
-        this.listen = new ListenerBase(wsUrl, options);
+        this.listener = new ListenerBase(wsUrl, options);
         this.sendMessage = sendMessageFactory(
             makeURL(`${zpwServiceMap.chat[0]}/api/message`, {
                 zpw_ver: Zalo.API_VERSION,

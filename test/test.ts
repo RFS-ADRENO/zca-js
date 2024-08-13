@@ -7,7 +7,7 @@ const zalo = new Zalo({
 });
 
 const api = await zalo.login();
-const listener = api.listen;
+const { listener } = api;
 
 listener.onConnected(() => {
     console.log("Connected");
@@ -29,9 +29,7 @@ listener.onMessage((message) => {
             if (message.data.idTo != api.getOwnId()) {
                 switch (message.data.content) {
                     case "reply": {
-                        api.sendMessage("reply", message.data.idTo, message.data).then(
-                            console.log
-                        );
+                        api.sendMessage("reply", message.data.idTo, message.data).then(console.log);
                         break;
                     }
                     case "ping": {

@@ -199,7 +199,7 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
 
                     await new Promise<void>((resolve) => {
                         if (param.fileType == "video") {
-                            api.listen.once("upload_attachment", async (data) => {
+                            api.listener.once("upload_attachment", async (data) => {
                                 let result = {
                                     fileType: "video",
                                     ...(JSON.parse(resDecode)).data,
