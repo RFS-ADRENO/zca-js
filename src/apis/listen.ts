@@ -2,17 +2,17 @@ import { decodeBase64ToBuffer, decodeEventData, decodeUnit8Array } from "../util
 import WebSocket from "ws";
 import pako from "pako";
 import { appContext } from "../context.js";
-import { Message, MessageType, GroupMessage } from "../models/Message.js";
+import { Message, MessageType, GroupMessage, GroupMessageType } from "../models/Message.js";
 import EventEmitter from "events";
 
 type MessageEventData =
     | {
         type: "message";
-        data: Message;
+        data: MessageType;
     }
     | {
         type: "group_message";
-        data: GroupMessage;
+        data: GroupMessageType;
     };
 
 type UploadEventData = {
@@ -131,7 +131,7 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
                     for (const msg of msgs) {
                         const messageEventData = {
                             type: "message",
-                            data: new Message(msg),
+                            data: (new Message(msg)).data,
                         } as const;
                         this.onMessageCallback(messageEventData);
                         this.emit("message", messageEventData);
@@ -144,7 +144,7 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
                     for (const msg of groupMsgs) {
                         const messageEventData = {
                             type: "group_message",
-                            data: new GroupMessage(msg),
+                            data: (new GroupMessage(msg)).data,
                         } as const;
                         this.onMessageCallback(messageEventData);
                         this.emit("message", messageEventData);
