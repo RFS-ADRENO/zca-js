@@ -1,29 +1,30 @@
 import { appContext } from "../context.js";
-import { MessageType, Message } from "../models/Message.js";
+import { Message } from "../models/Message.js";
 import { decodeAES, encodeAES, request } from "../utils.js";
 
 export function sendMessageFactory(serviceURL: string) {
-    return async function sendMessage(message: string, recipientId: string, quote?: MessageType) {
+    return async function sendMessage(message: string, recipientId: string, quote?: Message) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
         if (!appContext.imei) throw new Error("IMEI is not available");
         if (!appContext.cookie) throw new Error("Cookie is not available");
         if (!appContext.userAgent) throw new Error("User agent is not available");
 
         if (quote && !(quote instanceof Message)) throw new Error("Invalid quote message");
+        const quoteData = quote!.data;
 
         const params = quote
             ? {
                   toid: recipientId,
                   message: message,
                   clientId: Date.now(),
-                  qmsgOwner: quote,
-                  qmsgId: quote.msgId,
-                  qmsgCliId: quote.cliMsgId,
-                  qmsgType: quote.status,
-                  qmsgTs: quote.ts,
-                  qmsg: quote.content,
+                  qmsgOwner: quoteData.uidFrom,
+                  qmsgId: quoteData.msgId,
+                  qmsgCliId: quoteData.cliMsgId,
+                  qmsgType: quoteData.status,
+                  qmsgTs: quoteData.ts,
+                  qmsg: quoteData.content,
                   imei: appContext.imei,
-                  qmsgTTL: quote.ttl,
+                  qmsgTTL: quoteData.ttl,
                   ttl: 0,
               }
             : {

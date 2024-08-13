@@ -1,8 +1,11 @@
-export type MessageType = {
+import { appContext } from "../context.js";
+
+export type TMessage = {
     actionId: string;
     msgId: string;
     cliMsgId: string;
     msgType: string;
+    uidFrom: string;
     idTo: string;
     dName: string;
     ts: string;
@@ -31,9 +34,10 @@ export type MessageType = {
     st: number;
     at: number;
     realMsgId: string;
+    quote: TQuote | undefined;
 }
 
-export type GroupMessageType = {
+export type TGroupMessage = {
     actionId: string;
     msgId: string;
     cliMsgId: string;
@@ -67,11 +71,11 @@ export type GroupMessageType = {
     st: number;
     at: number;
     realMsgId: string;
-    mentions: MentionType[] | undefined;
-    quote: QuoteType | undefined;
+    mentions: TMention[] | undefined;
+    quote: TQuote | undefined;
 }
 
-export type QuoteType = {
+export type TQuote = {
     ownerId: number;
     cliId: number;
     globalMsgId: number;
@@ -83,33 +87,35 @@ export type QuoteType = {
     ttl: number
 }
 
-export type MentionType = {
+export type TMention = {
     uid: string;
     pos: number;
     len: number;
     type: 0 | 1;
 };
 
+export enum MessageType {
+    Message,
+    GroupMessage
+}
+
 export class Message {
-    data: MessageType;
+    data: TMessage;
+    type: MessageType = MessageType.Message;
 
-    constructor(data: MessageType) {
+    constructor(data: TMessage) {
         this.data = data;
-    }
-
-    toJSON() {
-        return this.data;
+        if (data.idTo == "0") data.idTo = appContext.uid!;
+        if (data.uidFrom == "0") data.uidFrom = appContext.uid!;
     }
 }
 
 export class GroupMessage {
-    data: GroupMessageType
+    data: TGroupMessage
+    type: MessageType = MessageType.GroupMessage;
 
-    constructor(data: GroupMessageType) {
+    constructor(data: TGroupMessage) {
         this.data = data;
-    }
-
-    toJSON() {
-        return this.data;
+        if (data.uidFrom == "0") data.uidFrom = appContext.uid!;
     }
 }

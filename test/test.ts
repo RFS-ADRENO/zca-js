@@ -1,4 +1,5 @@
 import { Zalo } from "../src/index.js";
+import { MessageType } from "../src/models/Message.js";
 const zalo = new Zalo({
     cookie: "",
     imei: "",
@@ -24,16 +25,16 @@ listener.onError((error: any) => {
 listener.onMessage((message) => {
     console.log("Message:", message.data);
     switch (message.type) {
-        case "message":
-            api.addReaction(":>", message.data).then(console.log);
-            if (message.data.idTo != api.getOwnId()) {
+        case MessageType.Message:
+            api.addReaction(":>", message).then(console.log);
+            if (message.data.uidFrom != api.getOwnId()) {
                 switch (message.data.content) {
                     case "reply": {
-                        api.sendMessage("reply", message.data.idTo, message.data).then(console.log);
+                        api.sendMessage("reply", message.data.uidFrom, message).then(console.log);
                         break;
                     }
                     case "ping": {
-                        api.sendMessage("pong", message.data.idTo).then(console.log);
+                        api.sendMessage("pong", message.data.uidFrom).then(console.log);
                         break;
                     }
                     default: {
@@ -45,9 +46,9 @@ listener.onMessage((message) => {
                                 console.log("Sending sticker:", random);
 
                                 if (random)
-                                    api.sendSticker(random, message.data.idTo).then(console.log);
+                                    api.sendSticker(random, message.data.uidFrom).then(console.log);
                                 else
-                                    api.sendMessage("No sticker found", message.data.idTo).then(
+                                    api.sendMessage("No sticker found", message.data.uidFrom).then(
                                         console.log
                                     );
                             });
@@ -63,7 +64,7 @@ listener.onMessage((message) => {
             }
             break;
 
-        case "group_message":
+        case MessageType.GroupMessage:
             break;
 
         default:

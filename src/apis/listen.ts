@@ -1,19 +1,10 @@
-import { decodeBase64ToBuffer, decodeEventData, decodeUnit8Array } from "../utils.js";
-import WebSocket from "ws";
-import pako from "pako";
-import { appContext } from "../context.js";
-import { Message, MessageType, GroupMessage, GroupMessageType } from "../models/Message.js";
 import EventEmitter from "events";
+import WebSocket from "ws";
+import { appContext } from "../context.js";
+import { GroupMessage, Message } from "../models/Message.js";
+import { decodeEventData } from "../utils.js";
 
-type MessageEventData =
-    | {
-        type: "message";
-        data: MessageType;
-    }
-    | {
-        type: "group_message";
-        data: GroupMessageType;
-    };
+type MessageEventData = Message | GroupMessage;
 
 type UploadEventData = {
     fileUrl: string;
@@ -129,12 +120,9 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { msgs } = parsedData;
                     for (const msg of msgs) {
-                        const messageEventData = {
-                            type: "message",
-                            data: (new Message(msg)).data,
-                        } as const;
-                        this.onMessageCallback(messageEventData);
-                        this.emit("message", messageEventData);
+                        const messageObject = new Message(msg);
+                        this.onMessageCallback(messageObject);
+                        this.emit("message", messageObject);
                     }
                 }
 
@@ -142,12 +130,9 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { groupMsgs } = parsedData;
                     for (const msg of groupMsgs) {
-                        const messageEventData = {
-                            type: "group_message",
-                            data: (new GroupMessage(msg)).data,
-                        } as const;
-                        this.onMessageCallback(messageEventData);
-                        this.emit("message", messageEventData);
+                        const messageObject = new GroupMessage(msg);
+                        this.onMessageCallback(messageObject);
+                        this.emit("message", messageObject);
                     }
                 }
 
