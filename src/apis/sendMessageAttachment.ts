@@ -5,6 +5,7 @@ import { decodeAES, encodeAES, getMd5LargeFileObject, handleGif, request } from 
 import fs from "node:fs";
 import FormData from "form-data";
 import sharp from "sharp";
+import { MessageType } from "../models/Message.js";
 
 const urlType = {
     image: "photo_original/send?",
@@ -21,8 +22,8 @@ type UpthumbType = {
 
 export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
     let url = {
-        group_message: `${serviceURL}/group/`,
-        message: `${serviceURL}/message/`,
+        [MessageType.GroupMessage]: `${serviceURL}/group/`,
+        [MessageType.DirectMessage]: `${serviceURL}/message/`,
     };
 
     function getGroupLayoutId() {
@@ -81,7 +82,7 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
     return async function sendMessageAttachment(
         message: string = "",
         filePaths: string[],
-        type: "group_message" | "message",
+        type: MessageType,
         toid: string
     ) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
@@ -91,6 +92,7 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
 
         let firstExtFile = filePaths[0].split(".").pop();
         let isMutilFileType = filePaths.some((e) => e.split(".").pop() != firstExtFile);
+        const isGroupMessage = type == MessageType.GroupMessage;
 
         if (isMutilFileType) {
             await api.sendMessage(message, toid);
@@ -122,17 +124,17 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
                                 desc: message,
                                 width: attachment.width,
                                 height: attachment.height,
-                                toid: type == "group_message" ? undefined : String(toid),
-                                grid: type == "group_message" ? String(toid) : undefined,
+                                toid: isGroupMessage ? undefined : String(toid),
+                                grid: isGroupMessage ? String(toid) : undefined,
                                 rawUrl: attachment.normalUrl,
                                 hdUrl: attachment.hdUrl,
                                 thumbUrl: attachment.thumbUrl,
                                 oriUrl:
-                                    type == "group_message"
+                                    isGroupMessage
                                         ? attachment.normalUrl
                                         : undefined,
                                 normalUrl:
-                                    type == "group_message"
+                                    isGroupMessage
                                         ? undefined
                                         : attachment.normalUrl,
                                 thumbSize: "9815",
@@ -167,17 +169,17 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
                                 isGroupLayout: 1,
                                 idInGroup: indexInGroupLayout--,
                                 totalItemInGroup: filePaths.length,
-                                toid: type == "group_message" ? undefined : String(toid),
-                                grid: type == "group_message" ? String(toid) : undefined,
+                                toid: isGroupMessage ? undefined : String(toid),
+                                grid: isGroupMessage ? String(toid) : undefined,
                                 rawUrl: attachment.normalUrl,
                                 hdUrl: attachment.hdUrl,
                                 thumbUrl: attachment.thumbUrl,
                                 oriUrl:
-                                    type == "group_message"
+                                    isGroupMessage
                                         ? attachment.normalUrl
                                         : undefined,
                                 normalUrl:
-                                    type == "group_message"
+                                    isGroupMessage
                                         ? undefined
                                         : attachment.normalUrl,
                                 thumbSize: "9815",

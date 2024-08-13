@@ -25,7 +25,7 @@ listener.onError((error: any) => {
 listener.onMessage((message) => {
     console.log("Message:", message.data);
     switch (message.type) {
-        case MessageType.Message:
+        case MessageType.DirectMessage:
             api.addReaction(":>", message).then(console.log);
             if (message.data.uidFrom != api.getOwnId()) {
                 switch (message.data.content) {

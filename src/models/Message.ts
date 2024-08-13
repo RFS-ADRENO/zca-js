@@ -95,13 +95,13 @@ export type TMention = {
 };
 
 export enum MessageType {
-    Message,
+    DirectMessage,
     GroupMessage
 }
 
 export class Message {
     data: TMessage;
-    type: MessageType = MessageType.Message;
+    type: MessageType = MessageType.DirectMessage;
 
     constructor(data: TMessage) {
         this.data = data;

@@ -4,6 +4,7 @@ import fs from "node:fs";
 import { API, Zalo } from "../index.js";
 import FormData from "form-data";
 import { handleImage } from "../utils.js";
+import { MessageType } from "../models/Message.js";
 
 type ImageResponse = {
     normalUrl: string;
@@ -92,7 +93,7 @@ const urlType = {
 export function uploadAttachmentFactory(serviceURL: string, api: API) {
     return async function uploadAttachment(
         filePaths: string[],
-        type: "group_message" | "message",
+        type: MessageType,
         toid: string
     ): Promise<UploadAttachmentType[]> {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
@@ -100,9 +101,10 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
         if (!appContext.cookie) throw new Error("Cookie is not available");
         if (!appContext.userAgent) throw new Error("User agent is not available");
 
+        const isGroupMessage = type == MessageType.GroupMessage;
         let params: ParamType[] = [];
-        let url = `${serviceURL}/${type == "group_message" ? "group" : "message"}/`;
-        let queryString = `zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}&type=${type == "group_message" ? "11" : "2"}`;
+        let url = `${serviceURL}/${isGroupMessage ? "group" : "message"}/`;
+        let queryString = `zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}&type=${isGroupMessage ? "11" : "2"}`;
 
         for (const filePath of filePaths) {
             if (!fs.existsSync(filePath)) throw new Error("File not found");
@@ -122,7 +124,7 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
                 data: {}
             } as ParamType;
 
-            if (type == "group_message") param.data.grid = toid;
+            if (isGroupMessage) param.data.grid = toid;
             else param.data.toid = toid;
 
             switch (extFile) {
