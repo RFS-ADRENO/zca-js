@@ -1,9 +1,9 @@
 import { appContext } from "../context.js";
-import { Message } from "../models/Message.js";
+import { Message, MessageType } from "../models/Message.js";
 import { decodeAES, encodeAES, request } from "../utils.js";
 
 export function addReactionFactory(serviceURL: string) {
-    return async function addReaction(icon: ":>" | "/-strong" | "/-heart" | ":o" | ":-(("  | ":-h" | "", message: Message) {
+    return async function addReaction(icon: ":>" | "/-strong" | "/-heart" | ":o" | ":-(("  | ":-h" | "", message: MessageType) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
         if (!appContext.imei) throw new Error("IMEI is not available");
         if (!appContext.cookie) throw new Error("Cookie is not available");

@@ -2,17 +2,17 @@ import { decodeBase64ToBuffer, decodeEventData, decodeUnit8Array } from "../util
 import WebSocket from "ws";
 import pako from "pako";
 import { appContext } from "../context.js";
-import { Message, MessageType, GroupMessage } from "../models/Message.js";
+import { Message, MessageType, GroupMessage, GroupMessageType } from "../models/Message.js";
 import EventEmitter from "events";
 
 type MessageEventData =
     | {
         type: "message";
-        data: Message;
+        data: MessageType;
     }
     | {
         type: "group_message";
-        data: GroupMessage;
+        data: GroupMessageType;
     };
 
 type UploadEventData = {
@@ -129,34 +129,9 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { msgs } = parsedData;
                     for (const msg of msgs) {
-                        if (msg.idTo == "0" && !this.options.selfListen) continue;
                         const messageEventData = {
                             type: "message",
-                            data: new Message(
-                                msg.actionId,
-                                msg.msgId,
-                                msg.cliMsgId,
-                                msg.msgType,
-                                msg.idTo == "0" ? appContext.uid : msg.idTo,
-                                msg.uidFrom == "0" ? appContext.uid : msg.uidFrom,
-                                msg.dName,
-                                msg.ts,
-                                msg.status,
-                                msg.content,
-                                msg.notify,
-                                msg.ttl,
-                                msg.userId,
-                                msg.uin,
-                                msg.topOut,
-                                msg.topOutTimeOut,
-                                msg.topOutImprTimeOut,
-                                msg.propertyExt,
-                                msg.paramsExt,
-                                msg.cmd,
-                                msg.st,
-                                msg.at,
-                                msg.realMsgId
-                            ),
+                            data: (new Message(msg)).data,
                         } as const;
                         this.onMessageCallback(messageEventData);
                         this.emit("message", messageEventData);
@@ -169,33 +144,7 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
                     for (const msg of groupMsgs) {
                         const messageEventData = {
                             type: "group_message",
-                            data: new GroupMessage(
-                                msg.actionId,
-                                msg.msgId,
-                                msg.cliMsgId,
-                                msg.msgType,
-                                msg.idTo,
-                                msg.uidFrom == "0" ? appContext.uid : msg.uidFrom,
-                                msg.dName,
-                                msg.ts,
-                                msg.status,
-                                msg.content,
-                                msg.notify,
-                                msg.ttl,
-                                msg.userId,
-                                msg.uin,
-                                msg.topOut,
-                                msg.topOutTimeOut,
-                                msg.topOutImprTimeOut,
-                                msg.propertyExt,
-                                msg.paramsExt,
-                                msg.cmd,
-                                msg.st,
-                                msg.at,
-                                msg.realMsgId,
-                                msg.mentions,
-                                msg.quote
-                            ),
+                            data: (new GroupMessage(msg)).data,
                         } as const;
                         this.onMessageCallback(messageEventData);
                         this.emit("message", messageEventData);

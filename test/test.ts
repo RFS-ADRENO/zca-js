@@ -22,7 +22,7 @@ listener.onError((error: any) => {
 });
 
 listener.onMessage((message) => {
-    console.log("Message:", message.data.toJSON());
+    console.log("Message:", message.data);
     switch (message.type) {
         case "message":
             api.addReaction(":>", message.data).then(console.log);
