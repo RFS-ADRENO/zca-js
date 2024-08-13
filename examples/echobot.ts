@@ -15,7 +15,7 @@ listener.on("message", (message) => {
 
     if (isDirectMessage && !message.isSelf) {
         console.log("Message:", message.data.content, message.threadId);
-        api.sendMessage(message.data.content, message.threadId, message);
+        api.sendMessage(message.data.content, message.threadId, message.type, message);
     }
 });
 

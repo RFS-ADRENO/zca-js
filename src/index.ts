@@ -102,8 +102,8 @@ export class Zalo {
 
 export class API {
     private secretKey: string;
-    private zpwServiceMap: Record<string, string[]>;
-
+    
+    public zpwServiceMap: Record<string, string[]>;
     public listener: ListenerBase;
     public sendMessage: ReturnType<typeof sendMessageFactory>;
     public addReaction: ReturnType<typeof addReactionFactory>;
@@ -118,13 +118,7 @@ export class API {
         this.secretKey = secretKey;
         this.zpwServiceMap = zpwServiceMap;
         this.listener = new ListenerBase(wsUrl, options);
-        this.sendMessage = sendMessageFactory(
-            makeURL(`${zpwServiceMap.chat[0]}/api/message`, {
-                zpw_ver: Zalo.API_VERSION,
-                zpw_type: Zalo.API_TYPE,
-                nretry: 0,
-            })
-        );
+        this.sendMessage = sendMessageFactory(this);
         this.addReaction = addReactionFactory(
             makeURL(`${zpwServiceMap.reaction[0]}/api/message/reaction`, {
                 zpw_ver: Zalo.API_VERSION,

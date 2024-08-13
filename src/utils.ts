@@ -393,3 +393,18 @@ export function getMd5LargeFileObject(filePath: string, fileSize: number) {
         loadNext();
     })
 }
+
+export const logger = {
+    verbose: (...args: any[]) => {
+        console.log("\x1b[2mVERBOSE\x1b[0m", ...args);
+    },
+    info: (...args: any[]) => {
+        console.log("\x1b[34mINFO\x1b[0m", ...args);
+    },
+    warn: (...args: any[]) => {
+        console.log("\x1b[33mWARN\x1b[0m", ...args);
+    },
+    error: (...args: any[]) => {
+        console.log("\x1b[31mERROR\x1b[0m", ...args);
+    },
+}

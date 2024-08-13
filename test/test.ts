@@ -32,7 +32,9 @@ listener.onMessage((message) => {
             if (!message.isSelf) {
                 switch (message.data.content) {
                     case "reply": {
-                        api.sendMessage("reply", message.threadId, message).then(console.log);
+                        api.sendMessage("reply", message.threadId, message.type, message).then(
+                            console.log
+                        );
                         break;
                     }
                     case "ping": {
@@ -74,6 +76,16 @@ listener.onMessage((message) => {
             break;
 
         case MessageType.GroupMessage:
+            if (!message.isSelf) {
+                switch (message.data.content) {
+                    case "ping": {
+                        api.sendMessage("pong", message.threadId, message.type).then(console.log);
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
             break;
 
         default:
