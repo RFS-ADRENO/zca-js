@@ -130,3 +130,4 @@ dist
 .pnp.*
 
 bun.lockb
+cookies.json
