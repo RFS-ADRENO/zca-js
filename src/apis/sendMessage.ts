@@ -10,21 +10,21 @@ export function sendMessageFactory(serviceURL: string) {
         if (!appContext.userAgent) throw new Error("User agent is not available");
 
         if (quote && !(quote instanceof Message)) throw new Error("Invalid quote message");
-        const quoteData = quote!.data;
+        const quoteData = quote?.data;
 
         const params = quote
             ? {
                   toid: recipientId,
                   message: message,
                   clientId: Date.now(),
-                  qmsgOwner: quoteData.uidFrom,
-                  qmsgId: quoteData.msgId,
-                  qmsgCliId: quoteData.cliMsgId,
-                  qmsgType: quoteData.status,
-                  qmsgTs: quoteData.ts,
-                  qmsg: quoteData.content,
+                  qmsgOwner: quoteData!.uidFrom,
+                  qmsgId: quoteData!.msgId,
+                  qmsgCliId: quoteData!.cliMsgId,
+                  qmsgType: quoteData!.status,
+                  qmsgTs: quoteData!.ts,
+                  qmsg: quoteData!.content,
                   imei: appContext.imei,
-                  qmsgTTL: quoteData.ttl,
+                  qmsgTTL: quoteData!.ttl,
                   ttl: 0,
               }
             : {
