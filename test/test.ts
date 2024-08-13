@@ -1,3 +1,4 @@
+import path from "path";
 import { Zalo } from "../src/index.js";
 import { MessageType } from "../src/models/Message.js";
 const zalo = new Zalo({
@@ -23,18 +24,19 @@ listener.onError((error: any) => {
 });
 
 listener.onMessage((message) => {
-    console.log("Message:", message.data);
+    console.log("Message:", message.threadId, message.data.content);
     switch (message.type) {
         case MessageType.DirectMessage:
             api.addReaction(":>", message).then(console.log);
-            if (message.data.uidFrom != api.getOwnId()) {
+            if (!message.data.content || typeof message.data.content != "string") return;
+            if (!message.isSelf) {
                 switch (message.data.content) {
                     case "reply": {
-                        api.sendMessage("reply", message.data.uidFrom, message).then(console.log);
+                        api.sendMessage("reply", message.threadId, message).then(console.log);
                         break;
                     }
                     case "ping": {
-                        api.sendMessage("pong", message.data.uidFrom).then(console.log);
+                        api.sendMessage("pong", message.threadId).then(console.log);
                         break;
                     }
                     default: {
@@ -46,9 +48,9 @@ listener.onMessage((message) => {
                                 console.log("Sending sticker:", random);
 
                                 if (random)
-                                    api.sendSticker(random, message.data.uidFrom).then(console.log);
+                                    api.sendSticker(random, message.threadId).then(console.log);
                                 else
-                                    api.sendMessage("No sticker found", message.data.uidFrom).then(
+                                    api.sendMessage("No sticker found", message.threadId).then(
                                         console.log
                                     );
                             });
@@ -60,6 +62,13 @@ listener.onMessage((message) => {
                 const args = message.data.content.split(/\s+/);
                 if (args[0] == "find" && args[1]) {
                     api.findUser(args[1]).then(console.log);
+                } else if (args[0] == "get") {
+                    api.sendMessageAttachment(
+                        "hi",
+                        [path.resolve("./test/a.png")],
+                        message.type,
+                        message.threadId
+                    ).then(console.log);
                 }
             }
             break;

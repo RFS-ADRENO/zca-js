@@ -100,22 +100,40 @@ export enum MessageType {
 }
 
 export class Message {
-    data: TMessage;
     type: MessageType = MessageType.DirectMessage;
+
+    data: TMessage;
+    threadId: string;
+    /**
+     * true if the message is sent by the logged in account
+     */
+    isSelf: boolean;
 
     constructor(data: TMessage) {
         this.data = data;
+        this.threadId = data.uidFrom == "0" ? data.idTo : data.uidFrom;
+        this.isSelf = data.uidFrom == "0";
+        
         if (data.idTo == "0") data.idTo = appContext.uid!;
         if (data.uidFrom == "0") data.uidFrom = appContext.uid!;
     }
 }
 
 export class GroupMessage {
-    data: TGroupMessage
     type: MessageType = MessageType.GroupMessage;
+
+    data: TGroupMessage;
+    threadId: string;
+    /**
+     * true if the message is sent by the logged in account
+     */
+    isSelf: boolean;
 
     constructor(data: TGroupMessage) {
         this.data = data;
+        this.threadId = data.idTo;
+        this.isSelf = data.uidFrom == "0";
+
         if (data.uidFrom == "0") data.uidFrom = appContext.uid!;
     }
 }
