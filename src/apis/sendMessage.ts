@@ -1,7 +1,38 @@
 import { appContext } from "../context.js";
 import { API, Zalo } from "../index.js";
-import { Message, MessageType } from "../models/Message.js";
-import { decodeAES, encodeAES, logger, makeURL, request } from "../utils.js";
+import { GroupMessage, Message, MessageType } from "../models/Message.js";
+import { decodeAES, encodeAES, getClientMessageType, makeURL, request } from "../utils.js";
+
+function prepareQMSGAttach(quote: Message | GroupMessage) {
+    const quoteData = quote.data;
+    if (typeof quoteData.content == "string") return quoteData.propertyExt;
+    if (quoteData.msgType == "chat.todo")
+        return {
+            properties: {
+                color: 0,
+                size: 0,
+                type: 0,
+                subType: 0,
+                ext: '{"shouldParseLinkOrContact":0}',
+            },
+        };
+
+    return {
+        ...quoteData.content,
+        thumbUrl: quoteData.content.thumb,
+        oriUrl: quoteData.content.href,
+        normalUrl: quoteData.content.href,
+    };
+}
+
+function prepareQMSG(quote: Message | GroupMessage) {
+    const quoteData = quote.data;
+    if (quoteData.msgType == "chat.todo" && typeof quoteData.content != "string") {
+        return JSON.parse(quoteData.content.params).item.content;
+    }
+
+    return "";
+}
 
 export function sendMessageFactory(api: API) {
     const directMessageServiceURL = makeURL(`${api.zpwServiceMap.chat[0]}/api/message`, {
@@ -18,42 +49,59 @@ export function sendMessageFactory(api: API) {
         message: string,
         recipientId: string,
         type: MessageType = MessageType.DirectMessage,
-        quote?: Message
+        quote?: Message | GroupMessage
     ) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
         if (!appContext.imei) throw new Error("IMEI is not available");
         if (!appContext.cookie) throw new Error("Cookie is not available");
         if (!appContext.userAgent) throw new Error("User agent is not available");
 
-        if (quote && !(quote instanceof Message)) throw new Error("Invalid quote message");
+        const isValidInstance = quote instanceof Message || quote instanceof GroupMessage;
+        if (quote && !isValidInstance) throw new Error("Invalid quote message");
         const isGroupMessage = type == MessageType.GroupMessage;
         const quoteData = quote?.data;
 
-        const params =
-            quote && !isGroupMessage
-                ? {
-                      toid: isGroupMessage ? undefined : recipientId,
-                      grid: isGroupMessage ? recipientId : undefined,
-                      message: message,
-                      clientId: Date.now(),
-                      qmsgOwner: quoteData!.uidFrom,
-                      qmsgId: quoteData!.msgId,
-                      qmsgCliId: quoteData!.cliMsgId,
-                      qmsgType: quoteData!.status,
-                      qmsgTs: quoteData!.ts,
-                      qmsg: quoteData!.content,
-                      imei: appContext.imei,
-                      qmsgTTL: quoteData!.ttl,
-                      ttl: 0,
-                  }
-                : {
-                      message: message,
-                      clientId: Date.now(),
-                      imei: appContext.imei,
-                      ttl: 0,
-                      toid: isGroupMessage ? undefined : recipientId,
-                      grid: isGroupMessage ? recipientId : undefined,
-                  };
+        if (quoteData) {
+            if (typeof quoteData.content != "string" && quoteData.msgType == "webchat") {
+                throw new Error("This kind of `webchat` quote type is not available");
+            }
+
+            if (quoteData.msgType == "group.poll") {
+                throw new Error("The `group.poll` quote type is not available");
+            }
+        }
+
+        const params = quote
+            ? {
+                  toid: isGroupMessage ? undefined : recipientId,
+                  grid: isGroupMessage ? recipientId : undefined,
+                  message: message,
+                  clientId: Date.now(),
+                  qmsgOwner: quoteData!.uidFrom,
+                  qmsgId: quoteData!.msgId,
+                  qmsgCliId: quoteData!.cliMsgId,
+                  qmsgType: getClientMessageType(quoteData!.msgType),
+                  qmsgTs: quoteData!.ts,
+                  qmsg: typeof quoteData!.content == "string" ? quoteData!.content : prepareQMSG(quote),
+                  imei: isGroupMessage ? undefined : appContext.imei,
+                  visibility: isGroupMessage ? 0 : undefined,
+                  qmsgAttach: isGroupMessage ? JSON.stringify(prepareQMSGAttach(quote)) : undefined,
+                  qmsgTTL: quoteData!.ttl,
+                  ttl: 0,
+              }
+            : {
+                  message: message,
+                  clientId: Date.now(),
+                  imei: appContext.imei,
+                  ttl: 0,
+                  toid: isGroupMessage ? undefined : recipientId,
+                  grid: isGroupMessage ? recipientId : undefined,
+              };
+
+        for (const key in params) {
+            if (params[key as keyof typeof params] === undefined)
+                delete params[key as keyof typeof params];
+        }
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new Error("Failed to encrypt message");
@@ -61,14 +109,7 @@ export function sendMessageFactory(api: API) {
             isGroupMessage ? groupMessageServiceURL : directMessageServiceURL
         );
         if (quote) {
-            if (isGroupMessage) {
-                finalServiceUrl.pathname = finalServiceUrl.pathname + "/quote";
-            } else {
-                logger.warn(
-                    "Quoting is not yet supported for group messages, falling back to normal message"
-                );
-                finalServiceUrl.pathname = finalServiceUrl.pathname + "/sendmsg";
-            }
+            finalServiceUrl.pathname = finalServiceUrl.pathname + "/quote";
         } else {
             finalServiceUrl.pathname =
                 finalServiceUrl.pathname + "/" + (isGroupMessage ? "sendmsg" : "sms");
