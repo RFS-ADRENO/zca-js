@@ -1,5 +1,20 @@
 import { appContext } from "../context.js";
 
+export type TAttachmentContent = {
+    title: string;
+    description: string;
+    href: string;
+    thumb: string;
+    childnumber: number;
+    action: string;
+    params: string;
+    type: string;
+}
+
+export type TOtherContent = {
+    [key: string]: any;
+}
+
 export type TMessage = {
     actionId: string;
     msgId: string;
@@ -10,7 +25,7 @@ export type TMessage = {
     dName: string;
     ts: string;
     status: number;
-    content: string;
+    content: string | TAttachmentContent | TOtherContent;
     notify: string;
     ttl: number;
     userId: string;
@@ -37,42 +52,8 @@ export type TMessage = {
     quote: TQuote | undefined;
 }
 
-export type TGroupMessage = {
-    actionId: string;
-    msgId: string;
-    cliMsgId: string;
-    msgType: string;
-    idTo: string;
-    uidFrom: string;
-    dName: string;
-    ts: string;
-    status: number;
-    content: string;
-    notify: string;
-    ttl: number;
-    userId: string;
-    uin: string;
-    topOut: string;
-    topOutTimeOut: string;
-    topOutImprTimeOut: string;
-    propertyExt: {
-        color: number;
-        size: number;
-        type: number;
-        subType: number;
-        ext: string;
-    } | undefined;
-    paramsExt: {
-        countUnread: number;
-        containType: number;
-        platformType: number;
-    };
-    cmd: number;
-    st: number;
-    at: number;
-    realMsgId: string;
+export type TGroupMessage = TMessage & {
     mentions: TMention[] | undefined;
-    quote: TQuote | undefined;
 }
 
 export type TQuote = {

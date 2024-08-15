@@ -1,4 +1,5 @@
 import cryptojs from "crypto-js";
+import crypto from "crypto";
 import { appContext } from "./context.js";
 import fs from "node:fs";
 import sharp from "sharp";
@@ -295,7 +296,7 @@ function mergeHeaders(headers: HeadersInit, defaultHeaders: Record<string, strin
     };
 }
 
-export async function handleImage(filePath: string) {
+export async function getImageMetaData(filePath: string) {
     const fileData = fs.readFileSync(filePath);
     const imageData = await sharp(fileData).metadata();
     const fileName = filePath.split("/").pop()!;
@@ -308,11 +309,11 @@ export async function handleImage(filePath: string) {
     }
 }
 
-export function handleVideo(filePath: string) {
-    return fs.statSync(filePath).size;
+export async function getVideoSize(filePath: string) {
+    return fs.promises.stat(filePath).then(s => s.size);
 }
 
-export async function handleGif(filePath: string) {
+export async function getGifMetaData(filePath: string) {
     const fileData = fs.readFileSync(filePath);
     const gifData = await sharp(fileData).metadata();
     const fileName = filePath.split("/").pop()!;
@@ -407,4 +408,22 @@ export const logger = {
     error: (...args: any[]) => {
         console.log("\x1b[31mERROR\x1b[0m", ...args);
     },
+}
+
+export function getClientMessageType(msgType: string) {
+    if (msgType === "webchat") return 1;
+    if (msgType === "chat.voice") return 31;
+    if (msgType === "chat.photo") return 32;
+    if (msgType === "chat.sticker") return 36;
+    if (msgType === "chat.doodle") return 37;
+    if (msgType === "chat.recommended") return 38;
+
+    if (msgType === "chat.link") return 1; // don't know
+    if (msgType === "chat.video.msg") return 44; // not sure
+
+    if (msgType === "share.file") return 46;
+    if (msgType === "chat.gif") return 49;
+    if (msgType === "chat.location.new") return 43;
+
+    return 1;
 }
