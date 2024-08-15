@@ -132,12 +132,7 @@ export class API {
                 zpw_type: Zalo.API_TYPE,
             })
         );
-        this.sendSticker = sendStickerFactory(
-            makeURL(`${zpwServiceMap.chat[0]}/api/message/sticker`, {
-                zpw_ver: Zalo.API_VERSION,
-                zpw_type: Zalo.API_TYPE,
-            })
-        );
+        this.sendSticker = sendStickerFactory(this);
         this.findUser = findUserFactory(
             makeURL(`${zpwServiceMap.friend[0]}/api/friend/profile/get`, {
                 zpw_ver: Zalo.API_VERSION,
