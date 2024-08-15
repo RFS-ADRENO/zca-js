@@ -13,7 +13,7 @@ const { listener } = api;
 listener.on("message", (message) => {
     const isDirectMessage = message.type === MessageType.DirectMessage;
 
-    if (isDirectMessage && !message.isSelf) {
+    if (isDirectMessage && !message.isSelf && typeof message.data.content === "string") {
         console.log("Message:", message.data.content, message.threadId);
         api.sendMessage(message.data.content, message.threadId, message.type, message);
     }
