@@ -1,4 +1,5 @@
 import cryptojs from "crypto-js";
+import crypto from "crypto";
 import { appContext } from "./context.js";
 import fs from "node:fs";
 import sharp from "sharp";

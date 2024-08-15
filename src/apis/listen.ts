@@ -161,6 +161,5 @@ function getHeader(buffer: Buffer) {
         throw new Error("Invalid header");
     }
 
-    const n = new DataView(buffer.buffer);
-    return [n.getUint8(0), n.getUint16(1, true), n.getUint8(3)];
+    return [buffer[0], buffer.readUInt16LE(1), buffer[3]];
 }
