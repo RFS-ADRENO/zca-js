@@ -1,7 +1,7 @@
 import { appContext } from "../context.js";
 import { API } from "../index.js";
 import { Zalo } from "../index.js";
-import { decodeAES, encodeAES, getMd5LargeFileObject, handleGif, request } from "../utils.js";
+import { decodeAES, encodeAES, getMd5LargeFileObject, getGifMetaData, request } from "../utils.js";
 import fs from "node:fs";
 import FormData from "form-data";
 import sharp from "sharp";
@@ -27,21 +27,7 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
     };
 
     function getGroupLayoutId() {
-        return new (class {
-            _lastClientId: number;
-            getTimeServer: () => number;
-            constructor() {
-                (this._lastClientId = Date.now()), (this.getTimeServer = () => Date.now());
-            }
-            next() {
-                let e = this.getTimeServer();
-                return (
-                    e <= this._lastClientId && (this._lastClientId++, (e = this._lastClientId)),
-                    (this._lastClientId = e),
-                    e
-                );
-            }
-        })();
+        return Date.now();
     }
 
     async function upthumb(filePath: string, url: string): Promise<UpthumbType> {
@@ -80,7 +66,7 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
     }
 
     return async function sendMessageAttachment(
-        message: string = "",
+        message: string,
         filePaths: string[],
         type: MessageType,
         toid: string
@@ -95,7 +81,7 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
         const isGroupMessage = type == MessageType.GroupMessage;
 
         if (isMutilFileType) {
-            await api.sendMessage(message, toid);
+            await api.sendMessage(message, toid, type);
             message = "";
         }
 
@@ -108,7 +94,7 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
         let paramsData = [],
             indexInGroupLayout = uploadAttachment.length - 1;
 
-        let grid = getGroupLayoutId().next();
+        let grid = getGroupLayoutId();
 
         for (const attachment of uploadAttachment) {
             switch (attachment.fileType) {
@@ -242,7 +228,7 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
 
         for (const gif of gifFiles) {
             const _upthumb = await upthumb(gif, url[type]);
-            let gifData = await handleGif(gif);
+            let gifData = await getGifMetaData(gif);
 
             let formData = new FormData();
             formData.append("chunkContent", fs.readFileSync(gif), {

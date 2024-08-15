@@ -1,9 +1,9 @@
 import { appContext } from "../context.js";
-import { decodeAES, encodeAES, getMd5LargeFileObject, handleGif, handleVideo, request } from "../utils.js";
+import { decodeAES, encodeAES, getMd5LargeFileObject, getGifMetaData, getVideoSize, request } from "../utils.js";
 import fs from "node:fs";
 import { API, Zalo } from "../index.js";
 import FormData from "form-data";
-import { handleImage } from "../utils.js";
+import { getImageMetaData } from "../utils.js";
 import { MessageType } from "../models/Message.js";
 
 type ImageResponse = {
@@ -132,7 +132,7 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
                 case "jpeg":
                 case "png":
                 case "webp":
-                    let imageData = await handleImage(filePath);
+                    let imageData = await getImageMetaData(filePath);
 
                     param.fileData = imageData;
                     param.fileType = "image";
@@ -148,7 +148,7 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
 
                     break;
                 case "mp4":
-                    let videoData = handleVideo(filePath);
+                    let videoData = await getVideoSize(filePath);
 
                     param.fileType = "video";
                     param.fileData = {

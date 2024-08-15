@@ -296,7 +296,7 @@ function mergeHeaders(headers: HeadersInit, defaultHeaders: Record<string, strin
     };
 }
 
-export async function handleImage(filePath: string) {
+export async function getImageMetaData(filePath: string) {
     const fileData = fs.readFileSync(filePath);
     const imageData = await sharp(fileData).metadata();
     const fileName = filePath.split("/").pop()!;
@@ -309,11 +309,11 @@ export async function handleImage(filePath: string) {
     }
 }
 
-export function handleVideo(filePath: string) {
-    return fs.statSync(filePath).size;
+export async function getVideoSize(filePath: string) {
+    return fs.promises.stat(filePath).then(s => s.size);
 }
 
-export async function handleGif(filePath: string) {
+export async function getGifMetaData(filePath: string) {
     const fileData = fs.readFileSync(filePath);
     const gifData = await sharp(fileData).metadata();
     const fileName = filePath.split("/").pop()!;
