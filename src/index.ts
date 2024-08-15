@@ -18,6 +18,7 @@ import { createGroupFactory } from "./apis/createGroup.js";
 import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
 import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
+import { changeGroupNameFactory } from "./apis/changeGroupName.js";
 
 export type J2Cookies = {
     url: string;
@@ -125,6 +126,7 @@ export class API {
     public changeGroupAvatar: ReturnType<typeof changeGroupAvatarFactory>;
     public removeUserFromGroup: ReturnType<typeof removeUserFromGroupFactory>;
     public addUserToGroup: ReturnType<typeof addUserToGroupFactory>;
+    public changeGroupName: ReturnType<typeof changeGroupNameFactory>;
 
     constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string, options?: ListenerOptions) {
         this.secretKey = secretKey;
@@ -187,6 +189,12 @@ export class API {
         );
         this.addUserToGroup = addUserToGroupFactory(
             makeURL(`${zpwServiceMap.group[0]}/api/group/invite/v2`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+            })
+        );
+        this.changeGroupName = changeGroupNameFactory(
+            makeURL(`${zpwServiceMap.group[0]}/api/group/updateinfo`, {
                 zpw_ver: Zalo.API_VERSION,
                 zpw_type: Zalo.API_TYPE,
             })
