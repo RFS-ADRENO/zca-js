@@ -13,9 +13,11 @@ import { findUserFactory } from "./apis/findUser.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 import { sendMessageAttachmentFactory } from "./apis/sendMessageAttachment.js";
 import { undoFactory } from "./apis/undo.js";
-import { deleteMessageFactory } from "./apis/deleteMessage.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
 import { createGroupFactory } from "./apis/createGroup.js";
+import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
+import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
+import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
 
 export type J2Cookies = {
     url: string;
@@ -118,9 +120,11 @@ export class API {
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
     public sendMessageAttachment: ReturnType<typeof sendMessageAttachmentFactory>;
     public undo: ReturnType<typeof undoFactory>;
-    public deleteMessage: ReturnType<typeof deleteMessageFactory>;
     public getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
     public createGroup: ReturnType<typeof createGroupFactory>;
+    public changeGroupAvatar: ReturnType<typeof changeGroupAvatarFactory>;
+    public removeUserFromGroup: ReturnType<typeof removeUserFromGroupFactory>;
+    public addUserToGroup: ReturnType<typeof addUserToGroupFactory>;
 
     constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string, options?: ListenerOptions) {
         this.secretKey = secretKey;
@@ -156,12 +160,6 @@ export class API {
             this
         )
         this.undo = undoFactory();
-        this.deleteMessage = deleteMessageFactory(
-            makeURL(`${zpwServiceMap.group[0]}/api/group/deletemsg`, {
-                zpw_ver: Zalo.API_VERSION,
-                zpw_type: Zalo.API_TYPE,
-            })
-        );
         this.getGroupInfo = getGroupInfoFactory(
             makeURL(`${zpwServiceMap.group[0]}/api/group/getmg-v2`, {
                 zpw_ver: Zalo.API_VERSION,
@@ -174,6 +172,24 @@ export class API {
                 zpw_type: Zalo.API_TYPE,
             }),
             this
+        );
+        this.changeGroupAvatar = changeGroupAvatarFactory(
+            makeURL(`${zpwServiceMap.file[0]}/api/group/upavatar`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+            })
+        );
+        this.removeUserFromGroup = removeUserFromGroupFactory(
+            makeURL(`${zpwServiceMap.group[0]}/api/group/kickout`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+            })
+        );
+        this.addUserToGroup = addUserToGroupFactory(
+            makeURL(`${zpwServiceMap.group[0]}/api/group/invite/v2`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+            })
         );
     }
 }

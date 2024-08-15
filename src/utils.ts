@@ -427,3 +427,13 @@ export function getClientMessageType(msgType: string) {
 
     return 1;
 }
+
+export function strPadLeft(e: any, t: string, n: number) {
+    const a = (e = "" + e).length;
+    return a === n ? e : a > n ? e.slice(-n) : t.repeat(n - a) + e
+}
+
+export function getFullTimeFromMilisecond(e: number) {
+    let t = new Date(e);
+    return strPadLeft(t.getHours(), "0", 2) + ":" + strPadLeft(t.getMinutes(), "0", 2) + " " + strPadLeft(t.getDate(), "0", 2) + "/" + strPadLeft(t.getMonth() + 1, "0", 2) + "/" + t.getFullYear()
+}
