@@ -12,6 +12,10 @@ import { addReactionFactory } from "./apis/addReaction.js";
 import { findUserFactory } from "./apis/findUser.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 import { sendMessageAttachmentFactory } from "./apis/sendMessageAttachment.js";
+import { undoFactory } from "./apis/undo.js";
+import { deleteMessageFactory } from "./apis/deleteMessage.js";
+import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
+import { createGroupFactory } from "./apis/createGroup.js";
 
 export type J2Cookies = {
     url: string;
@@ -40,7 +44,7 @@ export type Credentials = {
 
 export class Zalo {
     public static readonly API_TYPE = 30;
-    public static readonly API_VERSION = 636;
+    public static readonly API_VERSION = 637;
 
     private enableEncryptParam = true;
     private listenerOptions?: ListenerOptions;
@@ -102,7 +106,7 @@ export class Zalo {
 
 export class API {
     private secretKey: string;
-    
+
     public zpwServiceMap: Record<string, string[]>;
     public listener: ListenerBase;
     public sendMessage: ReturnType<typeof sendMessageFactory>;
@@ -113,6 +117,10 @@ export class API {
     public findUser: ReturnType<typeof findUserFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
     public sendMessageAttachment: ReturnType<typeof sendMessageAttachmentFactory>;
+    public undo: ReturnType<typeof undoFactory>;
+    public deleteMessage: ReturnType<typeof deleteMessageFactory>;
+    public getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
+    public createGroup: ReturnType<typeof createGroupFactory>;
 
     constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string, options?: ListenerOptions) {
         this.secretKey = secretKey;
@@ -152,5 +160,25 @@ export class API {
             `${zpwServiceMap.file[0]}/api`,
             this
         )
+        this.undo = undoFactory();
+        this.deleteMessage = deleteMessageFactory(
+            makeURL(`${zpwServiceMap.group[0]}/api/group/deletemsg`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+            })
+        );
+        this.getGroupInfo = getGroupInfoFactory(
+            makeURL(`${zpwServiceMap.group[0]}/api/group/getmg-v2`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+            })
+        );
+        this.createGroup = createGroupFactory(
+            makeURL(`${zpwServiceMap.group[0]}/api/group/create/v2`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+            }),
+            this
+        );
     }
 }
