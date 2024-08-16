@@ -5,6 +5,7 @@ import fs from "node:fs";
 import sharp from "sharp";
 import pako from "pako";
 import SparkMD5 from "spark-md5"
+import path from "path";
 
 export function getSignKey(type: string, params: Record<string, any>) {
     let n = [];
@@ -297,7 +298,7 @@ function mergeHeaders(headers: HeadersInit, defaultHeaders: Record<string, strin
 }
 
 export async function getImageMetaData(filePath: string) {
-    const fileData = fs.readFileSync(filePath);
+    const fileData = await fs.promises.readFile(filePath);
     const imageData = await sharp(fileData).metadata();
     const fileName = filePath.split("/").pop()!;
 
@@ -314,9 +315,9 @@ export async function getVideoSize(filePath: string) {
 }
 
 export async function getGifMetaData(filePath: string) {
-    const fileData = fs.readFileSync(filePath);
+    const fileData = await fs.promises.readFile(filePath);
     const gifData = await sharp(fileData).metadata();
-    const fileName = filePath.split("/").pop()!;
+    const fileName = path.basename(filePath);
 
     return {
         fileName,
@@ -367,12 +368,12 @@ export function getMd5LargeFileObject(filePath: string, fileSize: number) {
     return new Promise<{
         currentChunk: number;
         data: string;
-    }>((resolve, reject) => {
+    }>(async (resolve, reject) => {
         let chunkSize = 2097152, // Read in chunks of 2MB
             chunks = Math.ceil(fileSize / chunkSize),
             currentChunk = 0,
             spark = new SparkMD5.ArrayBuffer(),
-            buffer = fs.readFileSync(filePath);
+            buffer = await fs.promises.readFile(filePath);
 
         function loadNext() {
             let start = currentChunk * chunkSize,
@@ -436,4 +437,17 @@ export function strPadLeft(e: any, t: string, n: number) {
 export function getFullTimeFromMilisecond(e: number) {
     let t = new Date(e);
     return strPadLeft(t.getHours(), "0", 2) + ":" + strPadLeft(t.getMinutes(), "0", 2) + " " + strPadLeft(t.getDate(), "0", 2) + "/" + strPadLeft(t.getMonth() + 1, "0", 2) + "/" + t.getFullYear()
+}
+
+export function getFileExtension(e: string) {
+    return path.extname(e).slice(1);
+}
+
+export function getFileName(e: string) {
+    return path.basename(e);
+}
+
+export function removeUndefinedKeys(e: Record<string, any>) {
+    for (let t in e) e[t] === undefined && delete e[t];
+    return e
 }

@@ -1,11 +1,10 @@
-import { appContext } from "../context.js";
-import { API } from "../index.js";
-import { Zalo } from "../index.js";
-import { decodeAES, encodeAES, getMd5LargeFileObject, getGifMetaData, request } from "../utils.js";
-import fs from "node:fs";
 import FormData from "form-data";
+import fs from "fs";
 import sharp from "sharp";
+import { appContext } from "../context.js";
+import { API, Zalo } from "../index.js";
 import { MessageType } from "../models/Message.js";
+import { decodeAES, encodeAES, getFileExtension, getFileName, getGifMetaData, getMd5LargeFileObject, makeURL, removeUndefinedKeys, request } from "../utils.js";
 
 const urlType = {
     image: "photo_original/send?",
@@ -18,10 +17,24 @@ type UpthumbType = {
     clientFileId: string;
     url: string;
     fileId: string;
-}
+};
+
+type AttachmentData =
+    | {
+          query?: Record<string, string>;
+          fileType: "image" | "video";
+          body: URLSearchParams;
+          params: Record<string, any>;
+      }
+    | {
+          query?: Record<string, string>;
+          fileType: "gif";
+          body: Buffer;
+          headers: Record<string, string>;
+      };
 
 export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
-    let url = {
+    const url = {
         [MessageType.GroupMessage]: `${serviceURL}/group/`,
         [MessageType.DirectMessage]: `${serviceURL}/message/`,
     };
@@ -32,7 +45,7 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
 
     async function upthumb(filePath: string, url: string): Promise<UpthumbType> {
         let formData = new FormData();
-        let buffer = (await sharp(filePath).png().toBuffer());
+        let buffer = await sharp(filePath).png().toBuffer();
         formData.append("fileContent", buffer, {
             filename: "blob",
             contentType: "image/png",
@@ -40,25 +53,32 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
 
         const params = {
             clientId: Date.now(),
-            imei: appContext.imei
-        }   
+            imei: appContext.imei,
+        };
 
         const encryptedParams = encodeAES(appContext.secretKey!, JSON.stringify(params));
         if (!encryptedParams) throw new Error("Failed to encrypt message");
 
-        console.log(url + `upthumb?zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}&params=${encodeURIComponent(encryptedParams)}`);
-
-        let response = await request(url + `upthumb?zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}&params=${encodeURIComponent(encryptedParams)}`, {
-            method: "POST",
-            headers: formData.getHeaders(),
-            body: formData.getBuffer(),
-        });
+        let response = await request(
+            makeURL(
+                url + "upthumb?",
+                {
+                    zpw_ver: Zalo.API_VERSION,
+                    zpw_type: Zalo.API_TYPE,
+                    params: encryptedParams,
+                }
+            ),
+            {
+                method: "POST",
+                headers: formData.getHeaders(),
+                body: formData.getBuffer(),
+            }
+        );
 
         if (!response.ok) throw new Error("Failed to upload thumbnail: " + response.statusText);
         let resDecode = decodeAES(appContext.secretKey!, (await response.json()).data);
         if (!resDecode) throw new Error("Failed to decode thumbnail");
         if (!JSON.parse(resDecode).data) {
-            console.log(resDecode);
             throw new Error("Failed to upload file");
         }
 
@@ -76,167 +96,107 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
         if (!appContext.cookie) throw new Error("Cookie is not available");
         if (!appContext.userAgent) throw new Error("User agent is not available");
 
-        let firstExtFile = filePaths[0].split(".").pop();
-        let isMutilFileType = filePaths.some((e) => e.split(".").pop() != firstExtFile);
+        const firstExtFile = getFileExtension(filePaths[0]);
+        const isMutilFileType = filePaths.some((e) => getFileExtension(e) != firstExtFile);
         const isGroupMessage = type == MessageType.GroupMessage;
 
-        if (isMutilFileType) {
+        if (isMutilFileType || firstExtFile == "gif") {
             await api.sendMessage(message, toid, type);
             message = "";
         }
 
-        let gifFiles = filePaths.filter((e) => e.split(".").pop() == "gif");
-        filePaths = filePaths.filter((e) => e.split(".").pop() != "gif");
+        const gifFiles = filePaths.filter((e) => getFileExtension(e) == "gif");
+        filePaths = filePaths.filter((e) => getFileExtension(e) != "gif");
 
-        let uploadAttachment = await api.uploadAttachment(filePaths, type, toid);
+        const uploadAttachment = await api.uploadAttachment(filePaths, type, toid);
 
-        console.log("Upload attachment", uploadAttachment);
-        let paramsData = [],
-            indexInGroupLayout = uploadAttachment.length - 1;
+        const attachmentsData: AttachmentData[] = [];
+        let indexInGroupLayout = uploadAttachment.length - 1;
 
-        let grid = getGroupLayoutId();
+        const groupLayoutId = getGroupLayoutId();
 
+        const isMultiFile = filePaths.length > 1;
+        let clientId = Date.now();
         for (const attachment of uploadAttachment) {
+            let data: AttachmentData;
             switch (attachment.fileType) {
                 case "image": {
-                    if (filePaths.length === 1) {
-                        console.log("Send single file");
-                        let param: any = {
-                            queryString: `zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}&nretry=0`,
-                            fileType: attachment.fileType,
-                            param: {
-                                photoId: attachment.photoId,
-                                clientId: Date.now(),
-                                desc: message,
-                                width: attachment.width,
-                                height: attachment.height,
-                                toid: isGroupMessage ? undefined : String(toid),
-                                grid: isGroupMessage ? String(toid) : undefined,
-                                rawUrl: attachment.normalUrl,
-                                hdUrl: attachment.hdUrl,
-                                thumbUrl: attachment.thumbUrl,
-                                oriUrl:
-                                    isGroupMessage
-                                        ? attachment.normalUrl
-                                        : undefined,
-                                normalUrl:
-                                    isGroupMessage
-                                        ? undefined
-                                        : attachment.normalUrl,
-                                thumbSize: "9815",
-                                fileSize: String(attachment.totalSize),
-                                hdSize: String(attachment.totalSize),
-                                zsource: -1,
-                                ttl: 0,
-                                imei: appContext.imei,
-                            },
-                        }
+                    data = {
+                        fileType: attachment.fileType,
+                        params: {
+                            photoId: attachment.photoId,
+                            clientId: (clientId++).toString(),
+                            desc: message,
+                            width: attachment.width,
+                            height: attachment.height,
+                            toid: isGroupMessage ? undefined : String(toid),
+                            grid: isGroupMessage ? String(toid) : undefined,
+                            rawUrl: attachment.normalUrl,
+                            hdUrl: attachment.hdUrl,
+                            thumbUrl: attachment.thumbUrl,
+                            oriUrl: isGroupMessage ? attachment.normalUrl : undefined,
+                            normalUrl: isGroupMessage ? undefined : attachment.normalUrl,
+                            thumbSize: "9815",
+                            fileSize: String(attachment.totalSize),
+                            hdSize: String(attachment.totalSize),
+                            zsource: -1,
+                            ttl: 0,
 
-                        const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(param.param));
-                        if (!encryptedParams) throw new Error("Failed to encrypt message");
-
-                        param.body = new URLSearchParams({
-                            params: encryptedParams,
-                        })
-
-                        paramsData.push(param);
-                    } else {
-                        console.log("Send multiple files");
-                        let param: any = {
-                            queryString: `zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}&nretry=0`,
-                            fileType: attachment.fileType,
-                            param: {
-                                photoId: attachment.photoId,
-                                clientId: Date.now(),
-                                desc: message,
-                                width: attachment.width,
-                                height: attachment.height,
-                                groupLayoutId: grid,
-                                isGroupLayout: 1,
-                                idInGroup: indexInGroupLayout--,
-                                totalItemInGroup: filePaths.length,
-                                toid: isGroupMessage ? undefined : String(toid),
-                                grid: isGroupMessage ? String(toid) : undefined,
-                                rawUrl: attachment.normalUrl,
-                                hdUrl: attachment.hdUrl,
-                                thumbUrl: attachment.thumbUrl,
-                                oriUrl:
-                                    isGroupMessage
-                                        ? attachment.normalUrl
-                                        : undefined,
-                                normalUrl:
-                                    isGroupMessage
-                                        ? undefined
-                                        : attachment.normalUrl,
-                                thumbSize: "9815",
-                                fileSize: String(attachment.totalSize),
-                                hdSize: String(attachment.totalSize),
-                                zsource: -1,
-                                ttl: 0,
-                                imei: appContext.imei,
-                            },
-                        }
-
-                        const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(param.param));
-                        if (!encryptedParams) throw new Error("Failed to encrypt message");
-
-                        param.body = new URLSearchParams({
-                            params: encryptedParams,
-                        })
-                        paramsData.push(param);
-                    }
+                            groupLayoutId: isMultiFile ? groupLayoutId : undefined,
+                            isGroupLayout: isMultiFile ? 1 : undefined,
+                            idInGroup: isMultiFile ? indexInGroupLayout-- : undefined,
+                            totalItemInGroup: isMultiFile ? uploadAttachment.length : undefined,
+                        },
+                        body: new URLSearchParams(),
+                    };
                     break;
                 }
 
                 case "video": {
-                    let param: any = {
-                        queryString: `zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}&nretry=0`,
+                    data = {
                         fileType: attachment.fileType,
-                        param: {
+                        params: {
                             fileId: attachment.fileId,
                             checksum: attachment.checksum,
                             checksumSha: "",
-                            extention: attachment.fileName.split(".").pop(),
+                            extention: getFileExtension(attachment.fileName),
                             totalSize: attachment.totalSize,
                             fileName: attachment.fileName,
-                            clientId: Date.now(),
-                            ftype: 1,
+                            clientId: attachment.clientFileId,
+                            fType: 1,
                             fileCount: 0,
                             fdata: "{}",
-                            toid,
+                            toid: isGroupMessage ? undefined : String(toid),
+                            grid: isGroupMessage ? String(toid) : undefined,
                             fileUrl: attachment.fileUrl,
-                            zsource: 404,
+                            zsource: -1,
                             ttl: 0,
-                            imei: appContext.imei
                         },
-                    }
-
-                    const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(param.param));
-                    if (!encryptedParams) throw new Error("Failed to encrypt message");
-
-                    param.body = new URLSearchParams({
-                        params: encryptedParams,
-                    })
-
-                    paramsData.push(param);
+                        body: new URLSearchParams(),
+                    };
                     break;
                 }
             }
 
-            await new Promise((resolve) => setTimeout(resolve, 1));
+            removeUndefinedKeys(data.params);
+            const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(data.params));
+            if (!encryptedParams) throw new Error("Failed to encrypt message");
+
+            data.body.append("params", encryptedParams);
+            attachmentsData.push(data);
         }
 
         for (const gif of gifFiles) {
-            const _upthumb = await upthumb(gif, url[type]);
-            let gifData = await getGifMetaData(gif);
+            const _upthumb = await upthumb(gif, url[MessageType.DirectMessage]);
+            const gifData = await getGifMetaData(gif);
 
-            let formData = new FormData();
-            formData.append("chunkContent", fs.readFileSync(gif), {
-                filename: gif.split("/").pop()!,
+            const formData = new FormData();
+            formData.append("chunkContent", await fs.promises.readFile(gif), {
+                filename: getFileName(gif),
                 contentType: "application/octet-stream",
             });
 
-            let param = {
+            const params = {
                 clientId: Date.now().toString(),
                 fileName: gifData.fileName,
                 totalSize: gifData.totalSize,
@@ -245,20 +205,24 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
                 msg: message,
                 type: 1,
                 ttl: 0,
-                toid,
+                visibility: isGroupMessage ? 0 : undefined,
+                toid: isGroupMessage ? undefined : toid,
+                grid: isGroupMessage ? toid : undefined,
                 thumb: _upthumb.url,
                 checksum: (await getMd5LargeFileObject(gif, gifData.totalSize!)).data,
                 totalChunk: 1,
                 chunkId: 1,
-            }
+            };
 
-            console.log(param)
-
-            const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(param));
+            removeUndefinedKeys(params);
+            const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
             if (!encryptedParams) throw new Error("Failed to encrypt message");
 
-            paramsData.push({
-                queryString: `zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}&params=${encodeURIComponent(encryptedParams)}&type=1`,
+            attachmentsData.push({
+                query: {
+                    params: encryptedParams,
+                    type: "1",
+                },
                 body: formData.getBuffer(),
                 headers: formData.getHeaders(),
                 fileType: "gif",
@@ -268,17 +232,28 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
         let requests = [];
         let results: any = [];
 
-        for (const param of paramsData) {
-            console.log(param.fileType)
-            console.log(url[type] + urlType[param.fileType as "gif" | "image" | "video"] + param.queryString,
-                param.body, param.headers
-            )
+        for (const data of attachmentsData) {
+            const requestOptions: RequestInit = {
+                method: "POST",
+                body: data.body,
+                headers: data.fileType == "gif" ? data.headers : {},
+            };
+
             requests.push(
-                request(url[type] + urlType[param.fileType as "gif" | "image" | "video"] + param.queryString, {
-                    method: "POST",
-                    body: param.body,
-                    headers: param.headers
-                }).then(async (response) => {
+                request(
+                    makeURL(
+                        url[type] + urlType[data.fileType],
+                        Object.assign(
+                            {
+                                zpw_ver: Zalo.API_VERSION,
+                                zpw_type: Zalo.API_TYPE,
+                                nretry: "0",
+                            },
+                            data.query || {}
+                        )
+                    ),
+                    requestOptions
+                ).then(async (response) => {
                     if (!response.ok)
                         throw new Error("Failed to send message: " + response.statusText);
 
