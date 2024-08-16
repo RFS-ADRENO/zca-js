@@ -1,6 +1,7 @@
 import { appContext } from "../context.js";
 import { decodeAES, encodeAES, getMd5LargeFileObject, getGifMetaData, getVideoSize, request } from "../utils.js";
-import fs from "node:fs";
+import fs from "fs";
+import path from "path";
 import { API, Zalo } from "../index.js";
 import FormData from "form-data";
 import { getImageMetaData } from "../utils.js";
@@ -109,8 +110,8 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
         for (const filePath of filePaths) {
             if (!fs.existsSync(filePath)) throw new Error("File not found");
 
-            const extFile = filePath.split(".").pop();
-            const fileName = filePath.split("/").pop()!;
+            const extFile = path.extname(filePath).slice(1);
+            const fileName = path.basename(filePath);
 
             const formData = new FormData();
             formData.append("chunkContent", fs.readFileSync(filePath), {
