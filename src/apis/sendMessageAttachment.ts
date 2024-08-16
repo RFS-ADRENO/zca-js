@@ -4,12 +4,23 @@ import sharp from "sharp";
 import { appContext } from "../context.js";
 import { API, Zalo } from "../index.js";
 import { MessageType } from "../models/Message.js";
-import { decodeAES, encodeAES, getFileExtension, getFileName, getGifMetaData, getMd5LargeFileObject, makeURL, removeUndefinedKeys, request } from "../utils.js";
+import {
+    decodeAES,
+    encodeAES,
+    getFileExtension,
+    getFileName,
+    getGifMetaData,
+    getMd5LargeFileObject,
+    makeURL,
+    removeUndefinedKeys,
+    request,
+} from "../utils.js";
 
 const urlType = {
     image: "photo_original/send?",
     gif: "gif?",
     video: "asyncfile/msg?",
+    others: "asyncfile/msg?",
 };
 
 type UpthumbType = {
@@ -22,7 +33,7 @@ type UpthumbType = {
 type AttachmentData =
     | {
           query?: Record<string, string>;
-          fileType: "image" | "video";
+          fileType: "image" | "video" | "others";
           body: URLSearchParams;
           params: Record<string, any>;
       }
@@ -60,14 +71,11 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
         if (!encryptedParams) throw new Error("Failed to encrypt message");
 
         let response = await request(
-            makeURL(
-                url + "upthumb?",
-                {
-                    zpw_ver: Zalo.API_VERSION,
-                    zpw_type: Zalo.API_TYPE,
-                    params: encryptedParams,
-                }
-            ),
+            makeURL(url + "upthumb?", {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+                params: encryptedParams,
+            }),
             {
                 method: "POST",
                 headers: formData.getHeaders(),
@@ -153,6 +161,31 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
                 }
 
                 case "video": {
+                    data = {
+                        fileType: attachment.fileType,
+                        params: {
+                            fileId: attachment.fileId,
+                            checksum: attachment.checksum,
+                            checksumSha: "",
+                            extention: getFileExtension(attachment.fileName),
+                            totalSize: attachment.totalSize,
+                            fileName: attachment.fileName,
+                            clientId: attachment.clientFileId,
+                            fType: 1,
+                            fileCount: 0,
+                            fdata: "{}",
+                            toid: isGroupMessage ? undefined : String(toid),
+                            grid: isGroupMessage ? String(toid) : undefined,
+                            fileUrl: attachment.fileUrl,
+                            zsource: -1,
+                            ttl: 0,
+                        },
+                        body: new URLSearchParams(),
+                    };
+                    break;
+                }
+
+                case "others": {
                     data = {
                         fileType: attachment.fileType,
                         params: {

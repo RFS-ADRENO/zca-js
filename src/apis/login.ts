@@ -6,7 +6,8 @@ export async function login(encryptParams: boolean) {
     const encryptedParams = await getEncryptParam(
         appContext.imei!,
         appContext.language!,
-        encryptParams
+        encryptParams,
+        "getlogininfo"
     );
 
     try {
@@ -31,7 +32,41 @@ export async function login(encryptParams: boolean) {
     }
 }
 
-async function getEncryptParam(imei: string, language: string, encryptParams: boolean) {
+export async function getServerInfo(encryptParams: boolean) {
+    const encryptedParams = await getEncryptParam(
+        appContext.imei!,
+        appContext.language!,
+        encryptParams,
+        "getserverinfo"
+    );
+
+    try {
+        const response = await request(
+            makeURL("https://wpa.chat.zalo.me/api/login/getServerInfo", {
+                imei: appContext.imei,
+                type: Zalo.API_TYPE,
+                client_version: Zalo.API_VERSION,
+                computer_name: "Web",
+                signkey: encryptedParams.params.signkey,
+            })
+        );
+        if (!response.ok) throw new Error("Failed to fetch server info: " + response.statusText);
+        const data = await response.json();
+
+        if (data.data == null) throw new Error("Failed to fetch server info: " + data.error);
+        return data.data;
+    } catch (error) {
+        console.error(error);
+        throw new Error("Failed to fetch server info: " + error);
+    }
+}
+
+async function getEncryptParam(
+    imei: string,
+    language: string,
+    encryptParams: boolean,
+    type: string
+) {
     const params = {} as Record<string, any>;
     const data = {
         computer_name: "Web",
@@ -50,7 +85,15 @@ async function getEncryptParam(imei: string, language: string, encryptParams: bo
 
     params.type = Zalo.API_TYPE;
     params.client_version = Zalo.API_VERSION;
-    params.signkey = getSignKey("getlogininfo", params);
+    params.signkey =
+        type == "getserverinfo"
+            ? getSignKey(type, {
+                  imei: appContext.imei,
+                  type: Zalo.API_TYPE,
+                  client_version: Zalo.API_VERSION,
+                  computer_name: "Web",
+              })
+            : getSignKey(type, params);
 
     return {
         params,

@@ -1,5 +1,5 @@
 import cryptojs from "crypto-js";
-import { login } from "./apis/login.js";
+import { getServerInfo, login } from "./apis/login.js";
 import { ListenerBase, ListenerOptions } from "./apis/listen.js";
 import { getOwnId } from "./apis/getOwnId.js";
 import { makeURL } from "./utils.js";
@@ -87,10 +87,15 @@ export class Zalo {
 
     public async login() {
         const loginData = await login(this.enableEncryptParam);
+        const serverInfo = await getServerInfo(this.enableEncryptParam);
 
-        if (!loginData) throw new Error("Failed to login");
+        if (!loginData || !serverInfo) throw new Error("Failed to login");
         appContext.secretKey = loginData.data.zpw_enk;
         appContext.uid = loginData.data.uid;
+
+        // Zalo currently responds with setttings instead of settings
+        // they might fix this in the future, so we should have a fallback just in case
+        appContext.settings = serverInfo.setttings || serverInfo.settings;
 
         console.log("Logged in as", loginData.data.uid);
 

@@ -9,7 +9,7 @@ type MessageEventData = Message | GroupMessage;
 type UploadEventData = {
     fileUrl: string;
     fileId: string;
-}
+};
 
 export type ListenerOptions = {
     selfListen: boolean;
@@ -47,10 +47,10 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
         this.cookie = appContext.cookie;
         this.userAgent = appContext.userAgent;
 
-        this.onConnectedCallback = () => { };
-        this.onClosedCallback = () => { };
-        this.onErrorCallback = () => { };
-        this.onMessageCallback = () => { };
+        this.onConnectedCallback = () => {};
+        this.onClosedCallback = () => {};
+        this.onErrorCallback = () => {};
+        this.onMessageCallback = () => {};
     }
 
     public onConnected(cb: Function) {
@@ -142,8 +142,13 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
                     for (const control of controls) {
                         const data = {
                             fileUrl: control.content.data.url,
-                            fileId: control.content.fileId
-                        }
+                            fileId: control.content.fileId,
+                        };
+
+                        const uploadCallback = appContext.uploadCallbacks.get(
+                            String(control.content.fileId)
+                        );
+                        if (uploadCallback) uploadCallback(data);
 
                         this.emit("upload_attachment", data);
                     }

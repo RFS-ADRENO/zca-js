@@ -1,11 +1,18 @@
-import { appContext } from "../context.js";
-import { decodeAES, encodeAES, getMd5LargeFileObject, getGifMetaData, getVideoSize, request } from "../utils.js";
+import FormData from "form-data";
 import fs from "fs";
 import path from "path";
+import { appContext, UploadCallback } from "../context.js";
 import { API, Zalo } from "../index.js";
-import FormData from "form-data";
-import { getImageMetaData } from "../utils.js";
 import { MessageType } from "../models/Message.js";
+import {
+    decodeAES,
+    encodeAES,
+    getFileSize,
+    getImageMetaData,
+    getMd5LargeFileObject,
+    makeURL,
+    request,
+} from "../utils.js";
 
 type ImageResponse = {
     normalUrl: string;
@@ -21,7 +28,7 @@ type ImageResponse = {
     height: number;
     totalSize: number;
     hdSize: number;
-}
+};
 
 type VideoResponse = {
     finished: number;
@@ -34,7 +41,20 @@ type VideoResponse = {
     checksum: string;
     totalSize: number;
     fileName: string;
-}
+};
+
+type FileResponse = {
+    finished: number;
+    clientFileId: number;
+    chunkId: number;
+
+    fileType: "others";
+    fileUrl: string;
+    fileId: string;
+    checksum: string;
+    totalSize: number;
+    fileName: string;
+};
 
 export type ImageData = {
     fileName: string;
@@ -43,52 +63,55 @@ export type ImageData = {
     height: number | undefined;
 };
 
-export type VideoData = {
+export type FileData = {
     fileName: string;
     totalSize: number;
-}
+};
 
-export type UploadAttachmentType = ImageResponse | VideoResponse;
+export type UploadAttachmentType = ImageResponse | VideoResponse | FileResponse;
 
-type ParamType = {
-    filePath: string;
-    fileType: "image";
-    chunkContent: FormData;
-    fileData: ImageData;
-    data: {
-        toid?: string;
-        grid?: string;
-        totalChunk: number;
-        fileName: string;
-        clientId: number;
-        totalSize: number;
-        imei: string;
-        isE2EE: number;
-        jxl: number;
-        chunkId: number;
-    };
-} | {
-    filePath: string;
-    fileType: "video";
-    chunkContent: FormData;
-    fileData: VideoData;
-    data: {
-        toid?: string;
-        grid?: string;
-        totalChunk: number;
-        fileName: string;
-        clientId: number;
-        totalSize: number;
-        imei: string;
-        isE2EE: number;
-        jxl: number;
-        chunkId: number;
-    };
-}
+type AttachmentData =
+    | {
+          filePath: string;
+          fileType: "image";
+          chunkContent: FormData[];
+          fileData: ImageData;
+          params: {
+              toid?: string;
+              grid?: string;
+              totalChunk: number;
+              fileName: string;
+              clientId: number;
+              totalSize: number;
+              imei: string;
+              isE2EE: number;
+              jxl: number;
+              chunkId: number;
+          };
+      }
+    | {
+          filePath: string;
+          fileType: "video" | "others";
+          chunkContent: FormData[];
+          fileData: FileData;
+          params: {
+              toid?: string;
+              grid?: string;
+              totalChunk: number;
+              fileName: string;
+              clientId: number;
+              totalSize: number;
+              imei: string;
+              isE2EE: number;
+              jxl: number;
+              chunkId: number;
+          };
+      };
 
 const urlType = {
-    image: "photo_original/upload?",
-    video: "asyncfile/upload?",
+    image: "photo_original/upload",
+    video: "asyncfile/upload",
+    others: "asyncfile/upload",
 };
 
 export function uploadAttachmentFactory(serviceURL: string, api: API) {
@@ -102,31 +125,31 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
         if (!appContext.cookie) throw new Error("Cookie is not available");
         if (!appContext.userAgent) throw new Error("User agent is not available");
 
+        const chunkSize = appContext.settings!.features.sharefile.chunk_size_file;
         const isGroupMessage = type == MessageType.GroupMessage;
-        let params: ParamType[] = [];
+        let attachmentsData: AttachmentData[] = [];
         let url = `${serviceURL}/${isGroupMessage ? "group" : "message"}/`;
-        let queryString = `zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}&type=${isGroupMessage ? "11" : "2"}`;
+        const query = {
+            zpw_ver: Zalo.API_VERSION,
+            zpw_type: Zalo.API_TYPE,
+            type: isGroupMessage ? "11" : "2",
+        };
 
+        let clientId = Date.now();
         for (const filePath of filePaths) {
             if (!fs.existsSync(filePath)) throw new Error("File not found");
 
             const extFile = path.extname(filePath).slice(1);
             const fileName = path.basename(filePath);
 
-            const formData = new FormData();
-            formData.append("chunkContent", fs.readFileSync(filePath), {
-                filename: fileName,
-                contentType: "application/octet-stream",
-            });
-
-            let param: ParamType = {
+            const data: AttachmentData = {
                 filePath,
-                chunkContent: formData,
-                data: {}
-            } as ParamType;
+                chunkContent: [] as FormData[],
+                params: {},
+            } as AttachmentData;
 
-            if (isGroupMessage) param.data.grid = toid;
-            else param.data.toid = toid;
+            if (isGroupMessage) data.params.grid = toid;
+            else data.params.toid = toid;
 
             switch (extFile) {
                 case "jpg":
@@ -135,102 +158,156 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
                 case "webp":
                     let imageData = await getImageMetaData(filePath);
 
-                    param.fileData = imageData;
-                    param.fileType = "image";
+                    data.fileData = imageData;
+                    data.fileType = "image";
 
-                    param.data.totalChunk = 1;
-                    param.data.fileName = fileName;
-                    param.data.clientId = Date.now();
-                    param.data.totalSize = imageData.totalSize!;
-                    param.data.imei = appContext.imei;
-                    param.data.isE2EE = 0;
-                    param.data.jxl = 0;
-                    param.data.chunkId = 1;
+                    data.params.totalChunk = Math.ceil(data.fileData.totalSize! / chunkSize);
+                    data.params.fileName = fileName;
+                    data.params.clientId = clientId++;
+                    data.params.totalSize = imageData.totalSize!;
+                    data.params.imei = appContext.imei;
+                    data.params.isE2EE = 0;
+                    data.params.jxl = 0;
+                    data.params.chunkId = 1;
 
                     break;
                 case "mp4":
-                    let videoData = await getVideoSize(filePath);
+                    let videoSize = await getFileSize(filePath);
 
-                    param.fileType = "video";
-                    param.fileData = {
+                    data.fileType = "video";
+                    data.fileData = {
                         fileName,
-                        totalSize: videoData,
-                    }
+                        totalSize: videoSize,
+                    };
 
-                    param.data.totalChunk = 1;
-                    param.data.fileName = fileName;
-                    param.data.clientId = Date.now();
-                    param.data.totalSize = videoData;
-                    param.data.imei = appContext.imei;
-                    param.data.isE2EE = 0;
-                    param.data.jxl = 0;
-                    param.data.chunkId = 1;
+                    data.params.totalChunk = Math.ceil(data.fileData.totalSize! / chunkSize);
+                    data.params.fileName = fileName;
+                    data.params.clientId = clientId++;
+                    data.params.totalSize = videoSize;
+                    data.params.imei = appContext.imei;
+                    data.params.isE2EE = 0;
+                    data.params.jxl = 0;
+                    data.params.chunkId = 1;
 
                     break;
                 default:
-                    throw new Error("API does not support file type yet");
+                    const fileSize = await getFileSize(filePath);
+
+                    data.fileType = "others";
+                    data.fileData = {
+                        fileName,
+                        totalSize: fileSize,
+                    };
+
+                    data.params.totalChunk = Math.ceil(data.fileData.totalSize! / chunkSize);
+                    data.params.fileName = fileName;
+                    data.params.clientId = clientId++;
+                    data.params.totalSize = fileSize;
+                    data.params.imei = appContext.imei;
+                    data.params.isE2EE = 0;
+                    data.params.jxl = 0;
+                    data.params.chunkId = 1;
+
+                    break;
             }
 
-            params.push(param);
+            const fileBuffer = await fs.promises.readFile(filePath);
+            for (let i = 0; i < data.params.totalChunk; i++) {
+                const formData = new FormData();
+                const slicedBuffer = fileBuffer.subarray(i * chunkSize, (i + 1) * chunkSize);
+                formData.append(
+                    "chunkContent",
+                    slicedBuffer,
+                    {
+                        filename: fileName,
+                        contentType: "application/octet-stream",
+                    }
+                );
 
-            await new Promise((resolve) => setTimeout(resolve, 1));
+                data.chunkContent[i] = formData;
+            }
+            attachmentsData.push(data);
         }
 
         let requests = [];
         let results: UploadAttachmentType[] = [];
-        for (const param of params) {
-            const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(param.data));
-            if (!encryptedParams) throw new Error("Failed to encrypt message");
-            requests.push(
-                request(
-                    url +
-                    urlType[param.fileType] +
-                    queryString +
-                    `&params=${encodeURIComponent(encryptedParams)}`,
-                    {
-                        method: "POST",
-                        headers: param.chunkContent.getHeaders(),
-                        body: param.chunkContent.getBuffer(),
-                    }
-                ).then(async (response) => {
-                    if (!response.ok)
-                        throw new Error("Failed to send message: " + response.statusText);
+        for (const data of attachmentsData) {
+            for (let i = 0; i < data.params.totalChunk; i++) {
+                const encryptedParams = encodeAES(
+                    appContext.secretKey,
+                    JSON.stringify(data.params)
+                );
+                if (!encryptedParams) throw new Error("Failed to encrypt message");
+                const currentChunkId = data.params.chunkId;
 
-                    let resDecode = decodeAES(appContext.secretKey!, (await response.json()).data);
-                    if (!resDecode) throw new Error("Failed to decode message");
-                    if (!JSON.parse(resDecode).data) throw new Error("Failed to upload attachment");
+                requests.push(
+                    request(
+                        makeURL(
+                            url + urlType[data.fileType],
+                            Object.assign(query, { params: encryptedParams })
+                        ),
+                        {
+                            method: "POST",
+                            headers: data.chunkContent[i].getHeaders(),
+                            body: data.chunkContent[i].getBuffer(),
+                        }
+                    ).then(async (response) => {
+                        if (!response.ok)
+                            throw new Error("Failed to send message: " + response.statusText);
 
-                    await new Promise<void>((resolve) => {
-                        if (param.fileType == "video") {
-                            api.listener.once("upload_attachment", async (data) => {
-                                let result = {
-                                    fileType: "video",
-                                    ...(JSON.parse(resDecode)).data,
-                                    ...data,
-                                    totalSize: param.fileData.totalSize,
-                                    fileName: param.fileData.fileName,
-                                    checksum: (await getMd5LargeFileObject(param.filePath, param.fileData.totalSize)).data,
+                        let resDecode = decodeAES(
+                            appContext.secretKey!,
+                            (await response.json()).data
+                        );
+                        if (!resDecode) throw new Error("Failed to decode message");
+                        const resData = JSON.parse(resDecode);
+                        if (!resData.data)
+                            throw new Error("Failed to upload attachment: " + resData.error);
+
+                        if (resData.data.fileId != -1)
+                            await new Promise<void>((resolve) => {
+                                if (data.fileType == "video" || data.fileType == "others") {
+                                    const uploadCallback: UploadCallback = async (wsData) => {
+                                        let result = {
+                                            fileType: data.fileType,
+                                            ...JSON.parse(resDecode).data,
+                                            ...wsData,
+                                            totalSize: data.fileData.totalSize,
+                                            fileName: data.fileData.fileName,
+                                            checksum: (
+                                                await getMd5LargeFileObject(
+                                                    data.filePath,
+                                                    data.fileData.totalSize
+                                                )
+                                            ).data,
+                                        };
+                                        results.push(result);
+                                        resolve();
+                                    };
+
+                                    appContext.uploadCallbacks.set(
+                                        resData.data.fileId,
+                                        uploadCallback
+                                    );
                                 }
-                                results.push(result);
-                                resolve();
-                            })
-                        }
 
-                        if (param.fileType == "image") {
-                            let result = {
-                                fileType: "image",
-                                width: param.fileData.width,
-                                height: param.fileData.height,
-                                totalSize: param.fileData.totalSize,
-                                hdSize: param.fileData.totalSize,
-                                ...(JSON.parse(resDecode)).data,
-                            }
-                            results.push(result);
-                            resolve();
-                        }
-                    });
-                })
-            );
+                                if (data.fileType == "image") {
+                                    let result = {
+                                        fileType: "image",
+                                        width: data.fileData.width,
+                                        height: data.fileData.height,
+                                        totalSize: data.fileData.totalSize,
+                                        hdSize: data.fileData.totalSize,
+                                        ...JSON.parse(resDecode).data,
+                                    };
+                                    results.push(result);
+                                    resolve();
+                                }
+                            });
+                    })
+                );
+                data.params.chunkId++;
+            }
         }
 
         await Promise.all(requests);

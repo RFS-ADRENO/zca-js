@@ -13,12 +13,12 @@ export function getSignKey(type: string, params: Record<string, any>) {
         if (params.hasOwnProperty(s)) {
             n.push(s);
         }
-
-        n.sort();
-        let a = "zsecure" + type;
-        for (let s = 0; s < n.length; s++) a += params[n[s]];
-        return cryptojs.MD5(a).toString();
     }
+
+    n.sort();
+    let a = "zsecure" + type;
+    for (let s = 0; s < n.length; s++) a += params[n[s]];
+    return cryptojs.MD5(a);
 }
 
 export function makeURL(baseURL: string, params: Record<string, any>) {
@@ -310,7 +310,7 @@ export async function getImageMetaData(filePath: string) {
     }
 }
 
-export async function getVideoSize(filePath: string) {
+export async function getFileSize(filePath: string) {
     return fs.promises.stat(filePath).then(s => s.size);
 }
 
