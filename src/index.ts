@@ -12,6 +12,13 @@ import { addReactionFactory } from "./apis/addReaction.js";
 import { findUserFactory } from "./apis/findUser.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 import { sendMessageAttachmentFactory } from "./apis/sendMessageAttachment.js";
+import { undoFactory } from "./apis/undo.js";
+import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
+import { createGroupFactory } from "./apis/createGroup.js";
+import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
+import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
+import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
+import { changeGroupNameFactory } from "./apis/changeGroupName.js";
 
 export type J2Cookies = {
     url: string;
@@ -40,7 +47,7 @@ export type Credentials = {
 
 export class Zalo {
     public static readonly API_TYPE = 30;
-    public static readonly API_VERSION = 636;
+    public static readonly API_VERSION = 637;
 
     private enableEncryptParam = true;
     private listenerOptions?: ListenerOptions;
@@ -102,7 +109,7 @@ export class Zalo {
 
 export class API {
     private secretKey: string;
-    
+
     public zpwServiceMap: Record<string, string[]>;
     public listener: ListenerBase;
     public sendMessage: ReturnType<typeof sendMessageFactory>;
@@ -113,6 +120,13 @@ export class API {
     public findUser: ReturnType<typeof findUserFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
     public sendMessageAttachment: ReturnType<typeof sendMessageAttachmentFactory>;
+    public undo: ReturnType<typeof undoFactory>;
+    public getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
+    public createGroup: ReturnType<typeof createGroupFactory>;
+    public changeGroupAvatar: ReturnType<typeof changeGroupAvatarFactory>;
+    public removeUserFromGroup: ReturnType<typeof removeUserFromGroupFactory>;
+    public addUserToGroup: ReturnType<typeof addUserToGroupFactory>;
+    public changeGroupName: ReturnType<typeof changeGroupNameFactory>;
 
     constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string, options?: ListenerOptions) {
         this.secretKey = secretKey;
@@ -147,5 +161,43 @@ export class API {
             `${zpwServiceMap.file[0]}/api`,
             this
         )
+        this.undo = undoFactory();
+        this.getGroupInfo = getGroupInfoFactory(
+            makeURL(`${zpwServiceMap.group[0]}/api/group/getmg-v2`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+            })
+        );
+        this.createGroup = createGroupFactory(
+            makeURL(`${zpwServiceMap.group[0]}/api/group/create/v2`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+            }),
+            this
+        );
+        this.changeGroupAvatar = changeGroupAvatarFactory(
+            makeURL(`${zpwServiceMap.file[0]}/api/group/upavatar`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+            })
+        );
+        this.removeUserFromGroup = removeUserFromGroupFactory(
+            makeURL(`${zpwServiceMap.group[0]}/api/group/kickout`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+            })
+        );
+        this.addUserToGroup = addUserToGroupFactory(
+            makeURL(`${zpwServiceMap.group[0]}/api/group/invite/v2`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+            })
+        );
+        this.changeGroupName = changeGroupNameFactory(
+            makeURL(`${zpwServiceMap.group[0]}/api/group/updateinfo`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+            })
+        );
     }
 }

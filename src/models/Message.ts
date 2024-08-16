@@ -58,7 +58,7 @@ export type TGroupMessage = TMessage & {
 
 export type TQuote = {
     ownerId: number;
-    cliId: number;
+    cliMsgId: number;
     globalMsgId: number;
     cliMsgType: number;
     ts: number;
