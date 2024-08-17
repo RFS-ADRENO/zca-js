@@ -47,7 +47,7 @@ export function sendMessageFactory(api: API) {
     });
     return async function sendMessage(
         message: string,
-        recipientId: string,
+        threadId: string,
         type: MessageType = MessageType.DirectMessage,
         quote?: Message | GroupMessage
     ) {
@@ -55,6 +55,9 @@ export function sendMessageFactory(api: API) {
         if (!appContext.imei) throw new Error("IMEI is not available");
         if (!appContext.cookie) throw new Error("Cookie is not available");
         if (!appContext.userAgent) throw new Error("User agent is not available");
+
+        if (!message) throw new Error("Missing message");
+        if (!threadId) throw new Error("Missing threadId");
 
         const isValidInstance = quote instanceof Message || quote instanceof GroupMessage;
         if (quote && !isValidInstance) throw new Error("Invalid quote message");
@@ -73,8 +76,8 @@ export function sendMessageFactory(api: API) {
 
         const params = quote
             ? {
-                  toid: isGroupMessage ? undefined : recipientId,
-                  grid: isGroupMessage ? recipientId : undefined,
+                  toid: isGroupMessage ? undefined : threadId,
+                  grid: isGroupMessage ? threadId : undefined,
                   message: message,
                   clientId: Date.now(),
                   qmsgOwner: quoteData!.uidFrom,
@@ -94,8 +97,8 @@ export function sendMessageFactory(api: API) {
                   clientId: Date.now(),
                   imei: appContext.imei,
                   ttl: 0,
-                  toid: isGroupMessage ? undefined : recipientId,
-                  grid: isGroupMessage ? recipientId : undefined,
+                  toid: isGroupMessage ? undefined : threadId,
+                  grid: isGroupMessage ? threadId : undefined,
               };
 
         for (const key in params) {

@@ -117,13 +117,16 @@ const urlType = {
 export function uploadAttachmentFactory(serviceURL: string, api: API) {
     return async function uploadAttachment(
         filePaths: string[],
-        type: MessageType,
-        toid: string
+        threadId: string,
+        type: MessageType = MessageType.DirectMessage,
     ): Promise<UploadAttachmentType[]> {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
         if (!appContext.imei) throw new Error("IMEI is not available");
         if (!appContext.cookie) throw new Error("Cookie is not available");
         if (!appContext.userAgent) throw new Error("User agent is not available");
+
+        if (!filePaths || filePaths.length == 0) throw new Error("Missing filePaths");
+        if (!threadId) throw new Error("Missing threadId");
 
         const chunkSize = appContext.settings!.features.sharefile.chunk_size_file;
         const isGroupMessage = type == MessageType.GroupMessage;
@@ -148,8 +151,8 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
                 params: {},
             } as AttachmentData;
 
-            if (isGroupMessage) data.params.grid = toid;
-            else data.params.toid = toid;
+            if (isGroupMessage) data.params.grid = threadId;
+            else data.params.toid = threadId;
 
             switch (extFile) {
                 case "jpg":
@@ -238,7 +241,6 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
                     JSON.stringify(data.params)
                 );
                 if (!encryptedParams) throw new Error("Failed to encrypt message");
-                const currentChunkId = data.params.chunkId;
 
                 requests.push(
                     request(

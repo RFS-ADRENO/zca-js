@@ -67,10 +67,10 @@ export function getStickersFactory(serviceURL: string) {
             suggestions.sugg_sticker.forEach((sticker) =>
                 pms.push(getStickerDetail(sticker.sticker_id))
             );
+
         // @TODO: Implement these
         // if (suggestions.sugg_guggy) suggestions.sugg_guggy.forEach((sticker) => pms.push(getStickerDetail(sticker)));
         // if (suggestions.sugg_gif) suggestions.sugg_gif.forEach((sticker) => pms.push(getStickerDetail(sticker)));
-
         const stickerDetails = await Promise.all(pms);
         return {
             keyword: keyword,

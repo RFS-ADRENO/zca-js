@@ -96,27 +96,31 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
     return async function sendMessageAttachment(
         message: string,
         filePaths: string[],
-        type: MessageType,
-        toid: string
+        threadId: string,
+        type: MessageType = MessageType.DirectMessage,
     ) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
         if (!appContext.imei) throw new Error("IMEI is not available");
         if (!appContext.cookie) throw new Error("Cookie is not available");
         if (!appContext.userAgent) throw new Error("User agent is not available");
 
+        if (!message) throw new Error("Missing message");
+        if (!filePaths || filePaths.length == 0) throw new Error("Missing file paths");
+        if (!threadId) throw new Error("Missing threadId");
+
         const firstExtFile = getFileExtension(filePaths[0]);
         const isMutilFileType = filePaths.some((e) => getFileExtension(e) != firstExtFile);
         const isGroupMessage = type == MessageType.GroupMessage;
 
         if (isMutilFileType || firstExtFile == "gif") {
-            await api.sendMessage(message, toid, type);
+            await api.sendMessage(message, threadId, type);
             message = "";
         }
 
         const gifFiles = filePaths.filter((e) => getFileExtension(e) == "gif");
         filePaths = filePaths.filter((e) => getFileExtension(e) != "gif");
 
-        const uploadAttachment = await api.uploadAttachment(filePaths, type, toid);
+        const uploadAttachment = await api.uploadAttachment(filePaths, threadId, type);
 
         const attachmentsData: AttachmentData[] = [];
         let indexInGroupLayout = uploadAttachment.length - 1;
@@ -137,8 +141,8 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
                             desc: message,
                             width: attachment.width,
                             height: attachment.height,
-                            toid: isGroupMessage ? undefined : String(toid),
-                            grid: isGroupMessage ? String(toid) : undefined,
+                            toid: isGroupMessage ? undefined : String(threadId),
+                            grid: isGroupMessage ? String(threadId) : undefined,
                             rawUrl: attachment.normalUrl,
                             hdUrl: attachment.hdUrl,
                             thumbUrl: attachment.thumbUrl,
@@ -174,8 +178,8 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
                             fType: 1,
                             fileCount: 0,
                             fdata: "{}",
-                            toid: isGroupMessage ? undefined : String(toid),
-                            grid: isGroupMessage ? String(toid) : undefined,
+                            toid: isGroupMessage ? undefined : String(threadId),
+                            grid: isGroupMessage ? String(threadId) : undefined,
                             fileUrl: attachment.fileUrl,
                             zsource: -1,
                             ttl: 0,
@@ -199,8 +203,8 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
                             fType: 1,
                             fileCount: 0,
                             fdata: "{}",
-                            toid: isGroupMessage ? undefined : String(toid),
-                            grid: isGroupMessage ? String(toid) : undefined,
+                            toid: isGroupMessage ? undefined : String(threadId),
+                            grid: isGroupMessage ? String(threadId) : undefined,
                             fileUrl: attachment.fileUrl,
                             zsource: -1,
                             ttl: 0,
@@ -239,8 +243,8 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
                 type: 1,
                 ttl: 0,
                 visibility: isGroupMessage ? 0 : undefined,
-                toid: isGroupMessage ? undefined : toid,
-                grid: isGroupMessage ? toid : undefined,
+                toid: isGroupMessage ? undefined : threadId,
+                grid: isGroupMessage ? threadId : undefined,
                 thumb: _upthumb.url,
                 checksum: (await getMd5LargeFileObject(gif, gifData.totalSize!)).data,
                 totalChunk: 1,

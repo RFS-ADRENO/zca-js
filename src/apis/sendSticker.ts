@@ -15,14 +15,14 @@ export function sendStickerFactory(api: API) {
         zpw_type: Zalo.API_TYPE,
     });
 
-    return async function sendSticker(sticker: Sticker, recipientId: string, type: MessageType = MessageType.DirectMessage) {
+    return async function sendSticker(sticker: Sticker, threadId: string, type: MessageType = MessageType.DirectMessage) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
         if (!appContext.imei) throw new Error("IMEI is not available");
         if (!appContext.cookie) throw new Error("Cookie is not available");
         if (!appContext.userAgent) throw new Error("User agent is not available");
 
         if (!sticker) throw new Error("Missing sticker");
-        if (!recipientId) throw new Error("Missing recipientId");
+        if (!threadId) throw new Error("Missing threadId");
 
         if (!sticker.id) throw new Error("Missing sticker id");
         if (!sticker.cateId) throw new Error("Missing sticker cateId");
@@ -37,8 +37,8 @@ export function sendStickerFactory(api: API) {
             clientId: Date.now(),
             imei: appContext.imei,
             zsource: 101,
-            toid: isGroupMessage ? undefined : recipientId,
-            grid: isGroupMessage ? recipientId : undefined,
+            toid: isGroupMessage ? undefined : threadId,
+            grid: isGroupMessage ? threadId : undefined,
         }
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
