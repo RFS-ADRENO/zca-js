@@ -8,13 +8,13 @@ export function changeGroupNameFactory(serviceURL: string) {
         if (!appContext.cookie) throw new Error("Cookie is not available");
         if (!appContext.userAgent) throw new Error("User agent is not available");
 
-        if(name.length == 0) name = Date.now().toString();
+        if (name.length == 0) name = Date.now().toString();
 
         const params: any = {
             grid: groupId,
             gname: name,
             imei: appContext.imei,
-        }
+        };
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new Error("Failed to encrypt params");
@@ -29,5 +29,5 @@ export function changeGroupNameFactory(serviceURL: string) {
         if (!response.ok) throw new Error("Failed to add user to group: " + response.statusText);
 
         return (await response.json()).data;
-    }
+    };
 }

@@ -8,7 +8,7 @@ export function addUserToGroupFactory(serviceURL: string) {
         if (!appContext.cookie) throw new Error("Cookie is not available");
         if (!appContext.userAgent) throw new Error("User agent is not available");
 
-        if(!Array.isArray(members)) members = [members];
+        if (!Array.isArray(members)) members = [members];
 
         const params: any = {
             grid: groupId,
@@ -16,7 +16,7 @@ export function addUserToGroupFactory(serviceURL: string) {
             membersTypes: members.map(() => -1),
             imei: appContext.imei,
             clientLang: appContext.language,
-        }
+        };
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new Error("Failed to encrypt params");
@@ -31,5 +31,5 @@ export function addUserToGroupFactory(serviceURL: string) {
         if (!response.ok) throw new Error("Failed to add user to group: " + response.statusText);
 
         return (await response.json()).data;
-    }
+    };
 }

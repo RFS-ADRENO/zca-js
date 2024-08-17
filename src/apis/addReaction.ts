@@ -3,7 +3,10 @@ import { Message } from "../models/Message.js";
 import { decodeAES, encodeAES, request } from "../utils.js";
 
 export function addReactionFactory(serviceURL: string) {
-    return async function addReaction(icon: ":>" | "/-strong" | "/-heart" | ":o" | ":-(("  | ":-h" | "", message: Message) {
+    return async function addReaction(
+        icon: ":>" | "/-strong" | "/-heart" | ":o" | ":-((" | ":-h" | "",
+        message: Message,
+    ) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
         if (!appContext.imei) throw new Error("IMEI is not available");
         if (!appContext.cookie) throw new Error("Cookie is not available");
@@ -11,7 +14,7 @@ export function addReactionFactory(serviceURL: string) {
 
         let rType, source;
 
-        switch(icon) {
+        switch (icon) {
             case ":>":
                 rType = 0;
                 source = 6;
@@ -54,13 +57,13 @@ export function addReactionFactory(serviceURL: string) {
                         ],
                         rIcon: icon,
                         rType,
-                        source
+                        source,
                     }),
-                    clientId: message.data.cliMsgId, 
+                    clientId: message.data.cliMsgId,
                 },
             ],
             toid: message.data.idTo,
-        }
+        };
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new Error("Failed to encrypt message");
@@ -75,5 +78,5 @@ export function addReactionFactory(serviceURL: string) {
         if (!response.ok) throw new Error("Failed to send message: " + response.statusText);
 
         return decodeAES(appContext.secretKey, (await response.json()).data);
-    }
+    };
 }

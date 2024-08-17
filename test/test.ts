@@ -32,9 +32,7 @@ listener.onMessage((message) => {
             if (!message.isSelf) {
                 switch (message.data.content) {
                     case "reply": {
-                        api.sendMessage("reply", message.threadId, message.type, message).then(
-                            console.log
-                        );
+                        api.sendMessage("reply", message.threadId, message.type, message).then(console.log);
                         break;
                     }
                     case "ping": {
@@ -49,12 +47,8 @@ listener.onMessage((message) => {
                                 const random = sticker[Math.floor(Math.random() * sticker.length)];
                                 console.log("Sending sticker:", random);
 
-                                if (random)
-                                    api.sendSticker(random, message.threadId).then(console.log);
-                                else
-                                    api.sendMessage("No sticker found", message.threadId).then(
-                                        console.log
-                                    );
+                                if (random) api.sendSticker(random, message.threadId).then(console.log);
+                                else api.sendMessage("No sticker found", message.threadId).then(console.log);
                             });
                         }
                         break;

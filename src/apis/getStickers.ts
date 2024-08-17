@@ -1,10 +1,5 @@
 import { appContext } from "../context.js";
-import {
-    decodeAES,
-    encodeAES,
-    makeURL,
-    request
-} from "../utils.js";
+import { decodeAES, encodeAES, makeURL, request } from "../utils.js";
 
 interface StickerBasic {
     type: number;
@@ -52,7 +47,7 @@ export function getStickersFactory(serviceURL: string) {
         const response = await request(
             makeURL(finalServiceUrl.toString(), {
                 params: encryptedParams,
-            })
+            }),
         );
 
         if (!response.ok) throw new Error("Failed to get stickers: " + response.statusText);
@@ -64,9 +59,7 @@ export function getStickersFactory(serviceURL: string) {
         const pms: Promise<Sticker>[] = [];
 
         if (suggestions.sugg_sticker)
-            suggestions.sugg_sticker.forEach((sticker) =>
-                pms.push(getStickerDetail(sticker.sticker_id))
-            );
+            suggestions.sugg_sticker.forEach((sticker) => pms.push(getStickerDetail(sticker.sticker_id)));
 
         // @TODO: Implement these
         // if (suggestions.sugg_guggy) suggestions.sugg_guggy.forEach((sticker) => pms.push(getStickerDetail(sticker)));
@@ -96,11 +89,11 @@ export function getStickersFactory(serviceURL: string) {
         const response = await request(
             makeURL(finalServiceUrl.toString(), {
                 params: encryptedParams,
-            })
+            }),
         );
 
         if (!response.ok) throw new Error("Failed to get sticker detail: " + response.statusText);
-        
+
         const rawDetail = decodeAES(appContext.secretKey!, (await response.json()).data);
         if (!rawDetail) throw new Error("Failed to decrypt message");
 

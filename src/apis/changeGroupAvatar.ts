@@ -13,9 +13,9 @@ export function changeGroupAvatarFactory(serviceURL: string) {
         const params: any = {
             grid: groupId,
             avatarSize: 120,
-            clientId: `g${groupId}${getFullTimeFromMilisecond((new Date).getTime())}`,
+            clientId: `g${groupId}${getFullTimeFromMilisecond(new Date().getTime())}`,
             imei: appContext.imei,
-        }
+        };
 
         const imageMetaData = await getImageMetaData(avatarPath);
 
@@ -28,7 +28,6 @@ export function changeGroupAvatarFactory(serviceURL: string) {
             contentType: "image/jpeg",
         });
 
-        
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new Error("Failed to encrypt params");
 
@@ -40,7 +39,7 @@ export function changeGroupAvatarFactory(serviceURL: string) {
 
         if (!response.ok) throw new Error("Failed to upload avatar: " + response.statusText);
 
-        if((await response.json()).error_code === 0) return true;
+        if ((await response.json()).error_code === 0) return true;
         return false;
-    }
+    };
 }

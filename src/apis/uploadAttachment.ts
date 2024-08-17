@@ -218,14 +218,10 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
             for (let i = 0; i < data.params.totalChunk; i++) {
                 const formData = new FormData();
                 const slicedBuffer = fileBuffer.subarray(i * chunkSize, (i + 1) * chunkSize);
-                formData.append(
-                    "chunkContent",
-                    slicedBuffer,
-                    {
-                        filename: fileName,
-                        contentType: "application/octet-stream",
-                    }
-                );
+                formData.append("chunkContent", slicedBuffer, {
+                    filename: fileName,
+                    contentType: "application/octet-stream",
+                });
 
                 data.chunkContent[i] = formData;
             }
@@ -236,35 +232,21 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
         let results: UploadAttachmentType[] = [];
         for (const data of attachmentsData) {
             for (let i = 0; i < data.params.totalChunk; i++) {
-                const encryptedParams = encodeAES(
-                    appContext.secretKey,
-                    JSON.stringify(data.params)
-                );
+                const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(data.params));
                 if (!encryptedParams) throw new Error("Failed to encrypt message");
 
                 requests.push(
-                    request(
-                        makeURL(
-                            url + urlType[data.fileType],
-                            Object.assign(query, { params: encryptedParams })
-                        ),
-                        {
-                            method: "POST",
-                            headers: data.chunkContent[i].getHeaders(),
-                            body: data.chunkContent[i].getBuffer(),
-                        }
-                    ).then(async (response) => {
-                        if (!response.ok)
-                            throw new Error("Failed to send message: " + response.statusText);
+                    request(makeURL(url + urlType[data.fileType], Object.assign(query, { params: encryptedParams })), {
+                        method: "POST",
+                        headers: data.chunkContent[i].getHeaders(),
+                        body: data.chunkContent[i].getBuffer(),
+                    }).then(async (response) => {
+                        if (!response.ok) throw new Error("Failed to send message: " + response.statusText);
 
-                        let resDecode = decodeAES(
-                            appContext.secretKey!,
-                            (await response.json()).data
-                        );
+                        let resDecode = decodeAES(appContext.secretKey!, (await response.json()).data);
                         if (!resDecode) throw new Error("Failed to decode message");
                         const resData = JSON.parse(resDecode);
-                        if (!resData.data)
-                            throw new Error("Failed to upload attachment: " + resData.error);
+                        if (!resData.data) throw new Error("Failed to upload attachment: " + resData.error);
 
                         if (resData.data.fileId != -1)
                             await new Promise<void>((resolve) => {
@@ -277,20 +259,14 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
                                             totalSize: data.fileData.totalSize,
                                             fileName: data.fileData.fileName,
                                             checksum: (
-                                                await getMd5LargeFileObject(
-                                                    data.filePath,
-                                                    data.fileData.totalSize
-                                                )
+                                                await getMd5LargeFileObject(data.filePath, data.fileData.totalSize)
                                             ).data,
                                         };
                                         results.push(result);
                                         resolve();
                                     };
 
-                                    appContext.uploadCallbacks.set(
-                                        resData.data.fileId,
-                                        uploadCallback
-                                    );
+                                    appContext.uploadCallbacks.set(resData.data.fileId, uploadCallback);
                                 }
 
                                 if (data.fileType == "image") {
@@ -306,7 +282,7 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
                                     resolve();
                                 }
                             });
-                    })
+                    }),
                 );
                 data.params.chunkId++;
             }

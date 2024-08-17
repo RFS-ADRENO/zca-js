@@ -8,13 +8,13 @@ export function removeUserFromGroupFactory(serviceURL: string) {
         if (!appContext.cookie) throw new Error("Cookie is not available");
         if (!appContext.userAgent) throw new Error("User agent is not available");
 
-        if(!Array.isArray(members)) members = [members];
+        if (!Array.isArray(members)) members = [members];
 
         const params: any = {
             grid: groupId,
             members: members,
             imei: appContext.imei,
-        }
+        };
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new Error("Failed to encrypt params");
@@ -29,5 +29,5 @@ export function removeUserFromGroupFactory(serviceURL: string) {
         if (!response.ok) throw new Error("Failed to remove user from group: " + response.statusText);
 
         return (await response.json()).data;
-    }
+    };
 }

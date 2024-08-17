@@ -4,7 +4,7 @@ import { MessageType } from "../src/models/Message.js";
 const zalo = new Zalo({
     cookie: JSON.parse(fs.readFileSync("./examples/cookies.json", "utf-8")) as J2Cookies,
     imei: "",
-    userAgent: ""
+    userAgent: "",
 });
 
 const api = await zalo.login();

@@ -15,7 +15,11 @@ export function sendStickerFactory(api: API) {
         zpw_type: Zalo.API_TYPE,
     });
 
-    return async function sendSticker(sticker: Sticker, threadId: string, type: MessageType = MessageType.DirectMessage) {
+    return async function sendSticker(
+        sticker: Sticker,
+        threadId: string,
+        type: MessageType = MessageType.DirectMessage,
+    ) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
         if (!appContext.imei) throw new Error("IMEI is not available");
         if (!appContext.cookie) throw new Error("Cookie is not available");
@@ -39,7 +43,7 @@ export function sendStickerFactory(api: API) {
             zsource: 101,
             toid: isGroupMessage ? undefined : threadId,
             grid: isGroupMessage ? threadId : undefined,
-        }
+        };
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new Error("Failed to encrypt message");

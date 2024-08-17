@@ -80,7 +80,7 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
                 method: "POST",
                 headers: formData.getHeaders(),
                 body: formData.getBuffer(),
-            }
+            },
         );
 
         if (!response.ok) throw new Error("Failed to upload thumbnail: " + response.statusText);
@@ -286,18 +286,17 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
                                 zpw_type: Zalo.API_TYPE,
                                 nretry: "0",
                             },
-                            data.query || {}
-                        )
+                            data.query || {},
+                        ),
                     ),
-                    requestOptions
+                    requestOptions,
                 ).then(async (response) => {
-                    if (!response.ok)
-                        throw new Error("Failed to send message: " + response.statusText);
+                    if (!response.ok) throw new Error("Failed to send message: " + response.statusText);
 
                     let resDecode = decodeAES(appContext.secretKey!, (await response.json()).data);
                     if (!resDecode) throw new Error("Failed to decode message");
                     results.push(JSON.parse(resDecode));
-                })
+                }),
             );
         }
 

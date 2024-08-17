@@ -7,7 +7,7 @@ export async function login(encryptParams: boolean) {
         appContext.imei!,
         appContext.language!,
         encryptParams,
-        "getlogininfo"
+        "getlogininfo",
     );
 
     try {
@@ -15,7 +15,7 @@ export async function login(encryptParams: boolean) {
             makeURL("https://wpa.chat.zalo.me/api/login/getLoginInfo", {
                 ...encryptedParams.params,
                 nretry: 0,
-            })
+            }),
         );
         if (!response.ok) throw new Error("Failed to fetch login info: " + response.statusText);
         const data = await response.json();
@@ -37,7 +37,7 @@ export async function getServerInfo(encryptParams: boolean) {
         appContext.imei!,
         appContext.language!,
         encryptParams,
-        "getserverinfo"
+        "getserverinfo",
     );
 
     try {
@@ -48,7 +48,7 @@ export async function getServerInfo(encryptParams: boolean) {
                 client_version: Zalo.API_VERSION,
                 computer_name: "Web",
                 signkey: encryptedParams.params.signkey,
-            })
+            }),
         );
         if (!response.ok) throw new Error("Failed to fetch server info: " + response.statusText);
         const data = await response.json();
@@ -61,12 +61,7 @@ export async function getServerInfo(encryptParams: boolean) {
     }
 }
 
-async function getEncryptParam(
-    imei: string,
-    language: string,
-    encryptParams: boolean,
-    type: string
-) {
+async function getEncryptParam(imei: string, language: string, encryptParams: boolean, type: string) {
     const params = {} as Record<string, any>;
     const data = {
         computer_name: "Web",
@@ -111,12 +106,7 @@ async function _encryptParam(data: Record<string, any>, encryptParams: boolean) 
         try {
             const stringifiedData = JSON.stringify(data);
             const encryptedKey = encryptor.getEncryptKey();
-            const encodedData = ParamsEncryptor.encodeAES(
-                encryptedKey,
-                stringifiedData,
-                "base64",
-                false
-            );
+            const encodedData = ParamsEncryptor.encodeAES(encryptedKey, stringifiedData, "base64", false);
             const params = encryptor.getParams();
 
             return params

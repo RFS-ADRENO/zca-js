@@ -31,7 +31,7 @@ export function findUserFactory(serviceURL: string) {
             avatar_size: 240,
             language: appContext.language,
             imei: appContext.imei,
-            reqSrc: 40
+            reqSrc: 40,
         };
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
@@ -43,7 +43,7 @@ export function findUserFactory(serviceURL: string) {
         const response = await request(
             makeURL(finalServiceUrl.toString(), {
                 params: encryptedParams,
-            })
+            }),
         );
 
         if (!response.ok) throw new Error("Failed to find user: " + response.statusText);
@@ -52,5 +52,5 @@ export function findUserFactory(serviceURL: string) {
         if (!rawUserData) throw new Error("Failed to decrypt message");
 
         return JSON.parse(rawUserData).data as User;
-    }
+    };
 }

@@ -49,7 +49,7 @@ export function sendMessageFactory(api: API) {
         message: string,
         threadId: string,
         type: MessageType = MessageType.DirectMessage,
-        quote?: Message | GroupMessage
+        quote?: Message | GroupMessage,
     ) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
         if (!appContext.imei) throw new Error("IMEI is not available");
@@ -102,20 +102,16 @@ export function sendMessageFactory(api: API) {
               };
 
         for (const key in params) {
-            if (params[key as keyof typeof params] === undefined)
-                delete params[key as keyof typeof params];
+            if (params[key as keyof typeof params] === undefined) delete params[key as keyof typeof params];
         }
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new Error("Failed to encrypt message");
-        const finalServiceUrl = new URL(
-            isGroupMessage ? groupMessageServiceURL : directMessageServiceURL
-        );
+        const finalServiceUrl = new URL(isGroupMessage ? groupMessageServiceURL : directMessageServiceURL);
         if (quote) {
             finalServiceUrl.pathname = finalServiceUrl.pathname + "/quote";
         } else {
-            finalServiceUrl.pathname =
-                finalServiceUrl.pathname + "/" + (isGroupMessage ? "sendmsg" : "sms");
+            finalServiceUrl.pathname = finalServiceUrl.pathname + "/" + (isGroupMessage ? "sendmsg" : "sms");
         }
 
         const response = await request(finalServiceUrl.toString(), {

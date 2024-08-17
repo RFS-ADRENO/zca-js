@@ -4,7 +4,7 @@ import { appContext } from "./context.js";
 import fs from "node:fs";
 import sharp from "sharp";
 import pako from "pako";
-import SparkMD5 from "spark-md5"
+import SparkMD5 from "spark-md5";
 import path from "path";
 
 export function getSignKey(type: string, params: Record<string, any>) {
@@ -36,15 +36,7 @@ export class ParamsEncryptor {
     private enc_ver: string;
     private zcid_ext: string;
     private encryptKey: string | null;
-    constructor({
-        type,
-        imei,
-        firstLaunchTime,
-    }: {
-        type: number;
-        imei: string;
-        firstLaunchTime: number;
-    }) {
+    constructor({ type, imei, firstLaunchTime }: { type: number; imei: string; firstLaunchTime: number }) {
         this.enc_ver = "v2";
         this.zcid = null;
         this.encryptKey = null;
@@ -71,14 +63,10 @@ export class ParamsEncryptor {
             const { even: n } = ParamsEncryptor.processStr(e),
                 { even: a, odd: s } = ParamsEncryptor.processStr(t);
             if (!n || !a || !s) return !1;
-            const i =
-                n.slice(0, 8).join("") +
-                a.slice(0, 12).join("") +
-                s.reverse().slice(0, 12).join("");
+            const i = n.slice(0, 8).join("") + a.slice(0, 12).join("") + s.reverse().slice(0, 12).join("");
             return (this.encryptKey = i), !0;
         };
-        if (!this.zcid || !this.zcid_ext)
-            throw new Error("createEncryptKey: zcid or zcid_ext is null");
+        if (!this.zcid || !this.zcid_ext) throw new Error("createEncryptKey: zcid or zcid_ext is null");
         try {
             let n = cryptojs.MD5(this.zcid_ext).toString().toUpperCase();
             if (t(n, this.zcid) || !(e < 3)) return !1;
@@ -92,10 +80,10 @@ export class ParamsEncryptor {
     getParams() {
         return this.zcid
             ? {
-                zcid: this.zcid,
-                zcid_ext: this.zcid_ext,
-                enc_ver: this.enc_ver,
-            }
+                  zcid: this.zcid,
+                  zcid_ext: this.zcid_ext,
+                  enc_ver: this.enc_ver,
+              }
             : null;
     }
 
@@ -118,7 +106,7 @@ export class ParamsEncryptor {
         let s = Math.floor(Math.random() * (a - n + 1)) + n;
         if (s > 12) {
             let e = "";
-            for (; s > 0;)
+            for (; s > 0; )
                 (e += Math.random()
                     .toString(16)
                     .substr(2, s > 12 ? 12 : s)),
@@ -128,13 +116,7 @@ export class ParamsEncryptor {
         return Math.random().toString(16).substr(2, s);
     }
 
-    static encodeAES(
-        e: string,
-        message: string,
-        type: "hex" | "base64",
-        uppercase: boolean,
-        s = 0
-    ): string | null {
+    static encodeAES(e: string, message: string, type: "hex" | "base64", uppercase: boolean, s = 0): string | null {
         if (!message) return null;
         try {
             {
@@ -187,7 +169,7 @@ function decodeRespAES(key: string, data: string) {
             iv: n,
             mode: cryptojs.mode.CBC,
             padding: cryptojs.pad.Pkcs7,
-        }
+        },
     ).toString(cryptojs.enc.Utf8);
 }
 
@@ -229,7 +211,7 @@ export function decodeAES(secretKey: string, data: string, t = 0): string | null
                 iv: cryptojs.enc.Hex.parse("00000000000000000000000000000000"),
                 mode: cryptojs.mode.CBC,
                 padding: cryptojs.pad.Pkcs7,
-            }
+            },
         ).toString(cryptojs.enc.Utf8);
     } catch (n) {
         return t < 3 ? decodeAES(secretKey, data, t + 1) : null;
@@ -307,11 +289,11 @@ export async function getImageMetaData(filePath: string) {
         totalSize: imageData.size,
         width: imageData.width,
         height: imageData.height,
-    }
+    };
 }
 
 export async function getFileSize(filePath: string) {
-    return fs.promises.stat(filePath).then(s => s.size);
+    return fs.promises.stat(filePath).then((s) => s.size);
 }
 
 export async function getGifMetaData(filePath: string) {
@@ -324,16 +306,14 @@ export async function getGifMetaData(filePath: string) {
         totalSize: gifData.size,
         width: gifData.width,
         height: gifData.height,
-    }
+    };
 }
 
 export async function decodeEventData(parsed: any, cipherKey?: string) {
     if (!cipherKey) return;
 
     const eventData = parsed.data;
-    const decodedEventDataBuffer = decodeBase64ToBuffer(
-        decodeURIComponent(eventData)
-    );
+    const decodedEventDataBuffer = decodeBase64ToBuffer(decodeURIComponent(eventData));
 
     if (decodedEventDataBuffer.length >= 48) {
         const algorithm = {
@@ -344,18 +324,10 @@ export async function decodeEventData(parsed: any, cipherKey?: string) {
         };
         const dataSource = decodedEventDataBuffer.subarray(32);
 
-        const cryptoKey = await crypto.subtle.importKey(
-            "raw",
-            decodeBase64ToBuffer(cipherKey),
-            algorithm,
-            false,
-            ["decrypt"]
-        );
-        const decryptedData = await crypto.subtle.decrypt(
-            algorithm,
-            cryptoKey,
-            dataSource
-        );
+        const cryptoKey = await crypto.subtle.importKey("raw", decodeBase64ToBuffer(cipherKey), algorithm, false, [
+            "decrypt",
+        ]);
+        const decryptedData = await crypto.subtle.decrypt(algorithm, cryptoKey, dataSource);
         const decompressedData = pako.inflate(decryptedData);
         const decodedData = decodeUnit8Array(decompressedData);
 
@@ -377,7 +349,7 @@ export function getMd5LargeFileObject(filePath: string, fileSize: number) {
 
         function loadNext() {
             let start = currentChunk * chunkSize,
-                end = ((start + chunkSize) >= fileSize) ? fileSize : start + chunkSize;
+                end = start + chunkSize >= fileSize ? fileSize : start + chunkSize;
 
             spark.append(buffer.subarray(start, end));
             currentChunk++;
@@ -387,13 +359,13 @@ export function getMd5LargeFileObject(filePath: string, fileSize: number) {
             } else {
                 resolve({
                     currentChunk,
-                    data: spark.end()
+                    data: spark.end(),
                 });
             }
         }
 
         loadNext();
-    })
+    });
 }
 
 export const logger = {
@@ -409,7 +381,7 @@ export const logger = {
     error: (...args: any[]) => {
         console.log("\x1b[31mERROR\x1b[0m", ...args);
     },
-}
+};
 
 export function getClientMessageType(msgType: string) {
     if (msgType === "webchat") return 1;
@@ -431,12 +403,22 @@ export function getClientMessageType(msgType: string) {
 
 export function strPadLeft(e: any, t: string, n: number) {
     const a = (e = "" + e).length;
-    return a === n ? e : a > n ? e.slice(-n) : t.repeat(n - a) + e
+    return a === n ? e : a > n ? e.slice(-n) : t.repeat(n - a) + e;
 }
 
 export function getFullTimeFromMilisecond(e: number) {
     let t = new Date(e);
-    return strPadLeft(t.getHours(), "0", 2) + ":" + strPadLeft(t.getMinutes(), "0", 2) + " " + strPadLeft(t.getDate(), "0", 2) + "/" + strPadLeft(t.getMonth() + 1, "0", 2) + "/" + t.getFullYear()
+    return (
+        strPadLeft(t.getHours(), "0", 2) +
+        ":" +
+        strPadLeft(t.getMinutes(), "0", 2) +
+        " " +
+        strPadLeft(t.getDate(), "0", 2) +
+        "/" +
+        strPadLeft(t.getMonth() + 1, "0", 2) +
+        "/" +
+        t.getFullYear()
+    );
 }
 
 export function getFileExtension(e: string) {
@@ -449,5 +431,5 @@ export function getFileName(e: string) {
 
 export function removeUndefinedKeys(e: Record<string, any>) {
     for (let t in e) e[t] === undefined && delete e[t];
-    return e
+    return e;
 }

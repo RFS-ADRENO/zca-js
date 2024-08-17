@@ -34,8 +34,8 @@ export type J2Cookies = {
         session: boolean;
         storeId: string;
         value: string;
-    }[]
-}
+    }[];
+};
 
 export type Credentials = {
     imei: string;
@@ -107,7 +107,7 @@ export class Zalo {
                 zpw_type: Zalo.API_TYPE,
                 t: Date.now(),
             }),
-            this.listenerOptions
+            this.listenerOptions,
         );
     }
 }
@@ -141,68 +141,62 @@ export class API {
         this.addReaction = addReactionFactory(
             makeURL(`${zpwServiceMap.reaction[0]}/api/message/reaction`, {
                 zpw_ver: Zalo.API_VERSION,
-                zpw_type: Zalo.API_TYPE
-            })
+                zpw_type: Zalo.API_TYPE,
+            }),
         );
         this.getOwnId = getOwnId;
         this.getStickers = getStickersFactory(
             makeURL(`${zpwServiceMap.sticker}/api/message/sticker`, {
                 zpw_ver: Zalo.API_VERSION,
                 zpw_type: Zalo.API_TYPE,
-            })
+            }),
         );
         this.sendSticker = sendStickerFactory(this);
         this.findUser = findUserFactory(
             makeURL(`${zpwServiceMap.friend[0]}/api/friend/profile/get`, {
                 zpw_ver: Zalo.API_VERSION,
                 zpw_type: Zalo.API_TYPE,
-            })
+            }),
         );
-        this.uploadAttachment = uploadAttachmentFactory(
-            `${zpwServiceMap.file[0]}/api`,
-            this
-        );
-        this.sendMessageAttachment = sendMessageAttachmentFactory(
-            `${zpwServiceMap.file[0]}/api`,
-            this
-        )
+        this.uploadAttachment = uploadAttachmentFactory(`${zpwServiceMap.file[0]}/api`, this);
+        this.sendMessageAttachment = sendMessageAttachmentFactory(`${zpwServiceMap.file[0]}/api`, this);
         this.undo = undoFactory();
         this.getGroupInfo = getGroupInfoFactory(
             makeURL(`${zpwServiceMap.group[0]}/api/group/getmg-v2`, {
                 zpw_ver: Zalo.API_VERSION,
                 zpw_type: Zalo.API_TYPE,
-            })
+            }),
         );
         this.createGroup = createGroupFactory(
             makeURL(`${zpwServiceMap.group[0]}/api/group/create/v2`, {
                 zpw_ver: Zalo.API_VERSION,
                 zpw_type: Zalo.API_TYPE,
             }),
-            this
+            this,
         );
         this.changeGroupAvatar = changeGroupAvatarFactory(
             makeURL(`${zpwServiceMap.file[0]}/api/group/upavatar`, {
                 zpw_ver: Zalo.API_VERSION,
                 zpw_type: Zalo.API_TYPE,
-            })
+            }),
         );
         this.removeUserFromGroup = removeUserFromGroupFactory(
             makeURL(`${zpwServiceMap.group[0]}/api/group/kickout`, {
                 zpw_ver: Zalo.API_VERSION,
                 zpw_type: Zalo.API_TYPE,
-            })
+            }),
         );
         this.addUserToGroup = addUserToGroupFactory(
             makeURL(`${zpwServiceMap.group[0]}/api/group/invite/v2`, {
                 zpw_ver: Zalo.API_VERSION,
                 zpw_type: Zalo.API_TYPE,
-            })
+            }),
         );
         this.changeGroupName = changeGroupNameFactory(
             makeURL(`${zpwServiceMap.group[0]}/api/group/updateinfo`, {
                 zpw_ver: Zalo.API_VERSION,
                 zpw_type: Zalo.API_TYPE,
-            })
+            }),
         );
     }
 }

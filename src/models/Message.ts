@@ -9,11 +9,11 @@ export type TAttachmentContent = {
     action: string;
     params: string;
     type: string;
-}
+};
 
 export type TOtherContent = {
     [key: string]: any;
-}
+};
 
 export type TMessage = {
     actionId: string;
@@ -33,13 +33,15 @@ export type TMessage = {
     topOut: string;
     topOutTimeOut: string;
     topOutImprTimeOut: string;
-    propertyExt: {
-        color: number;
-        size: number;
-        type: number;
-        subType: number;
-        ext: string;
-    } | undefined;
+    propertyExt:
+        | {
+              color: number;
+              size: number;
+              type: number;
+              subType: number;
+              ext: string;
+          }
+        | undefined;
     paramsExt: {
         countUnread: number;
         containType: number;
@@ -50,11 +52,11 @@ export type TMessage = {
     at: number;
     realMsgId: string;
     quote: TQuote | undefined;
-}
+};
 
 export type TGroupMessage = TMessage & {
     mentions: TMention[] | undefined;
-}
+};
 
 export type TQuote = {
     ownerId: number;
@@ -65,8 +67,8 @@ export type TQuote = {
     msg: string;
     attach: string;
     fromD: string;
-    ttl: number
-}
+    ttl: number;
+};
 
 export type TMention = {
     uid: string;
@@ -77,7 +79,7 @@ export type TMention = {
 
 export enum MessageType {
     DirectMessage,
-    GroupMessage
+    GroupMessage,
 }
 
 export class Message {
@@ -94,7 +96,7 @@ export class Message {
         this.data = data;
         this.threadId = data.uidFrom == "0" ? data.idTo : data.uidFrom;
         this.isSelf = data.uidFrom == "0";
-        
+
         if (data.idTo == "0") data.idTo = appContext.uid!;
         if (data.uidFrom == "0") data.uidFrom = appContext.uid!;
     }

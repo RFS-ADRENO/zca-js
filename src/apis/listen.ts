@@ -144,9 +144,7 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
                             fileId: control.content.fileId,
                         };
 
-                        const uploadCallback = appContext.uploadCallbacks.get(
-                            String(control.content.fileId)
-                        );
+                        const uploadCallback = appContext.uploadCallbacks.get(String(control.content.fileId));
                         if (uploadCallback) uploadCallback(data);
                         appContext.uploadCallbacks.delete(String(control.content.fileId));
 
