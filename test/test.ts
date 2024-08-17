@@ -68,8 +68,8 @@ listener.onMessage((message) => {
                     api.sendMessageAttachment(
                         "hi",
                         [path.resolve("./test/a.png")],
+                        message.threadId,
                         message.type,
-                        message.threadId
                     ).then(console.log);
                 }
             }
