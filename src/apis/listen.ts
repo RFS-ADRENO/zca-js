@@ -102,8 +102,7 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
             if (!(data instanceof Buffer)) return;
 
             const encodedHeader = data.subarray(0, 4);
-            const [n, a, s] = getHeader(encodedHeader); // what is n, a, s?
-            console.log("Header:", n, a, s);
+            const [n, cmd, s] = getHeader(encodedHeader); // what is n, s?
 
             try {
                 const dataToDecode = data.subarray(4);
@@ -112,11 +111,11 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
 
                 const parsed = JSON.parse(decodedData);
 
-                if (n == 1 && a == 1 && s == 1 && parsed.hasOwnProperty("key")) {
+                if (n == 1 && cmd == 1 && s == 1 && parsed.hasOwnProperty("key")) {
                     this.cipherKey = parsed.key;
                 }
 
-                if (n == 1 && a == 501 && s == 0) {
+                if (n == 1 && cmd == 501 && s == 0) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { msgs } = parsedData;
                     for (const msg of msgs) {
@@ -126,7 +125,7 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
                     }
                 }
 
-                if (n == 1 && a == 521 && s == 0) {
+                if (n == 1 && cmd == 521 && s == 0) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { groupMsgs } = parsedData;
                     for (const msg of groupMsgs) {
@@ -136,7 +135,7 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
                     }
                 }
 
-                if (n == 1 && a == 601 && s == 0) {
+                if (n == 1 && cmd == 601 && s == 0) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { controls } = parsedData;
                     for (const control of controls) {
@@ -149,6 +148,7 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
                             String(control.content.fileId)
                         );
                         if (uploadCallback) uploadCallback(data);
+                        appContext.uploadCallbacks.delete(String(control.content.fileId));
 
                         this.emit("upload_attachment", data);
                     }

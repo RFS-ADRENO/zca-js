@@ -39,10 +39,23 @@ type AppContextBase = {
     }
 }
 
+const _5_MINUTES = 5 * 60 * 1000;
+class CallbacksMap extends Map<string, UploadCallback> {
+    /**
+     * @param ttl Time to live in milliseconds. Default is 5 minutes.
+     */
+    set(key: string, value: UploadCallback, ttl: number = _5_MINUTES): this {
+        setTimeout(() => {
+            this.delete(key);
+        }, ttl);
+        return super.set(key, value);
+    }
+}
+
 type AppContextExtended = {
-    uploadCallbacks: Map<string, UploadCallback>;
+    uploadCallbacks: CallbacksMap;
 }
 
 export const appContext: Partial<AppContextBase> & AppContextExtended = {
-    uploadCallbacks: new Map(),
+    uploadCallbacks: new CallbacksMap(),
 };
