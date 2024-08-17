@@ -2,6 +2,12 @@ import { appContext } from "../context.js";
 import { encodeAES, request } from "../utils.js";
 
 export function changeGroupNameFactory(serviceURL: string) {
+    /**
+     * Change group name
+     *
+     * @param groupId Group ID
+     * @param name New group name
+     */
     return async function changeGroupName(groupId: string, name: string) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
         if (!appContext.imei) throw new Error("IMEI is not available");

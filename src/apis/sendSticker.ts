@@ -15,6 +15,13 @@ export function sendStickerFactory(api: API) {
         zpw_type: Zalo.API_TYPE,
     });
 
+    /**
+     * Send a sticker to a thread
+     *
+     * @param sticker Sticker object
+     * @param threadId group or user id
+     * @param type Message type (DirectMessage or GroupMessage)
+     */
     return async function sendSticker(
         sticker: Sticker,
         threadId: string,

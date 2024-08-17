@@ -45,6 +45,14 @@ export function sendMessageFactory(api: API) {
         zpw_type: Zalo.API_TYPE,
         nretry: 0,
     });
+    /**
+     * Send a message to a thread
+     *
+     * @param message Message content
+     * @param threadId group or user id
+     * @param type Message type (DirectMessage or GroupMessage)
+     * @param quote Message or GroupMessage instance (optional), used for quoting
+     */
     return async function sendMessage(
         message: string,
         threadId: string,

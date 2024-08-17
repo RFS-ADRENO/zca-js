@@ -8,6 +8,11 @@ export function undoFactory() {
         [MessageType.DirectMessage]: `https://tt-chat2-wpa.chat.zalo.me/api/message/undo?zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}`,
         [MessageType.GroupMessage]: `https://tt-group-wpa.chat.zalo.me/api/group/undomsg?zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}`,
     };
+    /**
+     * Undo a message
+     *
+     * @param message Message or GroupMessage instance
+     */
     return async function undo(message: Message | GroupMessage) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
         if (!appContext.imei) throw new Error("IMEI is not available");

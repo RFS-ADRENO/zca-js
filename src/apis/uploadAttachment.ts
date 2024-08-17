@@ -115,6 +115,13 @@ const urlType = {
 };
 
 export function uploadAttachmentFactory(serviceURL: string, api: API) {
+    /**
+     * Upload an attachment to a thread
+     *
+     * @param filePaths Path to the file
+     * @param threadId group or user id
+     * @param type Message type (DirectMessage or GroupMessage)
+     */
     return async function uploadAttachment(
         filePaths: string[],
         threadId: string,
@@ -228,8 +235,9 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
             attachmentsData.push(data);
         }
 
-        let requests = [];
-        let results: UploadAttachmentType[] = [];
+        const requests = [],
+            results: UploadAttachmentType[] = [];
+
         for (const data of attachmentsData) {
             for (let i = 0; i < data.params.totalChunk; i++) {
                 const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(data.params));

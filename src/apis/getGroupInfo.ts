@@ -2,6 +2,11 @@ import { appContext } from "../context.js";
 import { decodeAES, encodeAES, request } from "../utils.js";
 
 export function getGroupInfoFactory(serviceURL: string) {
+    /**
+     * Get group information
+     *
+     * @param groupId Group ID or list of group IDs
+     */
     return async function getGroupInfo(groupId: string | string[]) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
         if (!appContext.imei) throw new Error("IMEI is not available");

@@ -15,6 +15,11 @@ export interface User {
 }
 
 export function findUserFactory(serviceURL: string) {
+    /**
+     * Find user by phone number
+     *
+     * @param phoneNumber Phone number
+     */
     return async function findUser(phoneNumber: string) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
         if (!appContext.imei) throw new Error("IMEI is not available");

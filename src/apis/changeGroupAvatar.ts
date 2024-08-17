@@ -4,6 +4,12 @@ import FormData from "form-data";
 import fs from "node:fs";
 
 export function changeGroupAvatarFactory(serviceURL: string) {
+    /**
+     * Change group avatar
+     *
+     * @param groupId Group ID
+     * @param avatarPath Path to the image file
+     */
     return async function changeGroupAvatar(groupId: string, avatarPath: string) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
         if (!appContext.imei) throw new Error("IMEI is not available");

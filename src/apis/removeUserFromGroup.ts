@@ -2,6 +2,12 @@ import { appContext } from "../context.js";
 import { encodeAES, request } from "../utils.js";
 
 export function removeUserFromGroupFactory(serviceURL: string) {
+    /**
+     * Remove user from existing group
+     *
+     * @param groupId Group ID
+     * @param members User ID or list of user IDs to remove
+     */
     return async function removeUserFromGroup(groupId: string, members: string | string[]) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
         if (!appContext.imei) throw new Error("IMEI is not available");

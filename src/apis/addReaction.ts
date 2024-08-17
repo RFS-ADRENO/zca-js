@@ -3,6 +3,12 @@ import { Message } from "../models/Message.js";
 import { decodeAES, encodeAES, request } from "../utils.js";
 
 export function addReactionFactory(serviceURL: string) {
+    /**
+     * Add reaction to a message
+     *
+     * @param icon Reaction icon
+     * @param message Message object to react to
+     */
     return async function addReaction(
         icon: ":>" | "/-strong" | "/-heart" | ":o" | ":-((" | ":-h" | "",
         message: Message,

@@ -93,6 +93,14 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
         return JSON.parse(resDecode).data as UpthumbType;
     }
 
+    /**
+     * Send a message with attachments
+     *
+     * @param message Message content
+     * @param filePaths Paths to the files
+     * @param threadId group ID or user ID
+     * @param type Message type (DirectMessage or GroupMessage)
+     */
     return async function sendMessageAttachment(
         message: string,
         filePaths: string[],

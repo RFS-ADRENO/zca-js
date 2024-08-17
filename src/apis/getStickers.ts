@@ -23,6 +23,11 @@ export interface Sticker {
 }
 
 export function getStickersFactory(serviceURL: string) {
+    /**
+     * Get stickers by keyword
+     *
+     * @param keyword Keyword to search for
+     */
     return async function getStikcers(keyword: string) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
         if (!appContext.imei) throw new Error("IMEI is not available");

@@ -3,6 +3,11 @@ import { API } from "../index.js";
 import { decodeAES, encodeAES, request } from "../utils.js";
 
 export function createGroupFactory(serviceURL: string, api: API) {
+    /**
+     * Create a new group
+     *
+     * @param options Group options
+     */
     return async function createGroup(options: { name?: string; members: string[]; avatarPath?: string }) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
         if (!appContext.imei) throw new Error("IMEI is not available");
