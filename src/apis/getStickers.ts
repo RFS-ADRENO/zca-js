@@ -27,8 +27,9 @@ export function getStickersFactory(serviceURL: string) {
      * Get stickers by keyword
      *
      * @param keyword Keyword to search for
+     * @returns Sticker IDs
      */
-    return async function getStikcers(keyword: string) {
+    return async function getStickers(keyword: string) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
         if (!appContext.imei) throw new Error("IMEI is not available");
         if (!appContext.cookie) throw new Error("Cookie is not available");
@@ -61,47 +62,13 @@ export function getStickersFactory(serviceURL: string) {
         if (!rawSuggestions) throw new Error("Failed to decrypt message");
 
         const suggestions: StickerSuggestions = JSON.parse(rawSuggestions).data;
-        const pms: Promise<Sticker>[] = [];
-
-        if (suggestions.sugg_sticker)
-            suggestions.sugg_sticker.forEach((sticker) => pms.push(getStickerDetail(sticker.sticker_id)));
+        const stickerIds: number[] = [];
 
         // @TODO: Implement these
-        // if (suggestions.sugg_guggy) suggestions.sugg_guggy.forEach((sticker) => pms.push(getStickerDetail(sticker)));
-        // if (suggestions.sugg_gif) suggestions.sugg_gif.forEach((sticker) => pms.push(getStickerDetail(sticker)));
-        const stickerDetails = await Promise.all(pms);
-        return {
-            keyword: keyword,
-            suggestions: {
-                sticker: stickerDetails,
-                // guggy: suggestions.sugg_guggy,
-                // gif: suggestions.sugg_gif,
-            },
-        };
+        // suggestions.sugg_guggy, suggestions.sugg_gif
+        if (suggestions.sugg_sticker)
+            suggestions.sugg_sticker.forEach((sticker) => stickerIds.push(sticker.sticker_id));
+
+        return stickerIds;
     };
-
-    async function getStickerDetail(stickerId: number): Promise<Sticker> {
-        const params = {
-            sid: stickerId,
-        };
-
-        const encryptedParams = encodeAES(appContext.secretKey!, JSON.stringify(params));
-        if (!encryptedParams) throw new Error("Failed to encrypt message");
-
-        const finalServiceUrl = new URL(serviceURL);
-        finalServiceUrl.pathname = finalServiceUrl.pathname + "/sticker_detail";
-
-        const response = await request(
-            makeURL(finalServiceUrl.toString(), {
-                params: encryptedParams,
-            }),
-        );
-
-        if (!response.ok) throw new Error("Failed to get sticker detail: " + response.statusText);
-
-        const rawDetail = decodeAES(appContext.secretKey!, (await response.json()).data);
-        if (!rawDetail) throw new Error("Failed to decrypt message");
-
-        return JSON.parse(rawDetail).data as Sticker;
-    }
 }

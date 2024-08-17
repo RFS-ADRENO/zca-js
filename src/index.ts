@@ -19,6 +19,7 @@ import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
 import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
 import { changeGroupNameFactory } from "./apis/changeGroupName.js";
+import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
 
 export type J2Cookies = {
     url: string;
@@ -121,6 +122,7 @@ export class API {
     public addReaction: ReturnType<typeof addReactionFactory>;
     public getOwnId: typeof getOwnId;
     public getStickers: ReturnType<typeof getStickersFactory>;
+    public getStickersDetail: ReturnType<typeof getStickersDetailFactory>;
     public sendSticker: ReturnType<typeof sendStickerFactory>;
     public findUser: ReturnType<typeof findUserFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
@@ -146,6 +148,12 @@ export class API {
         );
         this.getOwnId = getOwnId;
         this.getStickers = getStickersFactory(
+            makeURL(`${zpwServiceMap.sticker}/api/message/sticker`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+            }),
+        );
+        this.getStickersDetail = getStickersDetailFactory(
             makeURL(`${zpwServiceMap.sticker}/api/message/sticker`, {
                 zpw_ver: Zalo.API_VERSION,
                 zpw_type: Zalo.API_TYPE,
