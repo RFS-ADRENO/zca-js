@@ -1,25 +1,24 @@
-import cryptojs from "crypto-js";
-import { getServerInfo, login } from "./apis/login.js";
-import { ListenerBase, ListenerOptions } from "./apis/listen.js";
 import { getOwnId } from "./apis/getOwnId.js";
-import { makeURL } from "./utils.js";
+import { ListenerBase, ListenerOptions } from "./apis/listen.js";
+import { getServerInfo, login } from "./apis/login.js";
 import { appContext } from "./context.js";
+import { makeURL } from "./utils.js";
 
-import { getStickersFactory } from "./apis/getStickers.js";
-import { sendStickerFactory } from "./apis/sendSticker.js";
-import { sendMessageFactory } from "./apis/sendMessage.js";
 import { addReactionFactory } from "./apis/addReaction.js";
-import { findUserFactory } from "./apis/findUser.js";
-import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
-import { sendMessageAttachmentFactory } from "./apis/sendMessageAttachment.js";
-import { undoFactory } from "./apis/undo.js";
-import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
-import { createGroupFactory } from "./apis/createGroup.js";
-import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
-import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
 import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
+import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
 import { changeGroupNameFactory } from "./apis/changeGroupName.js";
+import { createGroupFactory } from "./apis/createGroup.js";
+import { findUserFactory } from "./apis/findUser.js";
+import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
+import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
+import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
+import { sendMessageFactory } from "./apis/sendMessage.js";
+import { sendMessageAttachmentFactory } from "./apis/sendMessageAttachment.js";
+import { sendStickerFactory } from "./apis/sendSticker.js";
+import { undoFactory } from "./apis/undo.js";
+import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 
 export type J2Cookies = {
     url: string;
@@ -75,13 +74,6 @@ export class Zalo {
     private validateParams(credentials: Credentials) {
         if (!credentials.imei || !credentials.cookie || !credentials.userAgent) {
             throw new Error("Missing required params");
-        }
-
-        const md5UserAgent = cryptojs.MD5(credentials.userAgent).toString();
-        const md5UserAgentFromImei = credentials.imei.slice(credentials.imei.lastIndexOf("-") + 1);
-
-        if (md5UserAgent !== md5UserAgentFromImei) {
-            throw new Error("Mismatched imei and userAgent");
         }
     }
 

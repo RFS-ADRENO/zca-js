@@ -52,7 +52,7 @@ const api = await zalo.login();
 
 -   `cookies`: Your Zalo cookies. You can get it by using [J2TEAM Cookies](https://chromewebstore.google.com/detail/j2team-cookies/okpidcojinmlaakglciglbpcpajaibco) extension or by using browser developer tools.
 -   `imei`: Your IMEI created by Zalo. You can get it using browser developer tools: `localStorage.getItem('z_uuid')`.
--   `userAgent`: Your browser user agent. Must be from the same browser you get cookies.
+-   `userAgent`: Your browser user agent. Better be from the same browser you get cookies.
 -   `selfListen`: Listen for messages sent by yourself. Default is `false`.
 
 ### Listen for new messages
