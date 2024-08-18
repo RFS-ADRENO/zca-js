@@ -1,6 +1,6 @@
 {
     "name": "zca-js",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "",
     "main": "dist/index.js",
     "type": "module",
@@ -9,14 +9,21 @@
         "build": "tsc",
         "prettier": "prettier --write ."
     },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/RFS-ADRENO/zca-js.git"
+    },
+    "homepage": "https://github.com/RFS-ADRENO/zca-js",
+    "bugs": {
+        "url": "https://github.com/RFS-ADRENO/zca-js/issues"
+    },
     "engines": {
         "node": ">=18.0.0"
     },
     "keywords": [
         "chatbot",
         "zalo",
-        "api",
-        "javascript"
+        "api"
     ],
     "author": "RFS-ADRENO, truong9c2208",
     "license": "MIT",
