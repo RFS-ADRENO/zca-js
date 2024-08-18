@@ -11,9 +11,9 @@ type UploadEventData = {
     fileId: string;
 };
 
-export type ListenerOptions = {
+export type ListenerOptions = Partial<{
     selfListen: boolean;
-};
+}>;
 
 export type OnMessageCallback = (message: MessageEventData) => void | Promise<void>;
 
@@ -120,6 +120,7 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
                     const { msgs } = parsedData;
                     for (const msg of msgs) {
                         const messageObject = new Message(msg);
+                        if (messageObject.isSelf && !this.options.selfListen) continue;
                         this.onMessageCallback(messageObject);
                         this.emit("message", messageObject);
                     }
@@ -130,6 +131,7 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
                     const { groupMsgs } = parsedData;
                     for (const msg of groupMsgs) {
                         const messageObject = new GroupMessage(msg);
+                        if (messageObject.isSelf && !this.options.selfListen) continue;
                         this.onMessageCallback(messageObject);
                         this.emit("message", messageObject);
                     }

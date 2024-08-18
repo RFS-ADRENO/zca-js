@@ -43,7 +43,6 @@ export type Credentials = {
     cookie: string | J2Cookies;
     userAgent: string;
     language?: string;
-    options?: ListenerOptions;
 };
 
 export class Zalo {
@@ -53,7 +52,7 @@ export class Zalo {
     private enableEncryptParam = true;
     private listenerOptions?: ListenerOptions;
 
-    constructor(credentials: Credentials) {
+    constructor(credentials: Credentials, options?: ListenerOptions) {
         this.validateParams(credentials);
 
         appContext.imei = credentials.imei;
@@ -63,7 +62,7 @@ export class Zalo {
 
         appContext.secretKey = null;
 
-        this.listenerOptions = credentials.options;
+        this.listenerOptions = options;
     }
 
     private parseCookies(cookie: string | J2Cookies) {
