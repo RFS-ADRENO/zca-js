@@ -39,7 +39,7 @@ import path from "path";
 
 const zalo = new Zalo(
     {
-        j2cookie: JSON.parse(fs.readFileSync("./cookies.json", "utf-8")),
+        cookies: JSON.parse(fs.readFileSync("./cookies.json", "utf-8")),
         imei: "your_imei_here",
         userAgent: "your_user_agent_here",
     },
