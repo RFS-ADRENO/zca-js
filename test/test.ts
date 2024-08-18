@@ -42,12 +42,12 @@ listener.onMessage((message) => {
                     default: {
                         const args = message.data.content.split(/\s+/);
                         if (args[0] == "sticker" && args[1]) {
-                            api.getStickers(args[1]).then((stickers) => {
-                                const { sticker } = stickers.suggestions;
-                                const random = sticker[Math.floor(Math.random() * sticker.length)];
-                                console.log("Sending sticker:", random);
+                            api.getStickers(args[1]).then(async (stickerIds) => {
+                                const random = stickerIds[Math.floor(Math.random() * stickerIds.length)];
+                                const sticker = await api.getStickersDetail(random);
+                                console.log("Sending sticker:", sticker[0]);
 
-                                if (random) api.sendSticker(random, message.threadId).then(console.log);
+                                if (random) api.sendSticker(sticker[0], message.threadId).then(console.log);
                                 else api.sendMessage("No sticker found", message.threadId).then(console.log);
                             });
                         }
