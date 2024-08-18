@@ -35,7 +35,6 @@ const api = await zalo.login();
 
 ```javascript
 import { Zalo } from "zca-js";
-import path from "path";
 
 const zalo = new Zalo(
     {
