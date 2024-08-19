@@ -1,6 +1,6 @@
 {
     "name": "zca-js",
-    "version": "1.0.4",
+    "version": "1.1.0",
     "description": "Unofficial Zalo API for JavaScript",
     "main": "dist/index.js",
     "type": "module",
@@ -31,6 +31,7 @@
         "crypto-js": "^4.2.0",
         "form-data": "^4.0.0",
         "pako": "^2.1.0",
+        "semver": "^7.6.3",
         "sharp": "^0.33.4",
         "spark-md5": "^3.0.2",
         "ws": "^8.18.0"
@@ -39,6 +40,7 @@
         "@types/crypto-js": "^4.2.2",
         "@types/node": "^20.14.10",
         "@types/pako": "^2.0.3",
+        "@types/semver": "^7.5.8",
         "@types/spark-md5": "^3.0.4",
         "@types/ws": "^8.5.11",
         "prettier": "3.3.3",
