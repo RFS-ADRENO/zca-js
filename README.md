@@ -25,6 +25,7 @@ const zalo = new Zalo(
     },
     {
         selfListen: true,
+        checkUpdate: true,
     },
 );
 
@@ -44,6 +45,7 @@ const zalo = new Zalo(
     },
     {
         selfListen: true,
+        checkUpdate: true,
     },
 );
 
@@ -54,6 +56,7 @@ const api = await zalo.login();
 -   `imei`: Your IMEI created by Zalo. You can get it using browser developer tools: `localStorage.getItem('z_uuid')`.
 -   `userAgent`: Your browser user agent. Better be from the same browser you get cookies.
 -   `selfListen`: Listen for messages sent by yourself. Default is `false`.
+-   `checkUpdate`: Check for zca-js update. Default is `true`.
 
 ### Listen for new messages
 
