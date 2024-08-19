@@ -1,7 +1,7 @@
 import EventEmitter from "events";
 import WebSocket from "ws";
 import { appContext } from "../context.js";
-import { GroupMessage, Message } from "../models/Message.js";
+import { GroupMessage, Message, Reaction } from "../models/Message.js";
 import { decodeEventData } from "../utils.js";
 
 type MessageEventData = Message | GroupMessage;
@@ -22,6 +22,7 @@ interface ListenerBaseEvents {
     closed: [];
     error: [error: any];
     message: [message: MessageEventData];
+    reaction: [reaction: Reaction];
     upload_attachment: [data: UploadEventData];
 }
 
@@ -151,6 +152,25 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
                         appContext.uploadCallbacks.delete(String(control.content.fileId));
 
                         this.emit("upload_attachment", data);
+                    }
+                }
+
+                if (cmd == 612) {
+                    const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    const { reacts, reactGroups } = parsedData;
+
+                    for (const react of reacts) {
+                        react.content = JSON.parse(react.content);
+                        const reactionObject = new Reaction(react, false);
+
+                        this.emit("reaction", reactionObject);
+                    }
+
+                    for (const reactGroup of reactGroups) {
+                        reactGroup.content = JSON.parse(reactGroup.content);
+                        const reactionObject = new Reaction(reactGroup, true);
+
+                        this.emit("reaction", reactionObject);
                     }
                 }
             } catch (error) {
