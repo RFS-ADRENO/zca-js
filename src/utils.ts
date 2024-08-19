@@ -1,7 +1,7 @@
 import cryptojs from "crypto-js";
 import crypto from "crypto";
 import { appContext } from "./context.js";
-import fs from "node:fs";
+import fs from "fs";
 import sharp from "sharp";
 import pako from "pako";
 import SparkMD5 from "spark-md5";
@@ -352,6 +352,7 @@ export function getMd5LargeFileObject(filePath: string, fileSize: number) {
             let start = currentChunk * chunkSize,
                 end = start + chunkSize >= fileSize ? fileSize : start + chunkSize;
 
+            // @ts-ignore
             spark.append(buffer.subarray(start, end));
             currentChunk++;
 
