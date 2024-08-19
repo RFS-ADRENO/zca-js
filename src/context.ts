@@ -41,6 +41,7 @@ type AppContextBase = {
 
 export type Options = {
     selfListen: boolean;
+    checkUpdate: boolean;
 };
 
 const _5_MINUTES = 5 * 60 * 1000;
@@ -65,5 +66,6 @@ export const appContext: Partial<AppContextBase> & AppContextExtended = {
     uploadCallbacks: new CallbacksMap(),
     options: {
         selfListen: false,
+        checkUpdate: true,
     },
 };

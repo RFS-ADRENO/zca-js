@@ -91,7 +91,6 @@ export class Zalo {
         // they might fix this in the future, so we should have a fallback just in case
         appContext.settings = serverInfo.setttings || serverInfo.settings;
 
-        console.log();
         logger.info("Logged in as", loginData.data.uid);
 
         return new API(
