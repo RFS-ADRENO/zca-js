@@ -6,6 +6,7 @@ import sharp from "sharp";
 import pako from "pako";
 import SparkMD5 from "spark-md5";
 import path from "path";
+import { GroupEventType } from "./models/GroupEvent.js";
 
 export function getSignKey(type: string, params: Record<string, any>) {
     let n = [];
@@ -432,4 +433,16 @@ export function getFileName(e: string) {
 export function removeUndefinedKeys(e: Record<string, any>) {
     for (let t in e) e[t] === undefined && delete e[t];
     return e;
+}
+
+export function getGroupEventType(act: string) {
+    if (act == "join") return GroupEventType.JOIN;
+    if (act == "leave") return GroupEventType.LEAVE;
+    if (act == "remove_member") return GroupEventType.REMOVE_MEMBER;
+    if (act == "block_member") return GroupEventType.BLOCK_MEMBER;
+    if (act == "update_setting") return GroupEventType.UPDATE_SETTING;
+    if (act == "update") return GroupEventType.UPDATE;
+    if (act == "new_link") return GroupEventType.NEW_LINK;
+
+    return GroupEventType.UNKNOWN;
 }

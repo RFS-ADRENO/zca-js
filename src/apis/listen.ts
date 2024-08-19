@@ -2,7 +2,8 @@ import EventEmitter from "events";
 import WebSocket from "ws";
 import { appContext } from "../context.js";
 import { GroupMessage, Message, Reaction, Undo } from "../models/index.js";
-import { decodeEventData, logger } from "../utils.js";
+import { decodeEventData, getGroupEventType, logger } from "../utils.js";
+import { GroupEvent } from "../models/GroupEvent.js";
 
 type MessageEventData = Message | GroupMessage;
 
@@ -21,6 +22,7 @@ interface ListenerEvents {
     reaction: [reaction: Reaction];
     upload_attachment: [data: UploadEventData];
     undo: [data: Undo];
+    group_event: [data: GroupEvent];
 }
 
 export class Listener extends EventEmitter<ListenerEvents> {
@@ -153,16 +155,24 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { controls } = parsedData;
                     for (const control of controls) {
-                        const data = {
-                            fileUrl: control.content.data.url,
-                            fileId: control.content.fileId,
-                        };
+                        if (control.content.act_type == "file_done") {
+                            const data = {
+                                fileUrl: control.content.data.url,
+                                fileId: control.content.fileId,
+                            };
 
-                        const uploadCallback = appContext.uploadCallbacks.get(String(control.content.fileId));
-                        if (uploadCallback) uploadCallback(data);
-                        appContext.uploadCallbacks.delete(String(control.content.fileId));
+                            const uploadCallback = appContext.uploadCallbacks.get(String(control.content.fileId));
+                            if (uploadCallback) uploadCallback(data);
+                            appContext.uploadCallbacks.delete(String(control.content.fileId));
 
-                        this.emit("upload_attachment", data);
+                            this.emit("upload_attachment", data);
+                        } else if (control.content.act_type == "group") {
+                            const groupEvent = new GroupEvent(
+                                JSON.parse(control.content.data),
+                                getGroupEventType(control.content.act),
+                            );
+                            this.emit("group_event", groupEvent);
+                        }
                     }
                 }
 
