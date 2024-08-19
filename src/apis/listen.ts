@@ -2,7 +2,7 @@ import EventEmitter from "events";
 import WebSocket from "ws";
 import { appContext } from "../context.js";
 import { GroupMessage, Message, Reaction, Undo } from "../models/index.js";
-import { decodeEventData } from "../utils.js";
+import { decodeEventData, logger } from "../utils.js";
 
 type MessageEventData = Message | GroupMessage;
 
@@ -185,6 +185,13 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
 
                         this.emit("reaction", reactionObject);
                     }
+                }
+
+                if (n == 1 && cmd == 3000 && s == 0) {
+                    console.log();
+                    logger.error("Another connection is opened, closing this one");
+                    console.log();
+                    if (ws.readyState !== WebSocket.CLOSED) ws.close();
                 }
             } catch (error) {
                 this.onErrorCallback(error);
