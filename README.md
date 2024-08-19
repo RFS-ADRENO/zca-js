@@ -19,7 +19,7 @@ import { Zalo } from "zca-js";
 
 const zalo = new Zalo(
     {
-        cookies: "your_cookies_here",
+        cookie: "your_cookie_here",
         imei: "your_imei_here",
         userAgent: "your_user_agent_here",
     },
@@ -39,7 +39,7 @@ import { Zalo } from "zca-js";
 
 const zalo = new Zalo(
     {
-        cookies: JSON.parse(fs.readFileSync("./cookies.json", "utf-8")),
+        cookie: JSON.parse(fs.readFileSync("./cookies.json", "utf-8")),
         imei: "your_imei_here",
         userAgent: "your_user_agent_here",
     },
@@ -52,9 +52,9 @@ const zalo = new Zalo(
 const api = await zalo.login();
 ```
 
--   `cookies`: Your Zalo cookies. You can get it by using [J2TEAM Cookies](https://chromewebstore.google.com/detail/j2team-cookies/okpidcojinmlaakglciglbpcpajaibco) extension or by using browser developer tools.
+-   `cookie`: Your Zalo cookie. You can get it by using [J2TEAM Cookies](https://chromewebstore.google.com/detail/j2team-cookies/okpidcojinmlaakglciglbpcpajaibco) extension or by using browser developer tools.
 -   `imei`: Your IMEI created by Zalo. You can get it using browser developer tools: `localStorage.getItem('z_uuid')` or `localStorage.getItem('sh_z_uuid')`.
--   `userAgent`: Your browser user agent. Better be from the same browser you get cookies.
+-   `userAgent`: Your browser user agent. Better be from the same browser you get cookie.
 -   `selfListen`: Listen for messages sent by yourself. Default is `false`.
 -   `checkUpdate`: Check for zca-js update. Default is `true`.
 
