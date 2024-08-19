@@ -1,7 +1,7 @@
 import EventEmitter from "events";
 import WebSocket from "ws";
 import { appContext } from "../context.js";
-import { GroupMessage, Message, Reaction } from "../models/Message.js";
+import { GroupMessage, Message, Reaction, Undo } from "../models/index.js";
 import { decodeEventData } from "../utils.js";
 
 type MessageEventData = Message | GroupMessage;
@@ -24,6 +24,7 @@ interface ListenerBaseEvents {
     message: [message: MessageEventData];
     reaction: [reaction: Reaction];
     upload_attachment: [data: UploadEventData];
+    undo: [data: Undo];
 }
 
 export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
@@ -120,10 +121,16 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { msgs } = parsedData;
                     for (const msg of msgs) {
-                        const messageObject = new Message(msg);
-                        if (messageObject.isSelf && !this.options.selfListen) continue;
-                        this.onMessageCallback(messageObject);
-                        this.emit("message", messageObject);
+                        if (msg.at == 0) {
+                            const messageObject = new Message(msg);
+                            if (messageObject.isSelf && !this.options.selfListen) continue;
+                            this.onMessageCallback(messageObject);
+                            this.emit("message", messageObject);
+                        } else {
+                            const undoObject = new Undo(msg, false);
+                            if (undoObject.isSelf && !this.options.selfListen) continue;
+                            this.emit("undo", undoObject);
+                        }
                     }
                 }
 
@@ -131,10 +138,16 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { groupMsgs } = parsedData;
                     for (const msg of groupMsgs) {
-                        const messageObject = new GroupMessage(msg);
-                        if (messageObject.isSelf && !this.options.selfListen) continue;
-                        this.onMessageCallback(messageObject);
-                        this.emit("message", messageObject);
+                        if (msg.at == 0) {
+                            const messageObject = new GroupMessage(msg);
+                            if (messageObject.isSelf && !this.options.selfListen) continue;
+                            this.onMessageCallback(messageObject);
+                            this.emit("message", messageObject);
+                        } else {
+                            const undoObject = new Undo(msg, true);
+                            if (undoObject.isSelf && !this.options.selfListen) continue;
+                            this.emit("undo", undoObject);
+                        }
                     }
                 }
 
