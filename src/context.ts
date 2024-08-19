@@ -39,6 +39,10 @@ type AppContextBase = {
     };
 };
 
+export type Options = {
+    selfListen: boolean;
+};
+
 const _5_MINUTES = 5 * 60 * 1000;
 class CallbacksMap extends Map<string, UploadCallback> {
     /**
@@ -54,8 +58,12 @@ class CallbacksMap extends Map<string, UploadCallback> {
 
 type AppContextExtended = {
     uploadCallbacks: CallbacksMap;
+    options: Options;
 };
 
 export const appContext: Partial<AppContextBase> & AppContextExtended = {
     uploadCallbacks: new CallbacksMap(),
+    options: {
+        selfListen: false,
+    },
 };

@@ -1,8 +1,8 @@
 import { getOwnId } from "./apis/getOwnId.js";
-import { ListenerBase, ListenerOptions } from "./apis/listen.js";
+import { Listener } from "./apis/listen.js";
 import { getServerInfo, login } from "./apis/login.js";
-import { appContext } from "./context.js";
-import { makeURL } from "./utils.js";
+import { appContext, Options } from "./context.js";
+import { logger, makeURL } from "./utils.js";
 
 import { addReactionFactory } from "./apis/addReaction.js";
 import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
@@ -19,6 +19,7 @@ import { sendMessageAttachmentFactory } from "./apis/sendMessageAttachment.js";
 import { sendStickerFactory } from "./apis/sendSticker.js";
 import { undoFactory } from "./apis/undo.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
+import { checkUpdate } from "./update.js";
 
 export type J2Cookies = {
     url: string;
@@ -49,9 +50,8 @@ export class Zalo {
     public static readonly API_VERSION = 637;
 
     private enableEncryptParam = true;
-    private listenerOptions?: ListenerOptions;
 
-    constructor(credentials: Credentials, options?: ListenerOptions) {
+    constructor(credentials: Credentials, options?: Partial<Options>) {
         this.validateParams(credentials);
 
         appContext.imei = credentials.imei;
@@ -61,7 +61,7 @@ export class Zalo {
 
         appContext.secretKey = null;
 
-        this.listenerOptions = options;
+        if (options) Object.assign(appContext.options, options);
     }
 
     private parseCookies(cookie: string | J2Cookies) {
@@ -78,6 +78,8 @@ export class Zalo {
     }
 
     public async login() {
+        await checkUpdate();
+
         const loginData = await login(this.enableEncryptParam);
         const serverInfo = await getServerInfo(this.enableEncryptParam);
 
@@ -89,7 +91,8 @@ export class Zalo {
         // they might fix this in the future, so we should have a fallback just in case
         appContext.settings = serverInfo.setttings || serverInfo.settings;
 
-        console.log("Logged in as", loginData.data.uid);
+        console.log();
+        logger.info("Logged in as", loginData.data.uid);
 
         return new API(
             appContext.secretKey!,
@@ -99,7 +102,6 @@ export class Zalo {
                 zpw_type: Zalo.API_TYPE,
                 t: Date.now(),
             }),
-            this.listenerOptions,
         );
     }
 }
@@ -108,7 +110,7 @@ export class API {
     private secretKey: string;
 
     public zpwServiceMap: Record<string, string[]>;
-    public listener: ListenerBase;
+    public listener: Listener;
     public sendMessage: ReturnType<typeof sendMessageFactory>;
     public addReaction: ReturnType<typeof addReactionFactory>;
     public getOwnId: typeof getOwnId;
@@ -126,10 +128,10 @@ export class API {
     public addUserToGroup: ReturnType<typeof addUserToGroupFactory>;
     public changeGroupName: ReturnType<typeof changeGroupNameFactory>;
 
-    constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string, options?: ListenerOptions) {
+    constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string) {
         this.secretKey = secretKey;
         this.zpwServiceMap = zpwServiceMap;
-        this.listener = new ListenerBase(wsUrl, options);
+        this.listener = new Listener(wsUrl);
         this.sendMessage = sendMessageFactory(this);
         this.addReaction = addReactionFactory(
             makeURL(`${zpwServiceMap.reaction[0]}/api/message/reaction`, {

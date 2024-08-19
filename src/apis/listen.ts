@@ -11,13 +11,9 @@ type UploadEventData = {
     fileId: string;
 };
 
-export type ListenerOptions = Partial<{
-    selfListen: boolean;
-}>;
-
 export type OnMessageCallback = (message: MessageEventData) => void | Promise<void>;
 
-interface ListenerBaseEvents {
+interface ListenerEvents {
     connected: [];
     closed: [];
     error: [error: any];
@@ -27,8 +23,7 @@ interface ListenerBaseEvents {
     undo: [data: Undo];
 }
 
-export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
-    private options: ListenerOptions;
+export class Listener extends EventEmitter<ListenerEvents> {
     private url: string;
     private cookie: string;
     private userAgent: string;
@@ -39,15 +34,18 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
     private onMessageCallback: OnMessageCallback;
     private cipherKey?: string;
 
-    constructor(url: string, options?: ListenerOptions) {
+    private selfListen;
+
+    constructor(url: string) {
         super();
         if (!appContext.cookie) throw new Error("Cookie is not available");
         if (!appContext.userAgent) throw new Error("User agent is not available");
 
-        this.options = options || { selfListen: false };
         this.url = url;
         this.cookie = appContext.cookie;
         this.userAgent = appContext.userAgent;
+
+        this.selfListen = appContext.options.selfListen;
 
         this.onConnectedCallback = () => {};
         this.onClosedCallback = () => {};
@@ -123,12 +121,12 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
                     for (const msg of msgs) {
                         if (msg.at == 0) {
                             const messageObject = new Message(msg);
-                            if (messageObject.isSelf && !this.options.selfListen) continue;
+                            if (messageObject.isSelf && !this.selfListen) continue;
                             this.onMessageCallback(messageObject);
                             this.emit("message", messageObject);
                         } else {
                             const undoObject = new Undo(msg, false);
-                            if (undoObject.isSelf && !this.options.selfListen) continue;
+                            if (undoObject.isSelf && !this.selfListen) continue;
                             this.emit("undo", undoObject);
                         }
                     }
@@ -140,12 +138,12 @@ export class ListenerBase extends EventEmitter<ListenerBaseEvents> {
                     for (const msg of groupMsgs) {
                         if (msg.at == 0) {
                             const messageObject = new GroupMessage(msg);
-                            if (messageObject.isSelf && !this.options.selfListen) continue;
+                            if (messageObject.isSelf && !this.selfListen) continue;
                             this.onMessageCallback(messageObject);
                             this.emit("message", messageObject);
                         } else {
                             const undoObject = new Undo(msg, true);
-                            if (undoObject.isSelf && !this.options.selfListen) continue;
+                            if (undoObject.isSelf && !this.selfListen) continue;
                             this.emit("undo", undoObject);
                         }
                     }
