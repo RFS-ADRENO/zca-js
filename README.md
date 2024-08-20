@@ -25,8 +25,8 @@ const zalo = new Zalo(
     },
     {
         selfListen: false,
-        checkUpdate: true,
-    },
+        checkUpdate: true
+    }
 );
 
 const api = await zalo.login();
@@ -45,8 +45,8 @@ const zalo = new Zalo(
     },
     {
         selfListen: false,
-        checkUpdate: true,
-    },
+        checkUpdate: true
+    }
 );
 
 const api = await zalo.login();
@@ -109,7 +109,7 @@ api.listener.on("message", (message) => {
                 "echo: " + message.data.content,
                 message.threadId,
                 message.type, // MessageType.DirectMessage
-                message, // the message object to reply to (optional)
+                message // the message object to reply to (optional)
             );
             break;
         }
@@ -118,7 +118,7 @@ api.listener.on("message", (message) => {
                 "echo: " + message.data.content,
                 message.threadId,
                 message.type, // MessageType.GroupMessage
-                message, // the message object to reply to (optional)
+                message // the message object to reply to (optional)
             );
             break;
         }
@@ -135,7 +135,7 @@ api.sendMessageAttachment(
     "title",
     [path.resolve("./assets/photo.png")], // array of file paths
     message.threadId,
-    message.type, // MessageType.DirectMessage or MessageType.GroupMessage
+    message.type // MessageType.DirectMessage or MessageType.GroupMessage
 );
 ```
 
@@ -148,7 +148,7 @@ api.getStickers("hello").then(async (stickerIds) => {
     api.sendMessageSticker(
         stickerObject,
         message.threadId,
-        message.type, // MessageType.DirectMessage or MessageType.GroupMessage
+        message.type // MessageType.DirectMessage or MessageType.GroupMessage
     );
 });
 ```
