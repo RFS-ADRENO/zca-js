@@ -121,15 +121,15 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { msgs } = parsedData;
                     for (const msg of msgs) {
-                        if (msg.at == 0) {
-                            const messageObject = new Message(msg);
+                        if (typeof msg.content == "object" && msg.content.hasOwnProperty("deleteMsg")) {
+                            const undoObject = new Undo(msg, true);
+                            if (undoObject.isSelf && !this.selfListen) continue;
+                            this.emit("undo", undoObject);
+                        } else {
+                            const messageObject = new GroupMessage(msg);
                             if (messageObject.isSelf && !this.selfListen) continue;
                             this.onMessageCallback(messageObject);
                             this.emit("message", messageObject);
-                        } else {
-                            const undoObject = new Undo(msg, false);
-                            if (undoObject.isSelf && !this.selfListen) continue;
-                            this.emit("undo", undoObject);
                         }
                     }
                 }
