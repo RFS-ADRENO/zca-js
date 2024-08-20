@@ -126,7 +126,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                             if (undoObject.isSelf && !this.selfListen) continue;
                             this.emit("undo", undoObject);
                         } else {
-                            const messageObject = new GroupMessage(msg);
+                            const messageObject = new Message(msg);
                             if (messageObject.isSelf && !this.selfListen) continue;
                             this.onMessageCallback(messageObject);
                             this.emit("message", messageObject);
