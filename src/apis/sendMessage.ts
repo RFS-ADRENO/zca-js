@@ -34,17 +34,49 @@ function prepareQMSG(quote: Message | GroupMessage) {
     return "";
 }
 
+export type Mention = {
+    /**
+     * mention position
+     */
+    pos: number;
+    /**
+     * id of the mentioned user
+     */
+    uid: string;
+    /**
+     * length of the mention
+     */
+    len: number;
+};
+
+export type MessageContent = {
+    /**
+     * Text content of the message
+     */
+    msg: string;
+    /**
+     * Quoted message (optional)
+     */
+    quote?: Message | GroupMessage;
+    /**
+     * Mentions in the message (optional)
+     */
+    mentions?: Mention[];
+};
+
 export function sendMessageFactory(api: API) {
-    const directMessageServiceURL = makeURL(`${api.zpwServiceMap.chat[0]}/api/message`, {
-        zpw_ver: Zalo.API_VERSION,
-        zpw_type: Zalo.API_TYPE,
-        nretry: 0,
-    });
-    const groupMessageServiceURL = makeURL(`${api.zpwServiceMap.group[0]}/api/group`, {
-        zpw_ver: Zalo.API_VERSION,
-        zpw_type: Zalo.API_TYPE,
-        nretry: 0,
-    });
+    const serviceURLs = {
+        [MessageType.DirectMessage]: makeURL(`${api.zpwServiceMap.chat[0]}/api/message`, {
+            zpw_ver: Zalo.API_VERSION,
+            zpw_type: Zalo.API_TYPE,
+            nretry: 0,
+        }),
+        [MessageType.GroupMessage]: makeURL(`${api.zpwServiceMap.group[0]}/api/group`, {
+            zpw_ver: Zalo.API_VERSION,
+            zpw_type: Zalo.API_TYPE,
+            nretry: 0,
+        }),
+    };
     /**
      * Send a message to a thread
      *
@@ -54,24 +86,40 @@ export function sendMessageFactory(api: API) {
      * @param quote Message or GroupMessage instance (optional), used for quoting
      */
     return async function sendMessage(
-        message: string,
+        message: MessageContent | string,
         threadId: string,
         type: MessageType = MessageType.DirectMessage,
-        quote?: Message | GroupMessage,
     ) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
         if (!appContext.imei) throw new Error("IMEI is not available");
         if (!appContext.cookie) throw new Error("Cookie is not available");
         if (!appContext.userAgent) throw new Error("User agent is not available");
 
-        if (!message) throw new Error("Missing message");
+        if (!message) throw new Error("Missing message content");
         if (!threadId) throw new Error("Missing threadId");
+        if (typeof message == "string") message = { msg: message };
+
+        const { msg, mentions, quote } = message;
+
+        if (!msg) throw new Error("Missing message content");
 
         const isValidInstance = quote instanceof Message || quote instanceof GroupMessage;
         if (quote && !isValidInstance) throw new Error("Invalid quote message");
         const isGroupMessage = type == MessageType.GroupMessage;
-        const quoteData = quote?.data;
 
+        const mentionsFinal =
+            Array.isArray(mentions) && type == MessageType.GroupMessage
+                ? mentions
+                      .filter((m) => m.pos >= 0 && m.uid && m.len > 0)
+                      .map((m) => ({
+                          pos: m.pos,
+                          uid: m.uid,
+                          len: m.len,
+                          type: m.uid == "-1" ? 1 : 0,
+                      }))
+                : [];
+
+        const quoteData = quote?.data;
         if (quoteData) {
             if (typeof quoteData.content != "string" && quoteData.msgType == "webchat") {
                 throw new Error("This kind of `webchat` quote type is not available");
@@ -82,12 +130,14 @@ export function sendMessageFactory(api: API) {
             }
         }
 
+        const isMentionsValid = mentionsFinal.length > 0 && isGroupMessage;
         const params = quote
             ? {
                   toid: isGroupMessage ? undefined : threadId,
                   grid: isGroupMessage ? threadId : undefined,
-                  message: message,
+                  message: msg,
                   clientId: Date.now(),
+                  mentionInfo: isMentionsValid ? JSON.stringify(mentionsFinal) : undefined,
                   qmsgOwner: quoteData!.uidFrom,
                   qmsgId: quoteData!.msgId,
                   qmsgCliId: quoteData!.cliMsgId,
@@ -101,10 +151,12 @@ export function sendMessageFactory(api: API) {
                   ttl: 0,
               }
             : {
-                  message: message,
+                  message: msg,
                   clientId: Date.now(),
-                  imei: appContext.imei,
+                  mentionInfo: isMentionsValid ? JSON.stringify(mentionsFinal) : undefined,
+                  imei: isGroupMessage ? undefined : appContext.imei,
                   ttl: 0,
+                  visibility: isGroupMessage ? 0 : undefined,
                   toid: isGroupMessage ? undefined : threadId,
                   grid: isGroupMessage ? threadId : undefined,
               };
@@ -115,11 +167,14 @@ export function sendMessageFactory(api: API) {
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new Error("Failed to encrypt message");
-        const finalServiceUrl = new URL(isGroupMessage ? groupMessageServiceURL : directMessageServiceURL);
+        const finalServiceUrl = new URL(serviceURLs[type]);
         if (quote) {
             finalServiceUrl.pathname = finalServiceUrl.pathname + "/quote";
         } else {
-            finalServiceUrl.pathname = finalServiceUrl.pathname + "/" + (isGroupMessage ? "sendmsg" : "sms");
+            finalServiceUrl.pathname =
+                finalServiceUrl.pathname +
+                "/" +
+                (isGroupMessage ? (params.mentionInfo ? "mention" : "sendmsg") : "sms");
         }
 
         const response = await request(finalServiceUrl.toString(), {

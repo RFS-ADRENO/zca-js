@@ -15,6 +15,7 @@ import {
     removeUndefinedKeys,
     request,
 } from "../utils.js";
+import type { MessageContent } from "./sendMessage.js";
 
 const urlType = {
     image: "photo_original/send?",
@@ -102,7 +103,7 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
      * @param type Message type (DirectMessage or GroupMessage)
      */
     return async function sendMessageAttachment(
-        message: string,
+        message: MessageContent | string,
         filePaths: string[],
         threadId: string,
         type: MessageType = MessageType.DirectMessage,
@@ -112,17 +113,19 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
         if (!appContext.cookie) throw new Error("Cookie is not available");
         if (!appContext.userAgent) throw new Error("User agent is not available");
 
-        if (!message) throw new Error("Missing message");
         if (!filePaths || filePaths.length == 0) throw new Error("Missing file paths");
         if (!threadId) throw new Error("Missing threadId");
 
+        if (typeof message == "string") message = { msg: message };
+
         const firstExtFile = getFileExtension(filePaths[0]);
-        const isMutilFileType = filePaths.some((e) => getFileExtension(e) != firstExtFile);
+        const isSingleFile = filePaths.length == 1;
         const isGroupMessage = type == MessageType.GroupMessage;
 
-        if (isMutilFileType || firstExtFile == "gif") {
+        const canBeDesc = isSingleFile && ["jpg", "jpeg", "png", "webp"].includes(firstExtFile);
+        if (!canBeDesc && message.msg.length > 0) {
             await api.sendMessage(message, threadId, type);
-            message = "";
+            message = { msg: "" };
         }
 
         const gifFiles = filePaths.filter((e) => getFileExtension(e) == "gif");
@@ -135,6 +138,19 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
 
         const groupLayoutId = getGroupLayoutId();
 
+        const mentionsFinal =
+            Array.isArray(message.mentions) && type == MessageType.GroupMessage
+                ? message.mentions
+                      .filter((m) => m.pos >= 0 && m.uid && m.len > 0)
+                      .map((m) => ({
+                          pos: m.pos,
+                          uid: m.uid,
+                          len: m.len,
+                          type: m.uid == "-1" ? 1 : 0,
+                      }))
+                : [];
+        const isMentionsValid = mentionsFinal.length > 0 && isGroupMessage && filePaths.length == 1;
+
         const isMultiFile = filePaths.length > 1;
         let clientId = Date.now();
         for (const attachment of uploadAttachment) {
@@ -146,7 +162,7 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
                         params: {
                             photoId: attachment.photoId,
                             clientId: (clientId++).toString(),
-                            desc: message,
+                            desc: message.msg,
                             width: attachment.width,
                             height: attachment.height,
                             toid: isGroupMessage ? undefined : String(threadId),
@@ -156,16 +172,17 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
                             thumbUrl: attachment.thumbUrl,
                             oriUrl: isGroupMessage ? attachment.normalUrl : undefined,
                             normalUrl: isGroupMessage ? undefined : attachment.normalUrl,
-                            thumbSize: "9815",
-                            fileSize: String(attachment.totalSize),
                             hdSize: String(attachment.totalSize),
                             zsource: -1,
                             ttl: 0,
+                            jcp: "{\"convertible\":\"jxl\"}",
 
                             groupLayoutId: isMultiFile ? groupLayoutId : undefined,
                             isGroupLayout: isMultiFile ? 1 : undefined,
                             idInGroup: isMultiFile ? indexInGroupLayout-- : undefined,
                             totalItemInGroup: isMultiFile ? uploadAttachment.length : undefined,
+
+                            mentionInfo: isMentionsValid ? JSON.stringify(mentionsFinal) : undefined,
                         },
                         body: new URLSearchParams(),
                     };
@@ -247,7 +264,7 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
                 totalSize: gifData.totalSize,
                 width: gifData.width,
                 height: gifData.height,
-                msg: message,
+                msg: message.msg,
                 type: 1,
                 ttl: 0,
                 visibility: isGroupMessage ? 0 : undefined,
