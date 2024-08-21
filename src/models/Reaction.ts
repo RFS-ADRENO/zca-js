@@ -1,6 +1,16 @@
 import { appContext } from "../context.js";
 
-type TReaction = {
+export enum Reactions {
+    HEART = "/-heart",
+    LIKE = "/-strong",
+    HAHA = ":>",
+    WOW = ":o",
+    CRY = ":-((",
+    ANGRY = ":-h",
+    NONE = "",
+}
+
+export type TReaction = {
     actionId: string;
     msgId: string;
     cliMsgId: string;
@@ -10,7 +20,7 @@ type TReaction = {
     dName: string;
     content: {
         rMsg: { gMsgID: string; cMsgID: string; msgType: number }[];
-        rIcon: string;
+        rIcon: Reactions;
         rType: number;
         source: number;
     };

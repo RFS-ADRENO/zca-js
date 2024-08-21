@@ -1,5 +1,6 @@
 import { appContext } from "../context.js";
 import { Message } from "../models/Message.js";
+import { Reactions } from "../models/Reaction.js";
 import { decodeAES, encodeAES, request } from "../utils.js";
 
 export function addReactionFactory(serviceURL: string) {
@@ -10,7 +11,7 @@ export function addReactionFactory(serviceURL: string) {
      * @param message Message object to react to
      */
     return async function addReaction(
-        icon: ":>" | "/-strong" | "/-heart" | ":o" | ":-((" | ":-h" | "",
+        icon: Reactions,
         message: Message,
     ) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
@@ -21,27 +22,27 @@ export function addReactionFactory(serviceURL: string) {
         let rType, source;
 
         switch (icon) {
-            case ":>":
+            case Reactions.HAHA:
                 rType = 0;
                 source = 6;
                 break;
-            case "/-strong":
+            case Reactions.LIKE:
                 rType = 3;
                 source = 6;
                 break;
-            case "/-heart":
+            case Reactions.HEART:
                 rType = 5;
                 source = 6;
                 break;
-            case ":o":
+            case Reactions.WOW:
                 rType = 32;
                 source = 6;
                 break;
-            case ":-((":
+            case Reactions.CRY:
                 rType = 2;
                 source = 6;
                 break;
-            case ":-h":
+            case Reactions.ANGRY:
                 rType = 20;
                 source = 6;
                 break;
