@@ -1,5 +1,53 @@
 import { appContext } from "../context.js";
+import type { GroupSetting } from "../models/GroupEvent.js";
 import { decodeAES, encodeAES, request } from "../utils.js";
+
+export type GroupInfoResponse = {
+    removedsGroup: string[];
+    unchangedsGroup: string[];
+    gridInfoMap: GridInfoMap;
+};
+
+export type GridInfoMap = {
+    [groupId: string]: GroupInfo;
+};
+
+export type GroupInfo = {
+    groupId: string;
+    name: string;
+    desc: string;
+    type: number;
+    creatorId: string;
+    version: string;
+    avt: string;
+    fullAvt: string;
+    memberIds: any[];
+    adminIds: string[];
+    currentMems: any[];
+    updateMems: any[];
+    memVerList: string[];
+    admins: any[];
+    hasMoreMember: number;
+    subType: number;
+    totalMember: number;
+    maxMember: number;
+    setting: GroupSetting;
+    createdTime: number;
+    visibility: number;
+    globalId: string;
+    e2ee: number;
+    pendingApprove: PendingApprove;
+    extraInfo: ExtraInfo;
+};
+
+export type PendingApprove = {
+    time: number;
+    uids: null | string[];
+};
+
+export type ExtraInfo = {
+    enable_media_store: number;
+};
 
 export function getGroupInfoFactory(serviceURL: string) {
     /**
@@ -41,6 +89,6 @@ export function getGroupInfoFactory(serviceURL: string) {
 
         if (!decoded) throw new Error("Failed to decode message");
 
-        return JSON.parse(decoded).data;
+        return JSON.parse(decoded).data as GroupInfoResponse;
     };
 }
