@@ -1,7 +1,8 @@
 import { appContext } from "../context.js";
-import { decodeAES, encodeAES, makeURL, request } from "../utils.js";
+import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import { encodeAES, handleZaloResponse, makeURL, request } from "../utils.js";
 
-export interface User {
+export type FindUserResponse = {
     avatar: string;
     cover: string;
     status: string;
@@ -12,21 +13,23 @@ export interface User {
     uid: string;
     zalo_name: string;
     display_name: string;
-}
+};
 
 export function findUserFactory(serviceURL: string) {
     /**
      * Find user by phone number
      *
      * @param phoneNumber Phone number
+     * 
+     * @throws ZaloApiError
      */
     return async function findUser(phoneNumber: string) {
-        if (!appContext.secretKey) throw new Error("Secret key is not available");
-        if (!appContext.imei) throw new Error("IMEI is not available");
-        if (!appContext.cookie) throw new Error("Cookie is not available");
-        if (!appContext.userAgent) throw new Error("User agent is not available");
+        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
+        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
+        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
+        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
 
-        if (!phoneNumber) throw new Error("Missing phoneNumber");
+        if (!phoneNumber) throw new ZaloApiError("Missing phoneNumber");
         if (phoneNumber.startsWith("0")) {
             if (appContext.language == "vi") phoneNumber = "84" + phoneNumber.slice(1);
         }
@@ -40,7 +43,7 @@ export function findUserFactory(serviceURL: string) {
         };
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
-        if (!encryptedParams) throw new Error("Failed to encrypt message");
+        if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
         const finalServiceUrl = new URL(serviceURL);
         finalServiceUrl.searchParams.append("params", encryptedParams);
@@ -50,12 +53,10 @@ export function findUserFactory(serviceURL: string) {
                 params: encryptedParams,
             }),
         );
+        
+        const result = await handleZaloResponse<FindUserResponse>(response);
+        if (result.error && result.error.code != 216) throw new ZaloApiError(result.error.message, result.error.code);
 
-        if (!response.ok) throw new Error("Failed to find user: " + response.statusText);
-
-        const rawUserData = decodeAES(appContext.secretKey, (await response.json()).data);
-        if (!rawUserData) throw new Error("Failed to decrypt message");
-
-        return JSON.parse(rawUserData).data as User;
+        return result.data as FindUserResponse | null;
     };
 }

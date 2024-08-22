@@ -1,7 +1,8 @@
 import { appContext } from "../context.js";
-import { decodeAES, encodeAES, makeURL, request } from "../utils.js";
+import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import { encodeAES, handleZaloResponse, makeURL, request } from "../utils.js";
 
-export interface Sticker {
+export interface StickerDetailResponse {
     id: number;
     cateId: number;
     type: number;
@@ -17,16 +18,16 @@ export function getStickersDetailFactory(serviceURL: string) {
      * @param keyword Keyword to search for
      */
     return async function getStickersDetail(stickerIds: number | number[]) {
-        if (!appContext.secretKey) throw new Error("Secret key is not available");
-        if (!appContext.imei) throw new Error("IMEI is not available");
-        if (!appContext.cookie) throw new Error("Cookie is not available");
-        if (!appContext.userAgent) throw new Error("User agent is not available");
+        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
+        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
+        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
+        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
 
-        if (!stickerIds) throw new Error("Missing sticker id");
+        if (!stickerIds) throw new ZaloApiError("Missing sticker id");
         if (!Array.isArray(stickerIds)) stickerIds = [stickerIds];
-        if (stickerIds.length == 0) throw new Error("Missing sticker id");
+        if (stickerIds.length == 0) throw new ZaloApiError("Missing sticker id");
 
-        const stickers: Sticker[] = [];
+        const stickers: StickerDetailResponse[] = [];
         const tasks = stickerIds.map((stickerId) => getStickerDetail(stickerId));
         const tasksResult = await Promise.allSettled(tasks);
         tasksResult.forEach((result) => {
@@ -36,13 +37,13 @@ export function getStickersDetailFactory(serviceURL: string) {
         return stickers;
     };
 
-    async function getStickerDetail(stickerId: number): Promise<Sticker> {
+    async function getStickerDetail(stickerId: number): Promise<StickerDetailResponse> {
         const params = {
             sid: stickerId,
         };
 
         const encryptedParams = encodeAES(appContext.secretKey!, JSON.stringify(params));
-        if (!encryptedParams) throw new Error("Failed to encrypt message");
+        if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
         const finalServiceUrl = new URL(serviceURL);
         finalServiceUrl.pathname = finalServiceUrl.pathname + "/sticker_detail";
@@ -53,11 +54,9 @@ export function getStickersDetailFactory(serviceURL: string) {
             }),
         );
 
-        if (!response.ok) throw new Error("Failed to get sticker detail: " + response.statusText);
+        const result = await handleZaloResponse<StickerDetailResponse>(response);
+        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
 
-        const rawDetail = decodeAES(appContext.secretKey!, (await response.json()).data);
-        if (!rawDetail) throw new Error("Failed to decrypt message");
-
-        return JSON.parse(rawDetail).data as Sticker;
+        return result.data as StickerDetailResponse;
     }
 }

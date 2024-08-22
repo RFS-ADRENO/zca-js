@@ -1,9 +1,10 @@
 import { appContext } from "../context.js";
-import { decodeAES, encodeAES, request } from "../utils.js";
+import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import { encodeAES, handleZaloResponse, request } from "../utils.js";
 
 export type ChangeGroupNameResponse = {
     status: number;
-} | null;
+};
 
 export function changeGroupNameFactory(serviceURL: string) {
     /**
@@ -11,12 +12,14 @@ export function changeGroupNameFactory(serviceURL: string) {
      *
      * @param groupId Group ID
      * @param name New group name
+     * 
+     * @throws ZaloApiError
      */
     return async function changeGroupName(groupId: string, name: string) {
-        if (!appContext.secretKey) throw new Error("Secret key is not available");
-        if (!appContext.imei) throw new Error("IMEI is not available");
-        if (!appContext.cookie) throw new Error("Cookie is not available");
-        if (!appContext.userAgent) throw new Error("User agent is not available");
+        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
+        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
+        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
+        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
 
         if (name.length == 0) name = Date.now().toString();
 
@@ -27,7 +30,7 @@ export function changeGroupNameFactory(serviceURL: string) {
         };
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
-        if (!encryptedParams) throw new Error("Failed to encrypt params");
+        if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
         const response = await request(serviceURL, {
             method: "POST",
@@ -36,14 +39,9 @@ export function changeGroupNameFactory(serviceURL: string) {
             }),
         });
 
-        if (!response.ok) throw new Error("Failed to add user to group: " + response.statusText);
-        
-        const decoded = decodeAES(appContext.secretKey, (await response.json()).data);
+        const result = await handleZaloResponse<ChangeGroupNameResponse>(response);
+        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
 
-        if (!decoded) throw new Error("Failed to decode message");
-
-        const data = JSON.parse(decoded).data;
-        
-        return data as ChangeGroupNameResponse;
+        return result.data as ChangeGroupNameResponse;
     };
 }
