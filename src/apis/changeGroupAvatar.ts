@@ -1,7 +1,9 @@
 import { appContext } from "../context.js";
-import { encodeAES, request, getImageMetaData, getFullTimeFromMilisecond } from "../utils.js";
+import { encodeAES, request, getImageMetaData, getFullTimeFromMilisecond, decodeAES } from "../utils.js";
 import FormData from "form-data";
 import fs from "node:fs";
+
+export type ChangeGroupAvatarResponse = "" | null;
 
 export function changeGroupAvatarFactory(serviceURL: string) {
     /**
@@ -9,6 +11,8 @@ export function changeGroupAvatarFactory(serviceURL: string) {
      *
      * @param groupId Group ID
      * @param avatarPath Path to the image file
+     * 
+     * @returns empty string if success, null if failed
      */
     return async function changeGroupAvatar(groupId: string, avatarPath: string) {
         if (!appContext.secretKey) throw new Error("Secret key is not available");
@@ -45,7 +49,12 @@ export function changeGroupAvatarFactory(serviceURL: string) {
 
         if (!response.ok) throw new Error("Failed to upload avatar: " + response.statusText);
 
-        if ((await response.json()).error_code === 0) return true;
-        return false;
+        const responseJson = await response.json();
+
+        const decoded = decodeAES(appContext.secretKey, responseJson.data);
+
+        if (!decoded) throw new Error("Failed to decode message");
+
+        return JSON.parse(decoded).data as ChangeGroupAvatarResponse;
     };
 }

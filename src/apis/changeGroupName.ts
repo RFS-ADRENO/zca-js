@@ -1,5 +1,9 @@
 import { appContext } from "../context.js";
-import { encodeAES, request } from "../utils.js";
+import { decodeAES, encodeAES, request } from "../utils.js";
+
+export type ChangeGroupNameResponse = {
+    status: number;
+} | null;
 
 export function changeGroupNameFactory(serviceURL: string) {
     /**
@@ -33,7 +37,13 @@ export function changeGroupNameFactory(serviceURL: string) {
         });
 
         if (!response.ok) throw new Error("Failed to add user to group: " + response.statusText);
+        
+        const decoded = decodeAES(appContext.secretKey, (await response.json()).data);
 
-        return (await response.json()).data;
+        if (!decoded) throw new Error("Failed to decode message");
+
+        const data = JSON.parse(decoded).data;
+        
+        return data as ChangeGroupNameResponse;
     };
 }

@@ -2,6 +2,14 @@ import { appContext } from "../context.js";
 import { API } from "../index.js";
 import { decodeAES, encodeAES, request } from "../utils.js";
 
+export type CreateGroupResponse = {
+    groupType: number;
+    sucessMembers: string[];
+    groupId: string;
+    errorMembers: string[];
+    error_data: Record<string, any>;
+} | null;
+
 export function createGroupFactory(serviceURL: string, api: API) {
     /**
      * Create a new group
@@ -51,6 +59,6 @@ export function createGroupFactory(serviceURL: string, api: API) {
 
         if (options.avatarPath) await api.changeGroupAvatar(data.groupId, options.avatarPath);
 
-        return data;
+        return data as CreateGroupResponse;
     };
 }
