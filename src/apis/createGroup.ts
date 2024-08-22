@@ -15,7 +15,7 @@ export function createGroupFactory(serviceURL: string, api: API) {
      * Create a new group
      *
      * @param options Group options
-     * 
+     *
      * @throws ZaloApiError
      */
     return async function createGroup(options: { name?: string; members: string[]; avatarPath?: string }) {
@@ -53,8 +53,9 @@ export function createGroupFactory(serviceURL: string, api: API) {
 
         const createGroupResult = await handleZaloResponse<CreateGroupResponse>(response);
 
-        if (createGroupResult.error) throw new ZaloApiError(createGroupResult.error.message, createGroupResult.error.code);
-        
+        if (createGroupResult.error)
+            throw new ZaloApiError(createGroupResult.error.message, createGroupResult.error.code);
+
         const data = createGroupResult.data as CreateGroupResponse;
 
         if (options.avatarPath) await api.changeGroupAvatar(data.groupId, options.avatarPath).catch(console.error);

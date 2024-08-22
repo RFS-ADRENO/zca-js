@@ -25,7 +25,7 @@ export function sendStickerFactory(api: API) {
      * @param sticker Sticker object
      * @param threadId group or user id
      * @param type Message type (DirectMessage or GroupMessage)
-     * 
+     *
      * @throws ZaloApiError
      */
     return async function sendSticker(

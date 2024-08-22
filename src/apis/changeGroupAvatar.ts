@@ -2,13 +2,7 @@ import FormData from "form-data";
 import fs from "node:fs";
 import { appContext } from "../context.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import {
-    encodeAES,
-    getFullTimeFromMilisecond,
-    getImageMetaData,
-    handleZaloResponse,
-    request
-} from "../utils.js";
+import { encodeAES, getFullTimeFromMilisecond, getImageMetaData, handleZaloResponse, request } from "../utils.js";
 
 export type ChangeGroupAvatarResponse = "";
 

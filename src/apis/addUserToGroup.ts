@@ -5,7 +5,7 @@ import { encodeAES, handleZaloResponse, request } from "../utils.js";
 export type AddUserToGroupResponse = {
     errorMemebers: string[];
     error_data: Record<string, any>;
-}
+};
 
 export function addUserToGroupFactory(serviceURL: string) {
     /**
@@ -13,7 +13,7 @@ export function addUserToGroupFactory(serviceURL: string) {
      *
      * @param groupId Group ID
      * @param members User ID or list of user IDs to add
-     * 
+     *
      * @throws ZaloApiError
      */
     return async function addUserToGroup(groupId: string, members: string | string[]) {

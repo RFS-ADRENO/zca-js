@@ -13,7 +13,7 @@ export type { GroupInfoResponse, ExtraInfo, GridInfoMap, GroupInfo, PendingAppro
 export type { StickerDetailResponse } from "./apis/getStickersDetail.js";
 export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js";
 export type { MessageContent, Mention } from "./apis/sendMessage.js";
-export type {  } from "./apis/sendMessageAttachment.js";
+export type {} from "./apis/sendMessageAttachment.js";
 export type { SendStickerResponse } from "./apis/sendSticker.js";
 export type { UndoResponse } from "./apis/undo.js";
 export type { UploadAttachmentResponse, UploadAttachmentType, ImageData, FileData } from "./apis/uploadAttachment.js";

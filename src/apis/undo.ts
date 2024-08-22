@@ -16,7 +16,7 @@ export function undoFactory() {
      * Undo a message
      *
      * @param message Message or GroupMessage instance
-     * 
+     *
      * @throws ZaloApiError
      */
     return async function undo(message: Message | GroupMessage) {

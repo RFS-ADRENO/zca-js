@@ -12,7 +12,7 @@ export function changeGroupNameFactory(serviceURL: string) {
      *
      * @param groupId Group ID
      * @param name New group name
-     * 
+     *
      * @throws ZaloApiError
      */
     return async function changeGroupName(groupId: string, name: string) {

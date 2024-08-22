@@ -465,7 +465,7 @@ export async function handleZaloResponse<T = any>(response: Response) {
     if (!response.ok) {
         result.error = {
             message: "Request failed with status code " + response.status,
-        }
+        };
         return result;
     }
 
@@ -480,7 +480,7 @@ export async function handleZaloResponse<T = any>(response: Response) {
             result.error = {
                 message: jsonData.error_message,
                 code: jsonData.error_code,
-            }
+            };
             return result;
         }
 
@@ -494,7 +494,7 @@ export async function handleZaloResponse<T = any>(response: Response) {
             result.error = {
                 message: decodedData.error_message,
                 code: decodedData.error_code,
-            }
+            };
             return result;
         }
 
@@ -503,7 +503,7 @@ export async function handleZaloResponse<T = any>(response: Response) {
         console.error(error);
         result.error = {
             message: "Failed to parse response data",
-        }
+        };
     }
 
     return result;

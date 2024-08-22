@@ -20,7 +20,7 @@ export function findUserFactory(serviceURL: string) {
      * Find user by phone number
      *
      * @param phoneNumber Phone number
-     * 
+     *
      * @throws ZaloApiError
      */
     return async function findUser(phoneNumber: string) {
@@ -53,7 +53,7 @@ export function findUserFactory(serviceURL: string) {
                 params: encryptedParams,
             }),
         );
-        
+
         const result = await handleZaloResponse<FindUserResponse>(response);
         if (result.error && result.error.code != 216) throw new ZaloApiError(result.error.message, result.error.code);
 

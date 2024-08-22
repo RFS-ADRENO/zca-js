@@ -20,7 +20,7 @@ export function getStickersFactory(serviceURL: string) {
      *
      * @param keyword Keyword to search for
      * @returns Sticker IDs
-     * 
+     *
      * @throws ZaloApiError
      */
     return async function getStickers(keyword: string) {
@@ -52,7 +52,7 @@ export function getStickersFactory(serviceURL: string) {
 
         const result = await handleZaloResponse<StickerSuggestions>(response);
         if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
-        
+
         const suggestions = result.data as StickerSuggestions;
         const stickerIds: number[] = [];
 
