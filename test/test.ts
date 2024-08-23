@@ -1,5 +1,5 @@
 import path from "path";
-import { Zalo } from "../src/index.js";
+import { Reactions, Zalo } from "../src/index.js";
 import { MessageType } from "../src/models/Message.js";
 const zalo = new Zalo(
     {
@@ -32,12 +32,19 @@ listener.onMessage((message) => {
     console.log("Message:", message.threadId, message.data.content);
     switch (message.type) {
         case MessageType.DirectMessage:
-            api.addReaction(":>", message).then(console.log);
+            api.addReaction(Reactions.HAHA, message).then(console.log);
             if (!message.data.content || typeof message.data.content != "string") return;
             if (!message.isSelf) {
                 switch (message.data.content) {
                     case "reply": {
-                        api.sendMessage("reply", message.threadId, message.type, message).then(console.log);
+                        api.sendMessage(
+                            {
+                                msg: "reply",
+                                quote: message,
+                            },
+                            message.threadId,
+                            message.type,
+                        ).then(console.log);
                         break;
                     }
                     case "ping": {
