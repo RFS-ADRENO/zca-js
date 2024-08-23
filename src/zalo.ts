@@ -14,12 +14,11 @@ import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
 import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
-import { sendMessageFactory } from "./apis/sendMessage.js";
-import { sendMessageAttachmentFactory } from "./apis/sendMessageAttachment.js";
 import { sendStickerFactory } from "./apis/sendSticker.js";
 import { undoFactory } from "./apis/undo.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 import { checkUpdate } from "./update.js";
+import { sendMessageFactory } from "./apis/sendMessage.js";
 
 export type J2Cookies = {
     url: string;
@@ -110,7 +109,6 @@ export class API {
 
     public zpwServiceMap: Record<string, string[]>;
     public listener: Listener;
-    public sendMessage: ReturnType<typeof sendMessageFactory>;
     public addReaction: ReturnType<typeof addReactionFactory>;
     public getOwnId: typeof getOwnId;
     public getStickers: ReturnType<typeof getStickersFactory>;
@@ -118,7 +116,6 @@ export class API {
     public sendSticker: ReturnType<typeof sendStickerFactory>;
     public findUser: ReturnType<typeof findUserFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
-    public sendMessageAttachment: ReturnType<typeof sendMessageAttachmentFactory>;
     public undo: ReturnType<typeof undoFactory>;
     public getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
     public createGroup: ReturnType<typeof createGroupFactory>;
@@ -126,12 +123,12 @@ export class API {
     public removeUserFromGroup: ReturnType<typeof removeUserFromGroupFactory>;
     public addUserToGroup: ReturnType<typeof addUserToGroupFactory>;
     public changeGroupName: ReturnType<typeof changeGroupNameFactory>;
+    public sendMessage: ReturnType<typeof sendMessageFactory>;
 
     constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string) {
         this.secretKey = secretKey;
         this.zpwServiceMap = zpwServiceMap;
         this.listener = new Listener(wsUrl);
-        this.sendMessage = sendMessageFactory(this);
         this.addReaction = addReactionFactory(
             makeURL(`${zpwServiceMap.reaction[0]}/api/message/reaction`, {
                 zpw_ver: Zalo.API_VERSION,
@@ -159,7 +156,6 @@ export class API {
             }),
         );
         this.uploadAttachment = uploadAttachmentFactory(`${zpwServiceMap.file[0]}/api`, this);
-        this.sendMessageAttachment = sendMessageAttachmentFactory(`${zpwServiceMap.file[0]}/api`, this);
         this.undo = undoFactory();
         this.getGroupInfo = getGroupInfoFactory(
             makeURL(`${zpwServiceMap.group[0]}/api/group/getmg-v2`, {
@@ -198,5 +194,6 @@ export class API {
                 zpw_type: Zalo.API_TYPE,
             }),
         );
+        this.sendMessage = sendMessageFactory(this);
     }
 }
