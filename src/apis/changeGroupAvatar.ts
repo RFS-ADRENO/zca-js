@@ -1,7 +1,10 @@
-import { appContext } from "../context.js";
-import { encodeAES, request, getImageMetaData, getFullTimeFromMilisecond } from "../utils.js";
 import FormData from "form-data";
 import fs from "node:fs";
+import { appContext } from "../context.js";
+import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import { encodeAES, getFullTimeFromMilisecond, getImageMetaData, handleZaloResponse, request } from "../utils.js";
+
+export type ChangeGroupAvatarResponse = "";
 
 export function changeGroupAvatarFactory(serviceURL: string) {
     /**
@@ -9,12 +12,14 @@ export function changeGroupAvatarFactory(serviceURL: string) {
      *
      * @param groupId Group ID
      * @param avatarPath Path to the image file
+     *
+     * @throws ZaloApiError
      */
     return async function changeGroupAvatar(groupId: string, avatarPath: string) {
-        if (!appContext.secretKey) throw new Error("Secret key is not available");
-        if (!appContext.imei) throw new Error("IMEI is not available");
-        if (!appContext.cookie) throw new Error("Cookie is not available");
-        if (!appContext.userAgent) throw new Error("User agent is not available");
+        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
+        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
+        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
+        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
 
         const params: any = {
             grid: groupId,
@@ -35,7 +40,7 @@ export function changeGroupAvatarFactory(serviceURL: string) {
         });
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
-        if (!encryptedParams) throw new Error("Failed to encrypt params");
+        if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
         const response = await request(serviceURL + `&params=${encodeURIComponent(encryptedParams)}`, {
             method: "POST",
@@ -43,9 +48,9 @@ export function changeGroupAvatarFactory(serviceURL: string) {
             body: formData.getBuffer(),
         });
 
-        if (!response.ok) throw new Error("Failed to upload avatar: " + response.statusText);
+        const result = await handleZaloResponse<ChangeGroupAvatarResponse>(response);
+        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
 
-        if ((await response.json()).error_code === 0) return true;
-        return false;
+        return result.data as ChangeGroupAvatarResponse;
     };
 }

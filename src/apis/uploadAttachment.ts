@@ -2,14 +2,14 @@ import FormData from "form-data";
 import fs from "fs";
 import path from "path";
 import { appContext, UploadCallback } from "../context.js";
-import { API, Zalo } from "../index.js";
+import { API, Zalo, ZaloApiError } from "../index.js";
 import { MessageType } from "../models/Message.js";
 import {
-    decodeAES,
     encodeAES,
     getFileSize,
     getImageMetaData,
     getMd5LargeFileObject,
+    handleZaloResponse,
     makeURL,
     request,
 } from "../utils.js";
@@ -69,6 +69,7 @@ export type FileData = {
 };
 
 export type UploadAttachmentType = ImageResponse | VideoResponse | FileResponse;
+export type UploadAttachmentResponse = UploadAttachmentType[];
 
 type AttachmentData =
     | {
@@ -121,19 +122,21 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
      * @param filePaths Path to the file
      * @param threadId group or user id
      * @param type Message type (DirectMessage or GroupMessage)
+     *
+     * @throws ZaloApiError
      */
     return async function uploadAttachment(
         filePaths: string[],
         threadId: string,
         type: MessageType = MessageType.DirectMessage,
     ): Promise<UploadAttachmentType[]> {
-        if (!appContext.secretKey) throw new Error("Secret key is not available");
-        if (!appContext.imei) throw new Error("IMEI is not available");
-        if (!appContext.cookie) throw new Error("Cookie is not available");
-        if (!appContext.userAgent) throw new Error("User agent is not available");
+        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
+        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
+        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
+        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
 
-        if (!filePaths || filePaths.length == 0) throw new Error("Missing filePaths");
-        if (!threadId) throw new Error("Missing threadId");
+        if (!filePaths || filePaths.length == 0) throw new ZaloApiError("Missing filePaths");
+        if (!threadId) throw new ZaloApiError("Missing threadId");
 
         const chunkSize = appContext.settings!.features.sharefile.chunk_size_file;
         const isGroupMessage = type == MessageType.GroupMessage;
@@ -147,7 +150,7 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
 
         let clientId = Date.now();
         for (const filePath of filePaths) {
-            if (!fs.existsSync(filePath)) throw new Error("File not found");
+            if (!fs.existsSync(filePath)) throw new ZaloApiError("File not found");
 
             const extFile = path.extname(filePath).slice(1);
             const fileName = path.basename(filePath);
@@ -241,7 +244,7 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
         for (const data of attachmentsData) {
             for (let i = 0; i < data.params.totalChunk; i++) {
                 const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(data.params));
-                if (!encryptedParams) throw new Error("Failed to encrypt message");
+                if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
                 requests.push(
                     request(makeURL(url + urlType[data.fileType], Object.assign(query, { params: encryptedParams })), {
@@ -249,20 +252,20 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
                         headers: data.chunkContent[i].getHeaders(),
                         body: data.chunkContent[i].getBuffer(),
                     }).then(async (response) => {
-                        if (!response.ok) throw new Error("Failed to send message: " + response.statusText);
+                        /**
+                         * @todo better type rather than any
+                         */
+                        const result = await handleZaloResponse<any>(response);
+                        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
 
-                        let resDecode = decodeAES(appContext.secretKey!, (await response.json()).data);
-                        if (!resDecode) throw new Error("Failed to decode message");
-                        const resData = JSON.parse(resDecode);
-                        if (!resData.data) throw new Error("Failed to upload attachment: " + resData.error);
-
-                        if (resData.data.fileId != -1)
+                        const resData = result.data;
+                        if (resData && resData.fileId != -1)
                             await new Promise<void>((resolve) => {
                                 if (data.fileType == "video" || data.fileType == "others") {
                                     const uploadCallback: UploadCallback = async (wsData) => {
                                         let result = {
                                             fileType: data.fileType,
-                                            ...JSON.parse(resDecode).data,
+                                            ...resData,
                                             ...wsData,
                                             totalSize: data.fileData.totalSize,
                                             fileName: data.fileData.fileName,
@@ -274,7 +277,7 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
                                         resolve();
                                     };
 
-                                    appContext.uploadCallbacks.set(resData.data.fileId, uploadCallback);
+                                    appContext.uploadCallbacks.set(resData.fileId, uploadCallback);
                                 }
 
                                 if (data.fileType == "image") {
@@ -284,7 +287,7 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
                                         height: data.fileData.height,
                                         totalSize: data.fileData.totalSize,
                                         hdSize: data.fileData.totalSize,
-                                        ...JSON.parse(resDecode).data,
+                                        ...resData,
                                     };
                                     results.push(result);
                                     resolve();

@@ -447,3 +447,64 @@ export function getGroupEventType(act: string) {
 
     return GroupEventType.UNKNOWN;
 }
+
+type ZaloResponse<T> = {
+    data: T | null;
+    error: {
+        message: string;
+        code?: number;
+    } | null;
+};
+
+export async function handleZaloResponse<T = any>(response: Response) {
+    const result: ZaloResponse<T> = {
+        data: null,
+        error: null,
+    };
+
+    if (!response.ok) {
+        result.error = {
+            message: "Request failed with status code " + response.status,
+        };
+        return result;
+    }
+
+    try {
+        const jsonData: {
+            error_code: number;
+            error_message: string;
+            data: string;
+        } = await response.json();
+
+        if (jsonData.error_code != 0) {
+            result.error = {
+                message: jsonData.error_message,
+                code: jsonData.error_code,
+            };
+            return result;
+        }
+
+        const decodedData: {
+            error_code: number;
+            error_message: string;
+            data: T;
+        } = JSON.parse(decodeAES(appContext.secretKey!, jsonData.data)!);
+
+        if (decodedData.error_code != 0) {
+            result.error = {
+                message: decodedData.error_message,
+                code: decodedData.error_code,
+            };
+            return result;
+        }
+
+        result.data = decodedData.data;
+    } catch (error) {
+        console.error(error);
+        result.error = {
+            message: "Failed to parse response data",
+        };
+    }
+
+    return result;
+}

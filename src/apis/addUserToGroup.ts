@@ -1,5 +1,11 @@
 import { appContext } from "../context.js";
-import { encodeAES, request } from "../utils.js";
+import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import { encodeAES, handleZaloResponse, request } from "../utils.js";
+
+export type AddUserToGroupResponse = {
+    errorMemebers: string[];
+    error_data: Record<string, any>;
+};
 
 export function addUserToGroupFactory(serviceURL: string) {
     /**
@@ -7,12 +13,14 @@ export function addUserToGroupFactory(serviceURL: string) {
      *
      * @param groupId Group ID
      * @param members User ID or list of user IDs to add
+     *
+     * @throws ZaloApiError
      */
     return async function addUserToGroup(groupId: string, members: string | string[]) {
-        if (!appContext.secretKey) throw new Error("Secret key is not available");
-        if (!appContext.imei) throw new Error("IMEI is not available");
-        if (!appContext.cookie) throw new Error("Cookie is not available");
-        if (!appContext.userAgent) throw new Error("User agent is not available");
+        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
+        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
+        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
+        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
 
         if (!Array.isArray(members)) members = [members];
 
@@ -25,7 +33,7 @@ export function addUserToGroupFactory(serviceURL: string) {
         };
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
-        if (!encryptedParams) throw new Error("Failed to encrypt params");
+        if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
         const response = await request(serviceURL, {
             method: "POST",
@@ -34,8 +42,9 @@ export function addUserToGroupFactory(serviceURL: string) {
             }),
         });
 
-        if (!response.ok) throw new Error("Failed to add user to group: " + response.statusText);
+        const result = await handleZaloResponse<AddUserToGroupResponse>(response);
+        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
 
-        return (await response.json()).data;
+        return result.data as AddUserToGroupResponse;
     };
 }

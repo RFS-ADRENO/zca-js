@@ -1,8 +1,12 @@
 import { appContext } from "../context.js";
-import { API, Zalo } from "../index.js";
+import { API, Zalo, ZaloApiError } from "../index.js";
 import { MessageType } from "../models/Message.js";
-import { decodeAES, encodeAES, makeURL, request } from "../utils.js";
-import { Sticker } from "./getStickers.js";
+import { encodeAES, handleZaloResponse, makeURL, request } from "../utils.js";
+import { StickerDetailResponse } from "./getStickersDetail.js";
+
+export type SendStickerResponse = {
+    msgId: number;
+};
 
 export function sendStickerFactory(api: API) {
     const directMessageServiceURL = makeURL(`${api.zpwServiceMap.chat[0]}/api/message/sticker`, {
@@ -21,23 +25,25 @@ export function sendStickerFactory(api: API) {
      * @param sticker Sticker object
      * @param threadId group or user id
      * @param type Message type (DirectMessage or GroupMessage)
+     *
+     * @throws ZaloApiError
      */
     return async function sendSticker(
-        sticker: Sticker,
+        sticker: StickerDetailResponse,
         threadId: string,
         type: MessageType = MessageType.DirectMessage,
     ) {
-        if (!appContext.secretKey) throw new Error("Secret key is not available");
-        if (!appContext.imei) throw new Error("IMEI is not available");
-        if (!appContext.cookie) throw new Error("Cookie is not available");
-        if (!appContext.userAgent) throw new Error("User agent is not available");
+        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
+        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
+        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
+        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
 
-        if (!sticker) throw new Error("Missing sticker");
-        if (!threadId) throw new Error("Missing threadId");
+        if (!sticker) throw new ZaloApiError("Missing sticker");
+        if (!threadId) throw new ZaloApiError("Missing threadId");
 
-        if (!sticker.id) throw new Error("Missing sticker id");
-        if (!sticker.cateId) throw new Error("Missing sticker cateId");
-        if (!sticker.type) throw new Error("Missing sticker type");
+        if (!sticker.id) throw new ZaloApiError("Missing sticker id");
+        if (!sticker.cateId) throw new ZaloApiError("Missing sticker cateId");
+        if (!sticker.type) throw new ZaloApiError("Missing sticker type");
 
         const isGroupMessage = type === MessageType.GroupMessage;
 
@@ -53,7 +59,7 @@ export function sendStickerFactory(api: API) {
         };
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
-        if (!encryptedParams) throw new Error("Failed to encrypt message");
+        if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
         const finalServiceUrl = new URL(isGroupMessage ? groupMessageServiceURL : directMessageServiceURL);
         finalServiceUrl.searchParams.append("nretry", "0");
@@ -65,8 +71,9 @@ export function sendStickerFactory(api: API) {
             }),
         });
 
-        if (!response.ok) throw new Error("Failed to send message: " + response.statusText);
+        const result = await handleZaloResponse<SendStickerResponse>(response);
+        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
 
-        return decodeAES(appContext.secretKey, (await response.json()).data);
+        return result.data as SendStickerResponse;
     };
 }

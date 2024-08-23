@@ -175,7 +175,7 @@ export function sendMessageAttachmentFactory(serviceURL: string, api: API) {
                             hdSize: String(attachment.totalSize),
                             zsource: -1,
                             ttl: 0,
-                            jcp: "{\"convertible\":\"jxl\"}",
+                            jcp: '{"convertible":"jxl"}',
 
                             groupLayoutId: isMultiFile ? groupLayoutId : undefined,
                             isGroupLayout: isMultiFile ? 1 : undefined,
