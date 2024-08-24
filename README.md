@@ -10,9 +10,15 @@ This is an unofficial Zalo API for personal account. It work by simulating the b
 bun install zca-js # or npm install zca-js
 ```
 
+## Documentation
+
+See [API Documentation](https://zca.tdung.co/) for more details.
+
 ## Basic Usages
 
 ### Login
+
+**UPDATE**: You can now get all required information by using [ZaloDataExtractor](https://github.com/JustKemForFun/ZaloDataExtractor) extension. Just open the extension and copy the data to your clipboard.
 
 ```javascript
 import { Zalo } from "zca-js";
@@ -106,19 +112,23 @@ api.listener.on("message", (message) => {
     switch (message.type) {
         case MessageType.DirectMessage: {
             api.sendMessage(
-                "echo: " + message.data.content,
+                {
+                    msg: "echo: " + message.data.content,
+                    quote: message, // the message object to reply to (optional)
+                },
                 message.threadId,
                 message.type, // MessageType.DirectMessage
-                message, // the message object to reply to (optional)
             );
             break;
         }
         case MessageType.GroupMessage: {
             api.sendMessage(
-                "echo: " + message.data.content,
+                {
+                    msg: "echo: " + message.data.content,
+                    quote: message, // the message object to reply to (optional)
+                },
                 message.threadId,
                 message.type, // MessageType.GroupMessage
-                message, // the message object to reply to (optional)
             );
             break;
         }
@@ -126,17 +136,6 @@ api.listener.on("message", (message) => {
 });
 
 api.listener.start();
-```
-
-### Send files
-
-```javascript
-api.sendMessageAttachment(
-    "title",
-    [path.resolve("./assets/photo.png")], // array of file paths
-    message.threadId,
-    message.type, // MessageType.DirectMessage or MessageType.GroupMessage
-);
 ```
 
 ### Get/Send a sticker
