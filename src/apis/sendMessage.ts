@@ -2,22 +2,29 @@ import FormData from "form-data";
 import fs from "fs";
 import sharp from "sharp";
 import { appContext } from "../context.js";
-import { API, Zalo } from "../index.js";
+import { API, Zalo, ZaloApiError } from "../index.js";
 import { GroupMessage, Message, MessageType } from "../models/Message.js";
 import {
-    decodeAES,
     encodeAES,
     getClientMessageType,
     getFileExtension,
     getFileName,
     getGifMetaData,
     getMd5LargeFileObject,
+    handleZaloResponse,
     makeURL,
     removeUndefinedKeys,
-    request
+    request,
 } from "../utils.js";
 
-const additionalCharacter = "a";
+export type SendMessageResult = {
+    msgId: number;
+};
+
+export type SendMessageResponse = {
+    message: SendMessageResult | null;
+    attachment: SendMessageResult[];
+};
 
 const attachmentUrlType = {
     image: "photo_original/send?",
@@ -57,40 +64,36 @@ function prepareQMSG(quote: Message | GroupMessage) {
     return "";
 }
 
-async function send(data: SendType | SendType[], callback?: (data: any[]) => void): Promise<any[]> {
+async function send(data: SendType | SendType[]): Promise<SendMessageResult[]> {
     if (!Array.isArray(data)) data = [data];
 
-    let requests = [];
-    let results: any = [];
+    const requests: Promise<SendMessageResult>[] = [];
 
-    for (const d of data) {
+    for (const each of data) {
         requests.push(
-            request(d.url, {
-                method: "POST",
-                body: d.body,
-                headers: d.headers,
-            }).then(async (res) => {
-                if (!res.ok) throw new Error("Failed to send message: " + res.statusText);
+            (async () => {
+                const response = await request(each.url, {
+                    method: "POST",
+                    body: each.body,
+                    headers: each.headers,
+                });
 
-                let resDecode = decodeAES(appContext.secretKey!, (await res.json()).data);
-                if (!resDecode) throw new Error("Failed to decode message");
-                results.push(JSON.parse(resDecode));
-            }),
+                const result = await handleZaloResponse<SendMessageResult>(response);
+                if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
+
+                return result.data as SendMessageResult;
+            })(),
         );
     }
 
-    await Promise.all(requests);
-
-    if (callback) callback(results);
-
-    return results;
+    return await Promise.all(requests);
 }
 
 type SendType = {
     url: string;
     body?: BodyInit | null;
     headers?: Record<string, string>;
-}
+};
 
 type UpthumbType = {
     hdUrl: string;
@@ -101,17 +104,17 @@ type UpthumbType = {
 
 type AttachmentData =
     | {
-        query?: Record<string, string>;
-        fileType: "image" | "video" | "others";
-        body: URLSearchParams;
-        params: Record<string, any>;
-    }
+          query?: Record<string, string>;
+          fileType: "image" | "video" | "others";
+          body: URLSearchParams;
+          params: Record<string, any>;
+      }
     | {
-        query?: Record<string, string>;
-        fileType: "gif";
-        body: Buffer;
-        headers: Record<string, string>;
-    };
+          query?: Record<string, string>;
+          fileType: "gif";
+          body: Buffer;
+          headers: Record<string, string>;
+      };
 
 export type Mention = {
     /**
@@ -159,12 +162,12 @@ export function sendMessageFactory(api: API) {
                 zpw_ver: Zalo.API_VERSION,
                 zpw_type: Zalo.API_TYPE,
                 nretry: 0,
-            })
+            }),
         },
         attachment: {
             [MessageType.DirectMessage]: `${api.zpwServiceMap.file[0]}/api/message/`,
-            [MessageType.GroupMessage]: `${api.zpwServiceMap.file[0]}/api/group/`
-        }
+            [MessageType.GroupMessage]: `${api.zpwServiceMap.file[0]}/api/group/`,
+        },
     };
 
     function getGroupLayoutId() {
@@ -185,7 +188,7 @@ export function sendMessageFactory(api: API) {
         };
 
         const encryptedParams = encodeAES(appContext.secretKey!, JSON.stringify(params));
-        if (!encryptedParams) throw new Error("Failed to encrypt message");
+        if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
         let response = await request(
             makeURL(url + "upthumb?", {
@@ -200,34 +203,31 @@ export function sendMessageFactory(api: API) {
             },
         );
 
-        if (!response.ok) throw new Error("Failed to upload thumbnail: " + response.statusText);
-        let resDecode = decodeAES(appContext.secretKey!, (await response.json()).data);
-        if (!resDecode) throw new Error("Failed to decode thumbnail");
-        if (!JSON.parse(resDecode).data) {
-            throw new Error("Failed to upload file");
-        }
+        const result = await handleZaloResponse<UpthumbType>(response);
+        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
 
-        return JSON.parse(resDecode).data as UpthumbType;
+        return result.data as UpthumbType;
     }
 
     function handleMentions(type: MessageType, msg: string, mentions?: Mention[]) {
-        let totalMentionChars = 0;
-        let mentionsFinal = Array.isArray(mentions) && type == MessageType.GroupMessage
-            ? mentions
-                .filter((m) => m.pos >= 0 && m.uid && m.len > 0)
-                .map((m) => {
-                    totalMentionChars += m.len;
-                    return {
-                        pos: m.pos,
-                        uid: m.uid,
-                        len: m.len,
-                        type: m.uid == "-1" ? 1 : 0,
-                    };
-                })
-            : [];
+        let totalMentionLen = 0;
+        const mentionsFinal =
+            Array.isArray(mentions) && type == MessageType.GroupMessage
+                ? mentions
+                      .filter((m) => m.pos >= 0 && m.uid && m.len > 0)
+                      .map((m) => {
+                          totalMentionLen += m.len;
+                          return {
+                              pos: m.pos,
+                              uid: m.uid,
+                              len: m.len,
+                              type: m.uid == "-1" ? 1 : 0,
+                          };
+                      })
+                : [];
 
-        if (totalMentionChars > msg.length) {
-            msg += additionalCharacter.repeat(totalMentionChars - msg.length);
+        if (totalMentionLen > msg.length) {
+            throw new ZaloApiError("Invalid mentions: total mention characters exceed message length");
         }
 
         return {
@@ -237,9 +237,9 @@ export function sendMessageFactory(api: API) {
     }
 
     async function handleMessage({ msg, mentions, quote }: MessageContent, threadId: string, type: MessageType) {
-        if (!msg || msg.length == 0) throw new Error("Missing message content");
+        if (!msg || msg.length == 0) throw new ZaloApiError("Missing message content");
         const isValidInstance = quote instanceof Message || quote instanceof GroupMessage;
-        if (quote && !isValidInstance) throw new Error("Invalid quote message");
+        if (quote && !isValidInstance) throw new ZaloApiError("Invalid quote message");
         const isGroupMessage = type == MessageType.GroupMessage;
 
         const { mentionsFinal, msgFinal } = handleMentions(type, msg, mentions);
@@ -248,51 +248,51 @@ export function sendMessageFactory(api: API) {
         const quoteData = quote?.data;
         if (quoteData) {
             if (typeof quoteData.content != "string" && quoteData.msgType == "webchat") {
-                throw new Error("This kind of `webchat` quote type is not available");
+                throw new ZaloApiError("This kind of `webchat` quote type is not available");
             }
 
             if (quoteData.msgType == "group.poll") {
-                throw new Error("The `group.poll` quote type is not available");
+                throw new ZaloApiError("The `group.poll` quote type is not available");
             }
         }
 
         const isMentionsValid = mentionsFinal.length > 0 && isGroupMessage;
         const params = quote
             ? {
-                toid: isGroupMessage ? undefined : threadId,
-                grid: isGroupMessage ? threadId : undefined,
-                message: msg,
-                clientId: Date.now(),
-                mentionInfo: isMentionsValid ? JSON.stringify(mentionsFinal) : undefined,
-                qmsgOwner: quoteData!.uidFrom,
-                qmsgId: quoteData!.msgId,
-                qmsgCliId: quoteData!.cliMsgId,
-                qmsgType: getClientMessageType(quoteData!.msgType),
-                qmsgTs: quoteData!.ts,
-                qmsg: typeof quoteData!.content == "string" ? quoteData!.content : prepareQMSG(quote),
-                imei: isGroupMessage ? undefined : appContext.imei,
-                visibility: isGroupMessage ? 0 : undefined,
-                qmsgAttach: isGroupMessage ? JSON.stringify(prepareQMSGAttach(quote)) : undefined,
-                qmsgTTL: quoteData!.ttl,
-                ttl: 0,
-            }
+                  toid: isGroupMessage ? undefined : threadId,
+                  grid: isGroupMessage ? threadId : undefined,
+                  message: msg,
+                  clientId: Date.now(),
+                  mentionInfo: isMentionsValid ? JSON.stringify(mentionsFinal) : undefined,
+                  qmsgOwner: quoteData!.uidFrom,
+                  qmsgId: quoteData!.msgId,
+                  qmsgCliId: quoteData!.cliMsgId,
+                  qmsgType: getClientMessageType(quoteData!.msgType),
+                  qmsgTs: quoteData!.ts,
+                  qmsg: typeof quoteData!.content == "string" ? quoteData!.content : prepareQMSG(quote),
+                  imei: isGroupMessage ? undefined : appContext.imei,
+                  visibility: isGroupMessage ? 0 : undefined,
+                  qmsgAttach: isGroupMessage ? JSON.stringify(prepareQMSGAttach(quote)) : undefined,
+                  qmsgTTL: quoteData!.ttl,
+                  ttl: 0,
+              }
             : {
-                message: msg,
-                clientId: Date.now(),
-                mentionInfo: isMentionsValid ? JSON.stringify(mentionsFinal) : undefined,
-                imei: isGroupMessage ? undefined : appContext.imei,
-                ttl: 0,
-                visibility: isGroupMessage ? 0 : undefined,
-                toid: isGroupMessage ? undefined : threadId,
-                grid: isGroupMessage ? threadId : undefined,
-            };
+                  message: msg,
+                  clientId: Date.now(),
+                  mentionInfo: isMentionsValid ? JSON.stringify(mentionsFinal) : undefined,
+                  imei: isGroupMessage ? undefined : appContext.imei,
+                  ttl: 0,
+                  visibility: isGroupMessage ? 0 : undefined,
+                  toid: isGroupMessage ? undefined : threadId,
+                  grid: isGroupMessage ? threadId : undefined,
+              };
 
         for (const key in params) {
             if (params[key as keyof typeof params] === undefined) delete params[key as keyof typeof params];
         }
 
         const encryptedParams = encodeAES(appContext.secretKey!, JSON.stringify(params));
-        if (!encryptedParams) throw new Error("Failed to encrypt message");
+        if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
         const finalServiceUrl = new URL(serviceURLs.message[type]);
         if (quote) {
             finalServiceUrl.pathname = finalServiceUrl.pathname + "/quote";
@@ -306,11 +306,15 @@ export function sendMessageFactory(api: API) {
         return {
             url: finalServiceUrl.toString(),
             body: new URLSearchParams({ params: encryptedParams }),
-        }
+        };
     }
 
-    async function handleAttachment({ msg, attachments, mentions, quote }: MessageContent, threadId: string, type: MessageType) {
-        if (!attachments || attachments.length == 0) throw new Error("Missing attachments");
+    async function handleAttachment(
+        { msg, attachments, mentions, quote }: MessageContent,
+        threadId: string,
+        type: MessageType,
+    ) {
+        if (!attachments || attachments.length == 0) throw new ZaloApiError("Missing attachments");
 
         const firstExtFile = getFileExtension(attachments[0]);
         const isSingleFile = attachments.length == 1;
@@ -357,14 +361,15 @@ export function sendMessageFactory(api: API) {
                             hdSize: String(attachment.totalSize),
                             zsource: -1,
                             ttl: 0,
-                            jcp: "{\"convertible\":\"jxl\"}",
+                            jcp: '{"convertible":"jxl"}',
 
                             groupLayoutId: isMultiFile ? groupLayoutId : undefined,
                             isGroupLayout: isMultiFile ? 1 : undefined,
                             idInGroup: isMultiFile ? indexInGroupLayout-- : undefined,
                             totalItemInGroup: isMultiFile ? uploadAttachment.length : undefined,
 
-                            mentionInfo: isMentionsValid && canBeDesc && !quote ? JSON.stringify(mentionsFinal) : undefined,
+                            mentionInfo:
+                                isMentionsValid && canBeDesc && !quote ? JSON.stringify(mentionsFinal) : undefined,
                         },
                         body: new URLSearchParams(),
                     };
@@ -424,7 +429,7 @@ export function sendMessageFactory(api: API) {
 
             removeUndefinedKeys(data.params);
             const encryptedParams = encodeAES(appContext.secretKey!, JSON.stringify(data.params));
-            if (!encryptedParams) throw new Error("Failed to encrypt message");
+            if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
             data.body.append("params", encryptedParams);
             attachmentsData.push(data);
@@ -460,7 +465,7 @@ export function sendMessageFactory(api: API) {
 
             removeUndefinedKeys(params);
             const encryptedParams = encodeAES(appContext.secretKey!, JSON.stringify(params));
-            if (!encryptedParams) throw new Error("Failed to encrypt message");
+            if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
             attachmentsData.push({
                 query: {
@@ -490,7 +495,7 @@ export function sendMessageFactory(api: API) {
                 ),
                 body: data.body,
                 headers: data.fileType == "gif" ? data.headers : {},
-            })
+            });
         }
 
         return responses;
@@ -503,28 +508,31 @@ export function sendMessageFactory(api: API) {
      * @param threadId group or user id
      * @param type Message type (DirectMessage or GroupMessage)
      * @param quote Message or GroupMessage instance (optional), used for quoting
+     *
+     * @throws {ZaloApiError}
      */
     return async function sendMessage(
         message: MessageContent | string,
         threadId: string,
         type: MessageType = MessageType.DirectMessage,
     ) {
-        if (!appContext.secretKey) throw new Error("Secret key is not available");
-        if (!appContext.imei) throw new Error("IMEI is not available");
-        if (!appContext.cookie) throw new Error("Cookie is not available");
-        if (!appContext.userAgent) throw new Error("User agent is not available");
+        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
+        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
+        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
+        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
 
-        if (!message) throw new Error("Missing message content");
-        if (!threadId) throw new Error("Missing threadId");
+        if (!message) throw new ZaloApiError("Missing message content");
+        if (!threadId) throw new ZaloApiError("Missing threadId");
         if (typeof message == "string") message = { msg: message };
 
         let { msg, quote, attachments, mentions } = message;
 
-        if (!msg && (!attachments || attachments && attachments.length == 0)) throw new Error("Missing message content");
+        if (!msg && (!attachments || (attachments && attachments.length == 0)))
+            throw new ZaloApiError("Missing message content");
 
-        let responses: {
-            message: any | null;
-            attachment: any[];
+        const responses: {
+            message: SendMessageResult | null;
+            attachment: SendMessageResult[];
         } = {
             message: null,
             attachment: [],
@@ -535,22 +543,22 @@ export function sendMessageFactory(api: API) {
             const isSingleFile = attachments.length == 1;
 
             const canBeDesc = isSingleFile && ["jpg", "jpeg", "png", "webp"].includes(firstExtFile);
-            if (!canBeDesc && msg.length > 0 || msg.length > 0 && quote) {
+            if ((!canBeDesc && msg.length > 0) || (msg.length > 0 && quote)) {
+                // send message and attachment separately
                 await handleMessage(message, threadId, type).then(async (data) => {
-                    await send(data, (res) => responses.message = res[0]);
+                    responses.message = (await send(data))[0];
                 });
                 msg = "";
                 mentions = undefined;
             }
-            await handleAttachment({ msg, mentions, attachments, quote }, threadId, type).then(async (data) => {
-                await send(data, (res) => responses.attachment = res);
-            });
+            const handledData = await handleAttachment({ msg, mentions, attachments, quote }, threadId, type);
+            responses.attachment = await send(handledData);
+            msg = "";
         }
 
         if (msg.length > 0) {
-            await handleMessage(message, threadId, type).then(async (data) => {
-                await send(data, (res) => responses.message = res[0]);
-            });
+            const handledData = await handleMessage(message, threadId, type);
+            responses.message = (await send(handledData))[0];
         }
 
         return responses;
