@@ -170,6 +170,16 @@ export function sendMessageFactory(api: API) {
         },
     };
 
+    const { sharefile } = appContext.settings!.features;
+
+    function isExceedMaxFile(totalFile: number) {
+        return totalFile > sharefile.max_file;
+    }
+
+    function isExceedMaxFileSize(fileSize: number) {
+        return fileSize > sharefile.max_size_share_file_v3 * 1024 * 1024;
+    }
+
     function getGroupLayoutId() {
         return Date.now();
     }
@@ -436,8 +446,13 @@ export function sendMessageFactory(api: API) {
         }
 
         for (const gif of gifFiles) {
-            const _upthumb = await upthumb(gif, serviceURLs.attachment[MessageType.DirectMessage]);
             const gifData = await getGifMetaData(gif);
+            if (isExceedMaxFileSize(gifData.totalSize!))
+                throw new ZaloApiError(
+                    `File ${getFileName(gif)} size exceed maximum size of ${sharefile.max_size_share_file_v3}MB`,
+                );
+
+            const _upthumb = await upthumb(gif, serviceURLs.attachment[MessageType.DirectMessage]);
 
             const formData = new FormData();
             formData.append("chunkContent", await fs.promises.readFile(gif), {
@@ -529,6 +544,9 @@ export function sendMessageFactory(api: API) {
 
         if (!msg && (!attachments || (attachments && attachments.length == 0)))
             throw new ZaloApiError("Missing message content");
+
+        if (attachments && isExceedMaxFile(attachments.length))
+            throw new ZaloApiError("Exceed maximum file of " + sharefile.max_file);
 
         const responses: {
             message: SendMessageResult | null;
