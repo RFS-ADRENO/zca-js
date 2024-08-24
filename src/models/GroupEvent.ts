@@ -77,6 +77,7 @@ export class GroupEvent {
         this.type = type;
         this.data = data;
         this.threadId = data.groupId;
-        this.isSelf = data.updateMembers.some((member) => member.id == appContext.uid!);
+        this.isSelf =
+            data.updateMembers.some((member) => member.id == appContext.uid!) || data.sourceId == appContext.uid;
     }
 }

@@ -171,6 +171,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                                 JSON.parse(control.content.data),
                                 getGroupEventType(control.content.act),
                             );
+                            if (groupEvent.isSelf && !this.selfListen) continue;
                             this.emit("group_event", groupEvent);
                         }
                     }
@@ -183,6 +184,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     for (const react of reacts) {
                         react.content = JSON.parse(react.content);
                         const reactionObject = new Reaction(react, false);
+                        if (reactionObject.isSelf && !this.selfListen) continue;
 
                         this.emit("reaction", reactionObject);
                     }
@@ -190,6 +192,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     for (const reactGroup of reactGroups) {
                         reactGroup.content = JSON.parse(reactGroup.content);
                         const reactionObject = new Reaction(reactGroup, true);
+                        if (reactionObject.isSelf && !this.selfListen) continue;
 
                         this.emit("reaction", reactionObject);
                     }
