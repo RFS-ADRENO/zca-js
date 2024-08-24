@@ -19,6 +19,7 @@ import { undoFactory } from "./apis/undo.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 import { checkUpdate } from "./update.js";
 import { sendMessageFactory } from "./apis/sendMessage.js";
+import { getCookieFactory } from "./apis/getCookie.js";
 
 export type J2Cookies = {
     url: string;
@@ -124,6 +125,7 @@ export class API {
     public addUserToGroup: ReturnType<typeof addUserToGroupFactory>;
     public changeGroupName: ReturnType<typeof changeGroupNameFactory>;
     public sendMessage: ReturnType<typeof sendMessageFactory>;
+    public getCookie: ReturnType<typeof getCookieFactory>;
 
     constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string) {
         this.secretKey = secretKey;
@@ -195,5 +197,6 @@ export class API {
             }),
         );
         this.sendMessage = sendMessageFactory(this);
+        this.getCookie = getCookieFactory();
     }
 }
