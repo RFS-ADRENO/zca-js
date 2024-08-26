@@ -1,5 +1,5 @@
 import { appContext } from "../context.js";
-import { Zalo, ZaloApiError } from "../index.js";
+import { API, Zalo, ZaloApiError } from "../index.js";
 import { GroupMessage, Message, MessageType } from "../models/Message.js";
 import { encodeAES, handleZaloResponse, request } from "../utils.js";
 
@@ -7,10 +7,10 @@ export type UndoResponse = {
     status: number;
 };
 
-export function undoFactory() {
+export function undoFactory(api: API) {
     const URLType = {
-        [MessageType.DirectMessage]: `https://tt-chat2-wpa.chat.zalo.me/api/message/undo?zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}`,
-        [MessageType.GroupMessage]: `https://tt-group-wpa.chat.zalo.me/api/group/undomsg?zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}`,
+        [MessageType.DirectMessage]: `${api.zpwServiceMap.chat[0]}/api/message/undo?zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}`,
+        [MessageType.GroupMessage]: `${api.zpwServiceMap.group[0]}/api/group/undomsg?zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}`,
     };
     /**
      * Undo a message
@@ -25,9 +25,11 @@ export function undoFactory() {
         if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
         if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
 
+        if (!(message instanceof Message) && !(message instanceof GroupMessage))
+            throw new ZaloApiError(
+                "Expected Message or GroupMessage instance, got: " + (message as unknown as any)?.constructor?.name,
+            );
         if (!message.data.quote) throw new ZaloApiError("Message does not have quote");
-        if (message instanceof Message && message.data.uidFrom !== String(message.data.quote.ownerId))
-            throw new ZaloApiError("You can only undo your own messages");
 
         const params: any = {
             msgId: message.data.quote.globalMsgId,

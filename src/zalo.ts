@@ -158,7 +158,7 @@ export class API {
             }),
         );
         this.uploadAttachment = uploadAttachmentFactory(`${zpwServiceMap.file[0]}/api`, this);
-        this.undo = undoFactory();
+        this.undo = undoFactory(this);
         this.getGroupInfo = getGroupInfoFactory(
             makeURL(`${zpwServiceMap.group[0]}/api/group/getmg-v2`, {
                 zpw_ver: Zalo.API_VERSION,
