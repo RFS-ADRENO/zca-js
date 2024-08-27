@@ -15,7 +15,7 @@ export function undoFactory(api: API) {
     /**
      * Undo a message
      *
-     * @param message Message or GroupMessage instance
+     * @param message Message or GroupMessage instance that has quote to undo
      *
      * @throws ZaloApiError
      */
