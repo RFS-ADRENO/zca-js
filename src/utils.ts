@@ -437,6 +437,8 @@ export function removeUndefinedKeys(e: Record<string, any>) {
 }
 
 export function getGroupEventType(act: string) {
+    if (act == "join_request") return GroupEventType.JOIN_REQUEST;
+    if (act == "join_reject") return GroupEventType.JOIN_REJECT;
     if (act == "join") return GroupEventType.JOIN;
     if (act == "leave") return GroupEventType.LEAVE;
     if (act == "remove_member") return GroupEventType.REMOVE_MEMBER;
@@ -444,6 +446,8 @@ export function getGroupEventType(act: string) {
     if (act == "update_setting") return GroupEventType.UPDATE_SETTING;
     if (act == "update") return GroupEventType.UPDATE;
     if (act == "new_link") return GroupEventType.NEW_LINK;
+    if (act == "add_admin") return GroupEventType.ADD_ADMIN;
+    if (act == "remove_admin") return GroupEventType.REMOVE_ADMIN;
 
     return GroupEventType.UNKNOWN;
 }

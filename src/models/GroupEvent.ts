@@ -1,6 +1,8 @@
 import { appContext } from "../context.js";
 
 export enum GroupEventType {
+    JOIN_REQUEST,
+    JOIN_REJECT,
     JOIN,
     LEAVE,
     REMOVE_MEMBER,
@@ -9,6 +11,9 @@ export enum GroupEventType {
     UPDATE_SETTING,
     UPDATE,
     NEW_LINK,
+
+    ADD_ADMIN,
+    REMOVE_ADMIN,
 
     UNKNOWN,
 }
@@ -37,7 +42,7 @@ export type GroupSetting = {
     banDuration: number;
 };
 
-type TGroupEvent = {
+type TGroupEventBase = {
     subType: number;
     groupId: string;
     creatorId: string;
@@ -67,6 +72,23 @@ type TGroupEvent = {
     e2ee: number;
 };
 
+type TGroupEventJoinRequest = {
+    uids: string[];
+    totalPending: number;
+    groupId: string;
+    time: string;
+};
+
+type TGroupEventDeclineRequest = {
+    totalPending: number;
+    groupId: string;
+    userIds: string[];
+    reviewer: string;
+    time: string;
+};
+
+type TGroupEvent = TGroupEventBase | TGroupEventJoinRequest | TGroupEventDeclineRequest;
+
 export class GroupEvent {
     type: GroupEventType;
     data: TGroupEvent;
@@ -78,6 +100,28 @@ export class GroupEvent {
         this.data = data;
         this.threadId = data.groupId;
         this.isSelf =
-            data.updateMembers.some((member) => member.id == appContext.uid!) || data.sourceId == appContext.uid;
+            // (data.updateMembers && data.updateMembers.some((member) => member.id == appContext.uid!)) ||
+            // data.sourceId == appContext.uid ||
+            // data.reviewer == appContext.uid;
+            isGroupEventJoinRequest(data)
+                ? false
+                : isGroupEventDeclineRequest(data)
+                  ? data.reviewer == appContext.uid || data.userIds.includes(appContext.uid!)
+                  : data.updateMembers.some((member) => member.id == appContext.uid!) ||
+                    data.sourceId == appContext.uid;
     }
+}
+
+function isGroupEventJoinRequest(data: TGroupEvent): data is TGroupEventJoinRequest {
+    return (
+        (data as TGroupEventJoinRequest).hasOwnProperty("uids") &&
+        (data as TGroupEventJoinRequest).hasOwnProperty("totalPending")
+    );
+}
+
+function isGroupEventDeclineRequest(data: TGroupEvent): data is TGroupEventDeclineRequest {
+    return (
+        (data as TGroupEventDeclineRequest).hasOwnProperty("userIds") &&
+        (data as TGroupEventDeclineRequest).hasOwnProperty("reviewer")
+    );
 }

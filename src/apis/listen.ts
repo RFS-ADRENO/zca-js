@@ -168,7 +168,9 @@ export class Listener extends EventEmitter<ListenerEvents> {
                             this.emit("upload_attachment", data);
                         } else if (control.content.act_type == "group") {
                             const groupEvent = new GroupEvent(
-                                JSON.parse(control.content.data),
+                                typeof control.content.data == "string"
+                                    ? JSON.parse(control.content.data)
+                                    : control.content.data,
                                 getGroupEventType(control.content.act),
                             );
                             if (groupEvent.isSelf && !this.selfListen) continue;
