@@ -20,6 +20,7 @@ import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 import { checkUpdate } from "./update.js";
 import { sendMessageFactory } from "./apis/sendMessage.js";
 import { getCookieFactory } from "./apis/getCookie.js";
+import { removeMessageFactory } from "./apis/deleteMessage.js";
 
 export type J2Cookies = {
     url: string;
@@ -126,6 +127,7 @@ export class API {
     public changeGroupName: ReturnType<typeof changeGroupNameFactory>;
     public sendMessage: ReturnType<typeof sendMessageFactory>;
     public getCookie: ReturnType<typeof getCookieFactory>;
+    public deleteMessage: ReturnType<typeof removeMessageFactory>;
 
     constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string) {
         this.secretKey = secretKey;
@@ -198,5 +200,6 @@ export class API {
         );
         this.sendMessage = sendMessageFactory(this);
         this.getCookie = getCookieFactory();
+        this.deleteMessage = removeMessageFactory(this);
     }
 }
