@@ -2,7 +2,6 @@ import { appContext } from "../context.js";
 
 export enum GroupEventType {
     JOIN_REQUEST,
-    JOIN_REJECT,
     JOIN,
     LEAVE,
     REMOVE_MEMBER,
@@ -79,15 +78,7 @@ export type TGroupEventJoinRequest = {
     time: string;
 };
 
-export type TGroupEventRejectRequest = {
-    totalPending: number;
-    groupId: string;
-    userIds: string[];
-    reviewer: string;
-    time: string;
-};
-
-export type TGroupEvent = TGroupEventBase | TGroupEventJoinRequest | TGroupEventRejectRequest;
+export type TGroupEvent = TGroupEventBase | TGroupEventJoinRequest;
 
 export type GroupEvent =
     | {
@@ -97,13 +88,7 @@ export type GroupEvent =
           isSelf: boolean;
       }
     | {
-          type: GroupEventType.JOIN_REJECT;
-          data: TGroupEventRejectRequest;
-          threadId: string;
-          isSelf: boolean;
-      }
-    | {
-          type: Exclude<GroupEventType, GroupEventType.JOIN_REQUEST | GroupEventType.JOIN_REJECT>;
+          type: Exclude<GroupEventType, GroupEventType.JOIN_REQUEST>;
           data: TGroupEventBase;
           threadId: string;
           isSelf: boolean;
@@ -113,14 +98,6 @@ export function initializeGroupEvent(data: TGroupEvent, type: GroupEventType): G
     const threadId = data.groupId;
     if (type == GroupEventType.JOIN_REQUEST) {
         return { type, data: data as TGroupEventJoinRequest, threadId, isSelf: false };
-    } else if (type == GroupEventType.JOIN_REJECT) {
-        const rejectData = data as TGroupEventRejectRequest;
-        return {
-            type,
-            data: rejectData,
-            threadId,
-            isSelf: rejectData.reviewer == appContext.uid || rejectData.userIds.includes(appContext.uid!),
-        };
     } else {
         const baseData = data as TGroupEventBase;
 

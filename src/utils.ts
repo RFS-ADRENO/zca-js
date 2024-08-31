@@ -438,7 +438,6 @@ export function removeUndefinedKeys(e: Record<string, any>) {
 
 export function getGroupEventType(act: string) {
     if (act == "join_request") return GroupEventType.JOIN_REQUEST;
-    if (act == "join_reject") return GroupEventType.JOIN_REJECT;
     if (act == "join") return GroupEventType.JOIN;
     if (act == "leave") return GroupEventType.LEAVE;
     if (act == "remove_member") return GroupEventType.REMOVE_MEMBER;

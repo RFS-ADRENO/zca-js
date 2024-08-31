@@ -168,8 +168,10 @@ export class Listener extends EventEmitter<ListenerEvents> {
                             this.emit("upload_attachment", data);
                         } else if (control.content.act_type == "group") {
                             // 31/08/2024
-                            // for some reason, Zalo send both join and join_reject event
-                            // when admin approve join requests, how do we deal with this?
+                            // for some reason, Zalo send both join and join_reject event when admin approve join requests
+                            // Zalo itself doesn't seem to handle this properly either, so we gonna ignore the join_reject event
+
+                            if (control.content.act == "join_reject") continue;
 
                             const groupEventData: TGroupEvent =
                                 typeof control.content.data == "string"
