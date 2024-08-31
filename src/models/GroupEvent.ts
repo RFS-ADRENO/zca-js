@@ -42,7 +42,7 @@ export type GroupSetting = {
     banDuration: number;
 };
 
-type TGroupEventBase = {
+export type TGroupEventBase = {
     subType: number;
     groupId: string;
     creatorId: string;
@@ -72,14 +72,14 @@ type TGroupEventBase = {
     e2ee: number;
 };
 
-type TGroupEventJoinRequest = {
+export type TGroupEventJoinRequest = {
     uids: string[];
     totalPending: number;
     groupId: string;
     time: string;
 };
 
-type TGroupEventDeclineRequest = {
+export type TGroupEventRejectRequest = {
     totalPending: number;
     groupId: string;
     userIds: string[];
@@ -87,41 +87,50 @@ type TGroupEventDeclineRequest = {
     time: string;
 };
 
-type TGroupEvent = TGroupEventBase | TGroupEventJoinRequest | TGroupEventDeclineRequest;
+export type TGroupEvent = TGroupEventBase | TGroupEventJoinRequest | TGroupEventRejectRequest;
 
-export class GroupEvent {
-    type: GroupEventType;
-    data: TGroupEvent;
-    threadId: string;
-    isSelf: boolean;
+export type GroupEvent =
+    | {
+          type: GroupEventType.JOIN_REQUEST;
+          data: TGroupEventJoinRequest;
+          threadId: string;
+          isSelf: boolean;
+      }
+    | {
+          type: GroupEventType.JOIN_REJECT;
+          data: TGroupEventRejectRequest;
+          threadId: string;
+          isSelf: boolean;
+      }
+    | {
+          type: Exclude<GroupEventType, GroupEventType.JOIN_REQUEST | GroupEventType.JOIN_REJECT>;
+          data: TGroupEventBase;
+          threadId: string;
+          isSelf: boolean;
+      };
 
-    constructor(data: TGroupEvent, type: GroupEventType) {
-        this.type = type;
-        this.data = data;
-        this.threadId = data.groupId;
-        this.isSelf =
-            // (data.updateMembers && data.updateMembers.some((member) => member.id == appContext.uid!)) ||
-            // data.sourceId == appContext.uid ||
-            // data.reviewer == appContext.uid;
-            isGroupEventJoinRequest(data)
-                ? false
-                : isGroupEventDeclineRequest(data)
-                  ? data.reviewer == appContext.uid || data.userIds.includes(appContext.uid!)
-                  : data.updateMembers.some((member) => member.id == appContext.uid!) ||
-                    data.sourceId == appContext.uid;
+export function initializeGroupEvent(data: TGroupEvent, type: GroupEventType): GroupEvent {
+    const threadId = data.groupId;
+    if (type == GroupEventType.JOIN_REQUEST) {
+        return { type, data: data as TGroupEventJoinRequest, threadId, isSelf: false };
+    } else if (type == GroupEventType.JOIN_REJECT) {
+        const rejectData = data as TGroupEventRejectRequest;
+        return {
+            type,
+            data: rejectData,
+            threadId,
+            isSelf: rejectData.reviewer == appContext.uid || rejectData.userIds.includes(appContext.uid!),
+        };
+    } else {
+        const baseData = data as TGroupEventBase;
+
+        return {
+            type,
+            data: baseData,
+            threadId,
+            isSelf:
+                baseData.updateMembers.some((member) => member.id == appContext.uid!) ||
+                baseData.sourceId == appContext.uid,
+        };
     }
-}
-
-function isGroupEventJoinRequest(data: TGroupEvent): data is TGroupEventJoinRequest {
-    return (
-        (data as TGroupEventJoinRequest).hasOwnProperty("uids") &&
-        (data as TGroupEventJoinRequest).hasOwnProperty("totalPending")
-    );
-}
-
-function isGroupEventDeclineRequest(data: TGroupEvent): data is TGroupEventDeclineRequest {
-    return (
-        (data as TGroupEventDeclineRequest).hasOwnProperty("userIds") &&
-        (data as TGroupEventDeclineRequest).hasOwnProperty("reviewer")
-    );
 }

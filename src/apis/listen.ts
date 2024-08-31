@@ -1,9 +1,9 @@
 import EventEmitter from "events";
 import WebSocket from "ws";
 import { appContext } from "../context.js";
+import { type GroupEvent, initializeGroupEvent, TGroupEvent } from "../models/GroupEvent.js";
 import { GroupMessage, Message, Reaction, Undo } from "../models/index.js";
 import { decodeEventData, getGroupEventType, logger } from "../utils.js";
-import { GroupEvent } from "../models/GroupEvent.js";
 
 type MessageEventData = Message | GroupMessage;
 
@@ -167,10 +167,17 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
                             this.emit("upload_attachment", data);
                         } else if (control.content.act_type == "group") {
-                            const groupEvent = new GroupEvent(
+                            // 31/08/2024
+                            // for some reason, Zalo send both join and join_reject event
+                            // when admin approve join requests, how do we deal with this?
+
+                            const groupEventData: TGroupEvent =
                                 typeof control.content.data == "string"
                                     ? JSON.parse(control.content.data)
-                                    : control.content.data,
+                                    : control.content.data;
+
+                            const groupEvent = initializeGroupEvent(
+                                groupEventData,
                                 getGroupEventType(control.content.act),
                             );
                             if (groupEvent.isSelf && !this.selfListen) continue;
