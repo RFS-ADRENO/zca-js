@@ -3,7 +3,7 @@ import { API, Zalo, ZaloApiError } from "../index.js";
 import { GroupMessage, Message, MessageType } from "../models/Message.js";
 import { encodeAES, handleZaloResponse, removeUndefinedKeys, request } from "../utils.js";
 
-export type RemoveMessageResponse = {
+export type DeleteMessageResponse = {
     status: number;
 };
 
@@ -62,9 +62,9 @@ export function removeMessageFactory(api: API) {
             }),
         });
 
-        const result = await handleZaloResponse<RemoveMessageResponse>(response);
+        const result = await handleZaloResponse<DeleteMessageResponse>(response);
         if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
 
-        return result.data as RemoveMessageResponse;
+        return result.data as DeleteMessageResponse;
     };
 }
