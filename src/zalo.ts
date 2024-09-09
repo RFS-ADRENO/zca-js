@@ -4,16 +4,19 @@ import { getServerInfo, login } from "./apis/login.js";
 import { appContext, Options } from "./context.js";
 import { logger, makeURL } from "./utils.js";
 
+import { acceptFriendRequestFactory } from "./apis/acceptFriendRequest.js";
 import { addReactionFactory } from "./apis/addReaction.js";
 import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
 import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
 import { changeGroupNameFactory } from "./apis/changeGroupName.js";
 import { createGroupFactory } from "./apis/createGroup.js";
+import { fetchAccountInfoFactory } from "./apis/fetchAccountInfo.js";
 import { findUserFactory } from "./apis/findUser.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
 import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
+import { sendFriendRequestFactory } from "./apis/sendFriendRequest.js";
 import { sendMessageFactory } from "./apis/sendMessage.js";
 import { sendMessageAttachmentFactory } from "./apis/sendMessageAttachment.js";
 import { sendStickerFactory } from "./apis/sendSticker.js";
@@ -126,6 +129,7 @@ export class API {
     public removeUserFromGroup: ReturnType<typeof removeUserFromGroupFactory>;
     public addUserToGroup: ReturnType<typeof addUserToGroupFactory>;
     public changeGroupName: ReturnType<typeof changeGroupNameFactory>;
+    public fetchAccountInfo: ReturnType<typeof fetchAccountInfoFactory>;
 
     constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string) {
         this.secretKey = secretKey;
@@ -194,6 +198,12 @@ export class API {
         );
         this.changeGroupName = changeGroupNameFactory(
             makeURL(`${zpwServiceMap.group[0]}/api/group/updateinfo`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+            }),
+        );
+        this.fetchAccountInfo = fetchAccountInfoFactory(
+            makeURL(`${zpwServiceMap.profile[0]}/api/social/profile/me-v2`, {
                 zpw_ver: Zalo.API_VERSION,
                 zpw_type: Zalo.API_TYPE,
             }),
