@@ -1,13 +1,14 @@
 import { Zalo } from "../zalo.js";
+import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { appContext } from "../context.js";
 import { encodeAES, request } from "../utils.js";
 
 export function fetchAccountInfoFactory(serviceURL: string) {
     return async function fetchAccountInfo() {
-        if (!appContext.secretKey) throw new Error("Secret key is not available");
-        if (!appContext.imei) throw new Error("IMEI is not available");
-        if (!appContext.cookie) throw new Error("Cookie is not available");
-        if (!appContext.userAgent) throw new Error("User agent is not available");
+        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
+        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
+        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
+        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
 
         const params: any = {
             params: {
@@ -21,7 +22,7 @@ export function fetchAccountInfoFactory(serviceURL: string) {
         };
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
-        if (!encryptedParams) throw new Error("Failed to encrypt params");
+        if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
         const response = await request(serviceURL, {
             method: "POST",
@@ -30,7 +31,7 @@ export function fetchAccountInfoFactory(serviceURL: string) {
             }),
         });
 
-        if (!response.ok) throw new Error("Failed fetch account info: " + response.statusText);
+        if (!response.ok) throw new ZaloApiError("Failed fetch account info: " + response.statusText);
 
         return (await response.json()).data;
     }
