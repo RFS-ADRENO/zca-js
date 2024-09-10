@@ -1,7 +1,15 @@
 import { Zalo } from "../zalo.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { appContext } from "../context.js";
-import { encodeAES, request } from "../utils.js";
+import { encodeAES, handleZaloResponse, request } from "../utils.js";
+
+export type FetchAccountInfoResponse = {
+    userId: string | number;
+    name?: string;
+    avatarUrl?: string;
+    email?: string;
+    phoneNumber?: string;
+};
 
 export function fetchAccountInfoFactory(serviceURL: string) {
     return async function fetchAccountInfo() {
@@ -31,8 +39,9 @@ export function fetchAccountInfoFactory(serviceURL: string) {
             }),
         });
 
-        if (!response.ok) throw new ZaloApiError("Failed fetch account info: " + response.statusText);
+        const result = await handleZaloResponse<FetchAccountInfoResponse>(response);
+        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
 
-        return (await response.json()).data;
+        return result.data as FetchAccountInfoResponse;
     }
 }
