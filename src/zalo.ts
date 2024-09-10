@@ -9,6 +9,7 @@ import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
 import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
 import { changeGroupNameFactory } from "./apis/changeGroupName.js";
 import { createGroupFactory } from "./apis/createGroup.js";
+import { fetchAccountInfoFactory } from "./apis/fetchAccountInfo.js";
 import { findUserFactory } from "./apis/findUser.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
 import { getStickersFactory } from "./apis/getStickers.js";
@@ -128,6 +129,7 @@ export class API {
     public sendMessage: ReturnType<typeof sendMessageFactory>;
     public getCookie: ReturnType<typeof getCookieFactory>;
     public deleteMessage: ReturnType<typeof removeMessageFactory>;
+    public fetchAccountInfo: ReturnType<typeof fetchAccountInfoFactory>;
 
     constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string) {
         this.secretKey = secretKey;
@@ -201,5 +203,11 @@ export class API {
         this.sendMessage = sendMessageFactory(this);
         this.getCookie = getCookieFactory();
         this.deleteMessage = removeMessageFactory(this);
+        this.fetchAccountInfo = fetchAccountInfoFactory(
+            makeURL(`${zpwServiceMap.profile[0]}/api/social/profile/me-v2`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+            }),
+        );
     }
 }
