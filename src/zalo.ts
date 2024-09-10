@@ -212,7 +212,7 @@ export class API {
             }),
         );
         this.fetchGroupInfo = fetchGroupInfoFactory(
-            makeURL(`${zpwServiceMap.group[0]}/api/social/profile/me-v2`, {
+            makeURL(`${zpwServiceMap.group_poll[0]}/api/group/getmg-v2`, {
                 zpw_ver: Zalo.API_VERSION,
                 zpw_type: Zalo.API_TYPE,
             }),
