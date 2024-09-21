@@ -129,6 +129,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-bun.lockb
 cookies.json
 /.dev
+*.local

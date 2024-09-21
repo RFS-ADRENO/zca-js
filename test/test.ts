@@ -1,6 +1,10 @@
 import path from "path";
 import { Reactions, Zalo } from "../src/index.js";
 import { MessageType } from "../src/models/Message.js";
+
+import { fileURLToPath } from "url";
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 const zalo = new Zalo(
     {
         cookie: "",
@@ -71,9 +75,11 @@ listener.onMessage((message) => {
                 if (args[0] == "find" && args[1]) {
                     api.findUser(args[1]).then(console.log);
                 } else if (args[0] == "get") {
-                    api.sendMessageAttachment(
-                        "hi",
-                        [path.resolve("./test/a.png")],
+                    api.sendMessage(
+                        {
+                            msg: "Hi",
+                            attachments: [path.resolve(__dirname, "a.png")],
+                        },
                         message.threadId,
                         message.type,
                     ).then(console.log);

@@ -81,13 +81,17 @@ export class Listener extends EventEmitter<ListenerEvents> {
                 host: new URL(this.url).host,
                 origin: "https://chat.zalo.me",
                 prgama: "no-cache",
-                "sec-websocket-extensions": "permessage-deflate; client_max_window_bits",
-                "sec-websocket-version": "13",
-                upgrade: "websocket",
                 "user-agent": this.userAgent,
                 cookie: this.cookie,
             },
+            perMessageDeflate: true
         });
+
+
+        ws.onerror = (e) => {
+            // error occurred, should kill the conenction
+            // and reconnect (TODO)
+        }
 
         ws.onopen = () => {
             this.onConnectedCallback();
