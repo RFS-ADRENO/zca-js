@@ -290,7 +290,7 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
                         if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
 
                         const resData = result.data;
-                        if (resData && resData.fileId != -1)
+                        if (resData && resData.fileId != -1 && resData.photoId != -1)
                             await new Promise<void>((resolve) => {
                                 if (data.fileType == "video" || data.fileType == "others") {
                                     const uploadCallback: UploadCallback = async (wsData) => {
