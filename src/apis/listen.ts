@@ -99,6 +99,11 @@ export class Listener extends EventEmitter<ListenerEvents> {
             this.emit("closed");
         };
 
+        ws.onerror = (event) => {
+            this.onErrorCallback(event);
+            this.emit("error", event);
+        }
+
         ws.onmessage = async (event) => {
             const { data } = event;
             if (!(data instanceof Buffer)) return;
