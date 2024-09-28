@@ -94,7 +94,7 @@ export class Zalo {
         // Zalo currently responds with setttings instead of settings
         // they might fix this in the future, so we should have a fallback just in case
         appContext.settings = serverInfo.setttings || serverInfo.settings;
-        
+
         appContext.extraVer = serverInfo.extra_ver;
 
         logger.info("Logged in as", loginData.data.uid);

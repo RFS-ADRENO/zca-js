@@ -37,7 +37,7 @@ type AppContextBase = {
             sharefile: ShareFileSettings;
         };
     };
-    extraVer: ExtraVer
+    extraVer: ExtraVer;
 };
 
 export type Options = {

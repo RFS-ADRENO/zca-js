@@ -53,9 +53,9 @@ export function getUserInfoFactory(api: API) {
 
     /**
      * Get user info using user id
-     * 
+     *
      * @param userId user id
-     * 
+     *
      * @throws ZaloApiError
      */
     return async function getUserInfo(userId: string) {
