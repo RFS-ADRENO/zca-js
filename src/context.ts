@@ -37,11 +37,23 @@ type AppContextBase = {
             sharefile: ShareFileSettings;
         };
     };
+    extraVer: ExtraVer
 };
 
 export type Options = {
     selfListen: boolean;
     checkUpdate: boolean;
+};
+
+type ExtraVer = {
+    phonebook: number;
+    conv_label: string;
+    friend: string;
+    ver_sticker_giphy_suggest: number;
+    ver_giphy_cate: number;
+    alias: string;
+    ver_sticker_cate_list: number;
+    block_friend: string;
 };
 
 const _5_MINUTES = 5 * 60 * 1000;

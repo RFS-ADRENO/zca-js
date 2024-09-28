@@ -23,6 +23,7 @@ import { checkUpdate } from "./update.js";
 import { sendMessageFactory } from "./apis/sendMessage.js";
 import { getCookieFactory } from "./apis/getCookie.js";
 import { removeMessageFactory } from "./apis/deleteMessage.js";
+import { getUserInfoFactory } from "./apis/getUserInfo.js";
 
 export type J2Cookies = {
     url: string;
@@ -93,6 +94,8 @@ export class Zalo {
         // Zalo currently responds with setttings instead of settings
         // they might fix this in the future, so we should have a fallback just in case
         appContext.settings = serverInfo.setttings || serverInfo.settings;
+        
+        appContext.extraVer = serverInfo.extra_ver;
 
         logger.info("Logged in as", loginData.data.uid);
 
@@ -132,6 +135,7 @@ export class API {
     public deleteMessage: ReturnType<typeof removeMessageFactory>;
     public fetchAccountInfo: ReturnType<typeof fetchAccountInfoFactory>;
     public fetchGroupInfo: ReturnType<typeof fetchGroupInfoFactory>;
+    public getUserInfo: ReturnType<typeof getUserInfoFactory>;
 
     constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string) {
         this.secretKey = secretKey;
@@ -217,5 +221,6 @@ export class API {
                 zpw_type: Zalo.API_TYPE,
             }),
         );
+        this.getUserInfo = getUserInfoFactory(this);
     }
 }
