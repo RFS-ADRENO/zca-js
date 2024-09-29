@@ -21,12 +21,12 @@ export function fetchAccountInfoFactory(serviceURL: string) {
         const params: any = {
             params: {
                 avatar_size: 120,
-                imei: appContext.imei
+                imei: appContext.imei,
             },
             zpw_ver: Zalo.API_VERSION,
             zpw_type: Zalo.API_TYPE,
             os: 8,
-            browser: 0
+            browser: 0,
         };
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
@@ -43,5 +43,5 @@ export function fetchAccountInfoFactory(serviceURL: string) {
         if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
 
         return result.data as FetchAccountInfoResponse;
-    }
+    };
 }

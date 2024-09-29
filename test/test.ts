@@ -71,9 +71,11 @@ listener.onMessage((message) => {
                 if (args[0] == "find" && args[1]) {
                     api.findUser(args[1]).then(console.log);
                 } else if (args[0] == "get") {
-                    api.sendMessageAttachment(
-                        "hi",
-                        [path.resolve("./test/a.png")],
+                    api.sendMessage(
+                        {
+                            msg: "hi",
+                            attachments: [path.resolve("./test/a.png")],
+                        },
                         message.threadId,
                         message.type,
                     ).then(console.log);

@@ -37,6 +37,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
     private cipherKey?: string;
 
     private selfListen;
+    private pingInterval?: Timer;
 
     constructor(url: string) {
         super();
@@ -99,12 +100,17 @@ export class Listener extends EventEmitter<ListenerEvents> {
             this.emit("closed");
         };
 
+        ws.onerror = (event) => {
+            this.onErrorCallback(event);
+            this.emit("error", event);
+        };
+
         ws.onmessage = async (event) => {
             const { data } = event;
             if (!(data instanceof Buffer)) return;
 
             const encodedHeader = data.subarray(0, 4);
-            const [n, cmd, s] = getHeader(encodedHeader); // what is n, s?
+            const [version, cmd, subCmd] = getHeader(encodedHeader);
 
             try {
                 const dataToDecode = data.subarray(4);
@@ -113,11 +119,43 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
                 const parsed = JSON.parse(decodedData);
 
-                if (n == 1 && cmd == 1 && s == 1 && parsed.hasOwnProperty("key")) {
+                if (version == 1 && cmd == 1 && subCmd == 1 && parsed.hasOwnProperty("key")) {
                     this.cipherKey = parsed.key;
+
+                    if (this.pingInterval) clearInterval(this.pingInterval);
+
+                    const ping = () => {
+                        const payload = {
+                            version: 1,
+                            cmd: 2,
+                            subCmd: 1,
+                            data: { eventId: Date.now() },
+                        };
+                        const encodedData = new TextEncoder().encode(JSON.stringify(payload.data));
+                        const dataLength = encodedData.length;
+
+                        const data = new DataView(Buffer.alloc(4 + dataLength).buffer);
+                        data.setUint8(0, payload.version);
+                        data.setInt32(1, payload.cmd, true);
+                        data.setInt8(3, payload.subCmd);
+
+                        encodedData.forEach((e, i) => {
+                            data.setUint8(4 + i, e);
+                        });
+
+                        logger.verbose(new Date().toLocaleString(), "PING");
+                        ws.send(data);
+                    };
+
+                    this.pingInterval = setInterval(
+                        () => {
+                            ping();
+                        },
+                        3 * 60 * 1000,
+                    );
                 }
 
-                if (n == 1 && cmd == 501 && s == 0) {
+                if (version == 1 && cmd == 501 && subCmd == 0) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { msgs } = parsedData;
                     for (const msg of msgs) {
@@ -134,7 +172,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     }
                 }
 
-                if (n == 1 && cmd == 521 && s == 0) {
+                if (version == 1 && cmd == 521 && subCmd == 0) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { groupMsgs } = parsedData;
                     for (const msg of groupMsgs) {
@@ -151,7 +189,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     }
                 }
 
-                if (n == 1 && cmd == 601 && s == 0) {
+                if (version == 1 && cmd == 601 && subCmd == 0) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { controls } = parsedData;
                     for (const control of controls) {
@@ -209,7 +247,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     }
                 }
 
-                if (n == 1 && cmd == 3000 && s == 0) {
+                if (version == 1 && cmd == 3000 && subCmd == 0) {
                     console.log();
                     logger.error("Another connection is opened, closing this one");
                     console.log();

@@ -28,13 +28,13 @@ export function fetchGroupInfoFactory(serviceURL: string) {
 
         const params: any = {
             params: {
-                gridVerMap: {}
+                gridVerMap: {},
             },
             zpw_ver: Zalo.API_VERSION,
-            zpw_type: Zalo.API_TYPE
+            zpw_type: Zalo.API_TYPE,
         };
-        
-        if (typeof groupId === 'object') {
+
+        if (typeof groupId === "object") {
             for (const i in groupId) {
                 if (groupId.hasOwnProperty(i)) {
                     params.params.gridVerMap[String(i)] = 0;
@@ -43,10 +43,10 @@ export function fetchGroupInfoFactory(serviceURL: string) {
         } else {
             params.params.gridVerMap[String(groupId)] = 0;
         }
-        
+
         params.params.gridVerMap = JSON.stringify(params.params.gridVerMap);
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
-        
+
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
         const response = await request(serviceURL, {
