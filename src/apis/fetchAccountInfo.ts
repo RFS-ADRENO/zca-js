@@ -4,7 +4,7 @@ import { appContext } from "../context.js";
 import { encodeAES, handleZaloResponse, request } from "../utils.js";
 
 export type FetchAccountInfoResponse = {
-    userId: string | number;
+    userId: string;
     name?: string;
     avatarUrl?: string;
     email?: string;

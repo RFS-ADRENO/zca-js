@@ -63,6 +63,7 @@ export function getUserInfoFactory(api: API) {
         if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
         if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
         if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
+        if (!appContext.language) throw new ZaloApiError("Language is not available");
 
         if (!userId) throw new ZaloApiError("Missing user id");
 
@@ -70,7 +71,7 @@ export function getUserInfoFactory(api: API) {
             phonebook_version: appContext.extraVer!.phonebook,
             friend_pversion_map: [`${userId}_0`],
             avatar_size: 120,
-            language: "vi",
+            language: appContext.language,
             show_online_status: 1,
             imei: appContext.imei,
         };
