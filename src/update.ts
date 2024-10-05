@@ -2,7 +2,7 @@ import { compare } from "semver";
 import { logger } from "./utils.js";
 import { appContext } from "./context.js";
 
-const VERSION = "1.4.0";
+const VERSION = "1.4.1";
 const NPM_REGISTRY = "https://registry.npmjs.org/zca-js";
 
 export async function checkUpdate() {
