@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "node:fs";
 import { J2Cookies, Zalo } from "../src/index.js";
 import { MessageType } from "../src/models/Message.js";
 const zalo = new Zalo({
