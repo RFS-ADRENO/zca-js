@@ -13,4 +13,4 @@ A clear and concise question about what. Ex. When to use API [...]
 A clear and concise description of what you want to
 
 **Additional context**
-Add any other context or screenshots about the feature request here.
+Add any other context or screenshots about the question here.

@@ -14,7 +14,7 @@ export default {
         "form-data",
         "node:fs",
         "crypto-js",
-        "crypto",
+        "node:crypto",
         "sharp",
         "pako",
         "spark-md5",

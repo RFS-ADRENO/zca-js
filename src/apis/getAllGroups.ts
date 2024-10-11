@@ -2,6 +2,7 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { handleZaloResponse, request } from "../utils.js";
 
 export type GetAllGroupsResponse = {
+    version: string;
     gridInfoMap: Record<string, string>;
 };
 

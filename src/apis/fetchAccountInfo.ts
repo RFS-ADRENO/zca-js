@@ -1,41 +1,47 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { appContext } from "../context.js";
-import { encodeAES, handleZaloResponse, request } from "../utils.js";
+import { handleZaloResponse, request } from "../utils.js";
 
 export type FetchAccountInfoResponse = {
     userId: string;
-    name?: string;
-    avatarUrl?: string;
-    email?: string;
-    phoneNumber?: string;
+    username: string;
+    displayName: string;
+    zaloName: string;
+    avatar: string;
+    bgavatar: string;
+    cover: string;
+    gender: number;
+    dob: number;
+    sdob: string;
+    status: string;
+    phoneNumber: string;
+    isFr: number;
+    isBlocked: number;
+    lastActionTime: number;
+    lastUpdateTime: number;
+    isActive: number;
+    key: number;
+    type: number;
+    isActivePC: number;
+    isActiveWeb: number;
+    isValid: number;
+    userKey: string;
+    accountStatus: number;
+    oaInfo: any;
+    user_mode: number;
+    globalId: string;
+    bizPkg: {
+        label: any;
+        pkgId: number;
+    };
+    createdTs: number;
+    oa_status: any;
 };
 
 export function fetchAccountInfoFactory(serviceURL: string) {
     return async function fetchAccountInfo() {
-        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
-        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
-        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
-        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
-
-        const params: any = {
-            params: {
-                avatar_size: 120,
-                imei: appContext.imei,
-            },
-            zpw_ver: appContext.API_VERSION,
-            zpw_type: appContext.API_TYPE,
-            os: 8,
-            browser: 0,
-        };
-
-        const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
-        if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
         const response = await request(serviceURL, {
-            method: "POST",
-            body: new URLSearchParams({
-                params: encryptedParams,
-            }),
+            method: "GET",
         });
 
         const result = await handleZaloResponse<FetchAccountInfoResponse>(response);

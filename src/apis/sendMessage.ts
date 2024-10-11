@@ -1,5 +1,5 @@
 import FormData from "form-data";
-import fs from "fs";
+import fs from "node:fs";
 import sharp from "sharp";
 import { appContext } from "../context.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
