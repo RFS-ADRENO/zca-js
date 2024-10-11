@@ -12,6 +12,7 @@ import { createGroupFactory } from "./apis/createGroup.js";
 import { fetchAccountInfoFactory } from "./apis/fetchAccountInfo.js";
 import { findUserFactory } from "./apis/findUser.js";
 import { getAllFriendsFactory } from "./apis/getAllFriends.js";
+import { getAllGroupsFactory } from "./apis/getAllGroups.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
 import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
@@ -51,7 +52,7 @@ export type Credentials = {
 
 export class Zalo {
     public static readonly API_TYPE = 30;
-    public static readonly API_VERSION = 643;
+    public static readonly API_VERSION = 645;
 
     private enableEncryptParam = true;
 
@@ -135,6 +136,7 @@ export class API {
     public deleteMessage: ReturnType<typeof removeMessageFactory>;
     public fetchAccountInfo: ReturnType<typeof fetchAccountInfoFactory>;
     public getAllFriends: ReturnType<typeof getAllFriendsFactory>;
+    public getAllGroups: ReturnType<typeof getAllGroupsFactory>;
     public getUserInfo: ReturnType<typeof getUserInfoFactory>;
 
     constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string) {
@@ -217,6 +219,12 @@ export class API {
         );
         this.getAllFriends = getAllFriendsFactory(
             makeURL(`${zpwServiceMap.profile[0]}/api/social/friend/getfriends`, {
+                zpw_ver: Zalo.API_VERSION,
+                zpw_type: Zalo.API_TYPE,
+            }),
+        );
+        this.getAllGroups = getAllGroupsFactory(
+            makeURL(`${zpwServiceMap.group_poll[0]}/api/group/getlg/v4`, {
                 zpw_ver: Zalo.API_VERSION,
                 zpw_type: Zalo.API_TYPE,
             }),
