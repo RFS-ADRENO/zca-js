@@ -1,7 +1,9 @@
 import { appContext } from "../context.js";
-import { API, Zalo, ZaloApiError } from "../index.js";
+import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { GroupMessage, Message, MessageType } from "../models/Message.js";
 import { encodeAES, handleZaloResponse, request } from "../utils.js";
+
+import type { API } from "../zalo.js";
 
 export type UndoResponse = {
     status: number;
@@ -9,8 +11,8 @@ export type UndoResponse = {
 
 export function undoFactory(api: API) {
     const URLType = {
-        [MessageType.DirectMessage]: `${api.zpwServiceMap.chat[0]}/api/message/undo?zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}`,
-        [MessageType.GroupMessage]: `${api.zpwServiceMap.group[0]}/api/group/undomsg?zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}`,
+        [MessageType.DirectMessage]: `${api.zpwServiceMap.chat[0]}/api/message/undo?zpw_ver=${appContext.API_VERSION}&zpw_type=${appContext.API_TYPE}`,
+        [MessageType.GroupMessage]: `${api.zpwServiceMap.group[0]}/api/group/undomsg?zpw_ver=${appContext.API_VERSION}&zpw_type=${appContext.API_TYPE}`,
     };
     /**
      * Undo a message

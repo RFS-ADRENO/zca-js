@@ -1,8 +1,10 @@
 import { appContext } from "../context.js";
-import { API, Zalo, ZaloApiError } from "../index.js";
 import { MessageType } from "../models/Message.js";
 import { encodeAES, handleZaloResponse, makeURL, request } from "../utils.js";
 import { StickerDetailResponse } from "./getStickersDetail.js";
+
+import type { API } from "../zalo.js";
+import { ZaloApiError } from "../Errors/ZaloApiError.js";
 
 export type SendStickerResponse = {
     msgId: number;
@@ -10,13 +12,13 @@ export type SendStickerResponse = {
 
 export function sendStickerFactory(api: API) {
     const directMessageServiceURL = makeURL(`${api.zpwServiceMap.chat[0]}/api/message/sticker`, {
-        zpw_ver: Zalo.API_VERSION,
-        zpw_type: Zalo.API_TYPE,
+        zpw_ver: appContext.API_VERSION,
+        zpw_type: appContext.API_TYPE,
     });
 
     const groupMessageServiceURL = makeURL(`${api.zpwServiceMap.group[0]}/api/group/sticker`, {
-        zpw_ver: Zalo.API_VERSION,
-        zpw_type: Zalo.API_TYPE,
+        zpw_ver: appContext.API_VERSION,
+        zpw_type: appContext.API_TYPE,
     });
 
     /**

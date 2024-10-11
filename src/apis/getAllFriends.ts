@@ -1,4 +1,3 @@
-import { Zalo } from "../zalo.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { appContext } from "../context.js";
 import { encodeAES, handleZaloResponse, request } from "../utils.js";
@@ -30,8 +29,8 @@ export function getAllFriendsFactory(serviceURL: string) {
                 avatar_size: 120,
                 actiontime: 0,
             },
-            zpw_ver: Zalo.API_VERSION,
-            zpw_type: Zalo.API_TYPE,
+            zpw_ver: appContext.API_VERSION,
+            zpw_type: appContext.API_TYPE,
         };
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));

@@ -1,5 +1,4 @@
 import { appContext } from "../context.js";
-import { Zalo } from "../index.js";
 import { decryptResp, getSignKey, makeURL, ParamsEncryptor, request } from "../utils.js";
 
 export async function login(encryptParams: boolean) {
@@ -44,8 +43,8 @@ export async function getServerInfo(encryptParams: boolean) {
         const response = await request(
             makeURL("https://wpa.chat.zalo.me/api/login/getServerInfo", {
                 imei: appContext.imei,
-                type: Zalo.API_TYPE,
-                client_version: Zalo.API_VERSION,
+                type: appContext.API_TYPE,
+                client_version: appContext.API_VERSION,
                 computer_name: "Web",
                 signkey: encryptedParams.params.signkey,
             }),
@@ -78,14 +77,14 @@ async function getEncryptParam(imei: string, language: string, encryptParams: bo
         params.params = encrypted_data;
     }
 
-    params.type = Zalo.API_TYPE;
-    params.client_version = Zalo.API_VERSION;
+    params.type = appContext.API_TYPE;
+    params.client_version = appContext.API_VERSION;
     params.signkey =
         type == "getserverinfo"
             ? getSignKey(type, {
                   imei: appContext.imei,
-                  type: Zalo.API_TYPE,
-                  client_version: Zalo.API_VERSION,
+                  type: appContext.API_TYPE,
+                  client_version: appContext.API_VERSION,
                   computer_name: "Web",
               })
             : getSignKey(type, params);
@@ -99,7 +98,7 @@ async function getEncryptParam(imei: string, language: string, encryptParams: bo
 async function _encryptParam(data: Record<string, any>, encryptParams: boolean) {
     if (encryptParams) {
         const encryptor = new ParamsEncryptor({
-            type: Zalo.API_TYPE,
+            type: appContext.API_TYPE,
             imei: data.imei,
             firstLaunchTime: Date.now(),
         });

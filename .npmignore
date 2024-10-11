@@ -5,3 +5,4 @@ test
 
 bun.lockb
 package-lock.json
+tsconfig.json

@@ -72,9 +72,13 @@ class CallbacksMap extends Map<string, UploadCallback> {
 type AppContextExtended = {
     uploadCallbacks: CallbacksMap;
     options: Options;
+    readonly API_TYPE: number;
+    readonly API_VERSION: number;
 };
 
 export const appContext: Partial<AppContextBase> & AppContextExtended = {
+    API_TYPE: 30,
+    API_VERSION: 645,
     uploadCallbacks: new CallbacksMap(),
     options: {
         selfListen: false,

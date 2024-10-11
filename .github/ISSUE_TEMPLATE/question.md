@@ -3,7 +3,7 @@ name: Question
 about: Questions arising during use.
 title: "[Question] Some question..."
 labels: question
-assignees: ''
+assignees: ""
 ---
 
 **Ask the questions you want!**

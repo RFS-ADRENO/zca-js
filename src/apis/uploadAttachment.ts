@@ -1,7 +1,7 @@
 import FormData from "form-data";
 import fs from "fs";
 import { appContext, UploadCallback } from "../context.js";
-import { API, Zalo, ZaloApiError } from "../index.js";
+import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { MessageType } from "../models/Message.js";
 import {
     encodeAES,
@@ -116,7 +116,7 @@ const urlType = {
     others: "asyncfile/upload",
 };
 
-export function uploadAttachmentFactory(serviceURL: string, api: API) {
+export function uploadAttachmentFactory(serviceURL: string) {
     const { sharefile } = appContext.settings!.features;
 
     function isExceedMaxFile(totalFile: number) {
@@ -159,8 +159,8 @@ export function uploadAttachmentFactory(serviceURL: string, api: API) {
         let attachmentsData: AttachmentData[] = [];
         let url = `${serviceURL}/${isGroupMessage ? "group" : "message"}/`;
         const query = {
-            zpw_ver: Zalo.API_VERSION,
-            zpw_type: Zalo.API_TYPE,
+            zpw_ver: appContext.API_VERSION,
+            zpw_type: appContext.API_TYPE,
             type: isGroupMessage ? "11" : "2",
         };
 

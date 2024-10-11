@@ -2,7 +2,7 @@ import FormData from "form-data";
 import fs from "fs";
 import sharp from "sharp";
 import { appContext } from "../context.js";
-import { API, Zalo, ZaloApiError } from "../index.js";
+import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { GroupMessage, Message, MessageType } from "../models/Message.js";
 import {
     encodeAES,
@@ -16,6 +16,8 @@ import {
     removeUndefinedKeys,
     request,
 } from "../utils.js";
+
+import type { API } from "../zalo.js";
 
 export type SendMessageResult = {
     msgId: number;
@@ -154,13 +156,13 @@ export function sendMessageFactory(api: API) {
     const serviceURLs = {
         message: {
             [MessageType.DirectMessage]: makeURL(`${api.zpwServiceMap.chat[0]}/api/message`, {
-                zpw_ver: Zalo.API_VERSION,
-                zpw_type: Zalo.API_TYPE,
+                zpw_ver: appContext.API_VERSION,
+                zpw_type: appContext.API_TYPE,
                 nretry: 0,
             }),
             [MessageType.GroupMessage]: makeURL(`${api.zpwServiceMap.group[0]}/api/group`, {
-                zpw_ver: Zalo.API_VERSION,
-                zpw_type: Zalo.API_TYPE,
+                zpw_ver: appContext.API_VERSION,
+                zpw_type: appContext.API_TYPE,
                 nretry: 0,
             }),
         },
@@ -202,8 +204,8 @@ export function sendMessageFactory(api: API) {
 
         let response = await request(
             makeURL(url + "upthumb?", {
-                zpw_ver: Zalo.API_VERSION,
-                zpw_type: Zalo.API_TYPE,
+                zpw_ver: appContext.API_VERSION,
+                zpw_type: appContext.API_TYPE,
                 params: encryptedParams,
             }),
             {
@@ -501,8 +503,8 @@ export function sendMessageFactory(api: API) {
                     serviceURLs.attachment[type] + attachmentUrlType[data.fileType],
                     Object.assign(
                         {
-                            zpw_ver: Zalo.API_VERSION,
-                            zpw_type: Zalo.API_TYPE,
+                            zpw_ver: appContext.API_VERSION,
+                            zpw_type: appContext.API_TYPE,
                             nretry: "0",
                         },
                         data.query || {},

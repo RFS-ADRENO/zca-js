@@ -1,7 +1,9 @@
 import { appContext } from "../context.js";
-import { API, Zalo, ZaloApiError } from "../index.js";
+import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { GroupMessage, Message, MessageType } from "../models/Message.js";
 import { encodeAES, handleZaloResponse, removeUndefinedKeys, request } from "../utils.js";
+
+import type { API } from "../zalo.js";
 
 export type DeleteMessageResponse = {
     status: number;
@@ -9,8 +11,8 @@ export type DeleteMessageResponse = {
 
 export function removeMessageFactory(api: API) {
     const URLType = {
-        [MessageType.DirectMessage]: `${api.zpwServiceMap.chat[0]}/api/message/delete?zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}`,
-        [MessageType.GroupMessage]: `${api.zpwServiceMap.group[0]}/api/group/deletemsg?zpw_ver=${Zalo.API_VERSION}&zpw_type=${Zalo.API_TYPE}`,
+        [MessageType.DirectMessage]: `${api.zpwServiceMap.chat[0]}/api/message/delete?zpw_ver=${appContext.API_VERSION}&zpw_type=${appContext.API_TYPE}`,
+        [MessageType.GroupMessage]: `${api.zpwServiceMap.group[0]}/api/group/deletemsg?zpw_ver=${appContext.API_VERSION}&zpw_type=${appContext.API_TYPE}`,
     };
     /**
      * Delete a message

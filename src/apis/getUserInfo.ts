@@ -1,7 +1,7 @@
 import { appContext } from "../context.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { encodeAES, handleZaloResponse, makeURL, request } from "../utils.js";
-import { API, Zalo } from "../zalo.js";
+import type { API } from "../zalo.js";
 
 export type ProfileInfo = {
     userId: string;
@@ -47,8 +47,8 @@ export type UserInfoResponse = {
 
 export function getUserInfoFactory(api: API) {
     const serviceURL = makeURL(`${api.zpwServiceMap.profile[0]}/api/social/friend/getprofiles/v2`, {
-        zpw_ver: Zalo.API_VERSION,
-        zpw_type: Zalo.API_TYPE,
+        zpw_ver: appContext.API_VERSION,
+        zpw_type: appContext.API_TYPE,
     });
 
     /**

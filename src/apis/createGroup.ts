@@ -1,6 +1,7 @@
 import { appContext } from "../context.js";
-import { API, ZaloApiError } from "../index.js";
+import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { encodeAES, handleZaloResponse, request } from "../utils.js";
+import type { API } from "../zalo.js";
 
 export type CreateGroupResponse = {
     groupType: number;
