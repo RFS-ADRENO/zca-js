@@ -1,14 +1,13 @@
 // rollup.config.js
-import typescript from "@rollup/plugin-typescript";
 
 export default {
-    input: "src/index.ts",
+    input: "dist/index.js",
     output: {
-        dir: "dist",
-        format: "esm",
+        dir: "dist/cjs",
+        entryFileNames: "[name].cjs",
+        format: "cjs",
         preserveModules: true,
     },
-    plugins: [typescript()],
     external: [
         "events",
         "ws",
