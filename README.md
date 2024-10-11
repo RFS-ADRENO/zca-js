@@ -41,6 +41,7 @@ const api = await zalo.login();
 **Alternative**: We also support [J2TEAM Cookies](https://chromewebstore.google.com/detail/j2team-cookies/okpidcojinmlaakglciglbpcpajaibco) extension:
 
 ```javascript
+import fs from "node:fs";
 import { Zalo } from "zca-js";
 
 const zalo = new Zalo(
