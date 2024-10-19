@@ -39,7 +39,6 @@ export type FetchAccountInfoResponse = {
 
 export function fetchAccountInfoFactory(serviceURL: string) {
     return async function fetchAccountInfo() {
-
         const response = await request(serviceURL, {
             method: "GET",
         });

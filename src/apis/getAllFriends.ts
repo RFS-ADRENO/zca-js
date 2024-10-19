@@ -39,7 +39,6 @@ export type GetAllFriendsResponse = {
 
 export function getAllFriendsFactory(serviceURL: string) {
     return async function getAllFriends() {
-
         const response = await request(serviceURL, {
             method: "GET",
         });

@@ -142,7 +142,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                         encodedData.forEach((e, i) => {
                             data.setUint8(4 + i, e);
                         });
-                        
+
                         ws.send(data);
                     };
 

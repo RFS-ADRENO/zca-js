@@ -8,7 +8,6 @@ export type GetAllGroupsResponse = {
 
 export function getAllGroupsFactory(serviceURL: string) {
     return async function getAllGroups() {
-
         const response = await request(serviceURL, {
             method: "GET",
         });
