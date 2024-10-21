@@ -5,6 +5,7 @@ export * from "./Errors/index.js";
 // API RESPONSE TYPES
 export type { AddReactionResponse } from "./apis/addReaction.js";
 export type { AddUserToGroupResponse } from "./apis/addUserToGroup.js";
+export type { BlockUserResponse } from "./apis/blockUser.js";
 export type { ChangeGroupAvatarResponse } from "./apis/changeGroupAvatar.js";
 export type { ChangeGroupNameResponse } from "./apis/changeGroupName.js";
 export type { CreateGroupResponse } from "./apis/createGroup.js";
@@ -19,5 +20,6 @@ export type { UserInfoResponse, ProfileInfo } from "./apis/getUserInfo.js";
 export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js";
 export type { MessageContent, Mention } from "./apis/sendMessage.js";
 export type { SendStickerResponse } from "./apis/sendSticker.js";
+export type { UnBlockUserResponse } from "./apis/unblockUser.js";
 export type { UndoResponse } from "./apis/undo.js";
 export type { UploadAttachmentResponse, UploadAttachmentType, ImageData, FileData } from "./apis/uploadAttachment.js";
