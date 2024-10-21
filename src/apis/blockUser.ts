@@ -14,7 +14,7 @@ export function blockUserFactory(serviceURL: string) {
 
         const params: any = {
             fid: userId,
-			imei: appContext.imei,
+            imei: appContext.imei,
         };
 
         const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
