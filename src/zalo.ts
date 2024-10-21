@@ -6,6 +6,8 @@ import { logger, makeURL } from "./utils.js";
 
 import { addReactionFactory } from "./apis/addReaction.js";
 import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
+import { blockUserFactory } from "./apis/blockUser.js";
+import { unblockUserFactory } from "./apis/unblockUser.js";
 import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
 import { changeGroupNameFactory } from "./apis/changeGroupName.js";
 import { createGroupFactory } from "./apis/createGroup.js";
@@ -115,6 +117,8 @@ export class API {
     public zpwServiceMap: Record<string, string[]>;
     public listener: Listener;
     public addReaction: ReturnType<typeof addReactionFactory>;
+    public blockUser: ReturnType<typeof blockUserFactory>;
+    public unblockUser: ReturnType<typeof unblockUserFactory>;
     public getOwnId: typeof getOwnId;
     public getStickers: ReturnType<typeof getStickersFactory>;
     public getStickersDetail: ReturnType<typeof getStickersDetailFactory>;
@@ -142,6 +146,18 @@ export class API {
         this.listener = new Listener(wsUrl);
         this.addReaction = addReactionFactory(
             makeURL(`${zpwServiceMap.reaction[0]}/api/message/reaction`, {
+                zpw_ver: appContext.API_VERSION,
+                zpw_type: appContext.API_TYPE,
+            }),
+        );
+        this.blockUser = blockUserFactory(
+            makeURL(`${zpwServiceMap.friend[0]}/api/friend/block`, {
+                zpw_ver: appContext.API_VERSION,
+                zpw_type: appContext.API_TYPE,
+            }),
+        );
+        this.unblockUser = unblockUserFactory(
+            makeURL(`${zpwServiceMap.friend[0]}/api/friend/unblock`, {
                 zpw_ver: appContext.API_VERSION,
                 zpw_type: appContext.API_TYPE,
             }),
