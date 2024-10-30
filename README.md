@@ -17,7 +17,7 @@ See [API Documentation](https://zca.tdung.co/) for more details.
 ## Basic Usages
 
 ### Login
-> [!TIP-EXTENSIONs]
+> [!TIP]
 If you have opened the website `https://chat.zalo.me/` but the extension does not have IMEI & Cookies, please click `Refresh Page`. Thank you very much ><
 
 **UPDATE**: You can now get all required information by using [ZaloDataExtractor](https://github.com/JustKemForFun/ZaloDataExtractor) extension. Just open the extension and copy the data to your clipboard.
