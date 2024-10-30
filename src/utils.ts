@@ -393,7 +393,7 @@ export function getClientMessageType(msgType: string) {
     if (msgType === "chat.doodle") return 37;
     if (msgType === "chat.recommended") return 38;
 
-    if (msgType === "chat.link") return 1; // don't know
+    if (msgType === "chat.link") return 38; // don't know || if (msgType === "chat.link") return 1;
     if (msgType === "chat.video.msg") return 44; // not sure
 
     if (msgType === "share.file") return 46;
