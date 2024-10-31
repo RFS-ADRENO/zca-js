@@ -43,6 +43,7 @@ export type AppContextBase = {
 export type Options = {
     selfListen: boolean;
     checkUpdate: boolean;
+    verbose: boolean;
 };
 
 type ExtraVer = {
@@ -83,6 +84,7 @@ export const appContext: Partial<AppContextBase> & AppContextExtended = {
     options: {
         selfListen: false,
         checkUpdate: true,
+        verbose: false
     },
 };
 
