@@ -4,6 +4,7 @@ import { appContext } from "../context.js";
 import { type GroupEvent, initializeGroupEvent, TGroupEvent } from "../models/GroupEvent.js";
 import { GroupMessage, Message, Reaction, Undo } from "../models/index.js";
 import { decodeEventData, getGroupEventType, logger } from "../utils.js";
+import { ZaloApiError } from "../Errors/ZaloApiError.js";
 
 type MessageEventData = Message | GroupMessage;
 
@@ -23,12 +24,15 @@ interface ListenerEvents {
     upload_attachment: [data: UploadEventData];
     undo: [data: Undo];
     group_event: [data: GroupEvent];
+    cipher_key: [key: string];
 }
 
 export class Listener extends EventEmitter<ListenerEvents> {
     private url: string;
     private cookie: string;
     private userAgent: string;
+
+    private ws: WebSocket | null;
 
     private onConnectedCallback: Function;
     private onClosedCallback: Function;
@@ -49,6 +53,8 @@ export class Listener extends EventEmitter<ListenerEvents> {
         this.userAgent = appContext.userAgent;
 
         this.selfListen = appContext.options.selfListen;
+
+        this.ws = null;
 
         this.onConnectedCallback = () => {};
         this.onClosedCallback = () => {};
@@ -73,6 +79,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
     }
 
     public start() {
+        if (this.ws) throw new ZaloApiError("ALready started");
         const ws = new WebSocket(this.url, {
             headers: {
                 "accept-encoding": "gzip, deflate, br, zstd",
@@ -89,6 +96,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                 cookie: this.cookie,
             },
         });
+        this.ws = ws;
 
         ws.onopen = () => {
             this.onConnectedCallback();
@@ -121,6 +129,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
                 if (version == 1 && cmd == 1 && subCmd == 1 && parsed.hasOwnProperty("key")) {
                     this.cipherKey = parsed.key;
+                    this.emit("cipher_key", parsed.key);
 
                     if (this.pingInterval) clearInterval(this.pingInterval);
 
@@ -257,6 +266,13 @@ export class Listener extends EventEmitter<ListenerEvents> {
                 this.emit("error", error);
             }
         };
+    }
+
+    public stop() {
+        if (this.ws) {
+            this.ws.close();
+            this.ws = null;
+        }
     }
 }
 
