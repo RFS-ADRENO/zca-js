@@ -131,4 +131,5 @@ dist
 
 bun.lockb
 cookies.json
+credentials.json
 /.dev
