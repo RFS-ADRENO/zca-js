@@ -15,6 +15,7 @@ import { fetchAccountInfoFactory } from "./apis/fetchAccountInfo.js";
 import { findUserFactory } from "./apis/findUser.js";
 import { getAllFriendsFactory } from "./apis/getAllFriends.js";
 import { getAllGroupsFactory } from "./apis/getAllGroups.js";
+import { getContextFactory } from "./apis/getContext.js";
 import { getCookieFactory } from "./apis/getCookie.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
 import { getStickersFactory } from "./apis/getStickers.js";
@@ -111,8 +112,9 @@ export class Zalo {
 export class API {
     public zpwServiceMap: Record<string, string[]>;
     public listener: Listener;
-    public addReaction: ReturnType<typeof addReactionFactory>;
     public getOwnId: ReturnType<typeof getOwnIdFactory>;
+    public getContext: ReturnType<typeof getContextFactory>;
+    public addReaction: ReturnType<typeof addReactionFactory>;
     public getStickers: ReturnType<typeof getStickersFactory>;
     public getStickersDetail: ReturnType<typeof getStickersDetailFactory>;
     public sendSticker: ReturnType<typeof sendStickerFactory>;
@@ -139,8 +141,10 @@ export class API {
         this.zpwServiceMap = zpwServiceMap;
         this.listener = new Listener(wsUrl);
 
-        this.addReaction = addReactionFactory(this);
         this.getOwnId = getOwnIdFactory(this);
+        this.getContext = getContextFactory(this);
+
+        this.addReaction = addReactionFactory(this);
         this.getStickers = getStickersFactory(this);
         this.getStickersDetail = getStickersDetailFactory(this);
         this.sendSticker = sendStickerFactory(this);
