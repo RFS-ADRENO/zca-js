@@ -41,18 +41,22 @@ export async function getServerInfo(encryptParams: boolean) {
 
     try {
         const response = await request(
-            makeURL("https://wpa.chat.zalo.me/api/login/getServerInfo", {
-                imei: appContext.imei,
-                type: appContext.API_TYPE,
-                client_version: appContext.API_VERSION,
-                computer_name: "Web",
-                signkey: encryptedParams.params.signkey,
-            }),
+            makeURL(
+                "https://wpa.chat.zalo.me/api/login/getServerInfo",
+                {
+                    imei: appContext.imei,
+                    type: appContext.API_TYPE,
+                    client_version: appContext.API_VERSION,
+                    computer_name: "Web",
+                    signkey: encryptedParams.params.signkey,
+                },
+                false,
+            ),
         );
         if (!response.ok) throw new Error("Failed to fetch server info: " + response.statusText);
         const data = await response.json();
 
-        if (data.data == null) throw new Error("Failed to fetch server info: " + data.error);
+        if (data.data == null) throw new Error("Failed to fetch server info: " + data.error_message);
         return data.data;
     } catch (error) {
         console.error(error);

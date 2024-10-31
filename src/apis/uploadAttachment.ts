@@ -1,18 +1,19 @@
 import FormData from "form-data";
 import fs from "node:fs";
-import { appContext, UploadCallback } from "../context.js";
+import type { UploadCallback } from "../context.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { MessageType } from "../models/Message.js";
 import {
+    apiFactory,
     encodeAES,
     getFileExtension,
     getFileName,
     getFileSize,
     getImageMetaData,
     getMd5LargeFileObject,
-    handleZaloResponse,
     makeURL,
     request,
+    resolveResponse,
 } from "../utils.js";
 
 type ImageResponse = {
@@ -116,8 +117,9 @@ const urlType = {
     others: "asyncfile/upload",
 };
 
-export function uploadAttachmentFactory(serviceURL: string) {
-    const { sharefile } = appContext.settings!.features;
+export const uploadAttachmentFactory = apiFactory()((api, ctx) => {
+    const serviceURL = `${api.zpwServiceMap.file[0]}/api`;
+    const { sharefile } = ctx.settings!.features;
 
     function isExceedMaxFile(totalFile: number) {
         return totalFile > sharefile.max_file;
@@ -145,24 +147,15 @@ export function uploadAttachmentFactory(serviceURL: string) {
         threadId: string,
         type: MessageType = MessageType.DirectMessage,
     ): Promise<UploadAttachmentType[]> {
-        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
-        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
-        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
-        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
-
         if (!filePaths || filePaths.length == 0) throw new ZaloApiError("Missing filePaths");
         if (isExceedMaxFile(filePaths.length)) throw new ZaloApiError("Exceed maximum file of " + sharefile.max_file);
         if (!threadId) throw new ZaloApiError("Missing threadId");
 
-        const chunkSize = appContext.settings!.features.sharefile.chunk_size_file;
+        const chunkSize = ctx.settings!.features.sharefile.chunk_size_file;
         const isGroupMessage = type == MessageType.GroupMessage;
         let attachmentsData: AttachmentData[] = [];
         let url = `${serviceURL}/${isGroupMessage ? "group" : "message"}/`;
-        const query = {
-            zpw_ver: appContext.API_VERSION,
-            zpw_type: appContext.API_TYPE,
-            type: isGroupMessage ? "11" : "2",
-        };
+        const typeParam = isGroupMessage ? "11" : "2";
 
         let clientId = Date.now();
         for (const filePath of filePaths) {
@@ -201,7 +194,7 @@ export function uploadAttachmentFactory(serviceURL: string) {
                     data.params.fileName = fileName;
                     data.params.clientId = clientId++;
                     data.params.totalSize = imageData.totalSize!;
-                    data.params.imei = appContext.imei;
+                    data.params.imei = ctx.imei;
                     data.params.isE2EE = 0;
                     data.params.jxl = 0;
                     data.params.chunkId = 1;
@@ -224,7 +217,7 @@ export function uploadAttachmentFactory(serviceURL: string) {
                     data.params.fileName = fileName;
                     data.params.clientId = clientId++;
                     data.params.totalSize = videoSize;
-                    data.params.imei = appContext.imei;
+                    data.params.imei = ctx.imei;
                     data.params.isE2EE = 0;
                     data.params.jxl = 0;
                     data.params.chunkId = 1;
@@ -247,7 +240,7 @@ export function uploadAttachmentFactory(serviceURL: string) {
                     data.params.fileName = fileName;
                     data.params.clientId = clientId++;
                     data.params.totalSize = fileSize;
-                    data.params.imei = appContext.imei;
+                    data.params.imei = ctx.imei;
                     data.params.isE2EE = 0;
                     data.params.jxl = 0;
                     data.params.chunkId = 1;
@@ -274,11 +267,11 @@ export function uploadAttachmentFactory(serviceURL: string) {
 
         for (const data of attachmentsData) {
             for (let i = 0; i < data.params.totalChunk; i++) {
-                const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(data.params));
+                const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(data.params));
                 if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
                 requests.push(
-                    request(makeURL(url + urlType[data.fileType], Object.assign(query, { params: encryptedParams })), {
+                    request(makeURL(url + urlType[data.fileType], { type: typeParam, params: encryptedParams }), {
                         method: "POST",
                         headers: data.chunkContent[i].getHeaders(),
                         body: data.chunkContent[i].getBuffer(),
@@ -286,10 +279,8 @@ export function uploadAttachmentFactory(serviceURL: string) {
                         /**
                          * @todo better type rather than any
                          */
-                        const result = await handleZaloResponse<any>(response);
-                        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
+                        const resData = await resolveResponse(response);
 
-                        const resData = result.data;
                         if (resData && resData.fileId != -1 && resData.photoId != -1)
                             await new Promise<void>((resolve) => {
                                 if (data.fileType == "video" || data.fileType == "others") {
@@ -308,7 +299,7 @@ export function uploadAttachmentFactory(serviceURL: string) {
                                         resolve();
                                     };
 
-                                    appContext.uploadCallbacks.set(resData.fileId, uploadCallback);
+                                    ctx.uploadCallbacks.set(resData.fileId, uploadCallback);
                                 }
 
                                 if (data.fileType == "image") {
@@ -334,4 +325,4 @@ export function uploadAttachmentFactory(serviceURL: string) {
 
         return results;
     };
-}
+});

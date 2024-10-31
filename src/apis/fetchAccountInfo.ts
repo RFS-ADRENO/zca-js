@@ -1,5 +1,4 @@
-import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { handleZaloResponse, request } from "../utils.js";
+import { apiFactory, makeURL, request } from "../utils.js";
 
 export type FetchAccountInfoResponse = {
     userId: string;
@@ -37,15 +36,14 @@ export type FetchAccountInfoResponse = {
     oa_status: any;
 };
 
-export function fetchAccountInfoFactory(serviceURL: string) {
+export const fetchAccountInfoFactory = apiFactory<FetchAccountInfoResponse>()((api, _, resolve) => {
+    const serviceURL = makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/me-v2`);
+
     return async function fetchAccountInfo() {
         const response = await request(serviceURL, {
             method: "GET",
         });
 
-        const result = await handleZaloResponse<FetchAccountInfoResponse>(response);
-        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
-
-        return result.data as FetchAccountInfoResponse;
+        return resolve(response);
     };
-}
+});

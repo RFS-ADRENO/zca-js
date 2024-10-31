@@ -1,7 +1,6 @@
-import { appContext } from "../context.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import type { GroupSetting } from "../models/GroupEvent.js";
-import { encodeAES, handleZaloResponse, request } from "../utils.js";
+import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
 
 export type GroupInfoResponse = {
     removedsGroup: string[];
@@ -50,7 +49,9 @@ export type ExtraInfo = {
     enable_media_store: number;
 };
 
-export function getGroupInfoFactory(serviceURL: string) {
+export const getGroupInfoFactory = apiFactory<GroupInfoResponse>()((api, ctx, resolve) => {
+    const serviceURL = makeURL(`${api.zpwServiceMap.group[0]}/api/group/getmg-v2`);
+
     /**
      * Get group information
      *
@@ -59,11 +60,6 @@ export function getGroupInfoFactory(serviceURL: string) {
      * @throws ZaloApiError
      */
     return async function getGroupInfo(groupId: string | string[]) {
-        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
-        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
-        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
-        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
-
         if (!Array.isArray(groupId)) groupId = [groupId];
 
         let params: any = {
@@ -76,7 +72,7 @@ export function getGroupInfoFactory(serviceURL: string) {
 
         params.gridVerMap = JSON.stringify(params.gridVerMap);
 
-        const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
+        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
         const response = await request(serviceURL, {
@@ -86,9 +82,6 @@ export function getGroupInfoFactory(serviceURL: string) {
             }),
         });
 
-        const result = await handleZaloResponse<GroupInfoResponse>(response);
-        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
-
-        return result.data as GroupInfoResponse;
+        return resolve(response);
     };
-}
+});

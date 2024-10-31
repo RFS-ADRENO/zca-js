@@ -1,7 +1,5 @@
-import { appContext } from "../context.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { encodeAES, handleZaloResponse, makeURL, request } from "../utils.js";
-import type { API } from "../zalo.js";
+import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
 
 export type ProfileInfo = {
     userId: string;
@@ -45,11 +43,8 @@ export type UserInfoResponse = {
     changed_profiles: Record<string, ProfileInfo>;
 };
 
-export function getUserInfoFactory(api: API) {
-    const serviceURL = makeURL(`${api.zpwServiceMap.profile[0]}/api/social/friend/getprofiles/v2`, {
-        zpw_ver: appContext.API_VERSION,
-        zpw_type: appContext.API_TYPE,
-    });
+export const getUserInfoFactory = apiFactory<UserInfoResponse>()((api, ctx, resolve) => {
+    const serviceURL = makeURL(`${api.zpwServiceMap.profile[0]}/api/social/friend/getprofiles/v2`);
 
     /**
      * Get user info using user id
@@ -59,24 +54,18 @@ export function getUserInfoFactory(api: API) {
      * @throws ZaloApiError
      */
     return async function getUserInfo(userId: string) {
-        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
-        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
-        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
-        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
-        if (!appContext.language) throw new ZaloApiError("Language is not available");
-
         if (!userId) throw new ZaloApiError("Missing user id");
 
         const params = {
-            phonebook_version: appContext.extraVer!.phonebook,
+            phonebook_version: ctx.extraVer!.phonebook,
             friend_pversion_map: [`${userId}_0`],
             avatar_size: 120,
-            language: appContext.language,
+            language: ctx.language,
             show_online_status: 1,
-            imei: appContext.imei,
+            imei: ctx.imei,
         };
 
-        const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
+        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
         const response = await request(serviceURL, {
@@ -86,9 +75,6 @@ export function getUserInfoFactory(api: API) {
             }),
         });
 
-        const result = await handleZaloResponse<UserInfoResponse>(response);
-        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
-
-        return result.data as UserInfoResponse;
+        return resolve(response);
     };
-}
+});

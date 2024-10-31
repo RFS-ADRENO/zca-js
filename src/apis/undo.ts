@@ -1,18 +1,15 @@
-import { appContext } from "../context.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { GroupMessage, Message, MessageType } from "../models/Message.js";
-import { encodeAES, handleZaloResponse, request } from "../utils.js";
-
-import type { API } from "../zalo.js";
+import { apiFactory, encodeAES, request } from "../utils.js";
 
 export type UndoResponse = {
     status: number;
 };
 
-export function undoFactory(api: API) {
+export const undoFactory = apiFactory<UndoResponse>()((api, ctx, resolve) => {
     const URLType = {
-        [MessageType.DirectMessage]: `${api.zpwServiceMap.chat[0]}/api/message/undo?zpw_ver=${appContext.API_VERSION}&zpw_type=${appContext.API_TYPE}`,
-        [MessageType.GroupMessage]: `${api.zpwServiceMap.group[0]}/api/group/undomsg?zpw_ver=${appContext.API_VERSION}&zpw_type=${appContext.API_TYPE}`,
+        [MessageType.DirectMessage]: `${api.zpwServiceMap.chat[0]}/api/message/undo`,
+        [MessageType.GroupMessage]: `${api.zpwServiceMap.group[0]}/api/group/undomsg`,
     };
     /**
      * Undo a message
@@ -22,11 +19,6 @@ export function undoFactory(api: API) {
      * @throws ZaloApiError
      */
     return async function undo(message: Message | GroupMessage) {
-        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
-        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
-        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
-        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
-
         if (!(message instanceof Message) && !(message instanceof GroupMessage))
             throw new ZaloApiError(
                 "Expected Message or GroupMessage instance, got: " + (message as unknown as any)?.constructor?.name,
@@ -42,10 +34,10 @@ export function undoFactory(api: API) {
         if (message instanceof GroupMessage) {
             params["grid"] = message.threadId;
             params["visibility"] = 0;
-            params["imei"] = appContext.imei;
+            params["imei"] = ctx.imei;
         } else params["toid"] = message.threadId;
 
-        const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
+        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
         const response = await request(URLType[message.type], {
@@ -55,9 +47,6 @@ export function undoFactory(api: API) {
             }),
         });
 
-        const result = await handleZaloResponse<UndoResponse>(response);
-        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
-
-        return result.data as UndoResponse;
+        return resolve(response);
     };
-}
+});

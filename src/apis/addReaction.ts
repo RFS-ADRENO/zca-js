@@ -1,14 +1,15 @@
-import { appContext } from "../context.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { Message } from "../models/Message.js";
 import { Reactions } from "../models/Reaction.js";
-import { encodeAES, handleZaloResponse, request } from "../utils.js";
+import { apiFactory, encodeAES, handleZaloResponse, makeURL, request } from "../utils.js";
 
 export type AddReactionResponse = {
     msgIds: string;
 };
 
-export function addReactionFactory(serviceURL: string) {
+export const addReactionFactory = apiFactory<AddReactionResponse>()((api, ctx, resolve) => {
+    const serviceURL = makeURL(`${api.zpwServiceMap.reaction[0]}/api/message/reaction`);
+
     /**
      * Add reaction to a message
      *
@@ -18,11 +19,6 @@ export function addReactionFactory(serviceURL: string) {
      * @throws ZaloApiError
      */
     return async function addReaction(icon: Reactions, message: Message) {
-        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
-        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
-        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
-        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
-
         let rType, source;
 
         switch (icon) {
@@ -268,7 +264,7 @@ export function addReactionFactory(serviceURL: string) {
             toid: message.threadId,
         };
 
-        const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
+        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
         const response = await request(serviceURL, {
@@ -278,9 +274,6 @@ export function addReactionFactory(serviceURL: string) {
             }),
         });
 
-        const result = await handleZaloResponse<AddReactionResponse>(response);
-        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
-
-        return result.data as AddReactionResponse;
+        return resolve(response);
     };
-}
+});

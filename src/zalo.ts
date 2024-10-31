@@ -1,32 +1,32 @@
-import { getOwnId } from "./apis/getOwnId.js";
+import { getOwnIdFactory } from "./apis/getOwnId.js";
 import { Listener } from "./apis/listen.js";
 import { getServerInfo, login } from "./apis/login.js";
-import { appContext, Options } from "./context.js";
+import { appContext, type Options } from "./context.js";
 import { logger, makeURL } from "./utils.js";
 
 import { addReactionFactory } from "./apis/addReaction.js";
 import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
 import { blockUserFactory } from "./apis/blockUser.js";
-import { unblockUserFactory } from "./apis/unblockUser.js";
 import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
 import { changeGroupNameFactory } from "./apis/changeGroupName.js";
 import { createGroupFactory } from "./apis/createGroup.js";
+import { deleteMessageFactory } from "./apis/deleteMessage.js";
 import { fetchAccountInfoFactory } from "./apis/fetchAccountInfo.js";
 import { findUserFactory } from "./apis/findUser.js";
 import { getAllFriendsFactory } from "./apis/getAllFriends.js";
 import { getAllGroupsFactory } from "./apis/getAllGroups.js";
+import { getCookieFactory } from "./apis/getCookie.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
 import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
+import { getUserInfoFactory } from "./apis/getUserInfo.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
+import { sendMessageFactory } from "./apis/sendMessage.js";
 import { sendStickerFactory } from "./apis/sendSticker.js";
+import { unblockUserFactory } from "./apis/unblockUser.js";
 import { undoFactory } from "./apis/undo.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 import { checkUpdate } from "./update.js";
-import { sendMessageFactory } from "./apis/sendMessage.js";
-import { getCookieFactory } from "./apis/getCookie.js";
-import { removeMessageFactory } from "./apis/deleteMessage.js";
-import { getUserInfoFactory } from "./apis/getUserInfo.js";
 
 export type J2Cookies = {
     url: string;
@@ -100,11 +100,8 @@ export class Zalo {
         logger.info("Logged in as", loginData.data.uid);
 
         return new API(
-            appContext.secretKey!,
             loginData.data.zpw_service_map_v3,
-            makeURL(`${loginData.data.zpw_ws[0]}`, {
-                zpw_ver: appContext.API_VERSION,
-                zpw_type: appContext.API_TYPE,
+            makeURL(loginData.data.zpw_ws[0], {
                 t: Date.now(),
             }),
         );
@@ -112,14 +109,10 @@ export class Zalo {
 }
 
 export class API {
-    private secretKey: string;
-
     public zpwServiceMap: Record<string, string[]>;
     public listener: Listener;
     public addReaction: ReturnType<typeof addReactionFactory>;
-    public blockUser: ReturnType<typeof blockUserFactory>;
-    public unblockUser: ReturnType<typeof unblockUserFactory>;
-    public getOwnId: typeof getOwnId;
+    public getOwnId: ReturnType<typeof getOwnIdFactory>;
     public getStickers: ReturnType<typeof getStickersFactory>;
     public getStickersDetail: ReturnType<typeof getStickersDetailFactory>;
     public sendSticker: ReturnType<typeof sendStickerFactory>;
@@ -134,114 +127,40 @@ export class API {
     public changeGroupName: ReturnType<typeof changeGroupNameFactory>;
     public sendMessage: ReturnType<typeof sendMessageFactory>;
     public getCookie: ReturnType<typeof getCookieFactory>;
-    public deleteMessage: ReturnType<typeof removeMessageFactory>;
+    public deleteMessage: ReturnType<typeof deleteMessageFactory>;
     public fetchAccountInfo: ReturnType<typeof fetchAccountInfoFactory>;
     public getAllFriends: ReturnType<typeof getAllFriendsFactory>;
     public getAllGroups: ReturnType<typeof getAllGroupsFactory>;
     public getUserInfo: ReturnType<typeof getUserInfoFactory>;
+    public blockUser: ReturnType<typeof blockUserFactory>;
+    public unblockUser: ReturnType<typeof unblockUserFactory>;
 
-    constructor(secretKey: string, zpwServiceMap: Record<string, string[]>, wsUrl: string) {
-        this.secretKey = secretKey;
+    constructor(zpwServiceMap: Record<string, string[]>, wsUrl: string) {
         this.zpwServiceMap = zpwServiceMap;
         this.listener = new Listener(wsUrl);
-        this.addReaction = addReactionFactory(
-            makeURL(`${zpwServiceMap.reaction[0]}/api/message/reaction`, {
-                zpw_ver: appContext.API_VERSION,
-                zpw_type: appContext.API_TYPE,
-            }),
-        );
-        this.blockUser = blockUserFactory(
-            makeURL(`${zpwServiceMap.friend[0]}/api/friend/block`, {
-                zpw_ver: appContext.API_VERSION,
-                zpw_type: appContext.API_TYPE,
-            }),
-        );
-        this.unblockUser = unblockUserFactory(
-            makeURL(`${zpwServiceMap.friend[0]}/api/friend/unblock`, {
-                zpw_ver: appContext.API_VERSION,
-                zpw_type: appContext.API_TYPE,
-            }),
-        );
-        this.getOwnId = getOwnId;
-        this.getStickers = getStickersFactory(
-            makeURL(`${zpwServiceMap.sticker}/api/message/sticker`, {
-                zpw_ver: appContext.API_VERSION,
-                zpw_type: appContext.API_TYPE,
-            }),
-        );
-        this.getStickersDetail = getStickersDetailFactory(
-            makeURL(`${zpwServiceMap.sticker}/api/message/sticker`, {
-                zpw_ver: appContext.API_VERSION,
-                zpw_type: appContext.API_TYPE,
-            }),
-        );
+
+        this.addReaction = addReactionFactory(this);
+        this.getOwnId = getOwnIdFactory(this);
+        this.getStickers = getStickersFactory(this);
+        this.getStickersDetail = getStickersDetailFactory(this);
         this.sendSticker = sendStickerFactory(this);
-        this.findUser = findUserFactory(
-            makeURL(`${zpwServiceMap.friend[0]}/api/friend/profile/get`, {
-                zpw_ver: appContext.API_VERSION,
-                zpw_type: appContext.API_TYPE,
-            }),
-        );
-        this.uploadAttachment = uploadAttachmentFactory(`${zpwServiceMap.file[0]}/api`);
+        this.findUser = findUserFactory(this);
+        this.uploadAttachment = uploadAttachmentFactory(this);
         this.undo = undoFactory(this);
-        this.getGroupInfo = getGroupInfoFactory(
-            makeURL(`${zpwServiceMap.group[0]}/api/group/getmg-v2`, {
-                zpw_ver: appContext.API_VERSION,
-                zpw_type: appContext.API_TYPE,
-            }),
-        );
-        this.createGroup = createGroupFactory(
-            makeURL(`${zpwServiceMap.group[0]}/api/group/create/v2`, {
-                zpw_ver: appContext.API_VERSION,
-                zpw_type: appContext.API_TYPE,
-            }),
-            this,
-        );
-        this.changeGroupAvatar = changeGroupAvatarFactory(
-            makeURL(`${zpwServiceMap.file[0]}/api/group/upavatar`, {
-                zpw_ver: appContext.API_VERSION,
-                zpw_type: appContext.API_TYPE,
-            }),
-        );
-        this.removeUserFromGroup = removeUserFromGroupFactory(
-            makeURL(`${zpwServiceMap.group[0]}/api/group/kickout`, {
-                zpw_ver: appContext.API_VERSION,
-                zpw_type: appContext.API_TYPE,
-            }),
-        );
-        this.addUserToGroup = addUserToGroupFactory(
-            makeURL(`${zpwServiceMap.group[0]}/api/group/invite/v2`, {
-                zpw_ver: appContext.API_VERSION,
-                zpw_type: appContext.API_TYPE,
-            }),
-        );
-        this.changeGroupName = changeGroupNameFactory(
-            makeURL(`${zpwServiceMap.group[0]}/api/group/updateinfo`, {
-                zpw_ver: appContext.API_VERSION,
-                zpw_type: appContext.API_TYPE,
-            }),
-        );
+        this.getGroupInfo = getGroupInfoFactory(this);
+        this.createGroup = createGroupFactory(this);
+        this.changeGroupAvatar = changeGroupAvatarFactory(this);
+        this.removeUserFromGroup = removeUserFromGroupFactory(this);
+        this.addUserToGroup = addUserToGroupFactory(this);
+        this.changeGroupName = changeGroupNameFactory(this);
         this.sendMessage = sendMessageFactory(this);
-        this.getCookie = getCookieFactory();
-        this.deleteMessage = removeMessageFactory(this);
-        this.fetchAccountInfo = fetchAccountInfoFactory(
-            makeURL(`${zpwServiceMap.profile[0]}/api/social/profile/me-v2`, {
-                zpw_ver: appContext.API_VERSION,
-                zpw_type: appContext.API_TYPE,
-            }),
-        );
-        this.getAllFriends = getAllFriendsFactory(
-            makeURL(`${zpwServiceMap.profile[0]}/api/social/friend/getfriends`, {
-                zpw_ver: appContext.API_VERSION,
-                zpw_type: appContext.API_TYPE,
-            }),
-        );
-        this.getAllGroups = getAllGroupsFactory(
-            makeURL(`${zpwServiceMap.group_poll[0]}/api/group/getlg/v4`, {
-                zpw_ver: appContext.API_VERSION,
-                zpw_type: appContext.API_TYPE,
-            }),
-        );
+        this.getCookie = getCookieFactory(this);
+        this.deleteMessage = deleteMessageFactory(this);
+        this.fetchAccountInfo = fetchAccountInfoFactory(this);
+        this.getAllFriends = getAllFriendsFactory(this);
+        this.getAllGroups = getAllGroupsFactory(this);
         this.getUserInfo = getUserInfoFactory(this);
+        this.blockUser = blockUserFactory(this);
+        this.unblockUser = unblockUserFactory(this);
     }
 }

@@ -37,7 +37,7 @@ export enum Reactions {
     SUNGLASSES = "b-)",
     NEUTRAL = ":--|",
     SAD_FACE = "p-(",
-    BYE = ":-bye", 
+    BYE = ":-bye",
     SLEEPY = "|-)",
     WIPE = ":wipe",
     DIG = ":-dig",

@@ -1,7 +1,5 @@
-import { appContext } from "../context.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { encodeAES, handleZaloResponse, request } from "../utils.js";
-import type { API } from "../zalo.js";
+import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
 
 export type CreateGroupResponse = {
     groupType: number;
@@ -11,7 +9,9 @@ export type CreateGroupResponse = {
     error_data: Record<string, any>;
 };
 
-export function createGroupFactory(serviceURL: string, api: API) {
+export const createGroupFactory = apiFactory<CreateGroupResponse>()((api, ctx, resolve) => {
+    const serviceURL = makeURL(`${api.zpwServiceMap.group[0]}/api/group/create/v2`);
+
     /**
      * Create a new group
      *
@@ -20,11 +20,6 @@ export function createGroupFactory(serviceURL: string, api: API) {
      * @throws ZaloApiError
      */
     return async function createGroup(options: { name?: string; members: string[]; avatarPath?: string }) {
-        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
-        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
-        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
-        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
-
         if (options.members.length == 0) throw new ZaloApiError("Group must have at least one member");
 
         const params: any = {
@@ -35,8 +30,8 @@ export function createGroupFactory(serviceURL: string, api: API) {
             membersTypes: options.members.map(() => -1),
             nameChanged: 0,
             createLink: 1,
-            clientLang: appContext.language,
-            imei: appContext.imei,
+            clientLang: ctx.language,
+            imei: ctx.imei,
             zsource: 601,
         };
 
@@ -45,22 +40,16 @@ export function createGroupFactory(serviceURL: string, api: API) {
             params.nameChanged = 1;
         }
 
-        const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
+        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
         const response = await request(serviceURL + `&params=${encodeURIComponent(encryptedParams)}`, {
             method: "POST",
         });
 
-        const createGroupResult = await handleZaloResponse<CreateGroupResponse>(response);
-
-        if (createGroupResult.error)
-            throw new ZaloApiError(createGroupResult.error.message, createGroupResult.error.code);
-
-        const data = createGroupResult.data as CreateGroupResponse;
-
+        const data = await resolve(response);
         if (options.avatarPath) await api.changeGroupAvatar(data.groupId, options.avatarPath).catch(console.error);
 
         return data;
     };
-}
+});

@@ -1,20 +1,18 @@
-import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { handleZaloResponse, request } from "../utils.js";
+import { apiFactory, makeURL, request } from "../utils.js";
 
 export type GetAllGroupsResponse = {
     version: string;
     gridInfoMap: Record<string, string>;
 };
 
-export function getAllGroupsFactory(serviceURL: string) {
+export const getAllGroupsFactory = apiFactory<GetAllGroupsResponse>()((api, ctx, resolve) => {
+    const serviceURL = makeURL(`${api.zpwServiceMap.group_poll[0]}/api/group/getlg/v4`);
+
     return async function getAllGroups() {
         const response = await request(serviceURL, {
             method: "GET",
         });
 
-        const result = await handleZaloResponse<GetAllGroupsResponse>(response);
-        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
-
-        return result.data as GetAllGroupsResponse;
+        return resolve(response);
     };
-}
+});

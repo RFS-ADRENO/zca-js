@@ -1,23 +1,18 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { appContext } from "../context.js";
-import { encodeAES, handleZaloResponse, request } from "../utils.js";
+import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
 
 export type UnBlockUserResponse = "";
 
-export function unblockUserFactory(serviceURL: string) {
-    return async function unblockUser(userId: string) {
-        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
-        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
-        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
-        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
-        if (!appContext.language) throw new ZaloApiError("Language is not available");
+export const unblockUserFactory = apiFactory<UnBlockUserResponse>()((api, ctx, resolve) => {
+    const serviceURL = makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/unblock`);
 
+    return async function unblockUser(userId: string) {
         const params: any = {
             fid: userId,
-            imei: appContext.imei,
+            imei: ctx.imei,
         };
 
-        const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
+        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
         const response = await request(serviceURL, {
@@ -27,9 +22,6 @@ export function unblockUserFactory(serviceURL: string) {
             }),
         });
 
-        const result = await handleZaloResponse<UnBlockUserResponse>(response);
-        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
-
-        return result.data as UnBlockUserResponse;
+        return resolve(response);
     };
-}
+});

@@ -1,25 +1,16 @@
-import { appContext } from "../context.js";
 import { MessageType } from "../models/Message.js";
-import { encodeAES, handleZaloResponse, makeURL, request } from "../utils.js";
-import { StickerDetailResponse } from "./getStickersDetail.js";
+import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
+import type { StickerDetailResponse } from "./getStickersDetail.js";
 
-import type { API } from "../zalo.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 
 export type SendStickerResponse = {
     msgId: number;
 };
 
-export function sendStickerFactory(api: API) {
-    const directMessageServiceURL = makeURL(`${api.zpwServiceMap.chat[0]}/api/message/sticker`, {
-        zpw_ver: appContext.API_VERSION,
-        zpw_type: appContext.API_TYPE,
-    });
-
-    const groupMessageServiceURL = makeURL(`${api.zpwServiceMap.group[0]}/api/group/sticker`, {
-        zpw_ver: appContext.API_VERSION,
-        zpw_type: appContext.API_TYPE,
-    });
+export const sendStickerFactory = apiFactory<SendStickerResponse>()((api, ctx, resolve) => {
+    const directMessageServiceURL = makeURL(`${api.zpwServiceMap.chat[0]}/api/message/sticker`);
+    const groupMessageServiceURL = makeURL(`${api.zpwServiceMap.group[0]}/api/group/sticker`);
 
     /**
      * Send a sticker to a thread
@@ -35,11 +26,6 @@ export function sendStickerFactory(api: API) {
         threadId: string,
         type: MessageType = MessageType.DirectMessage,
     ) {
-        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
-        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
-        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
-        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
-
         if (!sticker) throw new ZaloApiError("Missing sticker");
         if (!threadId) throw new ZaloApiError("Missing threadId");
 
@@ -54,13 +40,13 @@ export function sendStickerFactory(api: API) {
             cateId: sticker.cateId,
             type: sticker.type,
             clientId: Date.now(),
-            imei: appContext.imei,
+            imei: ctx.imei,
             zsource: 101,
             toid: isGroupMessage ? undefined : threadId,
             grid: isGroupMessage ? threadId : undefined,
         };
 
-        const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
+        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
         const finalServiceUrl = new URL(isGroupMessage ? groupMessageServiceURL : directMessageServiceURL);
@@ -73,9 +59,6 @@ export function sendStickerFactory(api: API) {
             }),
         });
 
-        const result = await handleZaloResponse<SendStickerResponse>(response);
-        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
-
-        return result.data as SendStickerResponse;
+        return resolve(response);
     };
-}
+});

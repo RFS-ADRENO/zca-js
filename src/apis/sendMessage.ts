@@ -1,23 +1,21 @@
 import FormData from "form-data";
 import fs from "node:fs";
 import sharp from "sharp";
-import { appContext } from "../context.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { GroupMessage, Message, MessageType } from "../models/Message.js";
 import {
+    apiFactory,
     encodeAES,
     getClientMessageType,
     getFileExtension,
     getFileName,
     getGifMetaData,
     getMd5LargeFileObject,
-    handleZaloResponse,
     makeURL,
     removeUndefinedKeys,
     request,
+    resolveResponse,
 } from "../utils.js";
-
-import type { API } from "../zalo.js";
 
 export type SendMessageResult = {
     msgId: number;
@@ -80,10 +78,7 @@ async function send(data: SendType | SendType[]): Promise<SendMessageResult[]> {
                     headers: each.headers,
                 });
 
-                const result = await handleZaloResponse<SendMessageResult>(response);
-                if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
-
-                return result.data as SendMessageResult;
+                return await resolveResponse<SendMessageResult>(response);
             })(),
         );
     }
@@ -152,17 +147,13 @@ export type MessageContent = {
     attachments?: string[];
 };
 
-export function sendMessageFactory(api: API) {
+export const sendMessageFactory = apiFactory()((api, ctx) => {
     const serviceURLs = {
         message: {
             [MessageType.DirectMessage]: makeURL(`${api.zpwServiceMap.chat[0]}/api/message`, {
-                zpw_ver: appContext.API_VERSION,
-                zpw_type: appContext.API_TYPE,
                 nretry: 0,
             }),
             [MessageType.GroupMessage]: makeURL(`${api.zpwServiceMap.group[0]}/api/group`, {
-                zpw_ver: appContext.API_VERSION,
-                zpw_type: appContext.API_TYPE,
                 nretry: 0,
             }),
         },
@@ -172,7 +163,7 @@ export function sendMessageFactory(api: API) {
         },
     };
 
-    const { sharefile } = appContext.settings!.features;
+    const { sharefile } = ctx.settings!.features;
 
     function isExceedMaxFile(totalFile: number) {
         return totalFile > sharefile.max_file;
@@ -196,16 +187,14 @@ export function sendMessageFactory(api: API) {
 
         const params = {
             clientId: Date.now(),
-            imei: appContext.imei,
+            imei: ctx.imei,
         };
 
-        const encryptedParams = encodeAES(appContext.secretKey!, JSON.stringify(params));
+        const encryptedParams = encodeAES(ctx.secretKey!, JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
-        let response = await request(
+        const response = await request(
             makeURL(url + "upthumb?", {
-                zpw_ver: appContext.API_VERSION,
-                zpw_type: appContext.API_TYPE,
                 params: encryptedParams,
             }),
             {
@@ -215,10 +204,7 @@ export function sendMessageFactory(api: API) {
             },
         );
 
-        const result = await handleZaloResponse<UpthumbType>(response);
-        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
-
-        return result.data as UpthumbType;
+        return await resolveResponse<UpthumbType>(response);
     }
 
     function handleMentions(type: MessageType, msg: string, mentions?: Mention[]) {
@@ -282,7 +268,7 @@ export function sendMessageFactory(api: API) {
                   qmsgType: getClientMessageType(quoteData!.msgType),
                   qmsgTs: quoteData!.ts,
                   qmsg: typeof quoteData!.content == "string" ? quoteData!.content : prepareQMSG(quote),
-                  imei: isGroupMessage ? undefined : appContext.imei,
+                  imei: isGroupMessage ? undefined : ctx.imei,
                   visibility: isGroupMessage ? 0 : undefined,
                   qmsgAttach: isGroupMessage ? JSON.stringify(prepareQMSGAttach(quote)) : undefined,
                   qmsgTTL: quoteData!.ttl,
@@ -292,7 +278,7 @@ export function sendMessageFactory(api: API) {
                   message: msg,
                   clientId: Date.now(),
                   mentionInfo: isMentionsValid ? JSON.stringify(mentionsFinal) : undefined,
-                  imei: isGroupMessage ? undefined : appContext.imei,
+                  imei: isGroupMessage ? undefined : ctx.imei,
                   ttl: 0,
                   visibility: isGroupMessage ? 0 : undefined,
                   toid: isGroupMessage ? undefined : threadId,
@@ -303,7 +289,7 @@ export function sendMessageFactory(api: API) {
             if (params[key as keyof typeof params] === undefined) delete params[key as keyof typeof params];
         }
 
-        const encryptedParams = encodeAES(appContext.secretKey!, JSON.stringify(params));
+        const encryptedParams = encodeAES(ctx.secretKey!, JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
         const finalServiceUrl = new URL(serviceURLs.message[type]);
         if (quote) {
@@ -440,7 +426,7 @@ export function sendMessageFactory(api: API) {
             }
 
             removeUndefinedKeys(data.params);
-            const encryptedParams = encodeAES(appContext.secretKey!, JSON.stringify(data.params));
+            const encryptedParams = encodeAES(ctx.secretKey!, JSON.stringify(data.params));
             if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
             data.body.append("params", encryptedParams);
@@ -481,7 +467,7 @@ export function sendMessageFactory(api: API) {
             };
 
             removeUndefinedKeys(params);
-            const encryptedParams = encodeAES(appContext.secretKey!, JSON.stringify(params));
+            const encryptedParams = encodeAES(ctx.secretKey!, JSON.stringify(params));
             if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
             attachmentsData.push({
@@ -503,8 +489,6 @@ export function sendMessageFactory(api: API) {
                     serviceURLs.attachment[type] + attachmentUrlType[data.fileType],
                     Object.assign(
                         {
-                            zpw_ver: appContext.API_VERSION,
-                            zpw_type: appContext.API_TYPE,
                             nretry: "0",
                         },
                         data.query || {},
@@ -533,11 +517,6 @@ export function sendMessageFactory(api: API) {
         threadId: string,
         type: MessageType = MessageType.DirectMessage,
     ) {
-        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
-        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
-        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
-        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
-
         if (!message) throw new ZaloApiError("Missing message content");
         if (!threadId) throw new ZaloApiError("Missing threadId");
         if (typeof message == "string") message = { msg: message };
@@ -583,4 +562,4 @@ export function sendMessageFactory(api: API) {
 
         return responses;
     };
-}
+});

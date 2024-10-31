@@ -1,6 +1,6 @@
 import { appContext } from "../context.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { encodeAES, handleZaloResponse, makeURL, request } from "../utils.js";
+import { apiFactory, encodeAES, makeURL, request, resolveResponse } from "../utils.js";
 
 export interface StickerDetailResponse {
     id: number;
@@ -11,18 +11,15 @@ export interface StickerDetailResponse {
     stickerWebpUrl: string | null;
 }
 
-export function getStickersDetailFactory(serviceURL: string) {
+export const getStickersDetailFactory = apiFactory()((api) => {
+    const serviceURL = makeURL(`${api.zpwServiceMap.sticker}/api/message/sticker`);
+
     /**
      * Get stickers by keyword
      *
      * @param keyword Keyword to search for
      */
     return async function getStickersDetail(stickerIds: number | number[]) {
-        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
-        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
-        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
-        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
-
         if (!stickerIds) throw new ZaloApiError("Missing sticker id");
         if (!Array.isArray(stickerIds)) stickerIds = [stickerIds];
         if (stickerIds.length == 0) throw new ZaloApiError("Missing sticker id");
@@ -54,9 +51,6 @@ export function getStickersDetailFactory(serviceURL: string) {
             }),
         );
 
-        const result = await handleZaloResponse<StickerDetailResponse>(response);
-        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
-
-        return result.data as StickerDetailResponse;
+        return resolveResponse<StickerDetailResponse>(response);
     }
-}
+});

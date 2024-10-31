@@ -1,6 +1,5 @@
-import { appContext } from "../context.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { encodeAES, handleZaloResponse, makeURL, request } from "../utils.js";
+import { apiFactory, encodeAES, handleZaloResponse, makeURL, request } from "../utils.js";
 
 interface StickerBasic {
     type: number;
@@ -14,7 +13,9 @@ interface StickerSuggestions {
     sugg_gif: StickerBasic[] | null;
 }
 
-export function getStickersFactory(serviceURL: string) {
+export const getStickersFactory = apiFactory<number[]>()((api, ctx, resolve) => {
+    const serviceURL = makeURL(`${api.zpwServiceMap.sticker}/api/message/sticker`);
+
     /**
      * Get stickers by keyword
      *
@@ -24,21 +25,16 @@ export function getStickersFactory(serviceURL: string) {
      * @throws ZaloApiError
      */
     return async function getStickers(keyword: string) {
-        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
-        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
-        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
-        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
-
         if (!keyword) throw new ZaloApiError("Missing keyword");
 
         const params = {
             keyword: keyword,
             gif: 1,
             guggy: 0,
-            imei: appContext.imei,
+            imei: ctx.imei,
         };
 
-        const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
+        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
         const finalServiceUrl = new URL(serviceURL);
@@ -50,17 +46,16 @@ export function getStickersFactory(serviceURL: string) {
             }),
         );
 
-        const result = await handleZaloResponse<StickerSuggestions>(response);
-        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
+        return resolve(response, (result) => {
+            const suggestions = result.data as StickerSuggestions;
+            const stickerIds: number[] = [];
 
-        const suggestions = result.data as StickerSuggestions;
-        const stickerIds: number[] = [];
+            // @TODO: Implement these
+            // suggestions.sugg_guggy, suggestions.sugg_gif
+            if (suggestions.sugg_sticker)
+                suggestions.sugg_sticker.forEach((sticker) => stickerIds.push(sticker.sticker_id));
 
-        // @TODO: Implement these
-        // suggestions.sugg_guggy, suggestions.sugg_gif
-        if (suggestions.sugg_sticker)
-            suggestions.sugg_sticker.forEach((sticker) => stickerIds.push(sticker.sticker_id));
-
-        return stickerIds;
+            return stickerIds;
+        });
     };
-}
+});

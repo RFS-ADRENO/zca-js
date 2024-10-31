@@ -1,12 +1,13 @@
-import { appContext } from "../context.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { encodeAES, handleZaloResponse, request } from "../utils.js";
+import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
 
 export type ChangeGroupNameResponse = {
     status: number;
 };
 
-export function changeGroupNameFactory(serviceURL: string) {
+export const changeGroupNameFactory = apiFactory<ChangeGroupNameResponse>()((api, ctx, resolve) => {
+    const serviceURL = makeURL(`${api.zpwServiceMap.group[0]}/api/group/updateinfo`);
+
     /**
      * Change group name
      *
@@ -16,20 +17,15 @@ export function changeGroupNameFactory(serviceURL: string) {
      * @throws ZaloApiError
      */
     return async function changeGroupName(groupId: string, name: string) {
-        if (!appContext.secretKey) throw new ZaloApiError("Secret key is not available");
-        if (!appContext.imei) throw new ZaloApiError("IMEI is not available");
-        if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
-        if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
-
         if (name.length == 0) name = Date.now().toString();
 
         const params: any = {
             grid: groupId,
             gname: name,
-            imei: appContext.imei,
+            imei: ctx.imei,
         };
 
-        const encryptedParams = encodeAES(appContext.secretKey, JSON.stringify(params));
+        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
         const response = await request(serviceURL, {
@@ -39,9 +35,6 @@ export function changeGroupNameFactory(serviceURL: string) {
             }),
         });
 
-        const result = await handleZaloResponse<ChangeGroupNameResponse>(response);
-        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
-
-        return result.data as ChangeGroupNameResponse;
+        return resolve(response);
     };
-}
+});

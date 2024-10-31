@@ -1,10 +1,10 @@
-import { appContext } from "../context.js";
+import { apiFactory } from "../utils.js";
 
-export function getCookieFactory() {
+export const getCookieFactory = apiFactory()((_, ctx) => {
     /**
      * Get the current cookie string
      */
     return function getCookie() {
-        return appContext.cookie;
+        return ctx.cookie;
     };
-}
+});

@@ -1,5 +1,4 @@
-import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { handleZaloResponse, request } from "../utils.js";
+import { apiFactory, makeURL, request } from "../utils.js";
 
 export type GetAllFriendsResponse = {
     userId: string;
@@ -37,15 +36,14 @@ export type GetAllFriendsResponse = {
     oa_status: any;
 };
 
-export function getAllFriendsFactory(serviceURL: string) {
+export const getAllFriendsFactory = apiFactory<GetAllFriendsResponse>()((api, _, resolve) => {
+    const serviceURL = makeURL(`${api.zpwServiceMap.profile[0]}/api/social/friend/getfriends`);
+
     return async function getAllFriends() {
         const response = await request(serviceURL, {
             method: "GET",
         });
 
-        const result = await handleZaloResponse<GetAllFriendsResponse>(response);
-        if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
-
-        return result.data as GetAllFriendsResponse;
+        return resolve(response);
     };
-}
+});

@@ -1,12 +1,14 @@
 import cryptojs from "crypto-js";
 import crypto from "node:crypto";
-import { appContext } from "./context.js";
 import fs from "node:fs";
-import sharp from "sharp";
-import pako from "pako";
-import SparkMD5 from "spark-md5";
 import path from "node:path";
+import pako from "pako";
+import sharp from "sharp";
+import SparkMD5 from "spark-md5";
+import { appContext, isContextValid, type ValidContext } from "./context.js";
+import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { GroupEventType } from "./models/GroupEvent.js";
+import type { API } from "./zalo.js";
 
 export function getSignKey(type: string, params: Record<string, any>) {
     let n = [];
@@ -22,13 +24,26 @@ export function getSignKey(type: string, params: Record<string, any>) {
     return cryptojs.MD5(a);
 }
 
-export function makeURL(baseURL: string, params: Record<string, any>) {
+/**
+ *
+ * @param baseURL
+ * @param params
+ * @param apiVersion automatically add zalo api versio to url params
+ * @returns
+ */
+export function makeURL(baseURL: string, params: Record<string, any> = {}, apiVersion: boolean = true) {
     let url = new URL(baseURL);
     for (let key in params) {
         if (params.hasOwnProperty(key)) {
             url.searchParams.append(key, params[key]);
         }
     }
+
+    if (apiVersion) {
+        if (!url.searchParams.has("zpw_ver")) url.searchParams.set("zpw_ver", appContext.API_VERSION.toString());
+        if (!url.searchParams.has("zpw_type")) url.searchParams.set("zpw_type", appContext.API_TYPE.toString());
+    }
+
     return url.toString();
 }
 
@@ -48,12 +63,12 @@ export class ParamsEncryptor {
     }
 
     getEncryptKey() {
-        if (!this.encryptKey) throw new Error("getEncryptKey: didn't create encryptKey yet");
+        if (!this.encryptKey) throw new ZaloApiError("getEncryptKey: didn't create encryptKey yet");
         return this.encryptKey;
     }
 
     createZcid(type: number, imei: string, firstLaunchTime: number) {
-        if (!type || !imei || !firstLaunchTime) throw new Error("createZcid: missing params");
+        if (!type || !imei || !firstLaunchTime) throw new ZaloApiError("createZcid: missing params");
         const msg = `${type},${imei},${firstLaunchTime}`;
         const s = ParamsEncryptor.encodeAES("3FC4F0D2AB50057BCE0D90D9187A22B1", msg, "hex", true);
         this.zcid = s;
@@ -67,7 +82,7 @@ export class ParamsEncryptor {
             const i = n.slice(0, 8).join("") + a.slice(0, 12).join("") + s.reverse().slice(0, 12).join("");
             return (this.encryptKey = i), !0;
         };
-        if (!this.zcid || !this.zcid_ext) throw new Error("createEncryptKey: zcid or zcid_ext is null");
+        if (!this.zcid || !this.zcid_ext) throw new ZaloApiError("createEncryptKey: zcid or zcid_ext is null");
         try {
             let n = cryptojs.MD5(this.zcid_ext).toString().toUpperCase();
             if (t(n, this.zcid) || !(e < 3)) return !1;
@@ -220,7 +235,7 @@ export function decodeAES(secretKey: string, data: string, t = 0): string | null
 }
 
 function updateCookie(input: string | string[]) {
-    if (!appContext.cookie) throw new Error("Cookie is not available");
+    if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
     if (typeof input !== "string" || !Array.isArray(input)) return null;
 
     const cookieMap = new Map<string, string>();
@@ -245,8 +260,8 @@ function updateCookie(input: string | string[]) {
 }
 
 export function getDefaultHeaders() {
-    if (!appContext.cookie) throw new Error("Cookie is not available");
-    if (!appContext.userAgent) throw new Error("User agent is not available");
+    if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
+    if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
 
     return {
         Accept: "application/json, text/plain, */*",
@@ -517,4 +532,23 @@ export async function handleZaloResponse<T = any>(response: Response) {
     }
 
     return result;
+}
+
+export async function resolveResponse<T = any>(res: Response, cb?: (result: ZaloResponse<unknown>) => T) {
+    const result = await handleZaloResponse<T>(res);
+    if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
+    if (cb) return cb(result);
+
+    return result.data as T;
+}
+
+export function apiFactory<T>() {
+    return <K extends (api: API, ctx: ValidContext, resolve: typeof resolveResponse<T>) => any>(callback: K) => {
+        return (api: API) => {
+            if (!isContextValid(appContext))
+                throw new ZaloApiError("Invalid context " + JSON.stringify(appContext, null, 2));
+
+            return callback(api, appContext, resolveResponse) as ReturnType<K>;
+        };
+    };
 }

@@ -22,7 +22,7 @@ type ShareFileSettings = {
     restricted_ext_file: string[];
 };
 
-type AppContextBase = {
+export type AppContextBase = {
     uid: string;
     imei: string;
     cookie: string;
@@ -69,7 +69,7 @@ class CallbacksMap extends Map<string, UploadCallback> {
     }
 }
 
-type AppContextExtended = {
+export type AppContextExtended = {
     uploadCallbacks: CallbacksMap;
     options: Options;
     readonly API_TYPE: number;
@@ -85,3 +85,9 @@ export const appContext: Partial<AppContextBase> & AppContextExtended = {
         checkUpdate: true,
     },
 };
+
+export type ValidContext = AppContextBase & AppContextExtended & { secretKey: string };
+
+export function isContextValid(ctx: typeof appContext): ctx is ValidContext {
+    return !!ctx.secretKey;
+}

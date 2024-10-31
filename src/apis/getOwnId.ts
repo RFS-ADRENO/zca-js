@@ -1,5 +1,5 @@
-import { appContext } from "../context.js";
+import { apiFactory } from "../utils.js";
 
-export function getOwnId() {
-    return appContext.uid;
-}
+export const getOwnIdFactory = apiFactory()((_, ctx) => {
+    return () => ctx.uid;
+});
