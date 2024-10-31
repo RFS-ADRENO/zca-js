@@ -3,6 +3,7 @@ import { getServerInfo, login } from "./apis/login.js";
 import { appContext, type Options } from "./context.js";
 import { logger, makeURL } from "./utils.js";
 
+import { acceptFriendRequestFactory } from "./apis/acceptFriendRequest.js";
 import { addReactionFactory } from "./apis/addReaction.js";
 import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
 import { blockUserFactory } from "./apis/blockUser.js";
@@ -112,6 +113,7 @@ export class API {
     public zpwServiceMap: Record<string, string[]>;
     public listener: Listener;
 
+    public acceptFriendRequest: ReturnType<typeof acceptFriendRequestFactory>;
     public addReaction: ReturnType<typeof addReactionFactory>;
     public addUserToGroup: ReturnType<typeof addUserToGroupFactory>;
     public blockUser: ReturnType<typeof blockUserFactory>;
@@ -140,6 +142,7 @@ export class API {
         this.zpwServiceMap = zpwServiceMap;
         this.listener = new Listener(wsUrl);
 
+        this.acceptFriendRequest = acceptFriendRequestFactory(this);
         this.addReaction = addReactionFactory(this);
         this.addUserToGroup = addUserToGroupFactory(this);
         this.blockUser = blockUserFactory(this);
