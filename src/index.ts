@@ -19,6 +19,7 @@ export type { ExtraInfo, GridInfoMap, GroupInfo, GroupInfoResponse, PendingAppro
 export type { StickerDetailResponse } from "./apis/getStickersDetail.js";
 export type { ProfileInfo, UserInfoResponse } from "./apis/getUserInfo.js";
 export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js";
+export type { SendFriendRequestResponse } from "./apis/sendFriendRequest.js";
 export type { Mention, MessageContent } from "./apis/sendMessage.js";
 export type { SendStickerResponse } from "./apis/sendSticker.js";
 export type { UnBlockUserResponse } from "./apis/unblockUser.js";

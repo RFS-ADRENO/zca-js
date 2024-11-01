@@ -22,6 +22,7 @@ import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
 import { getUserInfoFactory } from "./apis/getUserInfo.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
+import { sendFriendRequestFactory } from "./apis/sendFriendRequest.js";
 import { sendMessageFactory } from "./apis/sendMessage.js";
 import { sendStickerFactory } from "./apis/sendSticker.js";
 import { unblockUserFactory } from "./apis/unblockUser.js";
@@ -132,6 +133,7 @@ export class API {
     public getStickersDetail: ReturnType<typeof getStickersDetailFactory>;
     public getUserInfo: ReturnType<typeof getUserInfoFactory>;
     public removeUserFromGroup: ReturnType<typeof removeUserFromGroupFactory>;
+    public sendFriendRequest: ReturnType<typeof sendFriendRequestFactory>;
     public sendMessage: ReturnType<typeof sendMessageFactory>;
     public sendSticker: ReturnType<typeof sendStickerFactory>;
     public unblockUser: ReturnType<typeof unblockUserFactory>;
@@ -161,6 +163,7 @@ export class API {
         this.getStickersDetail = getStickersDetailFactory(this);
         this.getUserInfo = getUserInfoFactory(this);
         this.removeUserFromGroup = removeUserFromGroupFactory(this);
+        this.sendFriendRequest = sendFriendRequestFactory(this);
         this.sendMessage = sendMessageFactory(this);
         this.sendSticker = sendStickerFactory(this);
         this.unblockUser = unblockUserFactory(this);
