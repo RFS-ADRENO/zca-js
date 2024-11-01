@@ -1,7 +1,7 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { Message } from "../models/Message.js";
 import { Reactions } from "../models/Reaction.js";
-import { apiFactory, encodeAES, handleZaloResponse, makeURL, request } from "../utils.js";
+import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
 
 export type AddReactionResponse = {
     msgIds: string;
