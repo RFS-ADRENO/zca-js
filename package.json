@@ -16,6 +16,7 @@
         "build:esm": "tsc",
         "build:cjs": "rollup -c rollup.config.js",
         "build": "bun run build:clean && bun run build:esm && bun run build:cjs",
+        "test:feat": "bun run test/feat.ts",
         "prettier": "prettier --write ."
     },
     "repository": {
