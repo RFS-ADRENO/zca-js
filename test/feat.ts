@@ -1,3 +1,8 @@
+/**
+ * Xem hướng dẫn sử dụng tại:
+ * @tutorial https://drive.google.com/file/d/1xuGHYCu-5H28er4bXZEFjTCSGKcOekhi/view?usp=sharing
+ */
+
 import fs from "node:fs";
 import { createInterface } from "node:readline";
 import { Zalo, type Credentials } from "../src/index.js";
