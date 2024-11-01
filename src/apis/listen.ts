@@ -168,7 +168,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     const { msgs } = parsedData;
                     for (const msg of msgs) {
                         if (typeof msg.content == "object" && msg.content.hasOwnProperty("deleteMsg")) {
-                            const undoObject = new Undo(msg, true);
+                            const undoObject = new Undo(msg, false);
                             if (undoObject.isSelf && !this.selfListen) continue;
                             this.emit("undo", undoObject);
                         } else {
