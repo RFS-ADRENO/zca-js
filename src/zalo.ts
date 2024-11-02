@@ -10,6 +10,7 @@ import { blockUserFactory } from "./apis/blockUser.js";
 import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
 import { changeGroupNameFactory } from "./apis/changeGroupName.js";
 import { createGroupFactory } from "./apis/createGroup.js";
+import { createPollFactory } from "./apis/createPoll.js";
 import { deleteMessageFactory } from "./apis/deleteMessage.js";
 import { fetchAccountInfoFactory } from "./apis/fetchAccountInfo.js";
 import { findUserFactory } from "./apis/findUser.js";
@@ -23,6 +24,7 @@ import { getQRFactory } from "./apis/getQR.js";
 import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
 import { getUserInfoFactory } from "./apis/getUserInfo.js";
+import { lockPollFactory } from "./apis/lockPoll.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
 import { sendFriendRequestFactory } from "./apis/sendFriendRequest.js";
 import { sendMessageFactory } from "./apis/sendMessage.js";
@@ -123,6 +125,7 @@ export class API {
     public changeGroupAvatar: ReturnType<typeof changeGroupAvatarFactory>;
     public changeGroupName: ReturnType<typeof changeGroupNameFactory>;
     public createGroup: ReturnType<typeof createGroupFactory>;
+    public createPoll: ReturnType<typeof createPollFactory>;
     public deleteMessage: ReturnType<typeof deleteMessageFactory>;
     public fetchAccountInfo: ReturnType<typeof fetchAccountInfoFactory>;
     public findUser: ReturnType<typeof findUserFactory>;
@@ -136,6 +139,7 @@ export class API {
     public getStickers: ReturnType<typeof getStickersFactory>;
     public getStickersDetail: ReturnType<typeof getStickersDetailFactory>;
     public getUserInfo: ReturnType<typeof getUserInfoFactory>;
+    public lockPoll: ReturnType<typeof lockPollFactory>;
     public removeUserFromGroup: ReturnType<typeof removeUserFromGroupFactory>;
     public sendFriendRequest: ReturnType<typeof sendFriendRequestFactory>;
     public sendMessage: ReturnType<typeof sendMessageFactory>;
@@ -155,6 +159,7 @@ export class API {
         this.changeGroupAvatar = changeGroupAvatarFactory(this);
         this.changeGroupName = changeGroupNameFactory(this);
         this.createGroup = createGroupFactory(this);
+        this.createPoll = createPollFactory(this);
         this.deleteMessage = deleteMessageFactory(this);
         this.fetchAccountInfo = fetchAccountInfoFactory(this);
         this.findUser = findUserFactory(this);
@@ -168,6 +173,7 @@ export class API {
         this.getStickers = getStickersFactory(this);
         this.getStickersDetail = getStickersDetailFactory(this);
         this.getUserInfo = getUserInfoFactory(this);
+        this.lockPoll = lockPollFactory(this);
         this.removeUserFromGroup = removeUserFromGroupFactory(this);
         this.sendFriendRequest = sendFriendRequestFactory(this);
         this.sendMessage = sendMessageFactory(this);
