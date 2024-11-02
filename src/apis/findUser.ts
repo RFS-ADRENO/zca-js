@@ -9,6 +9,9 @@ export type FindUserResponse = {
     dob: number;
     sdob: string;
     globalId: string;
+    bizPkg: {
+        pkgId: number;
+    };
     uid: string;
     zalo_name: string;
     display_name: string;

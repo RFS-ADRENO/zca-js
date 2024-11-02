@@ -19,6 +19,7 @@ import { getContextFactory } from "./apis/getContext.js";
 import { getCookieFactory } from "./apis/getCookie.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
 import { getOwnIdFactory } from "./apis/getOwnId.js";
+import { getQRFactory } from "./apis/getQR.js";
 import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
 import { getUserInfoFactory } from "./apis/getUserInfo.js";
@@ -131,6 +132,7 @@ export class API {
     public getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
     public getOwnId: ReturnType<typeof getOwnIdFactory>;
     public getContext: ReturnType<typeof getContextFactory>;
+    public getQR: ReturnType<typeof getQRFactory>;
     public getStickers: ReturnType<typeof getStickersFactory>;
     public getStickersDetail: ReturnType<typeof getStickersDetailFactory>;
     public getUserInfo: ReturnType<typeof getUserInfoFactory>;
@@ -162,8 +164,7 @@ export class API {
         this.getGroupInfo = getGroupInfoFactory(this);
         this.getOwnId = getOwnIdFactory(this);
         this.getContext = getContextFactory(this);
-
-        this.addReaction = addReactionFactory(this);
+        this.getQR = getQRFactory(this);
         this.getStickers = getStickersFactory(this);
         this.getStickersDetail = getStickersDetailFactory(this);
         this.getUserInfo = getUserInfoFactory(this);

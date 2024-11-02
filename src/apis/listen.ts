@@ -79,7 +79,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
     }
 
     public start() {
-        if (this.ws) throw new ZaloApiError("ALready started");
+        if (this.ws) throw new ZaloApiError("Already started");
         const ws = new WebSocket(this.url, {
             headers: {
                 "accept-encoding": "gzip, deflate, br, zstd",
