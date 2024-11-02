@@ -30,14 +30,14 @@ export const createPollFactory = apiFactory<CreatePollResponse>()((api, ctx, res
 
     /**
      * @question (string): Question for poll
-	 * @options (string[]): List options for poll
-	 * @groupId (string): Group ID to create poll from
-	 * @expiredTime (number): Poll expiration time (0 = no expiration)
-	 * @pinAct (boolean): Pin action (pin poll)
-	 * @multiChoices (boolean): Allows multiple poll choices
-	 * @allowAddNewOption (boolean): Allow members to add new options
-	 * @hideVotePreview (boolean): Hide voting results when haven't voted
-	 * @isAnonymous (boolean): Hide poll voters
+     * @options (string[]): List options for poll
+     * @groupId (string): Group ID to create poll from
+     * @expiredTime (number): Poll expiration time (0 = no expiration)
+     * @pinAct (boolean): Pin action (pin poll)
+     * @multiChoices (boolean): Allows multiple poll choices
+     * @allowAddNewOption (boolean): Allow members to add new options
+     * @hideVotePreview (boolean): Hide voting results when haven't voted
+     * @isAnonymous (boolean): Hide poll voters
      */
     return async function createPoll(question: Message, options: string[], groupId: string) {
         const params: any = {
