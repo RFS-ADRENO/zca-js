@@ -9,7 +9,7 @@ export const lockPollFactory = apiFactory<LockPollResponse>()((api, ctx, resolve
     return async function lockPoll(pollId: number) {
         const params: any = {
             poll_id: pollId,
-			imei: ctx.imei
+            imei: ctx.imei,
         };
 
         const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));

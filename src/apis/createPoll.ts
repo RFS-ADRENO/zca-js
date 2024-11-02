@@ -31,17 +31,17 @@ export const createPollFactory = apiFactory<CreatePollResponse>()((api, ctx, res
     return async function createPoll(question: Message, options: string | string[], groupId: string) {
         const params: any = {
             group_id: groupId,
-			question: typeof question == "string" ? question : question.text,
-			options: [],
-			expired_time: 0,
-			pinAct: false,
-			allow_multi_choices: true,
-			allow_add_new_option: true,
-			is_hide_vote_preview: false,
-			is_anonymous: false,
-			poll_type: 0,
-			src: 1,
-			imei: ctx.imei,
+            question: typeof question == "string" ? question : question.text,
+            options: [],
+            expired_time: 0,
+            pinAct: false,
+            allow_multi_choices: true,
+            allow_add_new_option: true,
+            is_hide_vote_preview: false,
+            is_anonymous: false,
+            poll_type: 0,
+            src: 1,
+            imei: ctx.imei,
         };
 
         if (Array.isArray(options)) {
