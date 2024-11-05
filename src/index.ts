@@ -10,7 +10,10 @@ export type { BlockUserResponse } from "./apis/blockUser.js";
 export type { ChangeGroupAvatarResponse } from "./apis/changeGroupAvatar.js";
 export type { ChangeGroupNameResponse } from "./apis/changeGroupName.js";
 export type { CreateGroupResponse } from "./apis/createGroup.js";
+export type { CreateNoteResponse } from "./apis/createNote.js";
+export type { CreatePollResponse } from "./apis/createPoll.js";
 export type { DeleteMessageResponse } from "./apis/deleteMessage.js";
+export type { EditNoteResponse } from "./apis/editNote.js";
 export type { FetchAccountInfoResponse } from "./apis/fetchAccountInfo.js";
 export type { FindUserResponse } from "./apis/findUser.js";
 export type { GetAllFriendsResponse } from "./apis/getAllFriends.js";
@@ -19,6 +22,7 @@ export type { ExtraInfo, GridInfoMap, GroupInfo, GroupInfoResponse, PendingAppro
 export type { GetQRResponse } from "./apis/getQR.js";
 export type { StickerDetailResponse } from "./apis/getStickersDetail.js";
 export type { ProfileInfo, UserInfoResponse } from "./apis/getUserInfo.js";
+export type { LockPollResponse } from "./apis/lockPoll.js";
 export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js";
 export type { SendFriendRequestResponse } from "./apis/sendFriendRequest.js";
 export type { Mention, MessageContent } from "./apis/sendMessage.js";
