@@ -464,8 +464,10 @@ export function getGroupEventType(act: string) {
     if (act == "remove_admin") return GroupEventType.REMOVE_ADMIN;
 
     if (act == "new_pin_topic") return GroupEventType.NEW_PIN_TOPIC;
+    if (act == "update_pin_topic") return GroupEventType.UPDATE_PIN_TOPIC;
     if (act == "update_topic") return GroupEventType.UPDATE_TOPIC;
     if (act == "update_board") return GroupEventType.UPDATE_BOARD;
+    if (act == "remove_board") return GroupEventType.REMOVE_BOARD;
     if (act == "reorder_pin_topic") return GroupEventType.REORDER_PIN_TOPIC;
     if (act == "unpin_topic") return GroupEventType.UNPIN_TOPIC;
     if (act == "remove_topic") return GroupEventType.REMOVE_TOPIC;

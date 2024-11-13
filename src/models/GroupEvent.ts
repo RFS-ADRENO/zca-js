@@ -15,9 +15,13 @@ export enum GroupEventType {
     REMOVE_ADMIN,
 
     NEW_PIN_TOPIC,
-    UPDATE_TOPIC,
-    UPDATE_BOARD,
+    UPDATE_PIN_TOPIC,
     REORDER_PIN_TOPIC,
+
+    UPDATE_BOARD,
+    REMOVE_BOARD,
+
+    UPDATE_TOPIC,
     UNPIN_TOPIC,
     REMOVE_TOPIC,
 
@@ -48,6 +52,34 @@ export type GroupSetting = {
     banDuration: number;
 };
 
+export type GroupTopic = {
+    type: number;
+    color: number;
+    emoji: string;
+    startTime: number;
+    duration: number;
+    params: string;
+    id: string;
+    creatorId: string;
+    createTime: number;
+    editorId: string;
+    editTime: number;
+    repeat: number;
+    action: number;
+};
+
+export type GroupInfo = {
+    group_link?: string;
+    link_expired_time?: number;
+    [key: string]: any;
+};
+
+export type GroupExtraData = {
+    featureId?: number;
+    field?: string;
+    [key: string]: any;
+};
+
 export type TGroupEventBase = {
     subType: number;
     groupId: string;
@@ -56,16 +88,9 @@ export type TGroupEventBase = {
     sourceId: string;
     updateMembers: Member[];
     groupSetting: GroupSetting;
-    groupTopic: null;
-    info: {
-        group_link?: string;
-        link_expired_time?: number;
-        [key: string]: any;
-    };
-    extraData: {
-        featureId?: number;
-        [key: string]: any;
-    };
+    groupTopic: GroupTopic | null;
+    info: GroupInfo;
+    extraData: GroupExtraData;
     time: string;
     avt: null;
     fullAvt: null;
@@ -88,21 +113,7 @@ export type TGroupEventJoinRequest = {
 export type TGroupEventPinTopic = {
     oldBoardVersion: number;
     boardVersion: number;
-    topic: {
-        type: number;
-        color: number;
-        emoji: string;
-        startTime: number;
-        duration: number;
-        params: string;
-        id: string;
-        creatorId: string;
-        createTime: number;
-        editorId: string;
-        editTime: number;
-        repeat: number;
-        action: number;
-    };
+    topic: GroupTopic;
     actorId: string;
     groupId: string;
 };
@@ -119,7 +130,33 @@ export type TGroupEventReorderPinTopic = {
     topic: null;
 };
 
-export type TGroupEvent = TGroupEventBase | TGroupEventJoinRequest | TGroupEventPinTopic | TGroupEventReorderPinTopic;
+export type TGroupEventBoard = {
+    sourceId: string;
+    groupName: string;
+    groupTopic: GroupTopic;
+    groupId: string;
+    creatorId: string;
+
+    subType?: number;
+    updateMembers?: Member[];
+    groupSetting?: GroupSetting;
+    info?: GroupInfo;
+    extraData?: GroupExtraData;
+    time?: string;
+    avt?: null;
+    fullAvt?: null;
+    isAdd?: number;
+    hideGroupInfo?: number;
+    version?: string;
+    groupType?: number;
+};
+
+export type TGroupEvent =
+    | TGroupEventBase
+    | TGroupEventJoinRequest
+    | TGroupEventPinTopic
+    | TGroupEventReorderPinTopic
+    | TGroupEventBoard;
 
 export type GroupEvent =
     | {
@@ -129,7 +166,7 @@ export type GroupEvent =
           isSelf: boolean;
       }
     | {
-          type: GroupEventType.NEW_PIN_TOPIC | GroupEventType.UNPIN_TOPIC;
+          type: GroupEventType.NEW_PIN_TOPIC | GroupEventType.UNPIN_TOPIC | GroupEventType.UPDATE_PIN_TOPIC;
           data: TGroupEventPinTopic;
           threadId: string;
           isSelf: boolean;
@@ -141,12 +178,21 @@ export type GroupEvent =
           isSelf: boolean;
       }
     | {
+          type: GroupEventType.UPDATE_BOARD | GroupEventType.REMOVE_BOARD;
+          data: TGroupEventBoard;
+          threadId: string;
+          isSelf: boolean;
+      }
+    | {
           type: Exclude<
               GroupEventType,
               | GroupEventType.JOIN_REQUEST
               | GroupEventType.NEW_PIN_TOPIC
               | GroupEventType.UNPIN_TOPIC
+              | GroupEventType.UPDATE_PIN_TOPIC
               | GroupEventType.REORDER_PIN_TOPIC
+              | GroupEventType.UPDATE_BOARD
+              | GroupEventType.REMOVE_BOARD
           >;
           data: TGroupEventBase;
           threadId: string;
@@ -157,7 +203,7 @@ export function initializeGroupEvent(data: TGroupEvent, type: GroupEventType): G
     const threadId = data.groupId;
     if (type == GroupEventType.JOIN_REQUEST) {
         return { type, data: data as TGroupEventJoinRequest, threadId, isSelf: false };
-    } else if (type == GroupEventType.NEW_PIN_TOPIC || type == GroupEventType.UNPIN_TOPIC) {
+    } else if (type == GroupEventType.NEW_PIN_TOPIC || type == GroupEventType.UNPIN_TOPIC || type == GroupEventType.UPDATE_PIN_TOPIC) {
         return {
             type,
             data: data as TGroupEventPinTopic,
@@ -170,6 +216,13 @@ export function initializeGroupEvent(data: TGroupEvent, type: GroupEventType): G
             data: data as TGroupEventReorderPinTopic,
             threadId,
             isSelf: (data as TGroupEventPinTopic).actorId == appContext.uid,
+        };
+    } else if (type == GroupEventType.UPDATE_BOARD || type == GroupEventType.REMOVE_BOARD) {
+        return {
+            type,
+            data: data as TGroupEventBoard,
+            threadId,
+            isSelf: (data as TGroupEventBoard).sourceId == appContext.uid,
         };
     } else {
         const baseData = data as TGroupEventBase;
