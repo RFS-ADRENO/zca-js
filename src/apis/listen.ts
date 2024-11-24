@@ -49,7 +49,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
         if (!appContext.userAgent) throw new Error("User agent is not available");
 
         this.url = url;
-        this.cookie = appContext.cookie;
+        this.cookie = appContext.cookie.getCookieStringSync("https://chat.zalo.me");
         this.userAgent = appContext.userAgent;
 
         this.selfListen = appContext.options.selfListen;

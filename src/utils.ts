@@ -5,6 +5,8 @@ import path from "node:path";
 import pako from "pako";
 import sharp from "sharp";
 import SparkMD5 from "spark-md5";
+import toughCookie from "tough-cookie";
+
 import { appContext, isContextValid, type ValidContext } from "./context.js";
 import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { GroupEventType } from "./models/GroupEvent.js";
@@ -234,32 +236,7 @@ export function decodeAES(secretKey: string, data: string, t = 0): string | null
     }
 }
 
-function updateCookie(input: string | string[]) {
-    if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
-    if (typeof input !== "string" || !Array.isArray(input)) return null;
-
-    const cookieMap = new Map<string, string>();
-    const cookie = appContext.cookie;
-    cookie.split(";").forEach((cookie) => {
-        const [key, value] = cookie.split("=");
-        cookieMap.set(key.trim(), value.trim());
-    });
-
-    let newCookie: string;
-    if (Array.isArray(input)) newCookie = input.map((cookie) => cookie.split(";")[0]).join("; ");
-    else newCookie = input;
-
-    newCookie.split(";").forEach((cookie) => {
-        const [key, value] = cookie.split("=");
-        cookieMap.set(key.trim(), value.trim());
-    });
-
-    return Array.from(cookieMap.entries())
-        .map(([key, value]) => `${key}=${value}`)
-        .join("; ");
-}
-
-export function getDefaultHeaders() {
+export async function getDefaultHeaders(origin: string = "https://chat.zalo.me") {
     if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
     if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
 
@@ -268,7 +245,7 @@ export function getDefaultHeaders() {
         "Accept-Encoding": "gzip, deflate, br, zstd",
         "Accept-Language": "en-US,en;q=0.9",
         "content-type": "application/x-www-form-urlencoded",
-        Cookie: appContext.cookie,
+        Cookie: await appContext.cookie.getCookieString(origin),
         Origin: "https://chat.zalo.me",
         Referer: "https://chat.zalo.me/",
         "User-Agent": appContext.userAgent,
@@ -276,23 +253,34 @@ export function getDefaultHeaders() {
 }
 
 export async function request(url: string, options?: RequestInit) {
-    if (options) options.headers = mergeHeaders(options.headers || {}, getDefaultHeaders());
-    else options = { headers: getDefaultHeaders() };
+    if (!appContext.cookie) appContext.cookie = new toughCookie.CookieJar();
+    const origin = new URL(url).origin;
+
+    const defaultHeaders = await getDefaultHeaders(origin);
+    if (options) {
+        options.headers = Object.assign(defaultHeaders, options.headers || {});
+    } else options = { headers: defaultHeaders };
 
     const response = await fetch(url, options);
     if (response.headers.has("set-cookie")) {
-        const newCookie = updateCookie(response.headers.get("set-cookie")!);
-        if (newCookie) appContext.cookie = newCookie;
+        for (const cookie of response.headers.getSetCookie()) {
+            const parsed = toughCookie.Cookie.parse(cookie);
+            try {
+                if (parsed) await appContext.cookie.setCookie(parsed, origin);
+            } catch {}
+        }
+    }
+
+    const redirectURL = response.headers.get("location");
+    if (redirectURL) {
+        const redirectOptions = { ...options };
+        redirectOptions.method = "GET";
+        // @ts-ignore
+        redirectOptions.headers["Referer"] = "https://id.zalo.me/";
+        return await request(redirectURL, redirectOptions);
     }
 
     return response;
-}
-
-function mergeHeaders(headers: HeadersInit, defaultHeaders: Record<string, string>) {
-    return {
-        ...defaultHeaders,
-        ...headers,
-    };
 }
 
 export async function getImageMetaData(filePath: string) {
@@ -387,16 +375,16 @@ export function getMd5LargeFileObject(filePath: string, fileSize: number) {
 
 export const logger = {
     verbose: (...args: any[]) => {
-        if (appContext.options.verbose) console.log("\x1b[2m🚀 VERBOSE\x1b[0m", ...args);
+        if (appContext.options.logging) console.log("\x1b[2m🚀 VERBOSE\x1b[0m", ...args);
     },
     info: (...args: any[]) => {
-        console.log("\x1b[34mINFO\x1b[0m", ...args);
+        if (appContext.options.logging) console.log("\x1b[34mINFO\x1b[0m", ...args);
     },
     warn: (...args: any[]) => {
-        console.log("\x1b[33mWARN\x1b[0m", ...args);
+        if (appContext.options.logging) console.log("\x1b[33mWARN\x1b[0m", ...args);
     },
     error: (...args: any[]) => {
-        console.log("\x1b[31mERROR\x1b[0m", ...args);
+        if (appContext.options.logging) console.log("\x1b[31mERROR\x1b[0m", ...args);
     },
 };
 

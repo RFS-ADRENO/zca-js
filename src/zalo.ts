@@ -35,27 +35,29 @@ import { unblockUserFactory } from "./apis/unblockUser.js";
 import { undoFactory } from "./apis/undo.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 import { checkUpdate } from "./update.js";
+import toughCookie, { type SerializedCookie } from "tough-cookie";
+import { loginQR } from "./apis/loginQR.js";
+import { randomUUID } from "node:crypto";
+import { MD5 } from "crypto-js";
+import { ZaloApiError } from "./Errors/ZaloApiError.js";
 
-export type J2Cookies = {
-    url: string;
-    cookies: {
-        domain: string;
-        expirationDate: number;
-        hostOnly: boolean;
-        httpOnly: boolean;
-        name: string;
-        path: string;
-        sameSite: string;
-        secure: boolean;
-        session: boolean;
-        storeId: string;
-        value: string;
-    }[];
+export type Cookie = {
+    domain: string;
+    expirationDate: number;
+    hostOnly: boolean;
+    httpOnly: boolean;
+    name: string;
+    path: string;
+    sameSite: string;
+    secure: boolean;
+    session: boolean;
+    storeId: string;
+    value: string;
 };
 
 export type Credentials = {
     imei: string;
-    cookie: string | J2Cookies;
+    cookie: Cookie[] | SerializedCookie[] | { url: string; cookies: Cookie[] };
     userAgent: string;
     language?: string;
 };
@@ -63,24 +65,28 @@ export type Credentials = {
 export class Zalo {
     private enableEncryptParam = true;
 
-    constructor(credentials: Credentials, options?: Partial<Options>) {
-        this.validateParams(credentials);
-
-        appContext.imei = credentials.imei;
-        appContext.cookie = this.parseCookies(credentials.cookie);
-        appContext.userAgent = credentials.userAgent;
-        appContext.language = credentials.language || "vi";
-
+    constructor(options?: Partial<Options>) {
         appContext.secretKey = null;
 
         if (options) Object.assign(appContext.options, options);
     }
 
-    private parseCookies(cookie: string | J2Cookies) {
-        if (typeof cookie === "string") return cookie;
+    private parseCookies(cookie: Credentials["cookie"]): toughCookie.CookieJar {
+        const cookieArr = Array.isArray(cookie) ? cookie : cookie.cookies;
 
-        const cookieString = cookie.cookies.map((c) => `${c.name}=${c.value}`).join("; ");
-        return cookieString;
+        const jar = new toughCookie.CookieJar();
+        for (const each of cookieArr) {
+            try {
+                jar.setCookieSync(
+                    toughCookie.Cookie.fromJSON({
+                        ...each,
+                        key: (each as toughCookie.SerializedCookie).key || each.name,
+                    }) ?? "",
+                    "https://chat.zalo.me",
+                );
+            } catch {}
+        }
+        return jar;
     }
 
     private validateParams(credentials: Credentials) {
@@ -89,13 +95,20 @@ export class Zalo {
         }
     }
 
-    public async login() {
+    public async login(credentials: Credentials) {
         await checkUpdate();
+
+        this.validateParams(credentials);
+
+        appContext.imei = credentials.imei;
+        appContext.cookie = this.parseCookies(credentials.cookie);
+        appContext.userAgent = credentials.userAgent;
+        appContext.language = credentials.language || "vi";
 
         const loginData = await login(this.enableEncryptParam);
         const serverInfo = await getServerInfo(this.enableEncryptParam);
 
-        if (!loginData || !serverInfo) throw new Error("Failed to login");
+        if (!loginData || !serverInfo) throw new Error("Đăng nhập thất bại");
         appContext.secretKey = loginData.data.zpw_enk;
         appContext.uid = loginData.data.uid;
 
@@ -113,6 +126,25 @@ export class Zalo {
                 t: Date.now(),
             }),
         );
+    }
+
+    public async loginQR(
+        options?: { userAgent?: string; language?: string; qrPath?: string },
+        callback?: (qrPath: string) => void,
+    ) {
+        if (!options) options = {};
+        if (!options.userAgent)
+            options.userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0";
+        if (!options.language) options.language = "vi";
+
+        const loginQRResult = await loginQR(options as { userAgent: string; language: string; qrPath?: string }, callback);
+        if (!loginQRResult) throw new ZaloApiError("Đăng nhập với QR thất bại");
+        return this.login({
+            cookie: loginQRResult.cookies,
+            imei: randomUUID() + "-" + MD5(options.userAgent).toString(),
+            userAgent: options.userAgent,
+            language: options.language,
+        });
     }
 }
 

@@ -1,3 +1,5 @@
+import { type CookieJar } from "tough-cookie";
+
 type UploadEventData = {
     fileUrl: string;
     fileId: string;
@@ -25,7 +27,7 @@ type ShareFileSettings = {
 export type AppContextBase = {
     uid: string;
     imei: string;
-    cookie: string;
+    cookie: CookieJar;
     userAgent: string;
     language: string;
     secretKey: string | null;
@@ -43,7 +45,7 @@ export type AppContextBase = {
 export type Options = {
     selfListen: boolean;
     checkUpdate: boolean;
-    verbose: boolean;
+    logging: boolean;
 };
 
 type ExtraVer = {
@@ -84,7 +86,7 @@ export const appContext: Partial<AppContextBase> & AppContextExtended = {
     options: {
         selfListen: false,
         checkUpdate: true,
-        verbose: false
+        logging: true
     },
 };
 
