@@ -1,7 +1,7 @@
 import FormData from "form-data";
 import fs from "node:fs";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, encodeAES, getFullTimeFromMilisecond, getImageMetaData, makeURL, request } from "../utils.js";
+import { apiFactory, encodeAES, getFullTimeFromMillisecond, getImageMetaData, makeURL, request } from "../utils.js";
 
 export type ChangeGroupAvatarResponse = "";
 
@@ -20,7 +20,7 @@ export const changeGroupAvatarFactory = apiFactory<ChangeGroupAvatarResponse>()(
         const params: any = {
             grid: groupId,
             avatarSize: 120,
-            clientId: `g${groupId}${getFullTimeFromMilisecond(new Date().getTime())}`,
+            clientId: `g${groupId}${getFullTimeFromMillisecond(new Date().getTime())}`,
             imei: ctx.imei,
         };
 

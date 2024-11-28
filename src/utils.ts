@@ -411,7 +411,7 @@ export function strPadLeft(e: any, t: string, n: number) {
     return a === n ? e : a > n ? e.slice(-n) : t.repeat(n - a) + e;
 }
 
-export function getFullTimeFromMilisecond(e: number) {
+export function getFullTimeFromMillisecond(e: number) {
     let t = new Date(e);
     return (
         strPadLeft(t.getHours(), "0", 2) +
