@@ -1,8 +1,9 @@
 import { Listener } from "./apis/listen.js";
 import { getServerInfo, login } from "./apis/login.js";
 import { appContext, type Options } from "./context.js";
-import { logger, makeURL } from "./utils.js";
+import { generateZaloUUID, logger, makeURL } from "./utils.js";
 
+import toughCookie from "tough-cookie";
 import { acceptFriendRequestFactory } from "./apis/acceptFriendRequest.js";
 import { addReactionFactory } from "./apis/addReaction.js";
 import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
@@ -27,6 +28,7 @@ import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
 import { getUserInfoFactory } from "./apis/getUserInfo.js";
 import { lockPollFactory } from "./apis/lockPoll.js";
+import { loginQR } from "./apis/loginQR.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
 import { sendFriendRequestFactory } from "./apis/sendFriendRequest.js";
 import { sendMessageFactory } from "./apis/sendMessage.js";
@@ -34,12 +36,8 @@ import { sendStickerFactory } from "./apis/sendSticker.js";
 import { unblockUserFactory } from "./apis/unblockUser.js";
 import { undoFactory } from "./apis/undo.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
-import { checkUpdate } from "./update.js";
-import toughCookie, { type SerializedCookie } from "tough-cookie";
-import { loginQR } from "./apis/loginQR.js";
-import { randomUUID } from "node:crypto";
-import { MD5 } from "crypto-js";
 import { ZaloApiError } from "./Errors/ZaloApiError.js";
+import { checkUpdate } from "./update.js";
 
 export type Cookie = {
     domain: string;
@@ -57,7 +55,7 @@ export type Cookie = {
 
 export type Credentials = {
     imei: string;
-    cookie: Cookie[] | SerializedCookie[] | { url: string; cookies: Cookie[] };
+    cookie: Cookie[] | toughCookie.SerializedCookie[] | { url: string; cookies: Cookie[] };
     userAgent: string;
     language?: string;
 };
@@ -73,6 +71,10 @@ export class Zalo {
 
     private parseCookies(cookie: Credentials["cookie"]): toughCookie.CookieJar {
         const cookieArr = Array.isArray(cookie) ? cookie : cookie.cookies;
+
+        cookieArr.forEach((e, i) => {
+            if (typeof e.domain == "string" && e.domain.startsWith(".")) cookieArr[i].domain = e.domain.slice(1);
+        });
 
         const jar = new toughCookie.CookieJar();
         for (const each of cookieArr) {
@@ -137,11 +139,14 @@ export class Zalo {
             options.userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0";
         if (!options.language) options.language = "vi";
 
-        const loginQRResult = await loginQR(options as { userAgent: string; language: string; qrPath?: string }, callback);
+        const loginQRResult = await loginQR(
+            options as { userAgent: string; language: string; qrPath?: string },
+            callback,
+        );
         if (!loginQRResult) throw new ZaloApiError("Đăng nhập với QR thất bại");
         return this.login({
             cookie: loginQRResult.cookies,
-            imei: randomUUID() + "-" + MD5(options.userAgent).toString(),
+            imei: generateZaloUUID(options.userAgent),
             userAgent: options.userAgent,
             language: options.language,
         });

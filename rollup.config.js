@@ -21,5 +21,7 @@ export default {
         "node:path",
         "semver",
         "fs",
+        "node:fs/promises",
+        "tough-cookie"
     ],
 };

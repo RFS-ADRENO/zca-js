@@ -542,3 +542,7 @@ export function apiFactory<T>() {
         };
     };
 }
+
+export function generateZaloUUID(userAgent: string) {
+    return crypto.randomUUID() + "-" + cryptojs.MD5(userAgent).toString();
+}
