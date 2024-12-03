@@ -1,29 +1,34 @@
-import fs from "node:fs";
-import { J2Cookies, Zalo } from "../src/index.js";
-import { MessageType } from "../src/models/Message.js";
+import fs from "fs";
+import { API, Credentials, MessageType, Zalo } from "../src/index.js";
 
-/**
- * @support for cookie default values (not cookies of J2Cookies)
-const zalo = new Zalo(
-    {
-        cookie: "your_cookie_here",
-        imei: "your_imei_here",
-        userAgent: "your_useragent_here",
-    },
-    {
-        selfListen: false,
-        checkUpdate: true,
-    },
-);
-*/
+const zalo = new Zalo();
 
-const zalo = new Zalo({
-    cookie: JSON.parse(fs.readFileSync("./examples/cookies.json", "utf-8")) as J2Cookies,
+const credentials: Partial<Credentials> = {
+    cookie: JSON.parse(fs.readFileSync("./examples/cookies.json", "utf-8")),
     imei: "",
-    userAgent: "",
-});
+    userAgent: "", // Same userAgent is recommended
+};
 
-const api = await zalo.login();
+const isValid = (credentials: Partial<Credentials>): credentials is Credentials => {
+    return !!credentials.cookie && !!credentials.imei && !!credentials.userAgent;
+};
+
+let api: API | undefined;
+
+if (isValid(credentials)) {
+    api = await zalo.login(credentials);
+} else {
+    api = await zalo.loginQR({ qrPath: "./qr.png", userAgent: "" }, () => {
+        console.log("QR Code has been generated");
+    });
+    const context = api.getContext();
+
+    // Save credentials for later use
+    credentials.imei = context.imei;
+    credentials.userAgent = context.userAgent;
+    credentials.cookie = context.cookie.toJSON()?.cookies;
+}
+
 const { listener } = api;
 
 listener.on("message", (message) => {
@@ -31,7 +36,7 @@ listener.on("message", (message) => {
 
     if (isDirectMessage && !message.isSelf && typeof message.data.content === "string") {
         console.log("Message:", message.data.content, message.threadId);
-        api.sendMessage(message.data.content, message.threadId, message.type, message);
+        api.sendMessage(message.data.content, message.threadId, message.type);
     }
 });
 

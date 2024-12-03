@@ -1,13 +1,17 @@
 import { compare } from "semver";
-import { logger } from "./utils.js";
 import { appContext } from "./context.js";
+import { isBun, logger } from "./utils.js";
 
 const VERSION = "2.0.0-alpha.4";
 const NPM_REGISTRY = "https://registry.npmjs.org/zca-js";
 
 export async function checkUpdate() {
     if (!appContext.options.checkUpdate) return;
-    const response = await fetch(NPM_REGISTRY).catch(() => null);
+
+    const _options = {
+        ...(isBun ? { proxy: appContext.options.agent } : { agent: appContext.options.agent }),
+    };
+    const response = await appContext.options.polyfill(NPM_REGISTRY, _options as RequestInit).catch(() => null);
     if (!response || !response.ok) return;
 
     const data = await response.json().catch(() => null);
