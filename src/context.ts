@@ -1,4 +1,5 @@
-import { type CookieJar } from "tough-cookie";
+import type { Agent } from "http";
+import type { CookieJar } from "tough-cookie";
 
 type UploadEventData = {
     fileUrl: string;
@@ -46,6 +47,19 @@ export type Options = {
     selfListen: boolean;
     checkUpdate: boolean;
     logging: boolean;
+
+    /**
+     * Optional agent configuration.
+     * - When using `Bun`, this should be a string.
+     * - In other environments, this should be an `Agent` instance.
+     */
+    agent?: Agent | string;
+
+    /**
+     * Optional fetch implementation for polyfills in non-standard environments.
+     * If using proxy, `node-fetch` is highly recommended.
+     */
+    polyfill: typeof fetch;
 };
 
 type ExtraVer = {
@@ -86,7 +100,8 @@ export const appContext: Partial<AppContextBase> & AppContextExtended = {
     options: {
         selfListen: false,
         checkUpdate: true,
-        logging: true
+        logging: true,
+        polyfill: global.fetch,
     },
 };
 

@@ -12,6 +12,8 @@ import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { GroupEventType } from "./models/GroupEvent.js";
 import type { API } from "./zalo.js";
 
+export const isBun = typeof Bun !== "undefined";
+
 export function getSignKey(type: string, params: Record<string, any>) {
     let n = [];
     for (let s in params) {
@@ -261,7 +263,13 @@ export async function request(url: string, options?: RequestInit) {
         options.headers = Object.assign(defaultHeaders, options.headers || {});
     } else options = { headers: defaultHeaders };
 
-    const response = await fetch(url, options);
+    const _options = {
+        ...options,
+        // @ts-ignore
+        ...(isBun ? { proxy: appContext.options.agent } : { agent: appContext.options.agent }),
+    };
+
+    const response = await appContext.options.polyfill(url, _options);
     if (response.headers.has("set-cookie")) {
         for (const cookie of response.headers.getSetCookie()) {
             const parsed = toughCookie.Cookie.parse(cookie);
@@ -411,7 +419,7 @@ export function strPadLeft(e: any, t: string, n: number) {
     return a === n ? e : a > n ? e.slice(-n) : t.repeat(n - a) + e;
 }
 
-export function getFullTimeFromMilisecond(e: number) {
+export function getFullTimeFromMillisecond(e: number) {
     let t = new Date(e);
     return (
         strPadLeft(t.getHours(), "0", 2) +
