@@ -1,20 +1,17 @@
 import path from "node:path";
 import { Reactions, Zalo } from "../src/index.js";
 import { MessageType } from "../src/models/Message.js";
-const zalo = new Zalo(
-    {
-        cookie: "",
-        imei: "",
-        userAgent: "",
-        language: "vi",
-    },
-    {
-        selfListen: true,
-        checkUpdate: true,
-    },
-);
+const zalo = new Zalo({
+    selfListen: true,
+    checkUpdate: true,
+});
 
-const api = await zalo.login();
+const api = await zalo.login({
+    cookie: [],
+    imei: "",
+    userAgent: "",
+    language: "vi",
+});
 const { listener } = api;
 
 listener.onConnected(() => {
