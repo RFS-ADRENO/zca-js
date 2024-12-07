@@ -145,13 +145,13 @@ function getFreshKey() {
     gotFresh = true;
     return new Promise<string>(async (resolve, reject) => {
         try {
-            const zalo = new Zalo(credentials, {
+            const zalo = new Zalo({
                 selfListen: true,
-                verbose: true,
+                logging: true,
             });
 
             console.log();
-            const api = await zalo.login();
+            const api = await zalo.login(credentials);
             fs.writeFileSync(SECRET_PATH, api.getContext().secretKey, "utf-8");
 
             resolve(api.getContext().secretKey);
