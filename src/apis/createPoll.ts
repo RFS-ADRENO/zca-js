@@ -32,7 +32,7 @@ export const createPollFactory = apiFactory<CreatePollResponse>()((api, ctx, res
      * @question (string): Question for poll
      * @options (string[]): List options for poll
      * @groupId (string): Group ID to create poll from
-     * @expiredTime (number): Poll expiration time (0 = no expiration)
+     * @expiredTime (number): Poll expiration time (0 = no expiration), timestamp is in milliseconds
      * @pinAct (boolean): Pin action (pin poll)
      * @multiChoices (boolean): Allows multiple poll choices
      * @allowAddNewOption (boolean): Allow members to add new options
