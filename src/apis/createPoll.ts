@@ -32,24 +32,34 @@ export const createPollFactory = apiFactory<CreatePollResponse>()((api, ctx, res
      * @question (string): Question for poll
      * @options (string[]): List options for poll
      * @groupId (string): Group ID to create poll from
-     * @expiredTime (number): Poll expiration time (0 = no expiration)
+     * @expiredTime (number): Poll expiration time (0 = no expiration), timestamp is in milliseconds
      * @pinAct (boolean): Pin action (pin poll)
      * @multiChoices (boolean): Allows multiple poll choices
      * @allowAddNewOption (boolean): Allow members to add new options
      * @hideVotePreview (boolean): Hide voting results when haven't voted
      * @isAnonymous (boolean): Hide poll voters
      */
-    return async function createPoll(question: Message, options: string[], groupId: string) {
+    return async function createPoll(
+        question: Message,
+        options: string[],
+        groupId: string,
+        expiredTime = 0,
+        pinAct = false,
+        allowMultiChoices = false,
+        allowAddNewOption = false,
+        hideVotePreview = false,
+        isAnonymous = false,
+    ) {
         const params: any = {
             group_id: groupId,
             question: typeof question == "string" ? question : question.text,
             options: [],
-            expired_time: 0,
-            pinAct: false,
-            allow_multi_choices: true,
-            allow_add_new_option: true,
-            is_hide_vote_preview: false,
-            is_anonymous: false,
+            expired_time: expiredTime,
+            pinAct: pinAct,
+            allow_multi_choices: allowMultiChoices,
+            allow_add_new_option: allowAddNewOption,
+            is_hide_vote_preview: hideVotePreview,
+            is_anonymous: isAnonymous,
             poll_type: 0,
             src: 1,
             imei: ctx.imei,
