@@ -10,6 +10,7 @@ const api = await zalo.login({
     cookie: [],
     imei: "",
     userAgent: "",
+    language: "vi", // maybe add this line or not <(")
 });
 
 const { listener } = api;
