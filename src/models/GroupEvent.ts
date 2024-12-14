@@ -232,7 +232,7 @@ export function initializeGroupEvent(data: TGroupEvent, type: GroupEventType): G
             data: baseData,
             threadId,
             isSelf:
-                baseData.updateMembers.some((member) => member.id == appContext.uid!) ||
+                baseData.updateMembers?.some((member) => member.id == appContext.uid!) ||
                 baseData.sourceId == appContext.uid,
         };
     }
