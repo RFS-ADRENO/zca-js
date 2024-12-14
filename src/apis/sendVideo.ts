@@ -44,13 +44,11 @@ export const sendVideoFactory = apiFactory<SendVideoResponse>()((api, ctx, resol
         let fileSize: number = 0;
         let clientId = Date.now();
 
-        // duration: Video duration in milliseconds
         const durationInSeconds = await getVideoDurationInSeconds(videoUrl);
         const duration = Math.round(durationInSeconds * 1000);
         try {
             const headResponse = await request(videoUrl, { method: "HEAD" });
             if (headResponse.ok) {
-                // fileSize = parseInt(headResponse.headers.get("content-length")) || 0;
                 fileSize = parseInt(headResponse.headers.get("content-length") || "0");
             }
         } catch (error: any) {

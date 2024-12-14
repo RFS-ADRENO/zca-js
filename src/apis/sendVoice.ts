@@ -20,7 +20,6 @@ export const sendVoiceFactory = apiFactory<SendVoiceResponse>()((api, ctx, resol
      * @throws ZaloApiError
      */
     return async function sendVoice(voiceUrl: string, threadId: string, threadType: number, ttl: number = 0) {
-        // fileSize Size of voice - fileSize: number | null = null,
         let fileSize = null;
         let clientId = Date.now();
 
