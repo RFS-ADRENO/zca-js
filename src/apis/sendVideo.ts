@@ -24,7 +24,7 @@ export const sendVideoFactory = apiFactory<SendVideoResponse>()((api, ctx, resol
      * @param thumbnailUrl URL of the thumbnail
      * @param threadId ID of the user or group to send the video to
      * @param threadType Type of thread (USER or GROUP)
-     * @param duration Video duration in milliseconds || Ex: video duration: 5.5s => 5.5 * 1000 = 5500
+     * @param duration Video duration in milliseconds || Eg: video duration: 5.5s => 5.5 * 1000 = 5500
      * @param width Width of the video
      * @param height Height of the video
      * @param ttl Time to live for the message
