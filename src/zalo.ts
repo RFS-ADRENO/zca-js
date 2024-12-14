@@ -33,6 +33,8 @@ import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
 import { sendFriendRequestFactory } from "./apis/sendFriendRequest.js";
 import { sendMessageFactory } from "./apis/sendMessage.js";
 import { sendStickerFactory } from "./apis/sendSticker.js";
+import { sendVideoFactory } from "./apis/sendVideo.js";
+import { sendVoiceFactory } from "./apis/sendVoice.js";
 import { unblockUserFactory } from "./apis/unblockUser.js";
 import { undoFactory } from "./apis/undo.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
@@ -185,6 +187,8 @@ export class API {
     public sendFriendRequest: ReturnType<typeof sendFriendRequestFactory>;
     public sendMessage: ReturnType<typeof sendMessageFactory>;
     public sendSticker: ReturnType<typeof sendStickerFactory>;
+    public sendVideo: ReturnType<typeof sendVideoFactory>;
+    public sendVoice: ReturnType<typeof sendVoiceFactory>;
     public unblockUser: ReturnType<typeof unblockUserFactory>;
     public undo: ReturnType<typeof undoFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
@@ -221,6 +225,8 @@ export class API {
         this.sendFriendRequest = sendFriendRequestFactory(this);
         this.sendMessage = sendMessageFactory(this);
         this.sendSticker = sendStickerFactory(this);
+        this.sendVideo = sendVideoFactory(this);
+        this.sendVoice = sendVoiceFactory(this);
         this.unblockUser = unblockUserFactory(this);
         this.undo = undoFactory(this);
         this.uploadAttachment = uploadAttachmentFactory(this);

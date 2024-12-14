@@ -6,8 +6,15 @@ export type LockPollResponse = "";
 export const lockPollFactory = apiFactory<LockPollResponse>()((api, ctx, resolve) => {
     const serviceURL = makeURL(`${api.zpwServiceMap.group[0]}/api/poll/end`);
 
+    /**
+     * Lock a poll, preventing further votes.
+     * 
+     * @pollId Poll id to lock
+     * 
+     * @throws ZaloApiError
+     */
     return async function lockPoll(pollId: number) {
-        const params: any = {
+        const params = {
             poll_id: pollId,
             imei: ctx.imei,
         };

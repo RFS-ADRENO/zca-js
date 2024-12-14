@@ -1,6 +1,6 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { GroupMessage, Message, MessageType } from "../models/Message.js";
-import { apiFactory, encodeAES, handleZaloResponse, makeURL, removeUndefinedKeys, request } from "../utils.js";
+import { apiFactory, encodeAES, makeURL, removeUndefinedKeys, request } from "../utils.js";
 
 export type DeleteMessageResponse = {
     status: number;

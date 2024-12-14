@@ -29,26 +29,30 @@ export const createPollFactory = apiFactory<CreatePollResponse>()((api, ctx, res
     const serviceURL = makeURL(`${api.zpwServiceMap.group[0]}/api/poll/create`);
 
     /**
-     * @question (string): Question for poll
-     * @options (string[]): List options for poll
-     * @groupId (string): Group ID to create poll from
-     * @expiredTime (number): Poll expiration time (0 = no expiration), timestamp is in milliseconds
-     * @pinAct (boolean): Pin action (pin poll)
-     * @multiChoices (boolean): Allows multiple poll choices
-     * @allowAddNewOption (boolean): Allow members to add new options
-     * @hideVotePreview (boolean): Hide voting results when haven't voted
-     * @isAnonymous (boolean): Hide poll voters
+     * Create a poll in a group.
+     *
+     * @param question Question for poll
+     * @param options List options for poll
+     * @param groupId Group ID to create poll from
+     * @param expiredTime Poll expiration time (0 = no expiration), timestamp is in milliseconds
+     * @param pinAct Pin action (pin poll)
+     * @param multiChoices Allows multiple poll choices
+     * @param allowAddNewOption Allow members to add new options
+     * @param hideVotePreview Hide voting results when haven't voted
+     * @param isAnonymous Hide poll voters
+     *
+     * @throws ZaloApiError
      */
     return async function createPoll(
         question: Message,
         options: string[],
         groupId: string,
-        expiredTime = 0,
-        pinAct = false,
-        allowMultiChoices = false,
-        allowAddNewOption = false,
-        hideVotePreview = false,
-        isAnonymous = false,
+        expiredTime: number = 0,
+        pinAct: boolean = false,
+        allowMultiChoices: boolean = false,
+        allowAddNewOption: boolean = false,
+        hideVotePreview: boolean = false,
+        isAnonymous: boolean = false,
     ) {
         const params: any = {
             group_id: groupId,

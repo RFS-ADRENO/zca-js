@@ -3,15 +3,15 @@ import { Reactions, Zalo } from "../src/index.js";
 import { MessageType } from "../src/models/Message.js";
 const zalo = new Zalo({
     selfListen: true,
-    checkUpdate: true,
+    logging: true,
 });
 
 const api = await zalo.login({
     cookie: [],
     imei: "",
     userAgent: "",
-    language: "vi",
 });
+
 const { listener } = api;
 
 listener.onConnected(() => {

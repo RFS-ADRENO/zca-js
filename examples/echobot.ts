@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "node:fs";
 import { API, Credentials, MessageType, Zalo } from "../src/index.js";
 
 const zalo = new Zalo();

@@ -6,8 +6,15 @@ export type BlockUserResponse = "";
 export const blockUserFactory = apiFactory<BlockUserResponse>()((api, ctx, resolve) => {
     const serviceURL = makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/block`);
 
+    /**
+     * Block a User
+     *
+     * @param userId The ID of the User to block
+     *
+     * @throws ZaloApiError
+     */
     return async function blockUser(userId: string) {
-        const params: any = {
+        const params = {
             fid: userId,
             imei: ctx.imei,
         };

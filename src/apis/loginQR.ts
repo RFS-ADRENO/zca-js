@@ -306,8 +306,8 @@ export async function loginQR(options: { userAgent: string; qrPath?: string }, c
         cookies: SerializedCookieJar["cookies"];
     } | null>(async (resolve, reject) => {
         const loginVersion = await loadLoginPage();
-        if (!loginVersion) return reject(new ZaloApiError("Không thể lấy phiên bản api đăng nhập"));
-        logger.info("Phiên bản api đăng nhập:", loginVersion);
+        if (!loginVersion) return reject(new ZaloApiError("Không thể lấy phiên bản API đăng nhập"));
+        logger.info("Phiên bản API đăng nhập:", loginVersion);
 
         await getLoginInfo(loginVersion);
         await verifyClient(loginVersion);

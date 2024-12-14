@@ -28,11 +28,15 @@ export const createNoteFactory = apiFactory<CreateNoteResponse>()((api, ctx, res
     const serviceURL = makeURL(`${api.zpwServiceMap.group_board[0]}/api/board/topic/createv2`);
 
     /**
-     * @msg (string): Message for note
-     * @groupId (string): Group ID to create note from
-     * @pinAct (number): Pin action (pin note) || 0 = false, 1 = true
+     * Create a note in a group
+     *
+     * @param msg Message for note
+     * @param groupId Group ID to create note from
+     * @param pinAct Pin action (pin note) || 0 = false, 1 = true
+     *
+     * @throws ZaloApiError
      */
-    return async function createNote(msg: Message, groupId: string) {
+    return async function createNote(msg: Message, groupId: string, pinAct: number = 0) {
         const params: any = {
             grid: groupId,
             type: 0,
@@ -46,7 +50,7 @@ export const createNoteFactory = apiFactory<CreateNoteResponse>()((api, ctx, res
             repeat: 0,
             src: 1,
             imei: ctx.imei,
-            pinAct: 0,
+            pinAct: pinAct,
         };
 
         params.params = JSON.stringify(params.params);

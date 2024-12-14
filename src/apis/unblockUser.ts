@@ -6,8 +6,15 @@ export type UnBlockUserResponse = "";
 export const unblockUserFactory = apiFactory<UnBlockUserResponse>()((api, ctx, resolve) => {
     const serviceURL = makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/unblock`);
 
+    /**
+     * Unblock a User
+     *
+     * @param userId The ID of the User to unblock
+     *
+     * @throws ZaloApiError
+     */
     return async function unblockUser(userId: string) {
-        const params: any = {
+        const params = {
             fid: userId,
             imei: ctx.imei,
         };
