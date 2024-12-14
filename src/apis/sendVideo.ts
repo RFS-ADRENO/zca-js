@@ -1,4 +1,3 @@
-import { getVideoDurationInSeconds } from "get-video-duration";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
 
@@ -25,6 +24,7 @@ export const sendVideoFactory = apiFactory<SendVideoResponse>()((api, ctx, resol
      * @param thumbnailUrl URL of the thumbnail
      * @param threadId ID of the user or group to send the video to
      * @param threadType Type of thread (USER or GROUP)
+     * @param duration Video duration in milliseconds || Ex: video duration: 5.5s => 5.5 * 1000 = 5500
      * @param width Width of the video
      * @param height Height of the video
      * @param ttl Time to live for the message
@@ -40,12 +40,10 @@ export const sendVideoFactory = apiFactory<SendVideoResponse>()((api, ctx, resol
      * @Videodoc - 1440x2560 (2K): Rộng 1440px, cao 2560px
      * 
      */
-    return async function sendVideo(message: Message, videoUrl: string, thumbnailUrl: string, threadId: string, threadType: number, width: number = 1280, height: number = 720, ttl: number = 0) {
+    return async function sendVideo(message: Message, videoUrl: string, thumbnailUrl: string, threadId: string, threadType: number, duration: number = 0, width: number = 1280, height: number = 720, ttl: number = 0) {
         let fileSize: number = 0;
         let clientId = Date.now();
-
-        const durationInSeconds = await getVideoDurationInSeconds(videoUrl);
-        const duration = Math.round(durationInSeconds * 1000);
+        
         try {
             const headResponse = await request(videoUrl, { method: "HEAD" });
             if (headResponse.ok) {

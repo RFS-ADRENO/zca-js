@@ -23,6 +23,5 @@ export default {
         "fs",
         "node:fs/promises",
         "tough-cookie",
-        "get-video-duration",
     ],
 };
