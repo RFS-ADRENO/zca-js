@@ -9,7 +9,7 @@ export const lockPollFactory = apiFactory<LockPollResponse>()((api, ctx, resolve
     /**
      * Lock a poll, preventing further votes.
      * 
-     * @pollId Poll id to lock
+     * @param pollId Poll id to lock
      * 
      * @throws ZaloApiError
      */

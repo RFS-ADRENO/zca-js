@@ -31,10 +31,10 @@ export const editNoteFactory = apiFactory<EditNoteResponse>()((api, ctx, resolve
     /**
      * Edit an existing note in a group
      *
-     * @msg Message for edit note
-     * @topicId Topic ID to edit note from
-     * @groupId Group ID to create note from
-     * @pinAct Pin action (pin note) || 0 = false, 1 = true, (2 = edit note)
+     * @param msg Message for edit note
+     * @param topicId Topic ID to edit note from
+     * @param groupId Group ID to create note from
+     * @param pinAct Pin action (pin note) || 0 = false, 1 = true, (2 = edit note)
      *
      * @throws ZaloApiError
      */
