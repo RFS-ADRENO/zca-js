@@ -12,8 +12,16 @@ export type SendFriendRequestResponse = ""; // add response after
 export const sendFriendRequestFactory = apiFactory<SendFriendRequestResponse>()((api, ctx, resolve) => {
     const serviceURL = makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/sendreq`);
 
+    /**
+     * Send a friend request to a user.
+     *
+     * @param msg Message content or text string
+     * @param userId User ID to send friend request to
+     *
+     * @throws ZaloApiError
+     */
     return async function sendFriendRequest(msg: Message, userId: string) {
-        const params: any = {
+        const params = {
             toid: userId,
             msg: typeof msg == "string" ? msg : msg.text,
             reqsrc: 30,

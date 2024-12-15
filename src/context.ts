@@ -95,7 +95,7 @@ export type AppContextExtended = {
 
 export const appContext: Partial<AppContextBase> & AppContextExtended = {
     API_TYPE: 30,
-    API_VERSION: 645,
+    API_VERSION: 648,
     uploadCallbacks: new CallbacksMap(),
     options: {
         selfListen: false,

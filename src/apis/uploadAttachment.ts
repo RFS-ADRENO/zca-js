@@ -137,7 +137,7 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx) => {
      * Upload an attachment to a thread
      *
      * @param filePaths Path to the file
-     * @param threadId group or user id
+     * @param threadId Group or User ID
      * @param type Message type (DirectMessage or GroupMessage)
      *
      * @throws ZaloApiError

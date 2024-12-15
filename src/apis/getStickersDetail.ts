@@ -15,9 +15,11 @@ export const getStickersDetailFactory = apiFactory()((api) => {
     const serviceURL = makeURL(`${api.zpwServiceMap.sticker}/api/message/sticker`);
 
     /**
-     * Get stickers by keyword
+     * Get stickers detail by sticker IDs
      *
-     * @param keyword Keyword to search for
+     * @param stickerIds Sticker IDs to search for
+     *
+     * @throws ZaloApiError
      */
     return async function getStickersDetail(stickerIds: number | number[]) {
         if (!stickerIds) throw new ZaloApiError("Missing sticker id");

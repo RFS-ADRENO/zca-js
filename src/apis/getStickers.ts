@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, encodeAES, handleZaloResponse, makeURL, request } from "../utils.js";
+import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
 
 interface StickerBasic {
     type: number;

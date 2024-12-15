@@ -18,7 +18,7 @@ let secretKey = await getSecretKey(),
     cipher_key = "";
 
 const rl = createInterface(process.stdin, process.stdout);
-const cannotDecodeALert = () =>
+const cannotDecodeAlert = () =>
     console.log(
         "\n\x1b[31mKhông thể giải mã, đảm bảo bạn lấy dữ liệu từ đúng tài khoản và trình duyệt của tài khoản đã đăng nhập\x1b[0m\n",
     );
@@ -43,10 +43,14 @@ async function main() {
 
 function prompt() {
     console.log();
-    rl.question("Bạn muốn giải mã hóa loại nào? [1] HTTP, [2] Websocket, [3] thoát?: ", (answer) => {
+    rl.question("Bạn muốn giải mã hóa loại nào? \x1b[32m[1] HTTP(s)\x1b[0m, \x1b[38;5;165m[2] Websocket\x1b[0m, \x1b[38;5;15m[3] thoát?\x1b[0m: ", (answer) => {
         if (answer == "1") {
+            console.clear();
+             console.log("\x1b[32m[ HTTP(s) ] Bắt đầu khởi động\x1b[0m");
             decodeHTTP();
         } else if (answer == "2") {
+            console.clear();
+              console.log("\x1b[38;5;165m[ WEBSOCKET ] Bắt đầu khởi động\x1b[0m")
             decodeWebsocket();
         } else if (answer == "3") exit();
         else {
@@ -56,7 +60,7 @@ function prompt() {
 }
 
 function decodeHTTP() {
-    rl.question("\n[ HTTP ] Dán đoạn dữ liệu bị mã hóa hoặc gõ exit để thoát:\n\n", (encoded) => {
+    rl.question("\n\x1b[32m[ HTTP(s) ] Dán đoạn dữ liệu bị mã hóa hoặc gõ exit để thoát:\x1b[0m\n\n", (encoded) => {
         if (encoded.length == 0) return decodeHTTP();
         if (encoded == "exit") return prompt();
 
@@ -65,21 +69,21 @@ function decodeHTTP() {
         try {
             const decoded = decodeAES(secretKey, encoded);
             if (decoded == null) {
-                cannotDecodeALert();
+                cannotDecodeAlert();
                 return decodeHTTP();
             }
 
             const parsed = JSON.stringify(JSON.parse(decoded), null, 2);
 
             console.log();
-            console.log("=========== HTTP ===========");
+            console.log("\x1b[32m=========== HTTP(s) ===========\x1b[0m");
             console.log(parsed);
-            console.log("============================");
+            console.log("\x1b[32m===============================\x1b[0m");
             console.log();
 
             return decodeHTTP();
         } catch {
-            cannotDecodeALert();
+            cannotDecodeAlert();
             return decodeHTTP();
         }
     });
@@ -88,33 +92,33 @@ function decodeHTTP() {
 async function decodeWebsocket() {
     if (!cipher_key) {
         console.log(
-            "Mở devtools trên trình duyệt tại https://chat.zalo.me, vào tab Network -> WS\nMở tin nhắn đầu tiên, đổi sang định dạng UTF-8",
+            "Mở devtools trên trình duyệt tại https://chat.zalo.me/, vào tab Network -> WS\nMở tin nhắn đầu tiên, đổi sang định dạng UTF-8",
         );
         cipher_key = await promptForCipherKey();
     }
 
-    rl.question("\n[ WEBSOCKET ] Dán đoạn dữ liệu bị mã hóa hoặc gõ exit để thoát:\n\n", async (encoded) => {
+    rl.question("\n\x1b[38;5;165m[ WEBSOCKET ] Dán đoạn dữ liệu bị mã hóa hoặc gõ exit để thoát:\x1b[0m\n\n", async (encoded) => {
         if (encoded.length == 0) return decodeWebsocket();
         if (encoded == "exit") return prompt();
 
         try {
             const decoded = await decodeEventData({ data: encoded }, cipher_key);
             if (decoded == null) {
-                cannotDecodeALert();
+                cannotDecodeAlert();
                 return decodeWebsocket();
             }
 
             const parsed = JSON.stringify(decoded, null, 2);
 
             console.log();
-            console.log("=========== WEBSOCKET ===========");
+            console.log("\x1b[38;5;165m=========== WEBSOCKET ===========\x1b[0m");
             console.log(parsed);
-            console.log("=================================");
+            console.log("\x1b[38;5;165m=================================\x1b[0m");
             console.log();
 
             return decodeWebsocket();
         } catch {
-            cannotDecodeALert();
+            cannotDecodeAlert();
             return decodeWebsocket();
         }
     });
@@ -122,7 +126,7 @@ async function decodeWebsocket() {
 
 function promptForFreshKey() {
     return new Promise<boolean>((resolve) => {
-        rl.question("Tìm thấy khóa bí mật, bạn có muốn tái sử dụng? (y/n): ", (answer) => {
+        rl.question("\x1b[38;5;204m[ !? ] Tìm thấy khóa bí mật, bạn có muốn tái sử dụng? (y/n):\x1b[0m ", (answer) => {
             if (answer.toLowerCase() == "y") resolve(false);
             else if (answer.toLowerCase() == "n") resolve(true);
             else resolve(promptForFreshKey());
@@ -163,7 +167,7 @@ function getFreshKey() {
 
 async function promptForCipherKey() {
     return new Promise<string>((resolve) => {
-        rl.question("\nSao chép khóa và dán vào đây: ", (answer) => {
+        rl.question("\n\x1b[38;5;81mSao chép khóa và dán vào đây:\x1b[0m ", (answer) => {
             if (answer.length == 0) resolve(promptForCipherKey());
 
             resolve(answer);
