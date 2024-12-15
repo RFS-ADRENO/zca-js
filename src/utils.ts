@@ -14,6 +14,14 @@ import type { API } from "./zalo.js";
 
 export const isBun = typeof Bun !== "undefined";
 
+/**
+ * Get signed key for API requests.
+ * 
+ * @param type
+ * @param params
+ * @returns MD5 hash
+ * 
+ */
 export function getSignKey(type: string, params: Record<string, any>) {
     let n = [];
     for (let s in params) {
@@ -32,7 +40,7 @@ export function getSignKey(type: string, params: Record<string, any>) {
  *
  * @param baseURL
  * @param params
- * @param apiVersion automatically add zalo api versio to url params
+ * @param apiVersion automatically add zalo api version to url params
  * @returns
  */
 export function makeURL(baseURL: string, params: Record<string, any> = {}, apiVersion: boolean = true) {

@@ -20,25 +20,21 @@ See [API Documentation](https://zca.tdung.co/) for more details.
 
 **UPDATE**: You can now get all required information by using [ZaloDataExtractor](https://github.com/JustKemForFun/ZaloDataExtractor) extension. Just open the extension and copy the data to your clipboard.
 
-> **[ ZaloDataExtractor ]** If you have opened the website `https://chat.zalo.me/` but the extension does not have IMEI & Cookies, please click `Refresh Page`. Thank you very much >< 
-
+> **[ ZaloDataExtractor ]** If you have opened the website `https://chat.zalo.me/` but the extension does not have IMEI & Cookies, please click `Refresh Page`. Thank you very much ><
 
 ```javascript
 import { Zalo } from "zca-js";
 
-const zalo = new Zalo(
-    {
-        cookie: "your_cookie_here",
-        imei: "your_imei_here",
-        userAgent: "your_user_agent_here",
-    },
-    {
-        selfListen: false,
-        checkUpdate: true,
-    },
-);
+const zalo = new Zalo({
+    selfListen: false,
+    logging: true,
+});
 
-const api = await zalo.login();
+const api = await zalo.login({
+    cookie: "your_cookie_here",
+    imei: "your_imei_here",
+    userAgent: "your_user_agent_here",
+});
 ```
 
 **Alternative**: We also support [J2TEAM Cookies](https://chromewebstore.google.com/detail/j2team-cookies/okpidcojinmlaakglciglbpcpajaibco) extension:
@@ -47,34 +43,34 @@ const api = await zalo.login();
 import fs from "node:fs";
 import { Zalo } from "zca-js";
 
-const zalo = new Zalo(
-    {
-        cookie: JSON.parse(fs.readFileSync("./cookies.json", "utf-8")),
-        imei: "your_imei_here",
-        userAgent: "your_user_agent_here",
-    },
-    {
-        selfListen: false,
-        checkUpdate: true,
-    },
-);
+const zalo = new Zalo({
+    selfListen: false,
+    logging: true,
+});
 
-const api = await zalo.login();
+const api = await zalo.login({
+    cookie: JSON.parse(fs.readFileSync("./cookies.json", "utf-8")),
+    imei: "your_imei_here",
+    userAgent: "your_user_agent_here",
+});
 ```
 
 -   `cookie`: Your Zalo cookie. You can get it by using [J2TEAM Cookies](https://chromewebstore.google.com/detail/j2team-cookies/okpidcojinmlaakglciglbpcpajaibco) extension or by using browser developer tools.
 -   `imei`: Your IMEI created by Zalo. You can get it using browser developer tools: `localStorage.getItem('z_uuid')` or `localStorage.getItem('sh_z_uuid')`.
 -   `userAgent`: Your browser user agent. Better be from the same browser you get cookie.
 -   `selfListen`: Listen for messages sent by yourself. Default is `false`.
--   `checkUpdate`: Check for zca-js update. Default is `true`.
+-   `logging`: Turn on and turn off log. Default is `true`.
 
 ### Listen for new messages
 
 ```javascript
 import { Zalo, MessageType } from "zca-js";
 
-const zalo = new Zalo(credentials);
-const api = await zalo.login();
+const zalo = new Zalo({
+    selfListen: false,
+    logging: true,
+});
+const api = await zalo.login(credentials);
 
 api.listener.on("message", (message) => {
     const isPlainText = typeof message.data.content === "string";
@@ -105,8 +101,11 @@ api.listener.start();
 ```javascript
 import { Zalo, MessageType } from "zca-js";
 
-const zalo = new Zalo(credentials);
-const api = await zalo.login();
+const zalo = new Zalo({
+    selfListen: false,
+    logging: true,
+});
+const api = await zalo.login(credentials);
 
 // Echo bot
 api.listener.on("message", (message) => {
