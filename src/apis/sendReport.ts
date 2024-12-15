@@ -34,7 +34,7 @@ export const sendReportFactory = apiFactory<SendReportResponse>()((api, ctx, res
         };
 
         params.reason = reason !== undefined && reason !== null ? reason : Math.floor(Math.random() * 3) + 1;
-        if (message && reason === 0) {
+        if (message && (reason === 0 || reason === "0")) {
             params.content = typeof message === "string" ? message : message.text;
         } else {
             params.content = "";
