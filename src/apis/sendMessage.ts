@@ -1,6 +1,5 @@
 import FormData from "form-data";
-import fs from "node:fs";
-import sharp from "sharp";
+import fs from "node:fs/promises";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { GroupMessage, Message, MessageType } from "../models/Message.js";
 import {
@@ -176,7 +175,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
 
     async function upthumb(filePath: string, url: string): Promise<UpthumbType> {
         let formData = new FormData();
-        let buffer = await sharp(filePath).png().toBuffer();
+        let buffer = await fs.readFile(filePath);
         formData.append("fileContent", buffer, {
             filename: "blob",
             contentType: "image/png",
@@ -320,7 +319,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
         const gifFiles = attachments.filter((e) => getFileExtension(e) == "gif");
         attachments = attachments.filter((e) => getFileExtension(e) != "gif");
 
-        const uploadAttachment = await api.uploadAttachment(attachments, threadId, type);
+        const uploadAttachment = attachments.length == 0 ? [] : await api.uploadAttachment(attachments, threadId, type);
 
         const attachmentsData: AttachmentData[] = [];
         let indexInGroupLayout = uploadAttachment.length - 1;
@@ -440,7 +439,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
             const _upthumb = await upthumb(gif, serviceURLs.attachment[MessageType.DirectMessage]);
 
             const formData = new FormData();
-            formData.append("chunkContent", await fs.promises.readFile(gif), {
+            formData.append("chunkContent", await fs.readFile(gif), {
                 filename: getFileName(gif),
                 contentType: "application/octet-stream",
             });
