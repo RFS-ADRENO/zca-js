@@ -1,17 +1,17 @@
 import { compare } from "semver";
-import { appContext } from "./context.js";
 import { isBun, logger } from "./utils.js";
+import type { ContextBase } from "./context.js";
 
 const VERSION = "2.0.0-alpha.5";
 const NPM_REGISTRY = "https://registry.npmjs.org/zca-js";
 
-export async function checkUpdate() {
-    if (!appContext.options.checkUpdate) return;
+export async function checkUpdate(ctx: ContextBase) {
+    if (!ctx.options.checkUpdate) return;
 
     const _options = {
-        ...(isBun ? { proxy: appContext.options.agent } : { agent: appContext.options.agent }),
+        ...(isBun ? { proxy: ctx.options.agent } : { agent: ctx.options.agent }),
     };
-    const response = await appContext.options.polyfill(NPM_REGISTRY, _options as RequestInit).catch(() => null);
+    const response = await ctx.options.polyfill(NPM_REGISTRY, _options as RequestInit).catch(() => null);
     if (!response || !response.ok) return;
 
     const data = await response.json().catch(() => null);
@@ -19,8 +19,8 @@ export async function checkUpdate() {
 
     const latestVersion = data["dist-tags"].latest;
     if (compare(VERSION, latestVersion) === -1) {
-        logger.info(`A new version of zca-js is available: ${latestVersion}`);
+        logger(ctx).info(`A new version of zca-js is available: ${latestVersion}`);
     } else {
-        logger.info("zca-js is up to date");
+        logger(ctx).info("zca-js is up to date");
     }
 }

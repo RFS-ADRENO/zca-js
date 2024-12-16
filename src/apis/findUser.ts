@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
+import { apiFactory } from "../utils.js";
 
 export type FindUserResponse = {
     avatar: string;
@@ -17,8 +17,8 @@ export type FindUserResponse = {
     display_name: string;
 };
 
-export const findUserFactory = apiFactory<FindUserResponse>()((api, ctx, resolve) => {
-    const serviceURL = makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/profile/get`);
+export const findUserFactory = apiFactory<FindUserResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/profile/get`);
 
     /**
      * Find user by phone number
@@ -41,19 +41,19 @@ export const findUserFactory = apiFactory<FindUserResponse>()((api, ctx, resolve
             reqSrc: 40,
         };
 
-        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
         const finalServiceUrl = new URL(serviceURL);
         finalServiceUrl.searchParams.append("params", encryptedParams);
 
-        const response = await request(
-            makeURL(finalServiceUrl.toString(), {
+        const response = await utils.request(
+            utils.makeURL(finalServiceUrl.toString(), {
                 params: encryptedParams,
             }),
         );
 
-        return resolve(response, (result) => {
+        return utils.resolve(response, (result) => {
             if (result.error && result.error.code != 216)
                 throw new ZaloApiError(result.error.message, result.error.code);
 

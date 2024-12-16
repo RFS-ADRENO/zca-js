@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
+import { apiFactory } from "../utils.js";
 
 type Message =
     | {
@@ -12,9 +12,9 @@ export type SendVideoResponse = {
     msgId: number;
 };
 
-export const sendVideoFactory = apiFactory<SendVideoResponse>()((api, ctx, resolve) => {
-    const directMessageServiceURL = makeURL(`${api.zpwServiceMap.file[0]}/api/message/forward`);
-    const groupMessageServiceURL = makeURL(`${api.zpwServiceMap.file[0]}/api/group/forward`);
+export const sendVideoFactory = apiFactory<SendVideoResponse>()((api, ctx, utils) => {
+    const directMessageServiceURL = utils.makeURL(`${api.zpwServiceMap.file[0]}/api/message/forward`);
+    const groupMessageServiceURL = utils.makeURL(`${api.zpwServiceMap.file[0]}/api/group/forward`);
 
     /**
      * Send a video to a User - Group
@@ -30,22 +30,32 @@ export const sendVideoFactory = apiFactory<SendVideoResponse>()((api, ctx, resol
      * @param ttl Time to live for the message
      *
      * @throws ZaloApiError
-     * 
+     *
      * @Videongang - 3840x2160 (4K UHD): Rộng 3840px, cao 2160px
      * @Videongang - 1920x1080 (Full HD): Rộng 1920px, cao 1080px
      * @Videongang - 1280x720 (HD): Rộng 1280px, cao 720px
-     * 
+     *
      * @Videodoc - 3840x2160 (4K UHD): Rộng 3840px, cao 2160px
      * @Videodoc - 720x1280 (HD): Rộng 720px, cao 1280px
      * @Videodoc - 1440x2560 (2K): Rộng 1440px, cao 2560px
-     * 
+     *
      */
-    return async function sendVideo(message: Message, videoUrl: string, thumbnailUrl: string, threadId: string, threadType: number, duration: number = 0, width: number = 1280, height: number = 720, ttl: number = 0) {
+    return async function sendVideo(
+        message: Message,
+        videoUrl: string,
+        thumbnailUrl: string,
+        threadId: string,
+        threadType: number,
+        duration: number = 0,
+        width: number = 1280,
+        height: number = 720,
+        ttl: number = 0,
+    ) {
         let fileSize: number = 0;
         let clientId = Date.now();
-        
+
         try {
-            const headResponse = await request(videoUrl, { method: "HEAD" });
+            const headResponse = await utils.request(videoUrl, { method: "HEAD" });
             if (headResponse.ok) {
                 fileSize = parseInt(headResponse.headers.get("content-length") || "0");
             }
@@ -76,7 +86,7 @@ export const sendVideoFactory = apiFactory<SendVideoResponse>()((api, ctx, resol
                         msg_warning_type: 0,
                     },
                 },
-                title: `${typeof message == "string" ? message : message.text}`
+                title: `${typeof message == "string" ? message : message.text}`,
             }),
         };
 
@@ -98,16 +108,16 @@ export const sendVideoFactory = apiFactory<SendVideoResponse>()((api, ctx, resol
             throw new ZaloApiError("Thread type is invalid");
         }
 
-        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await request(serviceURL, {
+        const response = await utils.request(serviceURL, {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,
             }),
         });
 
-        return resolve(response);
+        return utils.resolve(response);
     };
 });

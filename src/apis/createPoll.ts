@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
+import { apiFactory } from "../utils.js";
 
 type Message =
     | {
@@ -25,8 +25,8 @@ export type CreatePollResponse = {
     num_vote: number;
 };
 
-export const createPollFactory = apiFactory<CreatePollResponse>()((api, ctx, resolve) => {
-    const serviceURL = makeURL(`${api.zpwServiceMap.group[0]}/api/poll/create`);
+export const createPollFactory = apiFactory<CreatePollResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/poll/create`);
 
     /**
      * Create a poll in a group.
@@ -76,16 +76,16 @@ export const createPollFactory = apiFactory<CreatePollResponse>()((api, ctx, res
             params.options.push(String(options));
         }
 
-        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await request(serviceURL, {
+        const response = await utils.request(serviceURL, {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,
             }),
         });
 
-        return resolve(response);
+        return utils.resolve(response);
     };
 });

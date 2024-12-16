@@ -1,14 +1,14 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { Message } from "../models/Message.js";
 import { Reactions } from "../models/Reaction.js";
-import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
+import { apiFactory } from "../utils.js";
 
 export type AddReactionResponse = {
     msgIds: string;
 };
 
-export const addReactionFactory = apiFactory<AddReactionResponse>()((api, ctx, resolve) => {
-    const serviceURL = makeURL(`${api.zpwServiceMap.reaction[0]}/api/message/reaction`);
+export const addReactionFactory = apiFactory<AddReactionResponse>()((api, _, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.reaction[0]}/api/message/reaction`);
 
     /**
      * Add reaction to a message
@@ -264,16 +264,16 @@ export const addReactionFactory = apiFactory<AddReactionResponse>()((api, ctx, r
             toid: message.threadId,
         };
 
-        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
-        const response = await request(serviceURL, {
+        const response = await utils.request(serviceURL, {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,
             }),
         });
 
-        return resolve(response);
+        return utils.resolve(response);
     };
 });

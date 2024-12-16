@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
+import { apiFactory } from "../utils.js";
 
 interface StickerBasic {
     type: number;
@@ -13,8 +13,8 @@ interface StickerSuggestions {
     sugg_gif: StickerBasic[] | null;
 }
 
-export const getStickersFactory = apiFactory<number[]>()((api, ctx, resolve) => {
-    const serviceURL = makeURL(`${api.zpwServiceMap.sticker}/api/message/sticker`);
+export const getStickersFactory = apiFactory<number[]>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.sticker}/api/message/sticker`);
 
     /**
      * Get stickers by keyword
@@ -34,19 +34,19 @@ export const getStickersFactory = apiFactory<number[]>()((api, ctx, resolve) => 
             imei: ctx.imei,
         };
 
-        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
         const finalServiceUrl = new URL(serviceURL);
         finalServiceUrl.pathname = finalServiceUrl.pathname + "/suggest/stickers";
 
-        const response = await request(
-            makeURL(finalServiceUrl.toString(), {
+        const response = await utils.request(
+            utils.makeURL(finalServiceUrl.toString(), {
                 params: encryptedParams,
             }),
         );
 
-        return resolve(response, (result) => {
+        return utils.resolve(response, (result) => {
             const suggestions = result.data as StickerSuggestions;
             const stickerIds: number[] = [];
 

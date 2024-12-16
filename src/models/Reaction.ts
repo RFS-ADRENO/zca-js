@@ -1,5 +1,3 @@
-import { appContext } from "../context.js";
-
 export enum Reactions {
     HEART = "/-heart",
     LIKE = "/-strong",
@@ -82,13 +80,13 @@ export class Reaction {
     isSelf: boolean;
     isGroup: boolean;
 
-    constructor(data: TReaction, isGroup: boolean) {
+    constructor(uid: string, data: TReaction, isGroup: boolean) {
         this.data = data;
         this.threadId = data.uidFrom == "0" ? data.idTo : data.uidFrom;
         this.isSelf = data.uidFrom == "0";
         this.isGroup = isGroup;
 
-        if (data.idTo == "0") data.idTo = appContext.uid!;
-        if (data.uidFrom == "0") data.uidFrom = appContext.uid!;
+        if (data.idTo == "0") data.idTo = uid;
+        if (data.uidFrom == "0") data.uidFrom = uid;
     }
 }

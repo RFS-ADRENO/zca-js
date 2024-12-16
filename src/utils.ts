@@ -7,7 +7,7 @@ import sharp from "sharp";
 import SparkMD5 from "spark-md5";
 import toughCookie from "tough-cookie";
 
-import { appContext, isContextValid, type ValidContext } from "./context.js";
+import { isContextSession, type ContextSession, type ContextBase } from "./context.js";
 import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { GroupEventType } from "./models/GroupEvent.js";
 import type { API } from "./zalo.js";
@@ -43,7 +43,12 @@ export function getSignKey(type: string, params: Record<string, any>) {
  * @param apiVersion automatically add zalo api version to url params
  * @returns
  */
-export function makeURL(baseURL: string, params: Record<string, any> = {}, apiVersion: boolean = true) {
+export function makeURL(
+    ctx: ContextBase,
+    baseURL: string,
+    params: Record<string, any> = {},
+    apiVersion: boolean = true,
+) {
     let url = new URL(baseURL);
     for (let key in params) {
         if (params.hasOwnProperty(key)) {
@@ -52,8 +57,8 @@ export function makeURL(baseURL: string, params: Record<string, any> = {}, apiVe
     }
 
     if (apiVersion) {
-        if (!url.searchParams.has("zpw_ver")) url.searchParams.set("zpw_ver", appContext.API_VERSION.toString());
-        if (!url.searchParams.has("zpw_type")) url.searchParams.set("zpw_type", appContext.API_TYPE.toString());
+        if (!url.searchParams.has("zpw_ver")) url.searchParams.set("zpw_ver", ctx.API_VERSION.toString());
+        if (!url.searchParams.has("zpw_type")) url.searchParams.set("zpw_type", ctx.API_TYPE.toString());
     }
 
     return url.toString();
@@ -246,27 +251,27 @@ export function decodeAES(secretKey: string, data: string, t = 0): string | null
     }
 }
 
-export async function getDefaultHeaders(origin: string = "https://chat.zalo.me") {
-    if (!appContext.cookie) throw new ZaloApiError("Cookie is not available");
-    if (!appContext.userAgent) throw new ZaloApiError("User agent is not available");
+export async function getDefaultHeaders(ctx: ContextBase, origin: string = "https://chat.zalo.me") {
+    if (!ctx.cookie) throw new ZaloApiError("Cookie is not available");
+    if (!ctx.userAgent) throw new ZaloApiError("User agent is not available");
 
     return {
         Accept: "application/json, text/plain, */*",
         "Accept-Encoding": "gzip, deflate, br, zstd",
         "Accept-Language": "en-US,en;q=0.9",
         "content-type": "application/x-www-form-urlencoded",
-        Cookie: await appContext.cookie.getCookieString(origin),
+        Cookie: await ctx.cookie.getCookieString(origin),
         Origin: "https://chat.zalo.me",
         Referer: "https://chat.zalo.me/",
-        "User-Agent": appContext.userAgent,
+        "User-Agent": ctx.userAgent,
     };
 }
 
-export async function request(url: string, options?: RequestInit) {
-    if (!appContext.cookie) appContext.cookie = new toughCookie.CookieJar();
+export async function request(ctx: ContextBase, url: string, options?: RequestInit) {
+    if (!ctx.cookie) ctx.cookie = new toughCookie.CookieJar();
     const origin = new URL(url).origin;
 
-    const defaultHeaders = await getDefaultHeaders(origin);
+    const defaultHeaders = await getDefaultHeaders(ctx, origin);
     if (options) {
         options.headers = Object.assign(defaultHeaders, options.headers || {});
     } else options = { headers: defaultHeaders };
@@ -274,15 +279,15 @@ export async function request(url: string, options?: RequestInit) {
     const _options = {
         ...options,
         // @ts-ignore
-        ...(isBun ? { proxy: appContext.options.agent } : { agent: appContext.options.agent }),
+        ...(isBun ? { proxy: ctx.options.agent } : { agent: ctx.options.agent }),
     };
 
-    const response = await appContext.options.polyfill(url, _options);
+    const response = await ctx.options.polyfill(url, _options);
     if (response.headers.has("set-cookie")) {
         for (const cookie of response.headers.getSetCookie()) {
             const parsed = toughCookie.Cookie.parse(cookie);
             try {
-                if (parsed) await appContext.cookie.setCookie(parsed, origin);
+                if (parsed) await ctx.cookie.setCookie(parsed, origin);
             } catch {}
         }
     }
@@ -293,7 +298,7 @@ export async function request(url: string, options?: RequestInit) {
         redirectOptions.method = "GET";
         // @ts-ignore
         redirectOptions.headers["Referer"] = "https://id.zalo.me/";
-        return await request(redirectURL, redirectOptions);
+        return await request(ctx, redirectURL, redirectOptions);
     }
 
     return response;
@@ -389,20 +394,20 @@ export function getMd5LargeFileObject(filePath: string, fileSize: number) {
     });
 }
 
-export const logger = {
+export const logger = (ctx: ContextBase) => ({
     verbose: (...args: any[]) => {
-        if (appContext.options.logging) console.log("\x1b[2m🚀 VERBOSE\x1b[0m", ...args);
+        if (ctx.options.logging) console.log("\x1b[2m🚀 VERBOSE\x1b[0m", ...args);
     },
     info: (...args: any[]) => {
-        if (appContext.options.logging) console.log("\x1b[34mINFO\x1b[0m", ...args);
+        if (ctx.options.logging) console.log("\x1b[34mINFO\x1b[0m", ...args);
     },
     warn: (...args: any[]) => {
-        if (appContext.options.logging) console.log("\x1b[33mWARN\x1b[0m", ...args);
+        if (ctx.options.logging) console.log("\x1b[33mWARN\x1b[0m", ...args);
     },
     error: (...args: any[]) => {
-        if (appContext.options.logging) console.log("\x1b[31mERROR\x1b[0m", ...args);
+        if (ctx.options.logging) console.log("\x1b[31mERROR\x1b[0m", ...args);
     },
-};
+});
 
 export function getClientMessageType(msgType: string) {
     if (msgType === "webchat") return 1;
@@ -475,6 +480,9 @@ export function getGroupEventType(act: string) {
     if (act == "reorder_pin_topic") return GroupEventType.REORDER_PIN_TOPIC;
     if (act == "unpin_topic") return GroupEventType.UNPIN_TOPIC;
     if (act == "remove_topic") return GroupEventType.REMOVE_TOPIC;
+    if (act == "accept_remind") return GroupEventType.ACCEPT_REMIND;
+    if (act == "reject_remind") return GroupEventType.REJECT_REMIND;
+    if (act == "remind_topic") return GroupEventType.REMIND_TOPIC;
 
     return GroupEventType.UNKNOWN;
 }
@@ -487,7 +495,7 @@ type ZaloResponse<T> = {
     } | null;
 };
 
-export async function handleZaloResponse<T = any>(response: Response) {
+export async function handleZaloResponse<T = any>(ctx: ContextSession, response: Response) {
     const result: ZaloResponse<T> = {
         data: null,
         error: null,
@@ -519,7 +527,7 @@ export async function handleZaloResponse<T = any>(response: Response) {
             error_code: number;
             error_message: string;
             data: T;
-        } = JSON.parse(decodeAES(appContext.secretKey!, jsonData.data)!);
+        } = JSON.parse(decodeAES(ctx.secretKey!, jsonData.data)!);
 
         if (decodedData.error_code != 0) {
             result.error = {
@@ -540,8 +548,12 @@ export async function handleZaloResponse<T = any>(response: Response) {
     return result;
 }
 
-export async function resolveResponse<T = any>(res: Response, cb?: (result: ZaloResponse<unknown>) => T) {
-    const result = await handleZaloResponse<T>(res);
+export async function resolveResponse<T = any>(
+    ctx: ContextSession,
+    res: Response,
+    cb?: (result: ZaloResponse<unknown>) => T,
+) {
+    const result = await handleZaloResponse<T>(ctx, res);
     if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
     if (cb) return cb(result);
 
@@ -549,12 +561,46 @@ export async function resolveResponse<T = any>(res: Response, cb?: (result: Zalo
 }
 
 export function apiFactory<T>() {
-    return <K extends (api: API, ctx: ValidContext, resolve: typeof resolveResponse<T>) => any>(callback: K) => {
-        return (api: API) => {
-            if (!isContextValid(appContext))
-                throw new ZaloApiError("Invalid context " + JSON.stringify(appContext, null, 2));
+    return <
+        K extends (
+            api: API,
+            ctx: ContextSession,
+            utils: {
+                makeURL: (
+                    baseURL: string,
+                    params?: Record<string, any>,
+                    apiVersion?: boolean,
+                ) => ReturnType<typeof makeURL>;
+                encodeAES: (data: any, t?: number) => ReturnType<typeof encodeAES>;
+                request: (url: string, options?: RequestInit) => ReturnType<typeof request>;
+                logger: ReturnType<typeof logger>;
+                resolve: (
+                    res: Response,
+                    cb?: (result: ZaloResponse<unknown>) => T,
+                ) => ReturnType<typeof resolveResponse<T>>;
+            },
+        ) => any,
+    >(
+        callback: K,
+    ) => {
+        return (ctx: ContextBase, api: API) => {
+            if (!isContextSession(ctx)) throw new ZaloApiError("Invalid context " + JSON.stringify(ctx, null, 2));
 
-            return callback(api, appContext, resolveResponse) as ReturnType<K>;
+            const utils = {
+                makeURL(baseURL: string, params?: Record<string, any>, apiVersion?: boolean) {
+                    return makeURL(ctx, baseURL, params, apiVersion);
+                },
+                encodeAES(data: any, t?: number) {
+                    return encodeAES(ctx.secretKey, data, t);
+                },
+                request(url: string, options?: RequestInit) {
+                    return request(ctx, url, options);
+                },
+                logger: logger(ctx),
+                resolve: (res: Response, cb?: (result: ZaloResponse<unknown>) => T) => resolveResponse<T>(ctx, res, cb),
+            };
+
+            return callback(api, ctx, utils) as ReturnType<K>;
         };
     };
 }

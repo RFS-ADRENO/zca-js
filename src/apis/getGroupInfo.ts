@@ -1,6 +1,6 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import type { GroupSetting } from "../models/GroupEvent.js";
-import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
+import { apiFactory } from "../utils.js";
 
 export type GroupInfoResponse = {
     removedsGroup: string[];
@@ -49,8 +49,8 @@ export type ExtraInfo = {
     enable_media_store: number;
 };
 
-export const getGroupInfoFactory = apiFactory<GroupInfoResponse>()((api, ctx, resolve) => {
-    const serviceURL = makeURL(`${api.zpwServiceMap.group[0]}/api/group/getmg-v2`);
+export const getGroupInfoFactory = apiFactory<GroupInfoResponse>()((api, _, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/getmg-v2`);
 
     /**
      * Get group information
@@ -72,16 +72,16 @@ export const getGroupInfoFactory = apiFactory<GroupInfoResponse>()((api, ctx, re
 
         params.gridVerMap = JSON.stringify(params.gridVerMap);
 
-        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
-        const response = await request(serviceURL, {
+        const response = await utils.request(serviceURL, {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,
             }),
         });
 
-        return resolve(response);
+        return utils.resolve(response);
     };
 });
