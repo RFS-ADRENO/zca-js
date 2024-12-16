@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
+import { apiFactory } from "../utils.js";
 
 export type ProfileInfo = {
     userId: string;
@@ -43,8 +43,8 @@ export type UserInfoResponse = {
     changed_profiles: Record<string, ProfileInfo>;
 };
 
-export const getUserInfoFactory = apiFactory<UserInfoResponse>()((api, ctx, resolve) => {
-    const serviceURL = makeURL(`${api.zpwServiceMap.profile[0]}/api/social/friend/getprofiles/v2`);
+export const getUserInfoFactory = apiFactory<UserInfoResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/friend/getprofiles/v2`);
 
     /**
      * Get user info using user id
@@ -65,16 +65,16 @@ export const getUserInfoFactory = apiFactory<UserInfoResponse>()((api, ctx, reso
             imei: ctx.imei,
         };
 
-        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await request(serviceURL, {
+        const response = await utils.request(serviceURL, {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,
             }),
         });
 
-        return resolve(response);
+        return utils.resolve(response);
     };
 });

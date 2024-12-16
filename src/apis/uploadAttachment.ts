@@ -5,14 +5,11 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { MessageType } from "../models/Message.js";
 import {
     apiFactory,
-    encodeAES,
     getFileExtension,
     getFileName,
     getFileSize,
     getImageMetaData,
     getMd5LargeFileObject,
-    makeURL,
-    request,
     resolveResponse,
 } from "../utils.js";
 
@@ -117,7 +114,7 @@ const urlType = {
     others: "asyncfile/upload",
 };
 
-export const uploadAttachmentFactory = apiFactory()((api, ctx) => {
+export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
     const serviceURL = `${api.zpwServiceMap.file[0]}/api`;
     const { sharefile } = ctx.settings!.features;
 
@@ -267,55 +264,60 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx) => {
 
         for (const data of attachmentsData) {
             for (let i = 0; i < data.params.totalChunk; i++) {
-                const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(data.params));
+                const encryptedParams = utils.encodeAES(JSON.stringify(data.params));
                 if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
                 requests.push(
-                    request(makeURL(url + urlType[data.fileType], { type: typeParam, params: encryptedParams }), {
-                        method: "POST",
-                        headers: data.chunkContent[i].getHeaders(),
-                        body: data.chunkContent[i].getBuffer(),
-                    }).then(async (response) => {
-                        /**
-                         * @todo better type rather than any
-                         */
-                        const resData = await resolveResponse(response);
+                    utils
+                        .request(
+                            utils.makeURL(url + urlType[data.fileType], { type: typeParam, params: encryptedParams }),
+                            {
+                                method: "POST",
+                                headers: data.chunkContent[i].getHeaders(),
+                                body: data.chunkContent[i].getBuffer(),
+                            },
+                        )
+                        .then(async (response) => {
+                            /**
+                             * @todo better type rather than any
+                             */
+                            const resData = await resolveResponse(ctx, response);
 
-                        if (resData && resData.fileId != -1 && resData.photoId != -1)
-                            await new Promise<void>((resolve) => {
-                                if (data.fileType == "video" || data.fileType == "others") {
-                                    const uploadCallback: UploadCallback = async (wsData) => {
+                            if (resData && resData.fileId != -1 && resData.photoId != -1)
+                                await new Promise<void>((resolve) => {
+                                    if (data.fileType == "video" || data.fileType == "others") {
+                                        const uploadCallback: UploadCallback = async (wsData) => {
+                                            let result = {
+                                                fileType: data.fileType,
+                                                ...resData,
+                                                ...wsData,
+                                                totalSize: data.fileData.totalSize,
+                                                fileName: data.fileData.fileName,
+                                                checksum: (
+                                                    await getMd5LargeFileObject(data.filePath, data.fileData.totalSize)
+                                                ).data,
+                                            };
+                                            results.push(result);
+                                            resolve();
+                                        };
+
+                                        ctx.uploadCallbacks.set(resData.fileId, uploadCallback);
+                                    }
+
+                                    if (data.fileType == "image") {
                                         let result = {
-                                            fileType: data.fileType,
-                                            ...resData,
-                                            ...wsData,
+                                            fileType: "image",
+                                            width: data.fileData.width,
+                                            height: data.fileData.height,
                                             totalSize: data.fileData.totalSize,
-                                            fileName: data.fileData.fileName,
-                                            checksum: (
-                                                await getMd5LargeFileObject(data.filePath, data.fileData.totalSize)
-                                            ).data,
+                                            hdSize: data.fileData.totalSize,
+                                            ...resData,
                                         };
                                         results.push(result);
                                         resolve();
-                                    };
-
-                                    ctx.uploadCallbacks.set(resData.fileId, uploadCallback);
-                                }
-
-                                if (data.fileType == "image") {
-                                    let result = {
-                                        fileType: "image",
-                                        width: data.fileData.width,
-                                        height: data.fileData.height,
-                                        totalSize: data.fileData.totalSize,
-                                        hdSize: data.fileData.totalSize,
-                                        ...resData,
-                                    };
-                                    results.push(result);
-                                    resolve();
-                                }
-                            });
-                    }),
+                                    }
+                                });
+                        }),
                 );
                 data.params.chunkId++;
             }

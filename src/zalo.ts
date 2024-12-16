@@ -1,6 +1,6 @@
 import { Listener } from "./apis/listen.js";
 import { getServerInfo, login } from "./apis/login.js";
-import { appContext, type Options } from "./context.js";
+import { createContext, isContextSession, type ContextBase, type ContextSession, type Options } from "./context.js";
 import { generateZaloUUID, logger, makeURL } from "./utils.js";
 
 import toughCookie from "tough-cookie";
@@ -65,11 +65,7 @@ export type Credentials = {
 export class Zalo {
     private enableEncryptParam = true;
 
-    constructor(options?: Partial<Options>) {
-        appContext.secretKey = null;
-
-        if (options) Object.assign(appContext.options, options);
-    }
+    constructor(private options: Partial<Options> = {}) {}
 
     private parseCookies(cookie: Credentials["cookie"]): toughCookie.CookieJar {
         const cookieArr = Array.isArray(cookie) ? cookie : cookie.cookies;
@@ -100,33 +96,43 @@ export class Zalo {
     }
 
     public async login(credentials: Credentials) {
-        await checkUpdate();
+        const ctx = createContext(this.options.apiType, this.options.apiVersion);
+        Object.assign(ctx.options, this.options);
+
+        return this.loginCookie(ctx, credentials);
+    }
+
+    private async loginCookie(ctx: ContextBase, credentials: Credentials) {
+        await checkUpdate(ctx);
 
         this.validateParams(credentials);
 
-        appContext.imei = credentials.imei;
-        appContext.cookie = this.parseCookies(credentials.cookie);
-        appContext.userAgent = credentials.userAgent;
-        appContext.language = credentials.language || "vi";
+        ctx.imei = credentials.imei;
+        ctx.cookie = this.parseCookies(credentials.cookie);
+        ctx.userAgent = credentials.userAgent;
+        ctx.language = credentials.language || "vi";
 
-        const loginData = await login(this.enableEncryptParam);
-        const serverInfo = await getServerInfo(this.enableEncryptParam);
+        const loginData = await login(ctx, this.enableEncryptParam);
+        const serverInfo = await getServerInfo(ctx, this.enableEncryptParam);
 
         if (!loginData || !serverInfo) throw new Error("Đăng nhập thất bại");
-        appContext.secretKey = loginData.data.zpw_enk;
-        appContext.uid = loginData.data.uid;
+        ctx.secretKey = loginData.data.zpw_enk;
+        ctx.uid = loginData.data.uid;
 
         // Zalo currently responds with setttings instead of settings
         // they might fix this in the future, so we should have a fallback just in case
-        appContext.settings = serverInfo.setttings || serverInfo.settings;
+        ctx.settings = serverInfo.setttings || serverInfo.settings;
 
-        appContext.extraVer = serverInfo.extra_ver;
+        ctx.extraVer = serverInfo.extra_ver;
 
-        logger.info("Logged in as", loginData.data.uid);
+        if (!isContextSession(ctx)) throw new Error("Khởi tạo ngữ cảnh thát bại.");
+
+        logger(ctx).info("Logged in as", loginData.data.uid);
 
         return new API(
+            ctx,
             loginData.data.zpw_service_map_v3,
-            makeURL(loginData.data.zpw_ws[0], {
+            makeURL(ctx, loginData.data.zpw_ws[0], {
                 t: Date.now(),
             }),
         );
@@ -141,12 +147,16 @@ export class Zalo {
             options.userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0";
         if (!options.language) options.language = "vi";
 
+        const ctx = createContext(this.options.apiType, this.options.apiVersion);
+        Object.assign(ctx.options, this.options);
+
         const loginQRResult = await loginQR(
+            ctx,
             options as { userAgent: string; language: string; qrPath?: string },
             callback,
         );
         if (!loginQRResult) throw new ZaloApiError("Đăng nhập với QR thất bại");
-        return this.login({
+        return this.loginCookie(ctx, {
             cookie: loginQRResult.cookies,
             imei: generateZaloUUID(options.userAgent),
             userAgent: options.userAgent,
@@ -193,42 +203,42 @@ export class API {
     public undo: ReturnType<typeof undoFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
 
-    constructor(zpwServiceMap: Record<string, string[]>, wsUrl: string) {
+    constructor(ctx: ContextSession, zpwServiceMap: Record<string, string[]>, wsUrl: string) {
         this.zpwServiceMap = zpwServiceMap;
-        this.listener = new Listener(wsUrl);
+        this.listener = new Listener(ctx, wsUrl);
 
-        this.acceptFriendRequest = acceptFriendRequestFactory(this);
-        this.addReaction = addReactionFactory(this);
-        this.addUserToGroup = addUserToGroupFactory(this);
-        this.blockUser = blockUserFactory(this);
-        this.changeGroupAvatar = changeGroupAvatarFactory(this);
-        this.changeGroupName = changeGroupNameFactory(this);
-        this.createGroup = createGroupFactory(this);
-        this.createNote = createNoteFactory(this);
-        this.createPoll = createPollFactory(this);
-        this.deleteMessage = deleteMessageFactory(this);
-        this.editNote = editNoteFactory(this);
-        this.fetchAccountInfo = fetchAccountInfoFactory(this);
-        this.findUser = findUserFactory(this);
-        this.getAllFriends = getAllFriendsFactory(this);
-        this.getAllGroups = getAllGroupsFactory(this);
-        this.getCookie = getCookieFactory(this);
-        this.getGroupInfo = getGroupInfoFactory(this);
-        this.getOwnId = getOwnIdFactory(this);
-        this.getContext = getContextFactory(this);
-        this.getQR = getQRFactory(this);
-        this.getStickers = getStickersFactory(this);
-        this.getStickersDetail = getStickersDetailFactory(this);
-        this.getUserInfo = getUserInfoFactory(this);
-        this.lockPoll = lockPollFactory(this);
-        this.removeUserFromGroup = removeUserFromGroupFactory(this);
-        this.sendFriendRequest = sendFriendRequestFactory(this);
-        this.sendMessage = sendMessageFactory(this);
-        this.sendSticker = sendStickerFactory(this);
-        this.sendVideo = sendVideoFactory(this);
-        this.sendVoice = sendVoiceFactory(this);
-        this.unblockUser = unblockUserFactory(this);
-        this.undo = undoFactory(this);
-        this.uploadAttachment = uploadAttachmentFactory(this);
+        this.acceptFriendRequest = acceptFriendRequestFactory(ctx, this);
+        this.addReaction = addReactionFactory(ctx, this);
+        this.addUserToGroup = addUserToGroupFactory(ctx, this);
+        this.blockUser = blockUserFactory(ctx, this);
+        this.changeGroupAvatar = changeGroupAvatarFactory(ctx, this);
+        this.changeGroupName = changeGroupNameFactory(ctx, this);
+        this.createGroup = createGroupFactory(ctx, this);
+        this.createNote = createNoteFactory(ctx, this);
+        this.createPoll = createPollFactory(ctx, this);
+        this.deleteMessage = deleteMessageFactory(ctx, this);
+        this.editNote = editNoteFactory(ctx, this);
+        this.fetchAccountInfo = fetchAccountInfoFactory(ctx, this);
+        this.findUser = findUserFactory(ctx, this);
+        this.getAllFriends = getAllFriendsFactory(ctx, this);
+        this.getAllGroups = getAllGroupsFactory(ctx, this);
+        this.getCookie = getCookieFactory(ctx, this);
+        this.getGroupInfo = getGroupInfoFactory(ctx, this);
+        this.getOwnId = getOwnIdFactory(ctx, this);
+        this.getContext = getContextFactory(ctx, this);
+        this.getQR = getQRFactory(ctx, this);
+        this.getStickers = getStickersFactory(ctx, this);
+        this.getStickersDetail = getStickersDetailFactory(ctx, this);
+        this.getUserInfo = getUserInfoFactory(ctx, this);
+        this.lockPoll = lockPollFactory(ctx, this);
+        this.removeUserFromGroup = removeUserFromGroupFactory(ctx, this);
+        this.sendFriendRequest = sendFriendRequestFactory(ctx, this);
+        this.sendMessage = sendMessageFactory(ctx, this);
+        this.sendSticker = sendStickerFactory(ctx, this);
+        this.sendVideo = sendVideoFactory(ctx, this);
+        this.sendVoice = sendVoiceFactory(ctx, this);
+        this.unblockUser = unblockUserFactory(ctx, this);
+        this.undo = undoFactory(ctx, this);
+        this.uploadAttachment = uploadAttachmentFactory(ctx, this);
     }
 }

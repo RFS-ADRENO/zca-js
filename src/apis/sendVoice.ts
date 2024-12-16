@@ -1,13 +1,13 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
+import { apiFactory } from "../utils.js";
 
 export type SendVoiceResponse = {
     msgId: string;
 };
 
-export const sendVoiceFactory = apiFactory<SendVoiceResponse>()((api, ctx, resolve) => {
-    const directMessageServiceURL = makeURL(`${api.zpwServiceMap.file[0]}/api/message/forward`);
-    const groupMessageServiceURL = makeURL(`${api.zpwServiceMap.file[0]}/api/group/forward`);
+export const sendVoiceFactory = apiFactory<SendVoiceResponse>()((api, ctx, utils) => {
+    const directMessageServiceURL = utils.makeURL(`${api.zpwServiceMap.file[0]}/api/message/forward`);
+    const groupMessageServiceURL = utils.makeURL(`${api.zpwServiceMap.file[0]}/api/group/forward`);
 
     /**
      * Send a voice to a User - Group
@@ -24,7 +24,7 @@ export const sendVoiceFactory = apiFactory<SendVoiceResponse>()((api, ctx, resol
         let clientId = Date.now();
 
         try {
-            const headResponse = await request(voiceUrl, { method: "HEAD" });
+            const headResponse = await utils.request(voiceUrl, { method: "HEAD" });
             if (headResponse.ok) {
                 fileSize = parseInt(headResponse.headers.get("content-length") || "0");
             }
@@ -58,16 +58,16 @@ export const sendVoiceFactory = apiFactory<SendVoiceResponse>()((api, ctx, resol
             throw new ZaloApiError("Thread type is invalid");
         }
 
-        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await request(serviceURL, {
+        const response = await utils.request(serviceURL, {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,
             }),
         });
 
-        return resolve(response);
+        return utils.resolve(response);
     };
 });

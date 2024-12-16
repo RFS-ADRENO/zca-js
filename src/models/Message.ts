@@ -1,5 +1,3 @@
-import { appContext } from "../context.js";
-
 export type TAttachmentContent = {
     title: string;
     description: string;
@@ -92,13 +90,13 @@ export class Message {
      */
     isSelf: boolean;
 
-    constructor(data: TMessage) {
+    constructor(uid: string, data: TMessage) {
         this.data = data;
         this.threadId = data.uidFrom == "0" ? data.idTo : data.uidFrom;
         this.isSelf = data.uidFrom == "0";
 
-        if (data.idTo == "0") data.idTo = appContext.uid!;
-        if (data.uidFrom == "0") data.uidFrom = appContext.uid!;
+        if (data.idTo == "0") data.idTo = uid;
+        if (data.uidFrom == "0") data.uidFrom = uid;
     }
 }
 
@@ -112,11 +110,11 @@ export class GroupMessage {
      */
     isSelf: boolean;
 
-    constructor(data: TGroupMessage) {
+    constructor(uid: string, data: TGroupMessage) {
         this.data = data;
         this.threadId = data.idTo;
         this.isSelf = data.uidFrom == "0";
 
-        if (data.uidFrom == "0") data.uidFrom = appContext.uid!;
+        if (data.uidFrom == "0") data.uidFrom = uid;
     }
 }

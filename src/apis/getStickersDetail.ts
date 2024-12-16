@@ -1,6 +1,5 @@
-import { appContext } from "../context.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, encodeAES, makeURL, request, resolveResponse } from "../utils.js";
+import { apiFactory, resolveResponse } from "../utils.js";
 
 export interface StickerDetailResponse {
     id: number;
@@ -11,8 +10,8 @@ export interface StickerDetailResponse {
     stickerWebpUrl: string | null;
 }
 
-export const getStickersDetailFactory = apiFactory()((api) => {
-    const serviceURL = makeURL(`${api.zpwServiceMap.sticker}/api/message/sticker`);
+export const getStickersDetailFactory = apiFactory()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.sticker}/api/message/sticker`);
 
     /**
      * Get stickers detail by sticker IDs
@@ -41,18 +40,18 @@ export const getStickersDetailFactory = apiFactory()((api) => {
             sid: stickerId,
         };
 
-        const encryptedParams = encodeAES(appContext.secretKey!, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
         const finalServiceUrl = new URL(serviceURL);
         finalServiceUrl.pathname = finalServiceUrl.pathname + "/sticker_detail";
 
-        const response = await request(
-            makeURL(finalServiceUrl.toString(), {
+        const response = await utils.request(
+            utils.makeURL(finalServiceUrl.toString(), {
                 params: encryptedParams,
             }),
         );
 
-        return resolveResponse<StickerDetailResponse>(response);
+        return resolveResponse<StickerDetailResponse>(ctx, response);
     }
 });

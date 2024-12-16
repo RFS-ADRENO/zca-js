@@ -1,5 +1,5 @@
 import { MessageType } from "../models/Message.js";
-import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
+import { apiFactory } from "../utils.js";
 import type { StickerDetailResponse } from "./getStickersDetail.js";
 
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
@@ -8,9 +8,9 @@ export type SendStickerResponse = {
     msgId: number;
 };
 
-export const sendStickerFactory = apiFactory<SendStickerResponse>()((api, ctx, resolve) => {
-    const directMessageServiceURL = makeURL(`${api.zpwServiceMap.chat[0]}/api/message/sticker`);
-    const groupMessageServiceURL = makeURL(`${api.zpwServiceMap.group[0]}/api/group/sticker`);
+export const sendStickerFactory = apiFactory<SendStickerResponse>()((api, ctx, utils) => {
+    const directMessageServiceURL = utils.makeURL(`${api.zpwServiceMap.chat[0]}/api/message/sticker`);
+    const groupMessageServiceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/sticker`);
 
     /**
      * Send a sticker to a thread
@@ -46,19 +46,19 @@ export const sendStickerFactory = apiFactory<SendStickerResponse>()((api, ctx, r
             grid: isGroupMessage ? threadId : undefined,
         };
 
-        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
         const finalServiceUrl = new URL(isGroupMessage ? groupMessageServiceURL : directMessageServiceURL);
         finalServiceUrl.searchParams.append("nretry", "0");
 
-        const response = await request(finalServiceUrl.toString(), {
+        const response = await utils.request(finalServiceUrl.toString(), {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,
             }),
         });
 
-        return resolve(response);
+        return utils.resolve(response);
     };
 });

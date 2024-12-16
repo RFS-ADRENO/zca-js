@@ -25,6 +25,17 @@ type ShareFileSettings = {
     restricted_ext_file: string[];
 };
 
+type ExtraVer = {
+    phonebook: number;
+    conv_label: string;
+    friend: string;
+    ver_sticker_giphy_suggest: number;
+    ver_giphy_cate: number;
+    alias: string;
+    ver_sticker_cate_list: number;
+    block_friend: string;
+};
+
 export type AppContextBase = {
     uid: string;
     imei: string;
@@ -48,6 +59,9 @@ export type Options = {
     checkUpdate: boolean;
     logging: boolean;
 
+    apiType: number;
+    apiVersion: number;
+
     /**
      * Optional agent configuration.
      * - When using `Bun`, this should be a string.
@@ -60,17 +74,6 @@ export type Options = {
      * If using proxy, `node-fetch` is highly recommended.
      */
     polyfill: typeof fetch;
-};
-
-type ExtraVer = {
-    phonebook: number;
-    conv_label: string;
-    friend: string;
-    ver_sticker_giphy_suggest: number;
-    ver_giphy_cate: number;
-    alias: string;
-    ver_sticker_cate_list: number;
-    block_friend: string;
 };
 
 const _5_MINUTES = 5 * 60 * 1000;
@@ -93,20 +96,24 @@ export type AppContextExtended = {
     readonly API_VERSION: number;
 };
 
-export const appContext: Partial<AppContextBase> & AppContextExtended = {
-    API_TYPE: 30,
-    API_VERSION: 648,
-    uploadCallbacks: new CallbacksMap(),
-    options: {
-        selfListen: false,
-        checkUpdate: true,
-        logging: true,
-        polyfill: global.fetch,
-    },
-};
+export type ContextBase = Partial<AppContextBase> & AppContextExtended;
 
-export type ValidContext = AppContextBase & AppContextExtended & { secretKey: string };
+export const createContext = (apiType = 30, apiVersion = 648) =>
+    ({
+        API_TYPE: apiType,
+        API_VERSION: apiVersion,
+        uploadCallbacks: new CallbacksMap(),
+        options: {
+            selfListen: false,
+            checkUpdate: true,
+            logging: true,
+            polyfill: global.fetch,
+        },
+        secretKey: null,
+    }) as ContextBase;
 
-export function isContextValid(ctx: typeof appContext): ctx is ValidContext {
+export type ContextSession = AppContextBase & AppContextExtended & { secretKey: string };
+
+export function isContextSession(ctx: ContextBase): ctx is ContextSession {
     return !!ctx.secretKey;
 }

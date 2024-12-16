@@ -1,5 +1,3 @@
-import { appContext } from "../context.js";
-
 export enum GroupEventType {
     JOIN_REQUEST,
     JOIN,
@@ -199,30 +197,34 @@ export type GroupEvent =
           isSelf: boolean;
       };
 
-export function initializeGroupEvent(data: TGroupEvent, type: GroupEventType): GroupEvent {
+export function initializeGroupEvent(uid: string, data: TGroupEvent, type: GroupEventType): GroupEvent {
     const threadId = data.groupId;
     if (type == GroupEventType.JOIN_REQUEST) {
         return { type, data: data as TGroupEventJoinRequest, threadId, isSelf: false };
-    } else if (type == GroupEventType.NEW_PIN_TOPIC || type == GroupEventType.UNPIN_TOPIC || type == GroupEventType.UPDATE_PIN_TOPIC) {
+    } else if (
+        type == GroupEventType.NEW_PIN_TOPIC ||
+        type == GroupEventType.UNPIN_TOPIC ||
+        type == GroupEventType.UPDATE_PIN_TOPIC
+    ) {
         return {
             type,
             data: data as TGroupEventPinTopic,
             threadId,
-            isSelf: (data as TGroupEventPinTopic).actorId == appContext.uid,
+            isSelf: (data as TGroupEventPinTopic).actorId == uid,
         };
     } else if (type == GroupEventType.REORDER_PIN_TOPIC) {
         return {
             type,
             data: data as TGroupEventReorderPinTopic,
             threadId,
-            isSelf: (data as TGroupEventPinTopic).actorId == appContext.uid,
+            isSelf: (data as TGroupEventPinTopic).actorId == uid,
         };
     } else if (type == GroupEventType.UPDATE_BOARD || type == GroupEventType.REMOVE_BOARD) {
         return {
             type,
             data: data as TGroupEventBoard,
             threadId,
-            isSelf: (data as TGroupEventBoard).sourceId == appContext.uid,
+            isSelf: (data as TGroupEventBoard).sourceId == uid,
         };
     } else {
         const baseData = data as TGroupEventBase;
@@ -231,9 +233,7 @@ export function initializeGroupEvent(data: TGroupEvent, type: GroupEventType): G
             type,
             data: baseData,
             threadId,
-            isSelf:
-                baseData.updateMembers.some((member) => member.id == appContext.uid!) ||
-                baseData.sourceId == appContext.uid,
+            isSelf: baseData.updateMembers.some((member) => member.id == uid) || baseData.sourceId == uid,
         };
     }
 }

@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
+import { apiFactory } from "../utils.js";
 
 type Message =
     | {
@@ -9,8 +9,8 @@ type Message =
 
 export type SendFriendRequestResponse = ""; // add response after
 
-export const sendFriendRequestFactory = apiFactory<SendFriendRequestResponse>()((api, ctx, resolve) => {
-    const serviceURL = makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/sendreq`);
+export const sendFriendRequestFactory = apiFactory<SendFriendRequestResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/sendreq`);
 
     /**
      * Send a friend request to a user.
@@ -32,16 +32,16 @@ export const sendFriendRequestFactory = apiFactory<SendFriendRequestResponse>()(
             }),
         };
 
-        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await request(serviceURL, {
+        const response = await utils.request(serviceURL, {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,
             }),
         });
 
-        return resolve(response);
+        return utils.resolve(response);
     };
 });

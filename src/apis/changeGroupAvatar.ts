@@ -1,12 +1,12 @@
 import FormData from "form-data";
 import fs from "node:fs";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, encodeAES, getFullTimeFromMillisecond, getImageMetaData, makeURL, request } from "../utils.js";
+import { apiFactory, getFullTimeFromMillisecond, getImageMetaData } from "../utils.js";
 
 export type ChangeGroupAvatarResponse = "";
 
-export const changeGroupAvatarFactory = apiFactory<ChangeGroupAvatarResponse>()((api, ctx, resolve) => {
-    const serviceURL = makeURL(`${api.zpwServiceMap.file[0]}/api/group/upavatar`);
+export const changeGroupAvatarFactory = apiFactory<ChangeGroupAvatarResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.file[0]}/api/group/upavatar`);
 
     /**
      * Change group avatar
@@ -35,15 +35,15 @@ export const changeGroupAvatarFactory = apiFactory<ChangeGroupAvatarResponse>()(
             contentType: "image/jpeg",
         });
 
-        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await request(serviceURL + `&params=${encodeURIComponent(encryptedParams)}`, {
+        const response = await utils.request(serviceURL + `&params=${encodeURIComponent(encryptedParams)}`, {
             method: "POST",
             headers: formData.getHeaders(),
             body: formData.getBuffer(),
         });
 
-        return resolve(response);
+        return utils.resolve(response);
     };
 });

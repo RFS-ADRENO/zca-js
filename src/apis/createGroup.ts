@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
+import { apiFactory } from "../utils.js";
 
 export type CreateGroupResponse = {
     groupType: number;
@@ -9,8 +9,8 @@ export type CreateGroupResponse = {
     error_data: Record<string, any>;
 };
 
-export const createGroupFactory = apiFactory<CreateGroupResponse>()((api, ctx, resolve) => {
-    const serviceURL = makeURL(`${api.zpwServiceMap.group[0]}/api/group/create/v2`);
+export const createGroupFactory = apiFactory<CreateGroupResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/create/v2`);
 
     /**
      * Create a new group
@@ -40,14 +40,14 @@ export const createGroupFactory = apiFactory<CreateGroupResponse>()((api, ctx, r
             params.nameChanged = 1;
         }
 
-        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
-        const response = await request(serviceURL + `&params=${encodeURIComponent(encryptedParams)}`, {
+        const response = await utils.request(serviceURL + `&params=${encodeURIComponent(encryptedParams)}`, {
             method: "POST",
         });
 
-        const data = await resolve(response);
+        const data = await utils.resolve(response);
         if (options.avatarPath) await api.changeGroupAvatar(data.groupId, options.avatarPath).catch(console.error);
 
         return data;

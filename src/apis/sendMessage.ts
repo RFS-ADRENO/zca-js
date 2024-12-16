@@ -5,15 +5,12 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { GroupMessage, Message, MessageType } from "../models/Message.js";
 import {
     apiFactory,
-    encodeAES,
     getClientMessageType,
     getFileExtension,
     getFileName,
     getGifMetaData,
     getMd5LargeFileObject,
-    makeURL,
     removeUndefinedKeys,
-    request,
     resolveResponse,
 } from "../utils.js";
 
@@ -62,28 +59,6 @@ function prepareQMSG(quote: Message | GroupMessage) {
     }
 
     return "";
-}
-
-async function send(data: SendType | SendType[]): Promise<SendMessageResult[]> {
-    if (!Array.isArray(data)) data = [data];
-
-    const requests: Promise<SendMessageResult>[] = [];
-
-    for (const each of data) {
-        requests.push(
-            (async () => {
-                const response = await request(each.url, {
-                    method: "POST",
-                    body: each.body,
-                    headers: each.headers,
-                });
-
-                return await resolveResponse<SendMessageResult>(response);
-            })(),
-        );
-    }
-
-    return await Promise.all(requests);
 }
 
 type SendType = {
@@ -147,13 +122,13 @@ export type MessageContent = {
     attachments?: string[];
 };
 
-export const sendMessageFactory = apiFactory()((api, ctx) => {
+export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
     const serviceURLs = {
         message: {
-            [MessageType.DirectMessage]: makeURL(`${api.zpwServiceMap.chat[0]}/api/message`, {
+            [MessageType.DirectMessage]: utils.makeURL(`${api.zpwServiceMap.chat[0]}/api/message`, {
                 nretry: 0,
             }),
-            [MessageType.GroupMessage]: makeURL(`${api.zpwServiceMap.group[0]}/api/group`, {
+            [MessageType.GroupMessage]: utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group`, {
                 nretry: 0,
             }),
         },
@@ -177,6 +152,28 @@ export const sendMessageFactory = apiFactory()((api, ctx) => {
         return Date.now();
     }
 
+    async function send(data: SendType | SendType[]): Promise<SendMessageResult[]> {
+        if (!Array.isArray(data)) data = [data];
+
+        const requests: Promise<SendMessageResult>[] = [];
+
+        for (const each of data) {
+            requests.push(
+                (async () => {
+                    const response = await utils.request(each.url, {
+                        method: "POST",
+                        body: each.body,
+                        headers: each.headers,
+                    });
+
+                    return await resolveResponse<SendMessageResult>(ctx, response);
+                })(),
+            );
+        }
+
+        return await Promise.all(requests);
+    }
+
     async function upthumb(filePath: string, url: string): Promise<UpthumbType> {
         let formData = new FormData();
         let buffer = await sharp(filePath).png().toBuffer();
@@ -190,11 +187,11 @@ export const sendMessageFactory = apiFactory()((api, ctx) => {
             imei: ctx.imei,
         };
 
-        const encryptedParams = encodeAES(ctx.secretKey!, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
-        const response = await request(
-            makeURL(url + "upthumb?", {
+        const response = await utils.request(
+            utils.makeURL(url + "upthumb?", {
                 params: encryptedParams,
             }),
             {
@@ -204,7 +201,7 @@ export const sendMessageFactory = apiFactory()((api, ctx) => {
             },
         );
 
-        return await resolveResponse<UpthumbType>(response);
+        return await resolveResponse<UpthumbType>(ctx, response);
     }
 
     function handleMentions(type: MessageType, msg: string, mentions?: Mention[]) {
@@ -289,7 +286,7 @@ export const sendMessageFactory = apiFactory()((api, ctx) => {
             if (params[key as keyof typeof params] === undefined) delete params[key as keyof typeof params];
         }
 
-        const encryptedParams = encodeAES(ctx.secretKey!, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
         const finalServiceUrl = new URL(serviceURLs.message[type]);
         if (quote) {
@@ -426,7 +423,7 @@ export const sendMessageFactory = apiFactory()((api, ctx) => {
             }
 
             removeUndefinedKeys(data.params);
-            const encryptedParams = encodeAES(ctx.secretKey!, JSON.stringify(data.params));
+            const encryptedParams = utils.encodeAES(JSON.stringify(data.params));
             if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
             data.body.append("params", encryptedParams);
@@ -467,7 +464,7 @@ export const sendMessageFactory = apiFactory()((api, ctx) => {
             };
 
             removeUndefinedKeys(params);
-            const encryptedParams = encodeAES(ctx.secretKey!, JSON.stringify(params));
+            const encryptedParams = utils.encodeAES(JSON.stringify(params));
             if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
             attachmentsData.push({
@@ -485,7 +482,7 @@ export const sendMessageFactory = apiFactory()((api, ctx) => {
 
         for (const data of attachmentsData) {
             responses.push({
-                url: makeURL(
+                url: utils.makeURL(
                     serviceURLs.attachment[type] + attachmentUrlType[data.fileType],
                     Object.assign(
                         {

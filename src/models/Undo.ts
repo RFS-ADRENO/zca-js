@@ -1,4 +1,3 @@
-import { appContext } from "../context.js";
 import { TAttachmentContent, TOtherContent } from "./Message.js";
 
 export type TUndo = {
@@ -28,13 +27,13 @@ export class Undo {
     isSelf: boolean;
     isGroup: boolean;
 
-    constructor(data: TUndo, isGroup: boolean) {
+    constructor(uid: string, data: TUndo, isGroup: boolean) {
         this.data = data;
         this.threadId = data.uidFrom == "0" ? data.idTo : data.uidFrom;
         this.isSelf = data.uidFrom == "0";
         this.isGroup = isGroup;
 
-        if (data.idTo == "0") data.idTo = appContext.uid!;
-        if (data.uidFrom == "0") data.uidFrom = appContext.uid!;
+        if (data.idTo == "0") data.idTo = uid;
+        if (data.uidFrom == "0") data.uidFrom = uid;
     }
 }

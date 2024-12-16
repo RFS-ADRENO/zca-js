@@ -1,15 +1,15 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { GroupMessage, Message, MessageType } from "../models/Message.js";
-import { apiFactory, encodeAES, makeURL, removeUndefinedKeys, request } from "../utils.js";
+import { apiFactory, removeUndefinedKeys } from "../utils.js";
 
 export type DeleteMessageResponse = {
     status: number;
 };
 
-export const deleteMessageFactory = apiFactory<DeleteMessageResponse>()((api, ctx, resolve) => {
+export const deleteMessageFactory = apiFactory<DeleteMessageResponse>()((api, ctx, utils) => {
     const URLType = {
-        [MessageType.DirectMessage]: makeURL(`${api.zpwServiceMap.chat[0]}/api/message/delete`),
-        [MessageType.GroupMessage]: makeURL(`${api.zpwServiceMap.group[0]}/api/group/deletemsg`),
+        [MessageType.DirectMessage]: utils.makeURL(`${api.zpwServiceMap.chat[0]}/api/message/delete`),
+        [MessageType.GroupMessage]: utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/deletemsg`),
     };
     /**
      * Delete a message
@@ -46,16 +46,16 @@ export const deleteMessageFactory = apiFactory<DeleteMessageResponse>()((api, ct
 
         removeUndefinedKeys(params);
 
-        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
-        const response = await request(URLType[message.type], {
+        const response = await utils.request(URLType[message.type], {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,
             }),
         });
 
-        return resolve(response);
+        return utils.resolve(response);
     };
 });

@@ -1,17 +1,13 @@
-import { appContext } from "../context.js";
+import type { ContextBase } from "../context.js";
 import { decryptResp, getSignKey, makeURL, ParamsEncryptor, request } from "../utils.js";
 
-export async function login(encryptParams: boolean) {
-    const encryptedParams = await getEncryptParam(
-        appContext.imei!,
-        appContext.language!,
-        encryptParams,
-        "getlogininfo",
-    );
+export async function login(ctx: ContextBase, encryptParams: boolean) {
+    const encryptedParams = await getEncryptParam(ctx, encryptParams, "getlogininfo");
 
     try {
         const response = await request(
-            makeURL("https://wpa.chat.zalo.me/api/login/getLoginInfo", {
+            ctx,
+            makeURL(ctx, "https://wpa.chat.zalo.me/api/login/getLoginInfo", {
                 ...encryptedParams.params,
                 nretry: 0,
             }),
@@ -31,22 +27,19 @@ export async function login(encryptParams: boolean) {
     }
 }
 
-export async function getServerInfo(encryptParams: boolean) {
-    const encryptedParams = await getEncryptParam(
-        appContext.imei!,
-        appContext.language!,
-        encryptParams,
-        "getserverinfo",
-    );
+export async function getServerInfo(ctx: ContextBase, encryptParams: boolean) {
+    const encryptedParams = await getEncryptParam(ctx, encryptParams, "getserverinfo");
 
     try {
         const response = await request(
+            ctx,
             makeURL(
+                ctx,
                 "https://wpa.chat.zalo.me/api/login/getServerInfo",
                 {
-                    imei: appContext.imei,
-                    type: appContext.API_TYPE,
-                    client_version: appContext.API_VERSION,
+                    imei: ctx.imei,
+                    type: ctx.API_TYPE,
+                    client_version: ctx.API_VERSION,
                     computer_name: "Web",
                     signkey: encryptedParams.params.signkey,
                 },
@@ -64,15 +57,15 @@ export async function getServerInfo(encryptParams: boolean) {
     }
 }
 
-async function getEncryptParam(imei: string, language: string, encryptParams: boolean, type: string) {
+async function getEncryptParam(ctx: ContextBase, encryptParams: boolean, type: string) {
     const params = {} as Record<string, any>;
     const data = {
         computer_name: "Web",
-        imei,
-        language,
+        imei: ctx.imei!,
+        language: ctx.language!,
         ts: Date.now(),
     };
-    const encryptedData = await _encryptParam(data, encryptParams);
+    const encryptedData = await _encryptParam(ctx, data, encryptParams);
 
     if (encryptedData == null) Object.assign(params, data);
     else {
@@ -81,14 +74,14 @@ async function getEncryptParam(imei: string, language: string, encryptParams: bo
         params.params = encrypted_data;
     }
 
-    params.type = appContext.API_TYPE;
-    params.client_version = appContext.API_VERSION;
+    params.type = ctx.API_TYPE;
+    params.client_version = ctx.API_VERSION;
     params.signkey =
         type == "getserverinfo"
             ? getSignKey(type, {
-                  imei: appContext.imei,
-                  type: appContext.API_TYPE,
-                  client_version: appContext.API_VERSION,
+                  imei: ctx.imei,
+                  type: ctx.API_TYPE,
+                  client_version: ctx.API_VERSION,
                   computer_name: "Web",
               })
             : getSignKey(type, params);
@@ -99,10 +92,10 @@ async function getEncryptParam(imei: string, language: string, encryptParams: bo
     };
 }
 
-async function _encryptParam(data: Record<string, any>, encryptParams: boolean) {
+async function _encryptParam(ctx: ContextBase, data: Record<string, any>, encryptParams: boolean) {
     if (encryptParams) {
         const encryptor = new ParamsEncryptor({
-            type: appContext.API_TYPE,
+            type: ctx.API_TYPE,
             imei: data.imei,
             firstLaunchTime: Date.now(),
         });

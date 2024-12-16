@@ -1,10 +1,10 @@
 import EventEmitter from "events";
 import WebSocket from "ws";
-import { appContext } from "../context.js";
 import { type GroupEvent, initializeGroupEvent, TGroupEvent } from "../models/GroupEvent.js";
 import { GroupMessage, Message, Reaction, Undo } from "../models/index.js";
 import { decodeEventData, getGroupEventType, logger } from "../utils.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { ContextSession } from "../context.js";
 
 type MessageEventData = Message | GroupMessage;
 
@@ -43,16 +43,19 @@ export class Listener extends EventEmitter<ListenerEvents> {
     private selfListen;
     private pingInterval?: Timer;
 
-    constructor(url: string) {
+    constructor(
+        private ctx: ContextSession,
+        url: string,
+    ) {
         super();
-        if (!appContext.cookie) throw new Error("Cookie is not available");
-        if (!appContext.userAgent) throw new Error("User agent is not available");
+        if (!ctx.cookie) throw new Error("Cookie is not available");
+        if (!ctx.userAgent) throw new Error("User agent is not available");
 
         this.url = url;
-        this.cookie = appContext.cookie.getCookieStringSync("https://chat.zalo.me");
-        this.userAgent = appContext.userAgent;
+        this.cookie = ctx.cookie.getCookieStringSync("https://chat.zalo.me");
+        this.userAgent = ctx.userAgent;
 
-        this.selfListen = appContext.options.selfListen;
+        this.selfListen = ctx.options.selfListen;
 
         this.ws = null;
 
@@ -168,11 +171,11 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     const { msgs } = parsedData;
                     for (const msg of msgs) {
                         if (typeof msg.content == "object" && msg.content.hasOwnProperty("deleteMsg")) {
-                            const undoObject = new Undo(msg, false);
+                            const undoObject = new Undo(this.ctx.uid, msg, false);
                             if (undoObject.isSelf && !this.selfListen) continue;
                             this.emit("undo", undoObject);
                         } else {
-                            const messageObject = new Message(msg);
+                            const messageObject = new Message(this.ctx.uid, msg);
                             if (messageObject.isSelf && !this.selfListen) continue;
                             this.onMessageCallback(messageObject);
                             this.emit("message", messageObject);
@@ -185,11 +188,11 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     const { groupMsgs } = parsedData;
                     for (const msg of groupMsgs) {
                         if (typeof msg.content == "object" && msg.content.hasOwnProperty("deleteMsg")) {
-                            const undoObject = new Undo(msg, true);
+                            const undoObject = new Undo(this.ctx.uid, msg, true);
                             if (undoObject.isSelf && !this.selfListen) continue;
                             this.emit("undo", undoObject);
                         } else {
-                            const messageObject = new GroupMessage(msg);
+                            const messageObject = new GroupMessage(this.ctx.uid, msg);
                             if (messageObject.isSelf && !this.selfListen) continue;
                             this.onMessageCallback(messageObject);
                             this.emit("message", messageObject);
@@ -207,9 +210,9 @@ export class Listener extends EventEmitter<ListenerEvents> {
                                 fileId: control.content.fileId,
                             };
 
-                            const uploadCallback = appContext.uploadCallbacks.get(String(control.content.fileId));
+                            const uploadCallback = this.ctx.uploadCallbacks.get(String(control.content.fileId));
                             if (uploadCallback) uploadCallback(data);
-                            appContext.uploadCallbacks.delete(String(control.content.fileId));
+                            this.ctx.uploadCallbacks.delete(String(control.content.fileId));
 
                             this.emit("upload_attachment", data);
                         } else if (control.content.act_type == "group") {
@@ -225,6 +228,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                                     : control.content.data;
 
                             const groupEvent = initializeGroupEvent(
+                                this.ctx.uid,
                                 groupEventData,
                                 getGroupEventType(control.content.act),
                             );
@@ -240,7 +244,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
                     for (const react of reacts) {
                         react.content = JSON.parse(react.content);
-                        const reactionObject = new Reaction(react, false);
+                        const reactionObject = new Reaction(this.ctx.uid, react, false);
                         if (reactionObject.isSelf && !this.selfListen) continue;
 
                         this.emit("reaction", reactionObject);
@@ -248,7 +252,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
                     for (const reactGroup of reactGroups) {
                         reactGroup.content = JSON.parse(reactGroup.content);
-                        const reactionObject = new Reaction(reactGroup, true);
+                        const reactionObject = new Reaction(this.ctx.uid, reactGroup, true);
                         if (reactionObject.isSelf && !this.selfListen) continue;
 
                         this.emit("reaction", reactionObject);
@@ -257,7 +261,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
                 if (version == 1 && cmd == 3000 && subCmd == 0) {
                     console.log();
-                    logger.error("Another connection is opened, closing this one");
+                    logger(this.ctx).error("Another connection is opened, closing this one");
                     console.log();
                     if (ws.readyState !== WebSocket.CLOSED) ws.close();
                 }
