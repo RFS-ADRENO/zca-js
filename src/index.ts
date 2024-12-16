@@ -8,6 +8,7 @@ export type { AddGroupDeputyResponse } from "./apis/addGroupDeputy.js"
 export type { AddReactionResponse } from "./apis/addReaction.js";
 export type { AddUserToGroupResponse } from "./apis/addUserToGroup.js";
 export type { BlockUserResponse } from "./apis/blockUser.js";
+export type { ChangeAccountSettingResponse } from "./apis/changeAccountSetting.js"
 export type { ChangeGroupAvatarResponse } from "./apis/changeGroupAvatar.js";
 export type { ChangeGroupNameResponse } from "./apis/changeGroupName.js";
 export type { ChangeGroupOwnerResponse } from "./apis/changeGroupOwner.js";
