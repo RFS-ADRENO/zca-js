@@ -1,5 +1,7 @@
 # ZCA-JS
 
+> This document is not compatible for the latest alpha version 2.0.0
+
 This is an unofficial Zalo API for personal account. It work by simulating the browser to interact with Zalo Web.
 
 **disclaimer**: We are not responsible if your account is locked or banned by Zalo. Use it at your own risk.
