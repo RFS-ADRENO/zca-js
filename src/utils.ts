@@ -472,6 +472,9 @@ export function getGroupEventType(act: string) {
     if (act == "reorder_pin_topic") return GroupEventType.REORDER_PIN_TOPIC;
     if (act == "unpin_topic") return GroupEventType.UNPIN_TOPIC;
     if (act == "remove_topic") return GroupEventType.REMOVE_TOPIC;
+    if (act == "accept_remind") return GroupEventType.ACCEPT_REMIND;
+    if (act == "reject_remind") return GroupEventType.REJECT_REMIND;
+    if (act == "remind_topic") return GroupEventType.REMIND_TOPIC;
 
     return GroupEventType.UNKNOWN;
 }
