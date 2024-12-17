@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
+import { apiFactory } from "../utils.js";
 
 type Message =
     | {
@@ -9,8 +9,8 @@ type Message =
 
 export type ChangeNickNameResponse = "";
 
-export const changeNickNameFactory = apiFactory<ChangeNickNameResponse>()((api, ctx, resolve) => {
-    const serviceURL = makeURL(`${api.zpwServiceMap.alias[0]}/api/alias/update`);
+export const changeNickNameFactory = apiFactory<ChangeNickNameResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.alias[0]}/api/alias/update`);
 
     /**
      * Change nick name a User
@@ -28,15 +28,15 @@ export const changeNickNameFactory = apiFactory<ChangeNickNameResponse>()((api, 
             imei: ctx.imei,
         };
 
-        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
         const urlWithParams = `${serviceURL}&params=${encodeURIComponent(encryptedParams)}`;
 
-        const response = await request(urlWithParams, {
+        const response = await utils.request(urlWithParams, {
             method: "GET",
         });
 
-        return resolve(response);
+        return utils.resolve(response);
     };
 });
