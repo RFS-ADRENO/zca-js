@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
+import { apiFactory } from "../utils.js";
 
 type Message =
     | {
@@ -11,8 +11,8 @@ export type SendReportResponse = {
     reportId: string;
 };
 
-export const sendReportFactory = apiFactory<SendReportResponse>()((api, ctx, resolve) => {
-    const serviceURL = makeURL(`${api.zpwServiceMap.profile[0]}/api/report/abuse-v2`);
+export const sendReportFactory = apiFactory<SendReportResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/report/abuse-v2`);
 
     /**
      * Send report to Zalo
@@ -40,16 +40,16 @@ export const sendReportFactory = apiFactory<SendReportResponse>()((api, ctx, res
             params.content = "";
         }
 
-        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await request(serviceURL, {
+        const response = await utils.request(serviceURL, {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,
             }),
         });
 
-        return resolve(response);
+        return utils.resolve(response);
     };
 });
