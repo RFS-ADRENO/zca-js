@@ -1,10 +1,10 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory } from "../utils.js";
+import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
 
 export type RemoveGroupDeputyResponse = "";
 
-export const removeGroupDeputyFactory = apiFactory<RemoveGroupDeputyResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/admins/remove`);
+export const removeGroupDeputyFactory = apiFactory<RemoveGroupDeputyResponse>()((api, ctx, resolve) => {
+    const serviceURL = makeURL(`${api.zpwServiceMap.group[0]}/api/group/admins/remove`);
 
     /**
      * Remove group deputy
@@ -24,15 +24,15 @@ export const removeGroupDeputyFactory = apiFactory<RemoveGroupDeputyResponse>()(
             imei: ctx.imei,
         };
 
-        const encryptedParams = utils.encodeAES(JSON.stringify(params));
+        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
         const urlWithParams = `${serviceURL}&params=${encodeURIComponent(encryptedParams)}`;
 
-        const response = await utils.request(urlWithParams, {
+        const response = await request(urlWithParams, {
             method: "GET",
         });
 
-        return utils.resolve(response);
+        return resolve(response);
     };
 });

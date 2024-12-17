@@ -5,9 +5,9 @@ export type SendCardResponse = {
     msgId: number;
 };
 
-export const sendCardFactory = apiFactory<SendCardResponse>()((api, ctx, utils) => {
-    const directMessageServiceURL = utils.makeURL(`${api.zpwServiceMap.file[0]}/api/message/forward`);
-    const groupMessageServiceURL = utils.makeURL(`${api.zpwServiceMap.file[0]}/api/group/forward`);
+export const sendCardFactory = apiFactory<SendCardResponse>()((api, ctx, resolve) => {
+    const directMessageServiceURL = makeURL(`${api.zpwServiceMap.file[0]}/api/message/forward`);
+    const groupMessageServiceURL = makeURL(`${api.zpwServiceMap.file[0]}/api/group/forward`);
 
     /**
      * Send a card to a User - Group
@@ -56,16 +56,16 @@ export const sendCardFactory = apiFactory<SendCardResponse>()((api, ctx, utils) 
         const msgInfoStringified = JSON.stringify(params.msgInfo);
         params.msgInfo = msgInfoStringified;
 
-        const encryptedParams = utils.encodeAES(JSON.stringify(params));
+        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await utils.request(serviceURL, {
+        const response = await request(serviceURL, {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,
             }),
         });
 
-        return utils.resolve(response);
+        return resolve(response);
     };
 });

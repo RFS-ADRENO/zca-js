@@ -1,10 +1,10 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory } from "../utils.js";
+import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
 
 export type PinConversationsResponse = "";
 
-export const pinConversationsFactory = apiFactory<PinConversationsResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.conversation[0]}/api/pinconvers/updatev2`);
+export const pinConversationsFactory = apiFactory<PinConversationsResponse>()((api, ctx, resolve) => {
+    const serviceURL = makeURL(`${api.zpwServiceMap.conversation[0]}/api/pinconvers/updatev2`);
 
     /**
      * Pin and unpin conversations of the thread (USER or GROUP)
@@ -32,16 +32,16 @@ export const pinConversationsFactory = apiFactory<PinConversationsResponse>()((a
             throw new ZaloApiError("Thread type is invalid");
         }
 
-        const encryptedParams = utils.encodeAES(JSON.stringify(params));
+        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await utils.request(serviceURL, {
+        const response = await request(serviceURL, {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,
             }),
         });
 
-        return utils.resolve(response);
+        return resolve(response);
     };
 });
