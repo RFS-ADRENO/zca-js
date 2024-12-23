@@ -34,7 +34,7 @@ export type GetAllFriendsResponse = {
     };
     createdTs: number;
     oa_status: any;
-};
+}[];
 
 export const getAllFriendsFactory = apiFactory<GetAllFriendsResponse>()((api, _, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/friend/getfriends`);
