@@ -9,6 +9,8 @@ import { addGroupDeputyFactory } from "./apis/addGroupDeputy.js";
 import { addReactionFactory } from "./apis/addReaction.js";
 import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
 import { blockUserFactory } from "./apis/blockUser.js";
+import { blockViewFeedFactory } from "./apis/blockViewFeed.js";
+import { changeAccountAvatarFactory } from "./apis/changeAccountAvatar.js";
 import { changeAccountSettingFactory } from "./apis/changeAccountSetting.js";
 import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
 import { changeGroupNameFactory } from "./apis/changeGroupName.js";
@@ -183,6 +185,8 @@ export class API {
     public addReaction: ReturnType<typeof addReactionFactory>;
     public addUserToGroup: ReturnType<typeof addUserToGroupFactory>;
     public blockUser: ReturnType<typeof blockUserFactory>;
+    public blockViewFeed: ReturnType<typeof blockViewFeedFactory>;
+    public changeAccountAvatar: ReturnType<typeof changeAccountAvatarFactory>;
     public changeAccountSetting: ReturnType<typeof changeAccountSettingFactory>;
     public changeGroupAvatar: ReturnType<typeof changeGroupAvatarFactory>;
     public changeGroupName: ReturnType<typeof changeGroupNameFactory>;
@@ -230,6 +234,8 @@ export class API {
         this.addReaction = addReactionFactory(ctx, this);
         this.addUserToGroup = addUserToGroupFactory(ctx, this);
         this.blockUser = blockUserFactory(ctx, this);
+        this.blockViewFeed = blockViewFeedFactory(ctx, this);
+        this.changeAccountAvatar = changeAccountAvatarFactory(ctx, this);
         this.changeAccountSetting = changeAccountSettingFactory(ctx, this);
         this.changeGroupAvatar = changeGroupAvatarFactory(ctx, this);
         this.changeGroupName = changeGroupNameFactory(ctx, this);
