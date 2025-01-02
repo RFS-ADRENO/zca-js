@@ -1,12 +1,6 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-type Message =
-    | {
-          text: string;
-      }
-    | string;
-
 export type CreatePollResponse = {
     creator: string;
     question: string;
@@ -25,56 +19,77 @@ export type CreatePollResponse = {
     num_vote: number;
 };
 
+/**
+ * Options for creating a poll.
+ */
+export type CreatePollOptions = {
+    /**
+     * Question for the poll.
+     */
+    question: string;
+
+    /**
+     * List of options for the poll.
+     */
+    options: string[];
+
+    /**
+     * Poll expiration time in milliseconds (0 = no expiration).
+     */
+    expiredTime?: number;
+
+    /**
+     * Pin action to pin the poll.
+     */
+    pinAct?: boolean;
+
+    /**
+     * Allows multiple choices in the poll.
+     */
+    allowMultiChoices?: boolean;
+
+    /**
+     * Allows members to add new options to the poll.
+     */
+    allowAddNewOption?: boolean;
+
+    /**
+     * Hides voting results until the user has voted.
+     */
+    hideVotePreview?: boolean;
+
+    /**
+     * Hides poll voters (anonymous poll).
+     */
+    isAnonymous?: boolean;
+};
+
 export const createPollFactory = apiFactory<CreatePollResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/poll/create`);
 
     /**
      * Create a poll in a group.
      *
-     * @param question Question for poll
-     * @param options List options for poll
      * @param groupId Group ID to create poll from
-     * @param expiredTime Poll expiration time (0 = no expiration), timestamp is in milliseconds
-     * @param pinAct Pin action (pin poll)
-     * @param multiChoices Allows multiple poll choices
-     * @param allowAddNewOption Allow members to add new options
-     * @param hideVotePreview Hide voting results when haven't voted
-     * @param isAnonymous Hide poll voters
+     * @param options Poll options
      *
      * @throws ZaloApiError
      */
-    return async function createPoll(
-        question: Message,
-        options: string[],
-        groupId: string,
-        expiredTime: number = 0,
-        pinAct: boolean = false,
-        allowMultiChoices: boolean = false,
-        allowAddNewOption: boolean = false,
-        hideVotePreview: boolean = false,
-        isAnonymous: boolean = false,
-    ) {
-        const params: any = {
+    return async function createPoll(groupId: string, options: CreatePollOptions) {
+        const params = {
             group_id: groupId,
-            question: typeof question == "string" ? question : question.text,
-            options: [],
-            expired_time: expiredTime,
-            pinAct: pinAct,
-            allow_multi_choices: allowMultiChoices,
-            allow_add_new_option: allowAddNewOption,
-            is_hide_vote_preview: hideVotePreview,
-            is_anonymous: isAnonymous,
+            question: options.question,
+            options: options.options,
+            expired_time: options.expiredTime ?? 0,
+            pinAct: !!options.pinAct,
+            allow_multi_choices: !!options.allowMultiChoices,
+            allow_add_new_option: !!options.allowAddNewOption,
+            is_hide_vote_preview: !!options.hideVotePreview,
+            is_anonymous: !!options.isAnonymous,
             poll_type: 0,
             src: 1,
             imei: ctx.imei,
         };
-
-        if (Array.isArray(options)) {
-            params.options = options;
-        } else {
-            params.options = params.options || [];
-            params.options.push(String(options));
-        }
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");

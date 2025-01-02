@@ -4,7 +4,7 @@ export * from "./zalo.js";
 
 // API RESPONSE TYPES
 export type { AcceptFriendRequestResponse } from "./apis/acceptFriendRequest.js";
-export type { AddGroupDeputyResponse } from "./apis/addGroupDeputy.js"
+export type { AddGroupDeputyResponse } from "./apis/addGroupDeputy.js";
 export type { AddReactionResponse } from "./apis/addReaction.js";
 export type { AddUserToGroupResponse } from "./apis/addUserToGroup.js";
 export type { BlockUserResponse } from "./apis/blockUser.js";
@@ -14,9 +14,9 @@ export type { ChangeGroupOwnerResponse } from "./apis/changeGroupOwner.js";
 export type { ChangeFriendAliasResponse } from "./apis/changeFriendAlias.js";
 export type { CreateGroupResponse } from "./apis/createGroup.js";
 export type { CreateNoteResponse } from "./apis/createNote.js";
-export type { CreatePollResponse } from "./apis/createPoll.js";
+export type { CreatePollResponse, CreatePollOptions } from "./apis/createPoll.js";
 export type { DeleteMessageResponse } from "./apis/deleteMessage.js";
-export type { DisperseGroupResponse } from "./apis/disperseGroup.js"
+export type { DisperseGroupResponse } from "./apis/disperseGroup.js";
 export type { EditNoteResponse } from "./apis/editNote.js";
 export type { FetchAccountInfoResponse } from "./apis/fetchAccountInfo.js";
 export type { FindUserResponse } from "./apis/findUser.js";
@@ -33,7 +33,7 @@ export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js"
 export type { SendCardResponse } from "./apis/sendCard.js";
 export type { SendFriendRequestResponse } from "./apis/sendFriendRequest.js";
 export type { Mention, MessageContent } from "./apis/sendMessage.js";
-export type { SendReportResponse } from "./apis/sendReport.js"
+export type { SendReportResponse } from "./apis/sendReport.js";
 export type { SendStickerResponse } from "./apis/sendSticker.js";
 export type { SendVideoResponse } from "./apis/sendVideo.js";
 export type { SendVoiceResponse } from "./apis/sendVoice.js";
