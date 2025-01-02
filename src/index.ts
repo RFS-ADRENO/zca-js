@@ -11,7 +11,7 @@ export type { BlockUserResponse } from "./apis/blockUser.js";
 export type { ChangeGroupAvatarResponse } from "./apis/changeGroupAvatar.js";
 export type { ChangeGroupNameResponse } from "./apis/changeGroupName.js";
 export type { ChangeGroupOwnerResponse } from "./apis/changeGroupOwner.js";
-export type { ChangeNickNameResponse } from "./apis/changeNickName.js";
+export type { ChangeFriendAliasResponse } from "./apis/changeFriendAlias.js";
 export type { CreateGroupResponse } from "./apis/createGroup.js";
 export type { CreateNoteResponse } from "./apis/createNote.js";
 export type { CreatePollResponse } from "./apis/createPoll.js";

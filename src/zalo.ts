@@ -12,7 +12,7 @@ import { blockUserFactory } from "./apis/blockUser.js";
 import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
 import { changeGroupNameFactory } from "./apis/changeGroupName.js";
 import { changeGroupOwnerFactory } from "./apis/changeGroupOwner.js";
-import { changeNickNameFactory } from "./apis/changeNickName.js";
+import { changeFriendAliasFactory } from "./apis/changeFriendAlias.js";
 import { createGroupFactory } from "./apis/createGroup.js";
 import { createNoteFactory } from "./apis/createNote.js";
 import { createPollFactory } from "./apis/createPoll.js";
@@ -185,7 +185,7 @@ export class API {
     public changeGroupAvatar: ReturnType<typeof changeGroupAvatarFactory>;
     public changeGroupName: ReturnType<typeof changeGroupNameFactory>;
     public changeGroupOwner: ReturnType<typeof changeGroupOwnerFactory>;
-    public changeNickName: ReturnType<typeof changeNickNameFactory>;
+    public changeFriendAlias: ReturnType<typeof changeFriendAliasFactory>;
     public createGroup: ReturnType<typeof createGroupFactory>;
     public createNote: ReturnType<typeof createNoteFactory>;
     public createPoll: ReturnType<typeof createPollFactory>;
@@ -231,7 +231,7 @@ export class API {
         this.changeGroupAvatar = changeGroupAvatarFactory(ctx, this);
         this.changeGroupName = changeGroupNameFactory(ctx, this);
         this.changeGroupOwner = changeGroupOwnerFactory(ctx, this);
-        this.changeNickName = changeNickNameFactory(ctx, this);
+        this.changeFriendAlias = changeFriendAliasFactory(ctx, this);
         this.createGroup = createGroupFactory(ctx, this);
         this.createNote = createNoteFactory(ctx, this);
         this.createPoll = createPollFactory(ctx, this);

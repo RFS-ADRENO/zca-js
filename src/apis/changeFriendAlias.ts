@@ -1,30 +1,24 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-type Message =
-    | {
-          text: string;
-      }
-    | string;
+export type ChangeFriendAliasResponse = "";
 
-export type ChangeNickNameResponse = "";
-
-export const changeNickNameFactory = apiFactory<ChangeNickNameResponse>()((api, ctx, utils) => {
+export const changeFriendAliasFactory = apiFactory<ChangeFriendAliasResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.alias[0]}/api/alias/update`);
 
     /**
-     * Change nick name a User
+     * Change friend's alias
      *
-     * @param message Nick name want change for user
-     * @param userId UserId for changeNickName
+     * @param alias
+     * @param friendId
      *
      * @throws ZaloApiError
      *
      */
-    return async function changeNickName(message: Message, userId: string) {
+    return async function changeFriendAlias(alias: string, friendId: string) {
         const params = {
-            friendId: userId,
-            alias: `${typeof message === "string" ? message : message.text}`,
+            friendId: friendId,
+            alias: alias,
             imei: ctx.imei,
         };
 
