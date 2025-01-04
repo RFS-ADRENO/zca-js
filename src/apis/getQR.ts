@@ -2,7 +2,7 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
 export type GetQRResponse = {
-    data: Record<string, string>;
+    [userId: string]: string
 };
 
 export const getQRFactory = apiFactory<GetQRResponse>()((api, _, utils) => {
