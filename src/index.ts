@@ -33,10 +33,13 @@ export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js"
 export type { SendCardResponse } from "./apis/sendCard.js";
 export type { SendFriendRequestResponse } from "./apis/sendFriendRequest.js";
 export type { Mention, MessageContent } from "./apis/sendMessage.js";
-export type { SendReportResponse } from "./apis/sendReport.js";
+export type { SendReportResponse, ReportOptions } from "./apis/sendReport.js";
 export type { SendStickerResponse } from "./apis/sendSticker.js";
 export type { SendVideoResponse } from "./apis/sendVideo.js";
 export type { SendVoiceResponse } from "./apis/sendVoice.js";
 export type { UnBlockUserResponse } from "./apis/unblockUser.js";
 export type { UndoResponse } from "./apis/undo.js";
 export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType } from "./apis/uploadAttachment.js";
+
+// Others
+export { ReportReason } from "./apis/sendReport.js";
