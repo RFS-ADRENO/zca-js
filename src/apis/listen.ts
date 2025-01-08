@@ -15,9 +15,14 @@ type UploadEventData = {
 
 export type OnMessageCallback = (message: MessageEventData) => void | Promise<void>;
 
+export enum CloseReason {
+    DuplicateConnection,
+    ManualClosure,
+}
+
 interface ListenerEvents {
     connected: [];
-    closed: [];
+    closed: [reason: CloseReason];
     error: [error: any];
     message: [message: MessageEventData];
     reaction: [reaction: Reaction];
@@ -106,9 +111,9 @@ export class Listener extends EventEmitter<ListenerEvents> {
             this.emit("connected");
         };
 
-        ws.onclose = () => {
-            this.onClosedCallback();
-            this.emit("closed");
+        ws.onclose = (event) => {
+            this.onClosedCallback(event.reason);
+            this.emit("closed", event.code as CloseReason);
         };
 
         ws.onerror = (event) => {
@@ -263,7 +268,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     console.log();
                     logger(this.ctx).error("Another connection is opened, closing this one");
                     console.log();
-                    if (ws.readyState !== WebSocket.CLOSED) ws.close();
+                    if (ws.readyState !== WebSocket.CLOSED) ws.close(CloseReason.DuplicateConnection);
                 }
             } catch (error) {
                 this.onErrorCallback(error);
@@ -274,7 +279,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
     public stop() {
         if (this.ws) {
-            this.ws.close();
+            this.ws.close(CloseReason.ManualClosure);
             this.ws = null;
         }
     }

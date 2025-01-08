@@ -43,3 +43,4 @@ export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentTyp
 
 // Others
 export { ReportReason } from "./apis/sendReport.js";
+export { CloseReason } from "./apis/listen.js";
