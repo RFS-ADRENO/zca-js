@@ -53,7 +53,7 @@ export enum Reactions {
     BIG_LAUGH = ":))",
     RICH = "$-)",
     BEER = "/-beer",
-    NONE = "", // more... (I don't find rType blibli)
+    NONE = "", // more...
 }
 
 export type TReaction = {

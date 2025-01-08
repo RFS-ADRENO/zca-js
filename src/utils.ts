@@ -16,11 +16,11 @@ export const isBun = typeof Bun !== "undefined";
 
 /**
  * Get signed key for API requests.
- * 
+ *
  * @param type
  * @param params
  * @returns MD5 hash
- * 
+ *
  */
 export function getSignKey(type: string, params: Record<string, any>) {
     let n = [];
@@ -267,23 +267,25 @@ export async function getDefaultHeaders(ctx: ContextBase, origin: string = "http
     };
 }
 
-export async function request(ctx: ContextBase, url: string, options?: RequestInit) {
+export async function request(ctx: ContextBase, url: string, options?: RequestInit, raw = false) {
     if (!ctx.cookie) ctx.cookie = new toughCookie.CookieJar();
     const origin = new URL(url).origin;
 
     const defaultHeaders = await getDefaultHeaders(ctx, origin);
-    if (options) {
-        options.headers = Object.assign(defaultHeaders, options.headers || {});
-    } else options = { headers: defaultHeaders };
+    if (!raw) {
+        if (options) {
+            options.headers = Object.assign(defaultHeaders, options.headers || {});
+        } else options = { headers: defaultHeaders };
+    }
 
     const _options = {
-        ...options,
+        ...(options ?? {}),
         // @ts-ignore
         ...(isBun ? { proxy: ctx.options.agent } : { agent: ctx.options.agent }),
     };
 
     const response = await ctx.options.polyfill(url, _options);
-    if (response.headers.has("set-cookie")) {
+    if (response.headers.has("set-cookie") && !raw) {
         for (const cookie of response.headers.getSetCookie()) {
             const parsed = toughCookie.Cookie.parse(cookie);
             try {
@@ -297,7 +299,7 @@ export async function request(ctx: ContextBase, url: string, options?: RequestIn
         const redirectOptions = { ...options };
         redirectOptions.method = "GET";
         // @ts-ignore
-        redirectOptions.headers["Referer"] = "https://id.zalo.me/";
+        if (!raw) redirectOptions.headers["Referer"] = "https://id.zalo.me/";
         return await request(ctx, redirectURL, redirectOptions);
     }
 
@@ -572,7 +574,7 @@ export function apiFactory<T>() {
                     apiVersion?: boolean,
                 ) => ReturnType<typeof makeURL>;
                 encodeAES: (data: any, t?: number) => ReturnType<typeof encodeAES>;
-                request: (url: string, options?: RequestInit) => ReturnType<typeof request>;
+                request: (url: string, options?: RequestInit, raw?: boolean) => ReturnType<typeof request>;
                 logger: ReturnType<typeof logger>;
                 resolve: (
                     res: Response,
@@ -593,8 +595,8 @@ export function apiFactory<T>() {
                 encodeAES(data: any, t?: number) {
                     return encodeAES(ctx.secretKey, data, t);
                 },
-                request(url: string, options?: RequestInit) {
-                    return request(ctx, url, options);
+                request(url: string, options?: RequestInit, raw?: boolean) {
+                    return request(ctx, url, options, raw);
                 },
                 logger: logger(ctx),
                 resolve: (res: Response, cb?: (result: ZaloResponse<unknown>) => T) => resolveResponse<T>(ctx, res, cb),

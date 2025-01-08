@@ -1,12 +1,16 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import { MessageType } from "../models/Message.js";
 import { apiFactory } from "../utils.js";
 
-type Message =
-    | {
-          text: string;
-          mention: any;
-      }
-    | string;
+export type SendVideoOptions = {
+    msg: string;
+    videoUrl: string;
+    thumbnailUrl: string;
+    duration?: number;
+    width?: number;
+    height?: number;
+    ttl?: number;
+};
 
 export type SendVideoResponse = {
     msgId: number;
@@ -27,53 +31,49 @@ export const sendVideoFactory = apiFactory<SendVideoResponse>()((api, ctx, utils
      * @param duration Video duration in milliseconds || Eg: video duration: 5.5s => 5.5 * 1000 = 5500
      * @param width Width of the video
      * @param height Height of the video
-     * @param ttl Time to live for the message
+     * @param ttl Time to live in miliseconds (default: 0)
      *
      * @throws ZaloApiError
      *
-     * @Videongang - 3840x2160 (4K UHD): Rộng 3840px, cao 2160px
-     * @Videongang - 1920x1080 (Full HD): Rộng 1920px, cao 1080px
-     * @Videongang - 1280x720 (HD): Rộng 1280px, cao 720px
-     *
-     * @Videodoc - 3840x2160 (4K UHD): Rộng 3840px, cao 2160px
-     * @Videodoc - 720x1280 (HD): Rộng 720px, cao 1280px
-     * @Videodoc - 1440x2560 (2K): Rộng 1440px, cao 2560px
+     * @examples Example Video Resolutions:
+     *   - **Standard Videos**:
+     *       - 3840x2160 (4K UHD): Width 3840px, Height 2160px.
+     *       - 1920x1080 (Full HD): Width 1920px, Height 1080px.
+     *       - 1280x720 (HD): Width 1280px, Height 720px.
+     *   - **Document-Oriented Videos** (Portrait):
+     *       - 3840x2160 (4K UHD): Width 3840px, Height 2160px.
+     *       - 720x1280 (HD): Width 720px, Height 1280px.
+     *       - 1440x2560 (2K): Width 1440px, Height 2560px.
      *
      */
     return async function sendVideo(
-        message: Message,
-        videoUrl: string,
-        thumbnailUrl: string,
+        options: SendVideoOptions,
         threadId: string,
-        threadType: number,
-        duration: number = 0,
-        width: number = 1280,
-        height: number = 720,
-        ttl: number = 0,
+        threadType: MessageType = MessageType.DirectMessage,
     ) {
         let fileSize: number = 0;
         let clientId = Date.now();
 
         try {
-            const headResponse = await utils.request(videoUrl, { method: "HEAD" });
+            const headResponse = await utils.request(options.videoUrl, { method: "HEAD" }, true);
             if (headResponse.ok) {
                 fileSize = parseInt(headResponse.headers.get("content-length") || "0");
             }
         } catch (error: any) {
-            throw new ZaloApiError(`Unable to get video content: ${error.message}`);
+            throw new ZaloApiError(`Unable to get video content: ${error?.message || error}`);
         }
 
         const params: any = {
             clientId: String(clientId),
-            ttl: ttl,
+            ttl: options.ttl ?? 0,
             zsource: 704,
             msgType: 5,
             msgInfo: JSON.stringify({
-                videoUrl: videoUrl,
-                thumbUrl: thumbnailUrl,
-                duration: duration,
-                width: width,
-                height: height,
+                videoUrl: options.videoUrl,
+                thumbUrl: options.thumbnailUrl,
+                duration: options.duration ?? 0,
+                width: options.width ?? 1280,
+                height: options.height ?? 720,
                 fileSize: fileSize,
                 properties: {
                     color: -1,
@@ -86,13 +86,14 @@ export const sendVideoFactory = apiFactory<SendVideoResponse>()((api, ctx, utils
                         msg_warning_type: 0,
                     },
                 },
-                title: `${typeof message == "string" ? message : message.text}`,
+                title: options.msg,
             }),
         };
 
-        if (typeof message !== "string" && message.mention) {
-            params.mentionInfo = message.mention;
-        }
+        // @TODO later
+        // if (typeof message !== "string" && message.mention) {
+        //     params.mentionInfo = message.mention;
+        // }
 
         let serviceURL;
         if (threadType === 0) {

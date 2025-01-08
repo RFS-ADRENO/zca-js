@@ -11,17 +11,17 @@ export const changeGroupOwnerFactory = apiFactory<ChangeGroupOwnerResponse>()((a
     /**
      * Change group owner
      *
-     * @param userId UserId for change group owner
-     * @param threadId ThreadId for change group owner
-     * @notes Change stupid is lose group rights. Because Web and APP not change key gold (admin main) <(")
+     * @param memberId User Id of new group owner
+     * @param groupId Group Id
+     * @notes Be careful when changing the key, as it will result in losing group admin rights
      *
      * @throws ZaloApiError
      *
      */
-    return async function changeGroupOwner(userId: string, threadId: string) {
+    return async function changeGroupOwner(memberId: string, groupId: string) {
         const params = {
-            grid: threadId,
-            newAdminId: userId,
+            grid: groupId,
+            newAdminId: memberId,
             imei: ctx.imei,
             language: ctx.language,
         };

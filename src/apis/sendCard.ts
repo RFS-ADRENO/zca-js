@@ -1,5 +1,12 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import { MessageType } from "../models/Message.js";
 import { apiFactory } from "../utils.js";
+
+export type SendCardOptions = {
+    userId: string;
+    phoneNumber?: string;
+    ttl?: number;
+};
 
 export type SendCardResponse = {
     msgId: number;
@@ -12,51 +19,43 @@ export const sendCardFactory = apiFactory<SendCardResponse>()((api, ctx, utils) 
     /**
      * Send a card to a User - Group
      *
-     * @param userId Unique ID of the recipient
-     * @param threadId Unique ID of the conversation
-     * @param threadType 0 = USER, 1 = GROUPGROUP
+     * @param userId Unique ID for Card
      * @param phoneNumber Optional phone number for sending card to a User
-     * @param ttl Time to live in seconds (default: 0)
+     * @param ttl Time to live in miliseconds (default: 0)
+     * @param threadId ID of the conversation
+     * @param type Message type (DirectMessage or GroupMessage)
      *
      * @throws ZaloApiError
      *
      */
-    return async function sendCard(
-        userId: string,
-        threadId: string,
-        threadType: number,
-        phoneNumber: string,
-        ttl: number = 0,
-    ) {
-        const data = await api.getQR(userId);
-        const QRCodeURL = Object.values(data)[0];
-        let clientId = Date.now();
+    return async function sendCard(options: SendCardOptions, threadId: string, type: MessageType = MessageType.DirectMessage) {
+        const data = await api.getQR(options.userId);
+        const QRCodeURL = data[options.userId];
+        const clientId = Date.now().toString();
 
         const params: any = {
-            ttl: ttl,
+            ttl: options.ttl ?? 0,
             msgType: 6,
-            clientId: String(clientId),
+            clientId: clientId,
             msgInfo: {
-                contactUid: userId,
+                contactUid: options.userId,
                 qrCodeUrl: QRCodeURL,
             },
         };
 
-        if (phoneNumber) {
-            params.msgInfo.phone = phoneNumber;
+        if (options.phoneNumber) {
+            params.msgInfo.phone = options.phoneNumber;
         }
 
         let serviceURL;
-        if (threadType === 0) {
-            serviceURL = directMessageServiceURL;
-            params.toId = threadId;
-            params.imei = ctx.imei;
-        } else if (threadType === 1) {
+        if (type == MessageType.GroupMessage) {
             serviceURL = groupMessageServiceURL;
             params.visibility = 0;
             params.grid = threadId;
         } else {
-            throw new ZaloApiError("Thread type is invalid");
+            serviceURL = directMessageServiceURL;
+            params.toId = threadId;
+            params.imei = ctx.imei;
         }
 
         const msgInfoStringified = JSON.stringify(params.msgInfo);

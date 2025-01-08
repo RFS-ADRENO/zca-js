@@ -1,24 +1,6 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type CreatePollResponse = {
-    creator: string;
-    question: string;
-    options: string[];
-    joined: boolean;
-    closed: boolean;
-    poll_id: string;
-    allow_multi_choices: boolean;
-    allow_add_new_option: boolean;
-    is_anonymous: boolean;
-    poll_type: number;
-    created_time: number;
-    updated_time: number;
-    expiried_time: number;
-    is_hide_vote_preview: boolean;
-    num_vote: number;
-};
-
 /**
  * Options for creating a poll.
  */
@@ -64,18 +46,36 @@ export type CreatePollOptions = {
     isAnonymous?: boolean;
 };
 
+export type CreatePollResponse = {
+    creator: string;
+    question: string;
+    options: string[];
+    joined: boolean;
+    closed: boolean;
+    poll_id: string;
+    allow_multi_choices: boolean;
+    allow_add_new_option: boolean;
+    is_anonymous: boolean;
+    poll_type: number;
+    created_time: number;
+    updated_time: number;
+    expiried_time: number;
+    is_hide_vote_preview: boolean;
+    num_vote: number;
+};
+
 export const createPollFactory = apiFactory<CreatePollResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/poll/create`);
 
     /**
      * Create a poll in a group.
      *
-     * @param groupId Group ID to create poll from
      * @param options Poll options
+     * @param groupId Group ID to create poll from
      *
      * @throws ZaloApiError
      */
-    return async function createPoll(groupId: string, options: CreatePollOptions) {
+    return async function createPoll(options: CreatePollOptions, groupId: string) {
         const params = {
             group_id: groupId,
             question: options.question,

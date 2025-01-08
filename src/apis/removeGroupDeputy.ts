@@ -9,18 +9,18 @@ export const removeGroupDeputyFactory = apiFactory<RemoveGroupDeputyResponse>()(
     /**
      * Remove group deputy
      *
-     * @param userId UserId for change group owner
-     * @param threadId ThreadId for change group owner
+     * @param memberId user Id or list of user Ids
+     * @param groupId group Id
      *
      * @throws ZaloApiError
      *
      */
-    return async function removeGroupDeputy(userId: string[], threadId: string) {
-        if (!Array.isArray(userId)) userId = [userId];
+    return async function removeGroupDeputy(memberId: string | string[], groupId: string) {
+        if (!Array.isArray(memberId)) memberId = [memberId];
 
         const params = {
-            grid: threadId,
-            members: userId,
+            grid: groupId,
+            members: memberId,
             imei: ctx.imei,
         };
 

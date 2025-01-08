@@ -9,28 +9,20 @@ export const pinConversationsFactory = apiFactory<PinConversationsResponse>()((a
     /**
      * Pin and unpin conversations of the thread (USER or GROUP)
      *
+     * @param pin Should pin conversation, default true
      * @param threadId The ID of the thread (USER or GROUP)
-     * @param threadType The threadType 0 for User, 1 for Group
-     * @param actionType Using 1 = pin, 2 = unpin
+     * @param isGroup Is group conversation, default false
      *
      * @throws ZaloApiError
      *
      */
-    return async function pinConversations(threadId: string[], threadType: number, actionType: number = 1) {
-        const conversationUser = threadId.map((id) => `u${id}`);
-        const conversationGroup = threadId.map((id) => `g${id}`);
+    return async function pinConversations(pin: boolean = true, threadId: string | string[], isGroup: boolean = false) {
+        if (typeof threadId == "string") threadId = [threadId];
 
-        const params: any = {
-            actionType: actionType,
+        const params = {
+            actionType: pin ? 1 : 2,
+            conversations: isGroup ? threadId.map((id) => `g${id}`) : threadId.map((id) => `u${id}`),
         };
-
-        if (threadType === 0) {
-            params.conversations = conversationUser;
-        } else if (threadType === 1) {
-            params.conversations = conversationGroup;
-        } else {
-            throw new ZaloApiError("Thread type is invalid");
-        }
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");

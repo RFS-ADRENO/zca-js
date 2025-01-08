@@ -2,10 +2,6 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { MessageType } from "../models/Message.js";
 import { apiFactory, removeUndefinedKeys } from "../utils.js";
 
-export type SendReportResponse = {
-    reportId: string;
-};
-
 export enum ReportReason {
     Sensitive = 1,
     Annoy = 2,
@@ -13,7 +9,7 @@ export enum ReportReason {
     Other = 0,
 }
 
-export type ReportOptions =
+export type SendReportOptions =
     | {
           reason: ReportReason.Other;
           content: string;
@@ -21,6 +17,10 @@ export type ReportOptions =
     | {
           reason: Exclude<ReportReason, ReportReason.Other>;
       };
+
+export type SendReportResponse = {
+    reportId: string;
+};
 
 export const sendReportFactory = apiFactory<SendReportResponse>()((api, ctx, utils) => {
     const serviceURL = {
@@ -39,7 +39,7 @@ export const sendReportFactory = apiFactory<SendReportResponse>()((api, ctx, uti
      *
      */
     return async function sendReport(
-        options: ReportOptions,
+        options: SendReportOptions,
         threadId: string,
         type: MessageType = MessageType.DirectMessage,
     ) {

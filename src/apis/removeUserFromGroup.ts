@@ -11,17 +11,17 @@ export const removeUserFromGroupFactory = apiFactory<RemoveUserFromGroupResponse
     /**
      * Remove user from existing group
      *
+     * @param memberId User ID or list of user IDs to remove
      * @param groupId Group ID
-     * @param members User ID or list of user IDs to remove
      *
      * @throws ZaloApiError
      */
-    return async function removeUserFromGroup(groupId: string, members: string | string[]) {
-        if (!Array.isArray(members)) members = [members];
+    return async function removeUserFromGroup(memberId: string | string[], groupId: string) {
+        if (!Array.isArray(memberId)) memberId = [memberId];
 
         const params: any = {
             grid: groupId,
-            members: members,
+            members: memberId,
             imei: ctx.imei,
         };
 

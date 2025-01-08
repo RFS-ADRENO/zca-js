@@ -1,5 +1,14 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import { MessageType } from "../models/Message.js";
 import { apiFactory } from "../utils.js";
+
+export type SendVoiceOptions = {
+    voiceUrl: string;
+    /**
+     * Time to live in miliseconds (default: 0)
+     */
+    ttl?: number;
+};
 
 export type SendVoiceResponse = {
     msgId: string;
@@ -12,35 +21,38 @@ export const sendVoiceFactory = apiFactory<SendVoiceResponse>()((api, ctx, utils
     /**
      * Send a voice to a User - Group
      *
-     * @param voiceUrl URL of the voice
+     * @param options voice options
      * @param threadId ID of the user or group to send the voice to
-     * @param threadType Type of thread (USER or GROUP) || 1 of USER - 2 of GROUPGROUP
-     * @param ttl Time to live for the message
+     * @param threadType Type of thread, default user
      *
      * @throws ZaloApiError
      */
-    return async function sendVoice(voiceUrl: string, threadId: string, threadType: number, ttl: number = 0) {
+    return async function sendVoice(
+        options: SendVoiceOptions,
+        threadId: string,
+        threadType: MessageType = MessageType.DirectMessage,
+    ) {
         let fileSize = null;
-        let clientId = Date.now();
+        let clientId = Date.now().toString();
 
         try {
-            const headResponse = await utils.request(voiceUrl, { method: "HEAD" });
+            const headResponse = await utils.request(options.voiceUrl, { method: "HEAD" }, true);
             if (headResponse.ok) {
                 fileSize = parseInt(headResponse.headers.get("content-length") || "0");
             }
         } catch (error: any) {
-            throw new ZaloApiError(`Unable to get voice content: ${error.message}`);
+            throw new ZaloApiError(`Unable to get voice content: ${error?.message || error}`); 
         }
 
         const params: any = {
-            ttl: ttl,
+            ttl: options.ttl ?? 0,
             zsource: -1,
             msgType: 3,
-            clientId: String(clientId),
+            clientId: clientId,
             msgInfo: JSON.stringify({
-                voiceUrl: voiceUrl,
-                m4aUrl: voiceUrl,
-                fileSize: Number(fileSize),
+                voiceUrl: options.voiceUrl,
+                m4aUrl: options.voiceUrl,
+                fileSize: fileSize ?? 0,
             }),
         };
 
