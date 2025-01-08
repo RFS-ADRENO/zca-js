@@ -42,6 +42,7 @@ export function getSignKey(type: string, params: Record<string, any>) {
  * @param params
  * @param apiVersion automatically add zalo api version to url params
  * @returns
+ * 
  */
 export function makeURL(
     ctx: ContextBase,
@@ -432,6 +433,35 @@ export function getClientMessageType(msgType: string) {
 export function strPadLeft(e: any, t: string, n: number) {
     const a = (e = "" + e).length;
     return a === n ? e : a > n ? e.slice(-n) : t.repeat(n - a) + e;
+}
+
+export function formatTime(format: string, timestamp: number = Date.now()): string {
+    const date = new Date(timestamp);
+
+    // using lib Intl
+    const options: Intl.DateTimeFormatOptions = {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        // hour12: false, // true or false is same <(")
+    };
+
+    const formatted = new Intl.DateTimeFormat("vi-VN", options).format(date);
+
+    if (format.includes("%H") || format.includes("%d")) {
+        return format
+            .replace("%H", date.getHours().toString().padStart(2, "0"))
+            .replace("%M", date.getMinutes().toString().padStart(2, "0"))
+            .replace("%S", date.getSeconds().toString().padStart(2, "0"))
+            .replace("%d", date.getDate().toString().padStart(2, "0"))
+            .replace("%m", (date.getMonth() + 1).toString().padStart(2, "0"))
+            .replace("%Y", date.getFullYear().toString());
+    }
+
+    return formatted;
 }
 
 export function getFullTimeFromMillisecond(e: number) {
