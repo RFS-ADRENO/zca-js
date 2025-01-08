@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { MessageType } from "../models/Message.js";
+import { ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type SendVoiceOptions = {
@@ -15,22 +15,24 @@ export type SendVoiceResponse = {
 };
 
 export const sendVoiceFactory = apiFactory<SendVoiceResponse>()((api, ctx, utils) => {
-    const directMessageServiceURL = utils.makeURL(`${api.zpwServiceMap.file[0]}/api/message/forward`);
-    const groupMessageServiceURL = utils.makeURL(`${api.zpwServiceMap.file[0]}/api/group/forward`);
+    const serviceURL = {
+        [ThreadType.User]: utils.makeURL(`${api.zpwServiceMap.file[0]}/api/message/forward`),
+        [ThreadType.Group]: utils.makeURL(`${api.zpwServiceMap.file[0]}/api/group/forward`),
+    };
 
     /**
      * Send a voice to a User - Group
      *
      * @param options voice options
      * @param threadId ID of the user or group to send the voice to
-     * @param threadType Type of thread, default user
+     * @param type Type of thread, default user
      *
      * @throws ZaloApiError
      */
     return async function sendVoice(
         options: SendVoiceOptions,
         threadId: string,
-        threadType: MessageType = MessageType.DirectMessage,
+        type: ThreadType = ThreadType.User,
     ) {
         let fileSize = null;
         let clientId = Date.now().toString();
@@ -41,7 +43,7 @@ export const sendVoiceFactory = apiFactory<SendVoiceResponse>()((api, ctx, utils
                 fileSize = parseInt(headResponse.headers.get("content-length") || "0");
             }
         } catch (error: any) {
-            throw new ZaloApiError(`Unable to get voice content: ${error?.message || error}`); 
+            throw new ZaloApiError(`Unable to get voice content: ${error?.message || error}`);
         }
 
         const params: any = {
@@ -56,13 +58,10 @@ export const sendVoiceFactory = apiFactory<SendVoiceResponse>()((api, ctx, utils
             }),
         };
 
-        let serviceURL;
-        if (threadType === 0) {
-            serviceURL = directMessageServiceURL;
+        if (type === 0) {
             params.toId = threadId;
             params.imei = ctx.imei;
-        } else if (threadType === 1) {
-            serviceURL = groupMessageServiceURL;
+        } else if (type === 1) {
             params.visibility = 0;
             params.grid = threadId;
             params.imei = ctx.imei;
@@ -73,7 +72,7 @@ export const sendVoiceFactory = apiFactory<SendVoiceResponse>()((api, ctx, utils
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await utils.request(serviceURL, {
+        const response = await utils.request(serviceURL[type], {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,

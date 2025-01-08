@@ -2,7 +2,7 @@ import FormData from "form-data";
 import fs from "node:fs";
 import type { UploadCallback } from "../context.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { MessageType } from "../models/Message.js";
+import { ThreadType } from "../models/index.js";
 import {
     apiFactory,
     getFileExtension,
@@ -135,21 +135,21 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
      *
      * @param filePaths Path to the file
      * @param threadId Group or User ID
-     * @param type Message type (DirectMessage or GroupMessage)
+     * @param type Message type (User or Group)
      *
      * @throws ZaloApiError
      */
     return async function uploadAttachment(
         filePaths: string[],
         threadId: string,
-        type: MessageType = MessageType.DirectMessage,
+        type: ThreadType = ThreadType.User,
     ): Promise<UploadAttachmentType[]> {
         if (!filePaths || filePaths.length == 0) throw new ZaloApiError("Missing filePaths");
         if (isExceedMaxFile(filePaths.length)) throw new ZaloApiError("Exceed maximum file of " + sharefile.max_file);
         if (!threadId) throw new ZaloApiError("Missing threadId");
 
         const chunkSize = ctx.settings!.features.sharefile.chunk_size_file;
-        const isGroupMessage = type == MessageType.GroupMessage;
+        const isGroupMessage = type == ThreadType.Group;
         let attachmentsData: AttachmentData[] = [];
         let url = `${serviceURL}/${isGroupMessage ? "group" : "message"}/`;
         const typeParam = isGroupMessage ? "11" : "2";

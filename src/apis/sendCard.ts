@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { MessageType } from "../models/Message.js";
+import { ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type SendCardOptions = {
@@ -13,8 +13,10 @@ export type SendCardResponse = {
 };
 
 export const sendCardFactory = apiFactory<SendCardResponse>()((api, ctx, utils) => {
-    const directMessageServiceURL = utils.makeURL(`${api.zpwServiceMap.file[0]}/api/message/forward`);
-    const groupMessageServiceURL = utils.makeURL(`${api.zpwServiceMap.file[0]}/api/group/forward`);
+    const serviceURL = {
+        [ThreadType.User]: utils.makeURL(`${api.zpwServiceMap.file[0]}/api/message/forward`),
+        [ThreadType.Group]: utils.makeURL(`${api.zpwServiceMap.file[0]}/api/group/forward`),
+    };
 
     /**
      * Send a card to a User - Group
@@ -23,12 +25,12 @@ export const sendCardFactory = apiFactory<SendCardResponse>()((api, ctx, utils) 
      * @param phoneNumber Optional phone number for sending card to a User
      * @param ttl Time to live in miliseconds (default: 0)
      * @param threadId ID of the conversation
-     * @param type Message type (DirectMessage or GroupMessage)
+     * @param type Message type (User or GroupMessage)
      *
      * @throws ZaloApiError
      *
      */
-    return async function sendCard(options: SendCardOptions, threadId: string, type: MessageType = MessageType.DirectMessage) {
+    return async function sendCard(options: SendCardOptions, threadId: string, type: ThreadType = ThreadType.User) {
         const data = await api.getQR(options.userId);
         const QRCodeURL = data[options.userId];
         const clientId = Date.now().toString();
@@ -47,13 +49,10 @@ export const sendCardFactory = apiFactory<SendCardResponse>()((api, ctx, utils) 
             params.msgInfo.phone = options.phoneNumber;
         }
 
-        let serviceURL;
-        if (type == MessageType.GroupMessage) {
-            serviceURL = groupMessageServiceURL;
+        if (type == ThreadType.Group) {
             params.visibility = 0;
             params.grid = threadId;
         } else {
-            serviceURL = directMessageServiceURL;
             params.toId = threadId;
             params.imei = ctx.imei;
         }
@@ -64,7 +63,7 @@ export const sendCardFactory = apiFactory<SendCardResponse>()((api, ctx, utils) 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await utils.request(serviceURL, {
+        const response = await utils.request(serviceURL[type], {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,

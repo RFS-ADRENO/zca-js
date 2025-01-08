@@ -1,10 +1,8 @@
 # ZCA-JS
 
-> This document is not compatible for the latest alpha version 2.0.0
-
 This is an unofficial Zalo API for personal account. It work by simulating the browser to interact with Zalo Web.
 
-**disclaimer**: We are not responsible if your account is locked or banned by Zalo. Use it at your own risk.
+**Warning**: Using this API could get your account locked or banned. We are not responsible for any issues that may happen. Use it at your own risk.
 
 ## Installation
 
@@ -20,75 +18,32 @@ See [API Documentation](https://zca.tdung.co/) for more details.
 
 ### Login
 
-**UPDATE**: You can now get all required information by using [ZaloDataExtractor](https://github.com/JustKemForFun/ZaloDataExtractor) extension. Just open the extension and copy the data to your clipboard.
-
-> **[ ZaloDataExtractor ]** If you have opened the website `https://chat.zalo.me/` but the extension does not have IMEI & Cookies, please click `Refresh Page`. Thank you very much >< 
-
-
 ```javascript
 import { Zalo } from "zca-js";
 
-const zalo = new Zalo(
-    {
-        cookie: "your_cookie_here",
-        imei: "your_imei_here",
-        userAgent: "your_user_agent_here",
-    },
-    {
-        selfListen: false,
-        checkUpdate: true,
-    },
-);
-
-const api = await zalo.login();
+const zalo = new Zalo();
+const api = await zalo.loginQR();
 ```
-
-**Alternative**: We also support [J2TEAM Cookies](https://chromewebstore.google.com/detail/j2team-cookies/okpidcojinmlaakglciglbpcpajaibco) extension:
-
-```javascript
-import fs from "node:fs";
-import { Zalo } from "zca-js";
-
-const zalo = new Zalo(
-    {
-        cookie: JSON.parse(fs.readFileSync("./cookies.json", "utf-8")),
-        imei: "your_imei_here",
-        userAgent: "your_user_agent_here",
-    },
-    {
-        selfListen: false,
-        checkUpdate: true,
-    },
-);
-
-const api = await zalo.login();
-```
-
--   `cookie`: Your Zalo cookie. You can get it by using [J2TEAM Cookies](https://chromewebstore.google.com/detail/j2team-cookies/okpidcojinmlaakglciglbpcpajaibco) extension or by using browser developer tools.
--   `imei`: Your IMEI created by Zalo. You can get it using browser developer tools: `localStorage.getItem('z_uuid')` or `localStorage.getItem('sh_z_uuid')`.
--   `userAgent`: Your browser user agent. Better be from the same browser you get cookie.
--   `selfListen`: Listen for messages sent by yourself. Default is `false`.
--   `checkUpdate`: Check for zca-js update. Default is `true`.
 
 ### Listen for new messages
 
 ```javascript
-import { Zalo, MessageType } from "zca-js";
+import { Zalo, ThreadType } from "zca-js";
 
-const zalo = new Zalo(credentials);
-const api = await zalo.login();
+const zalo = new Zalo();
+const api = await zalo.loginQR();
 
 api.listener.on("message", (message) => {
     const isPlainText = typeof message.data.content === "string";
 
     switch (message.type) {
-        case MessageType.DirectMessage: {
+        case ThreadType.User: {
             if (isPlainText) {
                 // received plain text direct message
             }
             break;
         }
-        case MessageType.GroupMessage: {
+        case ThreadType.Group: {
             if (isPlainText) {
                 // received plain text group message
             }
@@ -100,15 +55,15 @@ api.listener.on("message", (message) => {
 api.listener.start();
 ```
 
-**Note**: Only one web listener can be started at a time. If you open `Zalo` in the browser while the listener is running, the listener will be stopped.
+**Note**: Only one web listener can run per account at a time. If you open Zalo in the browser while the listener is active, the listener will be automatically stopped.
 
 ### Send a message
 
 ```javascript
-import { Zalo, MessageType } from "zca-js";
+import { Zalo, ThreadType } from "zca-js";
 
-const zalo = new Zalo(credentials);
-const api = await zalo.login();
+const zalo = new Zalo();
+const api = await zalo.loginQR();
 
 // Echo bot
 api.listener.on("message", (message) => {
@@ -116,25 +71,25 @@ api.listener.on("message", (message) => {
     if (message.isSelf || !isPlainText) return;
 
     switch (message.type) {
-        case MessageType.DirectMessage: {
+        case ThreadType.User: {
             api.sendMessage(
                 {
                     msg: "echo: " + message.data.content,
                     quote: message, // the message object to reply to (optional)
                 },
                 message.threadId,
-                message.type, // MessageType.DirectMessage
+                message.type, // ThreadType.User
             );
             break;
         }
-        case MessageType.GroupMessage: {
+        case ThreadType.Group: {
             api.sendMessage(
                 {
                     msg: "echo: " + message.data.content,
                     quote: message, // the message object to reply to (optional)
                 },
                 message.threadId,
-                message.type, // MessageType.GroupMessage
+                message.type, // ThreadType.Group
             );
             break;
         }
@@ -153,7 +108,7 @@ api.getStickers("hello").then(async (stickerIds) => {
     api.sendMessageSticker(
         stickerObject,
         message.threadId,
-        message.type, // MessageType.DirectMessage or MessageType.GroupMessage
+        message.type, // ThreadType.User or ThreadType.Group
     );
 });
 ```

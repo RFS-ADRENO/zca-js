@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { MessageType } from "../models/Message.js";
+import { ThreadType } from "../models/index.js";
 import { apiFactory, removeUndefinedKeys } from "../utils.js";
 
 export enum ReportReason {
@@ -24,8 +24,8 @@ export type SendReportResponse = {
 
 export const sendReportFactory = apiFactory<SendReportResponse>()((api, ctx, utils) => {
     const serviceURL = {
-        [MessageType.DirectMessage]: utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/report/abuse-v2`),
-        [MessageType.GroupMessage]: utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/reportabuse`),
+        [ThreadType.User]: utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/report/abuse-v2`),
+        [ThreadType.Group]: utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/reportabuse`),
     };
 
     /**
@@ -41,10 +41,10 @@ export const sendReportFactory = apiFactory<SendReportResponse>()((api, ctx, uti
     return async function sendReport(
         options: SendReportOptions,
         threadId: string,
-        type: MessageType = MessageType.DirectMessage,
+        type: ThreadType = ThreadType.User,
     ) {
         const params =
-            type == MessageType.DirectMessage
+            type == ThreadType.User
                 ? {
                       idTo: threadId,
                       objId: "person.profile",

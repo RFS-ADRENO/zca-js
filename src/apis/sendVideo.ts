@@ -1,14 +1,35 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { MessageType } from "../models/Message.js";
+import { ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type SendVideoOptions = {
-    msg: string;
+    /**
+     * Optional message to send along with the video
+     */
+    msg?: string;
+    /**
+     * URL of the video
+     */
     videoUrl: string;
+    /**
+     * URL of the thumbnail
+     */
     thumbnailUrl: string;
+    /**
+     * Video duration in milliseconds || Eg: video duration: 5.5s => 5.5 * 1000 = 5500
+     */
     duration?: number;
+    /**
+     * Width of the video
+     */
     width?: number;
+    /**
+     * Height of the video
+     */
     height?: number;
+    /**
+     * Time to live in miliseconds (default: 0)
+     */
     ttl?: number;
 };
 
@@ -17,21 +38,17 @@ export type SendVideoResponse = {
 };
 
 export const sendVideoFactory = apiFactory<SendVideoResponse>()((api, ctx, utils) => {
-    const directMessageServiceURL = utils.makeURL(`${api.zpwServiceMap.file[0]}/api/message/forward`);
-    const groupMessageServiceURL = utils.makeURL(`${api.zpwServiceMap.file[0]}/api/group/forward`);
+    const serviceURL = {
+        [ThreadType.User]: utils.makeURL(`${api.zpwServiceMap.file[0]}/api/message/forward`),
+        [ThreadType.Group]: utils.makeURL(`${api.zpwServiceMap.file[0]}/api/group/forward`),
+    };
 
     /**
      * Send a video to a User - Group
      *
-     * @param message Optional message to send along with the video
-     * @param videoUrl URL of the video
-     * @param thumbnailUrl URL of the thumbnail
+     * @param options send video options
      * @param threadId ID of the user or group to send the video to
-     * @param threadType Type of thread (USER or GROUP)
-     * @param duration Video duration in milliseconds || Eg: video duration: 5.5s => 5.5 * 1000 = 5500
-     * @param width Width of the video
-     * @param height Height of the video
-     * @param ttl Time to live in miliseconds (default: 0)
+     * @param type Type of thread (USER or GROUP)
      *
      * @throws ZaloApiError
      *
@@ -46,11 +63,7 @@ export const sendVideoFactory = apiFactory<SendVideoResponse>()((api, ctx, utils
      *       - 1440x2560 (2K): Width 1440px, Height 2560px.
      *
      */
-    return async function sendVideo(
-        options: SendVideoOptions,
-        threadId: string,
-        threadType: MessageType = MessageType.DirectMessage,
-    ) {
+    return async function sendVideo(options: SendVideoOptions, threadId: string, type: ThreadType = ThreadType.User) {
         let fileSize: number = 0;
         let clientId = Date.now();
 
@@ -86,7 +99,7 @@ export const sendVideoFactory = apiFactory<SendVideoResponse>()((api, ctx, utils
                         msg_warning_type: 0,
                     },
                 },
-                title: options.msg,
+                title: options.msg ?? "",
             }),
         };
 
@@ -95,13 +108,10 @@ export const sendVideoFactory = apiFactory<SendVideoResponse>()((api, ctx, utils
         //     params.mentionInfo = message.mention;
         // }
 
-        let serviceURL;
-        if (threadType === 0) {
-            serviceURL = directMessageServiceURL;
+        if (type === 0) {
             params.toId = threadId;
             params.imei = ctx.imei;
-        } else if (threadType === 1) {
-            serviceURL = groupMessageServiceURL;
+        } else if (type === 1) {
             params.visibility = 0;
             params.grid = threadId;
             params.imei = ctx.imei;
@@ -112,7 +122,7 @@ export const sendVideoFactory = apiFactory<SendVideoResponse>()((api, ctx, utils
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await utils.request(serviceURL, {
+        const response = await utils.request(serviceURL[type], {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,
