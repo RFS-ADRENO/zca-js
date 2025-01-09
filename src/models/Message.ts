@@ -77,8 +77,8 @@ export type TMention = {
     type: 0 | 1;
 };
 
-export class Message {
-    type: ThreadType = ThreadType.User;
+export class UserMessage {
+    type: ThreadType.User = ThreadType.User;
 
     data: TMessage;
     threadId: string;
@@ -98,7 +98,7 @@ export class Message {
 }
 
 export class GroupMessage {
-    type: ThreadType = ThreadType.Group;
+    type: ThreadType.Group = ThreadType.Group;
 
     data: TGroupMessage;
     threadId: string;
@@ -115,3 +115,6 @@ export class GroupMessage {
         if (data.uidFrom == "0") data.uidFrom = uid;
     }
 }
+
+
+export type Message = UserMessage | GroupMessage;

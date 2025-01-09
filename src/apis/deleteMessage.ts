@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { GroupMessage, Message, ThreadType } from "../models/index.js";
+import { GroupMessage, UserMessage, ThreadType } from "../models/index.js";
 import { apiFactory, removeUndefinedKeys } from "../utils.js";
 
 export type DeleteMessageResponse = {
@@ -19,8 +19,8 @@ export const deleteMessageFactory = apiFactory<DeleteMessageResponse>()((api, ct
      *
      * @throws ZaloApiError
      */
-    return async function deleteMessage(message: Message | GroupMessage, onlyMe: boolean = true) {
-        if (!(message instanceof Message) && !(message instanceof GroupMessage))
+    return async function deleteMessage(message: UserMessage | GroupMessage, onlyMe: boolean = true) {
+        if (!(message instanceof UserMessage) && !(message instanceof GroupMessage))
             throw new ZaloApiError(
                 "Expected Message or GroupMessage instance, got: " + (message as unknown as any)?.constructor?.name,
             );
@@ -29,7 +29,7 @@ export const deleteMessageFactory = apiFactory<DeleteMessageResponse>()((api, ct
             throw new ZaloApiError("To delete your message for everyone, use undo api instead");
 
         const params: any = {
-            toid: message instanceof Message ? message.threadId : undefined,
+            toid: message instanceof UserMessage ? message.threadId : undefined,
             grid: message instanceof GroupMessage ? message.threadId : undefined,
             cliMsgId: Date.now(),
             msgs: [
@@ -41,7 +41,7 @@ export const deleteMessageFactory = apiFactory<DeleteMessageResponse>()((api, ct
                 },
             ],
             onlyMe: onlyMe ? 1 : 0,
-            imei: message instanceof Message ? ctx.imei : undefined,
+            imei: message instanceof UserMessage ? ctx.imei : undefined,
         };
 
         removeUndefinedKeys(params);

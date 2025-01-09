@@ -307,7 +307,7 @@ async function getUserInfo(ctx: ContextBase): Promise<
 export async function loginQR(
     ctx: ContextBase,
     options: { userAgent: string; qrPath?: string },
-    callback?: (qrPath: string) => void,
+    callback?: (qrPath: string) => any,
 ) {
     ctx.cookie = new CookieJar();
     ctx.userAgent = options.userAgent;

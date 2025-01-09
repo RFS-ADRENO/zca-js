@@ -148,7 +148,7 @@ export class Zalo {
 
     public async loginQR(
         options?: { userAgent?: string; language?: string; qrPath?: string },
-        callback?: (qrPath: string) => void,
+        callback?: (qrPath: string) => any,
     ) {
         if (!options) options = {};
         if (!options.userAgent)

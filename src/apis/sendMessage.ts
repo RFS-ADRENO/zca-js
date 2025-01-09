@@ -1,7 +1,7 @@
 import FormData from "form-data";
 import fs from "node:fs/promises";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { GroupMessage, Message, ThreadType } from "../models/index.js";
+import { GroupMessage, UserMessage, ThreadType } from "../models/index.js";
 import {
     apiFactory,
     getClientMessageType,
@@ -29,7 +29,7 @@ const attachmentUrlType = {
     others: "asyncfile/msg?",
 };
 
-function prepareQMSGAttach(quote: Message | GroupMessage) {
+function prepareQMSGAttach(quote: UserMessage | GroupMessage) {
     const quoteData = quote.data;
     if (typeof quoteData.content == "string") return quoteData.propertyExt;
     if (quoteData.msgType == "chat.todo")
@@ -51,7 +51,7 @@ function prepareQMSGAttach(quote: Message | GroupMessage) {
     };
 }
 
-function prepareQMSG(quote: Message | GroupMessage) {
+function prepareQMSG(quote: UserMessage | GroupMessage) {
     const quoteData = quote.data;
     if (quoteData.msgType == "chat.todo" && typeof quoteData.content != "string") {
         return JSON.parse(quoteData.content.params).item.content;
@@ -110,7 +110,7 @@ export type MessageContent = {
     /**
      * Quoted message (optional)
      */
-    quote?: Message | GroupMessage;
+    quote?: UserMessage | GroupMessage;
     /**
      * Mentions in the message (optional)
      */
@@ -232,7 +232,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
 
     async function handleMessage({ msg, mentions, quote }: MessageContent, threadId: string, type: ThreadType) {
         if (!msg || msg.length == 0) throw new ZaloApiError("Missing message content");
-        const isValidInstance = quote instanceof Message || quote instanceof GroupMessage;
+        const isValidInstance = quote instanceof UserMessage || quote instanceof GroupMessage;
         if (quote && !isValidInstance) throw new ZaloApiError("Invalid quote message");
         const isGroupMessage = type == ThreadType.Group;
 
