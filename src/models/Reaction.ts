@@ -82,7 +82,7 @@ export class Reaction {
 
     constructor(uid: string, data: TReaction, isGroup: boolean) {
         this.data = data;
-        this.threadId = data.uidFrom == "0" ? data.idTo : data.uidFrom;
+        this.threadId = isGroup || data.uidFrom == "0" ? data.idTo : data.uidFrom;
         this.isSelf = data.uidFrom == "0";
         this.isGroup = isGroup;
 
