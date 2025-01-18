@@ -2,7 +2,7 @@ import { compare } from "semver";
 import { isBun, logger } from "./utils.js";
 import type { ContextBase } from "./context.js";
 
-const VERSION = "2.0.0-beta.5";
+const VERSION = "2.0.0-beta.6";
 const NPM_REGISTRY = "https://registry.npmjs.org/zca-js";
 
 export async function checkUpdate(ctx: ContextBase) {
