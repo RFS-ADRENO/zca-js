@@ -39,7 +39,7 @@ export type { SendStickerResponse } from "./apis/sendSticker.js";
 export type { SendVideoResponse, SendVideoOptions } from "./apis/sendVideo.js";
 export type { SendVoiceResponse, SendVoiceOptions } from "./apis/sendVoice.js";
 export type { UnBlockUserResponse } from "./apis/unblockUser.js";
-export type { UndoResponse } from "./apis/undo.js";
+export type { UndoResponse, UndoOptions } from "./apis/undo.js";
 export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType } from "./apis/uploadAttachment.js";
 
 // Others
