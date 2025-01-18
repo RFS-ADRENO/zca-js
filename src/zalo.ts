@@ -150,6 +150,7 @@ export class Zalo {
     public async loginQR(
         options?: { userAgent?: string; language?: string; qrPath?: string },
         callback?: (qrPath: string) => any,
+        loginedCallback?:(cookie:string,imei:string,userAgent:string)=>any,
     ) {
         if (!options) options = {};
         if (!options.userAgent)
@@ -165,9 +166,11 @@ export class Zalo {
             callback,
         );
         if (!loginQRResult) throw new ZaloApiError("Đăng nhập với QR thất bại");
+        let imei = generateZaloUUID(options.userAgent);
+        if(loginedCallback && 'function'==typeof loginedCallback) loginedCallback({cookie:loginQRResult.cookies,imei,userAgent:options.userAgent})
         return this.loginCookie(ctx, {
             cookie: loginQRResult.cookies,
-            imei: generateZaloUUID(options.userAgent),
+            imei,
             userAgent: options.userAgent,
             language: options.language,
         });
