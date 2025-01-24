@@ -34,7 +34,6 @@ export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js"
 export type { SendCardResponse, SendCardOptions } from "./apis/sendCard.js";
 export type { SendFriendRequestResponse } from "./apis/sendFriendRequest.js";
 export type { Mention, MessageContent, SendMessageResponse, SendMessageResult, Style } from "./apis/sendMessage.js";
-export { Urgency, TextStyle } from "./apis/sendMessage.js";
 export type { SendReportResponse, SendReportOptions } from "./apis/sendReport.js";
 export type { SendStickerResponse } from "./apis/sendSticker.js";
 export type { SendVideoResponse, SendVideoOptions } from "./apis/sendVideo.js";
@@ -46,3 +45,4 @@ export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentTyp
 // Others
 export { ReportReason } from "./apis/sendReport.js";
 export { CloseReason } from "./apis/listen.js";
+export { Urgency, TextStyle } from "./apis/sendMessage.js";
