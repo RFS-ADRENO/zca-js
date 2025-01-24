@@ -41,8 +41,10 @@ export type { SendVoiceResponse, SendVoiceOptions } from "./apis/sendVoice.js";
 export type { UnBlockUserResponse } from "./apis/unblockUser.js";
 export type { UndoResponse, UndoOptions } from "./apis/undo.js";
 export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType } from "./apis/uploadAttachment.js";
+export type { LoginQRCallback, LoginQRCallbackEvent } from "./apis/loginQR.js";
 
 // Others
 export { ReportReason } from "./apis/sendReport.js";
 export { CloseReason } from "./apis/listen.js";
 export { Urgency, TextStyle } from "./apis/sendMessage.js";
+export { LoginQRCallbackEventType } from "./apis/loginQR.js";

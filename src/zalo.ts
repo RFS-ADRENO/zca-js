@@ -33,7 +33,7 @@ import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
 import { getUserInfoFactory } from "./apis/getUserInfo.js";
 import { lockPollFactory } from "./apis/lockPoll.js";
-import { loginQR } from "./apis/loginQR.js";
+import { loginQR, type LoginQRCallback, LoginQRCallbackEventType } from "./apis/loginQR.js";
 import { pinConversationsFactory } from "./apis/pinConversations.js";
 import { removeGroupDeputyFactory } from "./apis/removeGroupDeputy.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
@@ -149,7 +149,7 @@ export class Zalo {
 
     public async loginQR(
         options?: { userAgent?: string; language?: string; qrPath?: string },
-        callback?: (qrPath: string) => any,
+        callback?: LoginQRCallback,
     ) {
         if (!options) options = {};
         if (!options.userAgent)
@@ -164,10 +164,26 @@ export class Zalo {
             options as { userAgent: string; language: string; qrPath?: string },
             callback,
         );
-        if (!loginQRResult) throw new ZaloApiError("Đăng nhập với QR thất bại");
+        if (!loginQRResult) throw new ZaloApiError("Unable to login with QRCode");
+
+        const imei = generateZaloUUID(options.userAgent);
+
+        if (callback) {
+            // Thanks to @YanCastle for this great suggestion!
+            callback({
+                type: LoginQRCallbackEventType.GotLoginInfo,
+                data: {
+                    cookie: loginQRResult.cookies,
+                    imei,
+                    userAgent: options.userAgent,
+                },
+                actions: null,
+            });
+        }
+
         return this.loginCookie(ctx, {
             cookie: loginQRResult.cookies,
-            imei: generateZaloUUID(options.userAgent),
+            imei,
             userAgent: options.userAgent,
             language: options.language,
         });
