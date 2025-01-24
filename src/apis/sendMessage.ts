@@ -87,6 +87,44 @@ type AttachmentData =
           headers: Record<string, string>;
       };
 
+export enum TextStyle {
+    Bold = "b",
+    Italic = "i",
+    Underline = "u",
+    StrikeThrough = "s",
+    Red = "c_db342e",
+    Orange = "c_f27806",
+    Yellow = "c_f7b503",
+    Green = "c_15a85f",
+    Small = "f_13",
+    Big = "f_18",
+    UnorderedList = "lst_1",
+    OrderedList = "lst_2",
+    Indent = "ind_$",
+}
+
+export type Style =
+    | {
+          start: number;
+          len: number;
+          st: Exclude<TextStyle, TextStyle.Indent>;
+      }
+    | {
+          start: number;
+          len: number;
+          st: TextStyle.Indent;
+          /**
+           * Number of spaces used for indentation.
+           */
+          indentSize?: number;
+      };
+
+export enum Urgency {
+    Default,
+    Important,
+    Urgent,
+}
+
 export type Mention = {
     /**
      * mention position
@@ -107,6 +145,14 @@ export type MessageContent = {
      * Text content of the message
      */
     msg: string;
+    /**
+     * Text styles
+     */
+    styles?: Style[];
+    /**
+     * Urgency of the message
+     */
+    urgency?: Urgency;
     /**
      * Quoted message (optional)
      */
@@ -230,7 +276,11 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
         };
     }
 
-    async function handleMessage({ msg, mentions, quote }: MessageContent, threadId: string, type: ThreadType) {
+    async function handleMessage(
+        { msg, styles, urgency, mentions, quote }: MessageContent,
+        threadId: string,
+        type: ThreadType,
+    ) {
         if (!msg || msg.length == 0) throw new ZaloApiError("Missing message content");
         const isValidInstance = quote instanceof UserMessage || quote instanceof GroupMessage;
         if (quote && !isValidInstance) throw new ZaloApiError("Invalid quote message");
@@ -280,6 +330,31 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                   toid: isGroupMessage ? undefined : threadId,
                   grid: isGroupMessage ? threadId : undefined,
               };
+
+        if (styles) {
+            Object.assign(params, {
+                textProperties: JSON.stringify({
+                    styles: styles.map((e) => {
+                        const styleFinal = {
+                            ...e,
+                            indentSize: undefined,
+                            st:
+                                e.st == TextStyle.Indent
+                                    ? TextStyle.Indent.replace("$", `${e.indentSize ?? 1}0`)
+                                    : e.st,
+                        };
+
+                        removeUndefinedKeys(styleFinal);
+                        return styleFinal;
+                    }),
+                    ver: 0,
+                }),
+            });
+        }
+
+        if (urgency == Urgency.Important || urgency == Urgency.Urgent) {
+            Object.assign(params, { metaData: { urgency } });
+        }
 
         for (const key in params) {
             if (params[key as keyof typeof params] === undefined) delete params[key as keyof typeof params];
