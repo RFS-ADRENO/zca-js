@@ -14,8 +14,8 @@ type UploadEventData = {
 export type OnMessageCallback = (message: Message) => any;
 
 export enum CloseReason {
-    DuplicateConnection,
-    ManualClosure,
+    ManualClosure = 1000,
+    DuplicateConnection = 3000,
 }
 
 interface ListenerEvents {
