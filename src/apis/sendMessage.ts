@@ -165,6 +165,10 @@ export type MessageContent = {
      * Attachments in the message (optional)
      */
     attachments?: string[];
+    /**
+     * Time to live in milisecond
+     */
+    ttl?: number;
 };
 
 export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
@@ -277,7 +281,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
     }
 
     async function handleMessage(
-        { msg, styles, urgency, mentions, quote }: MessageContent,
+        { msg, styles, urgency, mentions, quote, ttl }: MessageContent,
         threadId: string,
         type: ThreadType,
     ) {
@@ -318,14 +322,14 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                   visibility: isGroupMessage ? 0 : undefined,
                   qmsgAttach: isGroupMessage ? JSON.stringify(prepareQMSGAttach(quote)) : undefined,
                   qmsgTTL: quoteData!.ttl,
-                  ttl: 0,
+                  ttl: ttl ?? 0,
               }
             : {
                   message: msg,
                   clientId: Date.now(),
                   mentionInfo: isMentionsValid ? JSON.stringify(mentionsFinal) : undefined,
                   imei: isGroupMessage ? undefined : ctx.imei,
-                  ttl: 0,
+                  ttl: ttl ?? 0,
                   visibility: isGroupMessage ? 0 : undefined,
                   toid: isGroupMessage ? undefined : threadId,
                   grid: isGroupMessage ? threadId : undefined,
@@ -379,7 +383,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
     }
 
     async function handleAttachment(
-        { msg, attachments, mentions, quote }: MessageContent,
+        { msg, attachments, mentions, quote, ttl }: MessageContent,
         threadId: string,
         type: ThreadType,
     ) {
@@ -429,7 +433,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                             normalUrl: isGroupMessage ? undefined : attachment.normalUrl,
                             hdSize: String(attachment.totalSize),
                             zsource: -1,
-                            ttl: 0,
+                            ttl: ttl ?? 0,
                             jcp: '{"convertible":"jxl"}',
 
                             groupLayoutId: isMultiFile ? groupLayoutId : undefined,
@@ -463,7 +467,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                             grid: isGroupMessage ? String(threadId) : undefined,
                             fileUrl: attachment.fileUrl,
                             zsource: -1,
-                            ttl: 0,
+                            ttl: ttl ?? 0,
                         },
                         body: new URLSearchParams(),
                     };
@@ -488,7 +492,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                             grid: isGroupMessage ? String(threadId) : undefined,
                             fileUrl: attachment.fileUrl,
                             zsource: -1,
-                            ttl: 0,
+                            ttl: ttl ?? 0,
                         },
                         body: new URLSearchParams(),
                     };
@@ -527,7 +531,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                 height: gifData.height,
                 msg: msg,
                 type: 1,
-                ttl: 0,
+                ttl: ttl ?? 0,
                 visibility: isGroupMessage ? 0 : undefined,
                 toid: isGroupMessage ? undefined : threadId,
                 grid: isGroupMessage ? threadId : undefined,
@@ -592,7 +596,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
         if (!threadId) throw new ZaloApiError("Missing threadId");
         if (typeof message == "string") message = { msg: message };
 
-        let { msg, quote, attachments, mentions } = message;
+        let { msg, quote, attachments, mentions, ttl } = message;
 
         if (!msg && (!attachments || (attachments && attachments.length == 0)))
             throw new ZaloApiError("Missing message content");
@@ -621,7 +625,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                 msg = "";
                 mentions = undefined;
             }
-            const handledData = await handleAttachment({ msg, mentions, attachments, quote }, threadId, type);
+            const handledData = await handleAttachment({ msg, mentions, attachments, quote, ttl }, threadId, type);
             responses.attachment = await send(handledData);
             msg = "";
         }
