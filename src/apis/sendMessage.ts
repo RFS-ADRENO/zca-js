@@ -1,7 +1,7 @@
 import FormData from "form-data";
 import fs from "node:fs/promises";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { GroupMessage, Message, MessageType } from "../models/Message.js";
+import { GroupMessage, UserMessage, ThreadType } from "../models/index.js";
 import {
     apiFactory,
     getClientMessageType,
@@ -29,7 +29,7 @@ const attachmentUrlType = {
     others: "asyncfile/msg?",
 };
 
-function prepareQMSGAttach(quote: Message | GroupMessage) {
+function prepareQMSGAttach(quote: UserMessage | GroupMessage) {
     const quoteData = quote.data;
     if (typeof quoteData.content == "string") return quoteData.propertyExt;
     if (quoteData.msgType == "chat.todo")
@@ -51,7 +51,7 @@ function prepareQMSGAttach(quote: Message | GroupMessage) {
     };
 }
 
-function prepareQMSG(quote: Message | GroupMessage) {
+function prepareQMSG(quote: UserMessage | GroupMessage) {
     const quoteData = quote.data;
     if (quoteData.msgType == "chat.todo" && typeof quoteData.content != "string") {
         return JSON.parse(quoteData.content.params).item.content;
@@ -87,6 +87,44 @@ type AttachmentData =
           headers: Record<string, string>;
       };
 
+export enum TextStyle {
+    Bold = "b",
+    Italic = "i",
+    Underline = "u",
+    StrikeThrough = "s",
+    Red = "c_db342e",
+    Orange = "c_f27806",
+    Yellow = "c_f7b503",
+    Green = "c_15a85f",
+    Small = "f_13",
+    Big = "f_18",
+    UnorderedList = "lst_1",
+    OrderedList = "lst_2",
+    Indent = "ind_$",
+}
+
+export type Style =
+    | {
+          start: number;
+          len: number;
+          st: Exclude<TextStyle, TextStyle.Indent>;
+      }
+    | {
+          start: number;
+          len: number;
+          st: TextStyle.Indent;
+          /**
+           * Number of spaces used for indentation.
+           */
+          indentSize?: number;
+      };
+
+export enum Urgency {
+    Default,
+    Important,
+    Urgent,
+}
+
 export type Mention = {
     /**
      * mention position
@@ -108,9 +146,17 @@ export type MessageContent = {
      */
     msg: string;
     /**
+     * Text styles
+     */
+    styles?: Style[];
+    /**
+     * Urgency of the message
+     */
+    urgency?: Urgency;
+    /**
      * Quoted message (optional)
      */
-    quote?: Message | GroupMessage;
+    quote?: UserMessage | GroupMessage;
     /**
      * Mentions in the message (optional)
      */
@@ -119,21 +165,25 @@ export type MessageContent = {
      * Attachments in the message (optional)
      */
     attachments?: string[];
+    /**
+     * Time to live in milisecond
+     */
+    ttl?: number;
 };
 
 export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
     const serviceURLs = {
         message: {
-            [MessageType.DirectMessage]: utils.makeURL(`${api.zpwServiceMap.chat[0]}/api/message`, {
+            [ThreadType.User]: utils.makeURL(`${api.zpwServiceMap.chat[0]}/api/message`, {
                 nretry: 0,
             }),
-            [MessageType.GroupMessage]: utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group`, {
+            [ThreadType.Group]: utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group`, {
                 nretry: 0,
             }),
         },
         attachment: {
-            [MessageType.DirectMessage]: `${api.zpwServiceMap.file[0]}/api/message/`,
-            [MessageType.GroupMessage]: `${api.zpwServiceMap.file[0]}/api/group/`,
+            [ThreadType.User]: `${api.zpwServiceMap.file[0]}/api/message/`,
+            [ThreadType.Group]: `${api.zpwServiceMap.file[0]}/api/group/`,
         },
     };
 
@@ -203,10 +253,10 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
         return await resolveResponse<UpthumbType>(ctx, response);
     }
 
-    function handleMentions(type: MessageType, msg: string, mentions?: Mention[]) {
+    function handleMentions(type: ThreadType, msg: string, mentions?: Mention[]) {
         let totalMentionLen = 0;
         const mentionsFinal =
-            Array.isArray(mentions) && type == MessageType.GroupMessage
+            Array.isArray(mentions) && type == ThreadType.Group
                 ? mentions
                       .filter((m) => m.pos >= 0 && m.uid && m.len > 0)
                       .map((m) => {
@@ -230,11 +280,15 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
         };
     }
 
-    async function handleMessage({ msg, mentions, quote }: MessageContent, threadId: string, type: MessageType) {
+    async function handleMessage(
+        { msg, styles, urgency, mentions, quote, ttl }: MessageContent,
+        threadId: string,
+        type: ThreadType,
+    ) {
         if (!msg || msg.length == 0) throw new ZaloApiError("Missing message content");
-        const isValidInstance = quote instanceof Message || quote instanceof GroupMessage;
+        const isValidInstance = quote instanceof UserMessage || quote instanceof GroupMessage;
         if (quote && !isValidInstance) throw new ZaloApiError("Invalid quote message");
-        const isGroupMessage = type == MessageType.GroupMessage;
+        const isGroupMessage = type == ThreadType.Group;
 
         const { mentionsFinal, msgFinal } = handleMentions(type, msg, mentions);
         msg = msgFinal;
@@ -268,18 +322,43 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                   visibility: isGroupMessage ? 0 : undefined,
                   qmsgAttach: isGroupMessage ? JSON.stringify(prepareQMSGAttach(quote)) : undefined,
                   qmsgTTL: quoteData!.ttl,
-                  ttl: 0,
+                  ttl: ttl ?? 0,
               }
             : {
                   message: msg,
                   clientId: Date.now(),
                   mentionInfo: isMentionsValid ? JSON.stringify(mentionsFinal) : undefined,
                   imei: isGroupMessage ? undefined : ctx.imei,
-                  ttl: 0,
+                  ttl: ttl ?? 0,
                   visibility: isGroupMessage ? 0 : undefined,
                   toid: isGroupMessage ? undefined : threadId,
                   grid: isGroupMessage ? threadId : undefined,
               };
+
+        if (styles) {
+            Object.assign(params, {
+                textProperties: JSON.stringify({
+                    styles: styles.map((e) => {
+                        const styleFinal = {
+                            ...e,
+                            indentSize: undefined,
+                            st:
+                                e.st == TextStyle.Indent
+                                    ? TextStyle.Indent.replace("$", `${e.indentSize ?? 1}0`)
+                                    : e.st,
+                        };
+
+                        removeUndefinedKeys(styleFinal);
+                        return styleFinal;
+                    }),
+                    ver: 0,
+                }),
+            });
+        }
+
+        if (urgency == Urgency.Important || urgency == Urgency.Urgent) {
+            Object.assign(params, { metaData: { urgency } });
+        }
 
         for (const key in params) {
             if (params[key as keyof typeof params] === undefined) delete params[key as keyof typeof params];
@@ -304,15 +383,15 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
     }
 
     async function handleAttachment(
-        { msg, attachments, mentions, quote }: MessageContent,
+        { msg, attachments, mentions, quote, ttl }: MessageContent,
         threadId: string,
-        type: MessageType,
+        type: ThreadType,
     ) {
         if (!attachments || attachments.length == 0) throw new ZaloApiError("Missing attachments");
 
         const firstExtFile = getFileExtension(attachments[0]);
         const isSingleFile = attachments.length == 1;
-        const isGroupMessage = type == MessageType.GroupMessage;
+        const isGroupMessage = type == ThreadType.Group;
 
         const canBeDesc = isSingleFile && ["jpg", "jpeg", "png", "webp"].includes(firstExtFile);
 
@@ -354,7 +433,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                             normalUrl: isGroupMessage ? undefined : attachment.normalUrl,
                             hdSize: String(attachment.totalSize),
                             zsource: -1,
-                            ttl: 0,
+                            ttl: ttl ?? 0,
                             jcp: '{"convertible":"jxl"}',
 
                             groupLayoutId: isMultiFile ? groupLayoutId : undefined,
@@ -388,7 +467,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                             grid: isGroupMessage ? String(threadId) : undefined,
                             fileUrl: attachment.fileUrl,
                             zsource: -1,
-                            ttl: 0,
+                            ttl: ttl ?? 0,
                         },
                         body: new URLSearchParams(),
                     };
@@ -413,7 +492,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                             grid: isGroupMessage ? String(threadId) : undefined,
                             fileUrl: attachment.fileUrl,
                             zsource: -1,
-                            ttl: 0,
+                            ttl: ttl ?? 0,
                         },
                         body: new URLSearchParams(),
                     };
@@ -436,7 +515,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                     `File ${getFileName(gif)} size exceed maximum size of ${sharefile.max_size_share_file_v3}MB`,
                 );
 
-            const _upthumb = await upthumb(gif, serviceURLs.attachment[MessageType.DirectMessage]);
+            const _upthumb = await upthumb(gif, serviceURLs.attachment[ThreadType.User]);
 
             const formData = new FormData();
             formData.append("chunkContent", await fs.readFile(gif), {
@@ -452,7 +531,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                 height: gifData.height,
                 msg: msg,
                 type: 1,
-                ttl: 0,
+                ttl: ttl ?? 0,
                 visibility: isGroupMessage ? 0 : undefined,
                 toid: isGroupMessage ? undefined : threadId,
                 grid: isGroupMessage ? threadId : undefined,
@@ -503,7 +582,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
      *
      * @param message Message content
      * @param threadId group or user id
-     * @param type Message type (DirectMessage or GroupMessage)
+     * @param type Message type (User or Group)
      * @param quote Message or GroupMessage instance (optional), used for quoting
      *
      * @throws {ZaloApiError}
@@ -511,13 +590,13 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
     return async function sendMessage(
         message: MessageContent | string,
         threadId: string,
-        type: MessageType = MessageType.DirectMessage,
+        type: ThreadType = ThreadType.User,
     ) {
         if (!message) throw new ZaloApiError("Missing message content");
         if (!threadId) throw new ZaloApiError("Missing threadId");
         if (typeof message == "string") message = { msg: message };
 
-        let { msg, quote, attachments, mentions } = message;
+        let { msg, quote, attachments, mentions, ttl } = message;
 
         if (!msg && (!attachments || (attachments && attachments.length == 0)))
             throw new ZaloApiError("Missing message content");
@@ -546,7 +625,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                 msg = "";
                 mentions = undefined;
             }
-            const handledData = await handleAttachment({ msg, mentions, attachments, quote }, threadId, type);
+            const handledData = await handleAttachment({ msg, mentions, attachments, quote, ttl }, threadId, type);
             responses.attachment = await send(handledData);
             msg = "";
         }

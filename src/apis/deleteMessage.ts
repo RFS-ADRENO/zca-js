@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { GroupMessage, Message, MessageType } from "../models/Message.js";
+import { GroupMessage, UserMessage, ThreadType } from "../models/index.js";
 import { apiFactory, removeUndefinedKeys } from "../utils.js";
 
 export type DeleteMessageResponse = {
@@ -7,9 +7,9 @@ export type DeleteMessageResponse = {
 };
 
 export const deleteMessageFactory = apiFactory<DeleteMessageResponse>()((api, ctx, utils) => {
-    const URLType = {
-        [MessageType.DirectMessage]: utils.makeURL(`${api.zpwServiceMap.chat[0]}/api/message/delete`),
-        [MessageType.GroupMessage]: utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/deletemsg`),
+    const serviceURL = {
+        [ThreadType.User]: utils.makeURL(`${api.zpwServiceMap.chat[0]}/api/message/delete`),
+        [ThreadType.Group]: utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/deletemsg`),
     };
     /**
      * Delete a message
@@ -19,8 +19,8 @@ export const deleteMessageFactory = apiFactory<DeleteMessageResponse>()((api, ct
      *
      * @throws ZaloApiError
      */
-    return async function deleteMessage(message: Message | GroupMessage, onlyMe: boolean = true) {
-        if (!(message instanceof Message) && !(message instanceof GroupMessage))
+    return async function deleteMessage(message: UserMessage | GroupMessage, onlyMe: boolean = true) {
+        if (!(message instanceof UserMessage) && !(message instanceof GroupMessage))
             throw new ZaloApiError(
                 "Expected Message or GroupMessage instance, got: " + (message as unknown as any)?.constructor?.name,
             );
@@ -29,7 +29,7 @@ export const deleteMessageFactory = apiFactory<DeleteMessageResponse>()((api, ct
             throw new ZaloApiError("To delete your message for everyone, use undo api instead");
 
         const params: any = {
-            toid: message instanceof Message ? message.threadId : undefined,
+            toid: message instanceof UserMessage ? message.threadId : undefined,
             grid: message instanceof GroupMessage ? message.threadId : undefined,
             cliMsgId: Date.now(),
             msgs: [
@@ -41,7 +41,7 @@ export const deleteMessageFactory = apiFactory<DeleteMessageResponse>()((api, ct
                 },
             ],
             onlyMe: onlyMe ? 1 : 0,
-            imei: message instanceof Message ? ctx.imei : undefined,
+            imei: message instanceof UserMessage ? ctx.imei : undefined,
         };
 
         removeUndefinedKeys(params);
@@ -49,7 +49,7 @@ export const deleteMessageFactory = apiFactory<DeleteMessageResponse>()((api, ct
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
-        const response = await utils.request(URLType[message.type], {
+        const response = await utils.request(serviceURL[message.type], {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,

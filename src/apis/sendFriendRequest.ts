@@ -1,12 +1,6 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-type Message =
-    | {
-          text: string;
-      }
-    | string;
-
 export type SendFriendRequestResponse = ""; // add response after
 
 export const sendFriendRequestFactory = apiFactory<SendFriendRequestResponse>()((api, ctx, utils) => {
@@ -15,15 +9,15 @@ export const sendFriendRequestFactory = apiFactory<SendFriendRequestResponse>()(
     /**
      * Send a friend request to a user.
      *
-     * @param msg Message content or text string
+     * @param msg message sent with friend request
      * @param userId User ID to send friend request to
      *
      * @throws ZaloApiError
      */
-    return async function sendFriendRequest(msg: Message, userId: string) {
+    return async function sendFriendRequest(msg: string, userId: string) {
         const params = {
             toid: userId,
-            msg: typeof msg == "string" ? msg : msg.text,
+            msg: msg,
             reqsrc: 30,
             imei: ctx.imei,
             language: ctx.language,

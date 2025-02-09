@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { Message } from "../models/Message.js";
+import { UserMessage } from "../models/Message.js";
 import { Reactions } from "../models/Reaction.js";
 import { apiFactory } from "../utils.js";
 
@@ -18,7 +18,7 @@ export const addReactionFactory = apiFactory<AddReactionResponse>()((api, _, uti
      *
      * @throws ZaloApiError
      */
-    return async function addReaction(icon: Reactions, message: Message) {
+    return async function addReaction(icon: Reactions, message: UserMessage) {
         let rType, source;
 
         switch (icon) {

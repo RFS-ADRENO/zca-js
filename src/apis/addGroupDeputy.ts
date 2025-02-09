@@ -1,38 +1,38 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
+import { apiFactory } from "../utils.js";
 
 export type AddGroupDeputyResponse = "";
 
-export const addGroupDeputyFactory = apiFactory<AddGroupDeputyResponse>()((api, ctx, resolve) => {
-    const serviceURL = makeURL(`${api.zpwServiceMap.group[0]}/api/group/admins/add`);
+export const addGroupDeputyFactory = apiFactory<AddGroupDeputyResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/admins/add`);
 
     /**
      * Add group deputy
      *
-     * @param userId UserId for change group owner
-     * @param threadId ThreadId for change group owner
+     * @param memberId user Id or list of user Ids
+     * @param groupId group Id
      *
      * @throws ZaloApiError
      *
      */
-    return async function addGroupDeputy(userId: string | string[], threadId: string) {
-        if (!Array.isArray(userId)) userId = [userId];
+    return async function addGroupDeputy(memberId: string | string[], groupId: string) {
+        if (!Array.isArray(memberId)) memberId = [memberId];
 
         const params = {
-            grid: threadId,
-            members: userId,
+            grid: groupId,
+            members: memberId,
             imei: ctx.imei,
         };
 
-        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
         const urlWithParams = `${serviceURL}&params=${encodeURIComponent(encryptedParams)}`;
 
-        const response = await request(urlWithParams, {
+        const response = await utils.request(urlWithParams, {
             method: "GET",
         });
 
-        return resolve(response);
+        return utils.resolve(response);
     };
 });

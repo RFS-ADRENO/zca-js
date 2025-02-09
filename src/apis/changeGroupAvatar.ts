@@ -11,12 +11,12 @@ export const changeGroupAvatarFactory = apiFactory<ChangeGroupAvatarResponse>()(
     /**
      * Change group avatar
      *
-     * @param groupId Group ID
      * @param avatarPath Path to the image file
+     * @param groupId Group ID
      *
      * @throws ZaloApiError
      */
-    return async function changeGroupAvatar(groupId: string, avatarPath: string) {
+    return async function changeGroupAvatar(avatarPath: string, groupId: string) {
         const params: any = {
             grid: groupId,
             avatarSize: 120,

@@ -1,4 +1,10 @@
-import { TAttachmentContent, TOtherContent } from "./Message.js";
+export type TUndoContent = {
+    globalMsgId: number;
+    cliMsgId: number;
+    deleteMsg: number;
+    srcId: number;
+    destId: number;
+};
 
 export type TUndo = {
     actionId: string;
@@ -10,7 +16,7 @@ export type TUndo = {
     dName: string;
     ts: string;
     status: number;
-    content: string | TAttachmentContent | TOtherContent;
+    content: TUndoContent;
     notify: string;
     ttl: number;
     userId: string;
@@ -29,7 +35,7 @@ export class Undo {
 
     constructor(uid: string, data: TUndo, isGroup: boolean) {
         this.data = data;
-        this.threadId = data.uidFrom == "0" ? data.idTo : data.uidFrom;
+        this.threadId = isGroup || data.uidFrom == "0" ? data.idTo : data.uidFrom
         this.isSelf = data.uidFrom == "0";
         this.isGroup = isGroup;
 

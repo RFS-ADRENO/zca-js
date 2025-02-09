@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { API, Credentials, MessageType, Zalo } from "../src/index.js";
+import { API, Credentials, ThreadType, Zalo } from "../src/index.js";
 
 const zalo = new Zalo();
 
@@ -32,7 +32,7 @@ if (isValid(credentials)) {
 const { listener } = api;
 
 listener.on("message", (message) => {
-    const isDirectMessage = message.type === MessageType.DirectMessage;
+    const isDirectMessage = message.type === ThreadType.User;
 
     if (isDirectMessage && !message.isSelf && typeof message.data.content === "string") {
         console.log("Message:", message.data.content, message.threadId);

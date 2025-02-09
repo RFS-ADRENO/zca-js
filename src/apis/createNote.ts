@@ -1,11 +1,10 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-type Message =
-    | {
-          text: string;
-      }
-    | string;
+export type CreateNoteOptions = {
+    title: string;
+    pinAct?: boolean;
+};
 
 export type CreateNoteResponse = {
     id: string;
@@ -30,30 +29,29 @@ export const createNoteFactory = apiFactory<CreateNoteResponse>()((api, ctx, uti
     /**
      * Create a note in a group
      *
-     * @param msg Message for note
+     * @param options note options
+     * @param options.title note title
+     * @param options.pinAct Pin action (pin note)
      * @param groupId Group ID to create note from
-     * @param pinAct Pin action (pin note) || 0 = false, 1 = true
      *
      * @throws ZaloApiError
      */
-    return async function createNote(msg: Message, groupId: string, pinAct: number = 0) {
-        const params: any = {
+    return async function createNote(options: CreateNoteOptions, groupId: string) {
+        const params = {
             grid: groupId,
             type: 0,
             color: -16777216,
             emoji: "",
             startTime: -1,
             duration: -1,
-            params: {
-                title: `${typeof msg === "string" ? msg : msg.text}`,
-            },
+            params: JSON.stringify({
+                title: options.title,
+            }),
             repeat: 0,
             src: 1,
             imei: ctx.imei,
-            pinAct: pinAct,
+            pinAct: options.pinAct ? 1 : 0,
         };
-
-        params.params = JSON.stringify(params.params);
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");

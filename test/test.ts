@@ -1,6 +1,6 @@
 import path from "node:path";
 import { Reactions, Zalo } from "../src/index.js";
-import { MessageType } from "../src/models/Message.js";
+import { ThreadType } from "../src/models/index.js";
 const zalo = new Zalo({
     selfListen: true,
     logging: true,
@@ -30,7 +30,7 @@ listener.onError((error: any) => {
 listener.onMessage((message) => {
     console.log("Message:", message.threadId, message.data.content);
     switch (message.type) {
-        case MessageType.DirectMessage:
+        case ThreadType.User:
             api.addReaction(Reactions.HAHA, message).then(console.log);
             if (!message.data.content || typeof message.data.content != "string") return;
             if (!message.isSelf) {
@@ -82,7 +82,7 @@ listener.onMessage((message) => {
             }
             break;
 
-        case MessageType.GroupMessage:
+        case ThreadType.Group:
             if (!message.isSelf) {
                 switch (message.data.content) {
                     case "ping": {

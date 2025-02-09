@@ -1,40 +1,40 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
+import { apiFactory } from "../utils.js";
 
 export type ChangeGroupOwnerResponse = {
     time: number;
 };
 
-export const changeGroupOwnerFactory = apiFactory<ChangeGroupOwnerResponse>()((api, ctx, resolve) => {
-    const serviceURL = makeURL(`${api.zpwServiceMap.group[0]}/api/group/change-owner`);
+export const changeGroupOwnerFactory = apiFactory<ChangeGroupOwnerResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/change-owner`);
 
     /**
      * Change group owner
      *
-     * @param userId UserId for change group owner
-     * @param threadId ThreadId for change group owner
-     * @notes Change stupid is lose group rights. Because Web and APP not change key gold (admin main) <(")
+     * @param memberId User Id of new group owner
+     * @param groupId Group Id
+     * @notes Be careful when changing the key, as it will result in losing group admin rights
      *
      * @throws ZaloApiError
      *
      */
-    return async function changeGroupOwner(userId: string, threadId: string) {
+    return async function changeGroupOwner(memberId: string, groupId: string) {
         const params = {
-            grid: threadId,
-            newAdminId: userId,
+            grid: groupId,
+            newAdminId: memberId,
             imei: ctx.imei,
             language: ctx.language,
         };
 
-        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
         const urlWithParams = `${serviceURL}&params=${encodeURIComponent(encryptedParams)}`;
 
-        const response = await request(urlWithParams, {
+        const response = await utils.request(urlWithParams, {
             method: "GET",
         });
 
-        return resolve(response);
+        return utils.resolve(response);
     };
 });

@@ -12,10 +12,10 @@ import { blockUserFactory } from "./apis/blockUser.js";
 import { blockViewFeedFactory } from "./apis/blockViewFeed.js";
 import { changeAccountAvatarFactory } from "./apis/changeAccountAvatar.js";
 import { changeAccountSettingFactory } from "./apis/changeAccountSetting.js";
+import { changeFriendAliasFactory } from "./apis/changeFriendAlias.js";
 import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
 import { changeGroupNameFactory } from "./apis/changeGroupName.js";
 import { changeGroupOwnerFactory } from "./apis/changeGroupOwner.js";
-import { changeNickNameFactory } from "./apis/changeNickName.js";
 import { createGroupFactory } from "./apis/createGroup.js";
 import { createNoteFactory } from "./apis/createNote.js";
 import { createPollFactory } from "./apis/createPoll.js";
@@ -30,12 +30,13 @@ import { getContextFactory } from "./apis/getContext.js";
 import { getCookieFactory } from "./apis/getCookie.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
 import { getOwnIdFactory } from "./apis/getOwnId.js";
+import { getPollDetailFactory } from "./apis/getPollDetail.js";
 import { getQRFactory } from "./apis/getQR.js";
 import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
 import { getUserInfoFactory } from "./apis/getUserInfo.js";
 import { lockPollFactory } from "./apis/lockPoll.js";
-import { loginQR } from "./apis/loginQR.js";
+import { loginQR, type LoginQRCallback, LoginQRCallbackEventType } from "./apis/loginQR.js";
 import { pinConversationsFactory } from "./apis/pinConversations.js";
 import { removeGroupDeputyFactory } from "./apis/removeGroupDeputy.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
@@ -151,7 +152,7 @@ export class Zalo {
 
     public async loginQR(
         options?: { userAgent?: string; language?: string; qrPath?: string },
-        callback?: (qrPath: string) => void,
+        callback?: LoginQRCallback,
     ) {
         if (!options) options = {};
         if (!options.userAgent)
@@ -166,10 +167,26 @@ export class Zalo {
             options as { userAgent: string; language: string; qrPath?: string },
             callback,
         );
-        if (!loginQRResult) throw new ZaloApiError("Đăng nhập với QR thất bại");
+        if (!loginQRResult) throw new ZaloApiError("Unable to login with QRCode");
+
+        const imei = generateZaloUUID(options.userAgent);
+
+        if (callback) {
+            // Thanks to @YanCastle for this great suggestion!
+            callback({
+                type: LoginQRCallbackEventType.GotLoginInfo,
+                data: {
+                    cookie: loginQRResult.cookies,
+                    imei,
+                    userAgent: options.userAgent,
+                },
+                actions: null,
+            });
+        }
+
         return this.loginCookie(ctx, {
             cookie: loginQRResult.cookies,
-            imei: generateZaloUUID(options.userAgent),
+            imei,
             userAgent: options.userAgent,
             language: options.language,
         });
@@ -191,7 +208,7 @@ export class API {
     public changeGroupAvatar: ReturnType<typeof changeGroupAvatarFactory>;
     public changeGroupName: ReturnType<typeof changeGroupNameFactory>;
     public changeGroupOwner: ReturnType<typeof changeGroupOwnerFactory>;
-    public changeNickName: ReturnType<typeof changeNickNameFactory>;
+    public changeFriendAlias: ReturnType<typeof changeFriendAliasFactory>;
     public createGroup: ReturnType<typeof createGroupFactory>;
     public createNote: ReturnType<typeof createNoteFactory>;
     public createPoll: ReturnType<typeof createPollFactory>;
@@ -205,6 +222,7 @@ export class API {
     public getCookie: ReturnType<typeof getCookieFactory>;
     public getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
     public getOwnId: ReturnType<typeof getOwnIdFactory>;
+    public getPollDetail: ReturnType<typeof getPollDetailFactory>;
     public getContext: ReturnType<typeof getContextFactory>;
     public getQR: ReturnType<typeof getQRFactory>;
     public getStickers: ReturnType<typeof getStickersFactory>;
@@ -240,7 +258,7 @@ export class API {
         this.changeGroupAvatar = changeGroupAvatarFactory(ctx, this);
         this.changeGroupName = changeGroupNameFactory(ctx, this);
         this.changeGroupOwner = changeGroupOwnerFactory(ctx, this);
-        this.changeNickName = changeNickNameFactory(ctx, this);
+        this.changeFriendAlias = changeFriendAliasFactory(ctx, this);
         this.createGroup = createGroupFactory(ctx, this);
         this.createNote = createNoteFactory(ctx, this);
         this.createPoll = createPollFactory(ctx, this);
@@ -254,6 +272,7 @@ export class API {
         this.getCookie = getCookieFactory(ctx, this);
         this.getGroupInfo = getGroupInfoFactory(ctx, this);
         this.getOwnId = getOwnIdFactory(ctx, this);
+        this.getPollDetail = getPollDetailFactory(ctx, this);
         this.getContext = getContextFactory(ctx, this);
         this.getQR = getQRFactory(ctx, this);
         this.getStickers = getStickersFactory(ctx, this);

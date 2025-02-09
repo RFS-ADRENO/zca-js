@@ -1,26 +1,24 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type RemoveGroupDeputyResponse = "";
+export type ChangeFriendAliasResponse = "";
 
-export const removeGroupDeputyFactory = apiFactory<RemoveGroupDeputyResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/admins/remove`);
+export const changeFriendAliasFactory = apiFactory<ChangeFriendAliasResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.alias[0]}/api/alias/update`);
 
     /**
-     * Remove group deputy
+     * Change friend's alias
      *
-     * @param memberId user Id or list of user Ids
-     * @param groupId group Id
+     * @param alias
+     * @param friendId
      *
      * @throws ZaloApiError
      *
      */
-    return async function removeGroupDeputy(memberId: string | string[], groupId: string) {
-        if (!Array.isArray(memberId)) memberId = [memberId];
-
+    return async function changeFriendAlias(alias: string, friendId: string) {
         const params = {
-            grid: groupId,
-            members: memberId,
+            friendId: friendId,
+            alias: alias,
             imei: ctx.imei,
         };
 

@@ -11,12 +11,12 @@ export const changeGroupNameFactory = apiFactory<ChangeGroupNameResponse>()((api
     /**
      * Change group name
      *
-     * @param groupId Group ID
      * @param name New group name
+     * @param groupId Group ID
      *
      * @throws ZaloApiError
      */
-    return async function changeGroupName(groupId: string, name: string) {
+    return async function changeGroupName(name: string, groupId: string) {
         if (name.length == 0) name = Date.now().toString();
 
         const params: any = {

@@ -1,3 +1,5 @@
+import { ThreadType } from "./Enum.js";
+
 export type TAttachmentContent = {
     title: string;
     description: string;
@@ -75,13 +77,8 @@ export type TMention = {
     type: 0 | 1;
 };
 
-export enum MessageType {
-    DirectMessage,
-    GroupMessage,
-}
-
-export class Message {
-    type: MessageType = MessageType.DirectMessage;
+export class UserMessage {
+    type: ThreadType.User = ThreadType.User;
 
     data: TMessage;
     threadId: string;
@@ -101,7 +98,7 @@ export class Message {
 }
 
 export class GroupMessage {
-    type: MessageType = MessageType.GroupMessage;
+    type: ThreadType.Group = ThreadType.Group;
 
     data: TGroupMessage;
     threadId: string;
@@ -118,3 +115,6 @@ export class GroupMessage {
         if (data.uidFrom == "0") data.uidFrom = uid;
     }
 }
+
+
+export type Message = UserMessage | GroupMessage;
