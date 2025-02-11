@@ -32,3 +32,9 @@ export const acceptFriendRequestFactory = apiFactory<AcceptFriendRequestResponse
         return utils.resolve(response);
     };
 });
+
+// Let me ask about the function of the acceptFriendRequest() hook.
+// I did it through the login section (I got a message from another user to a logged-in user)
+// however, when another user sends a friend invitation, I haven't gotten the userId from the person who sent the friend action.
+// Currently only retrieved in api.listener.on("message", (message) => { //TODO}
+// very much looking forward to the suggestion from the owner himself.
