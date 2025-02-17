@@ -102,7 +102,7 @@ async function loadLoginPage(ctx: ContextBase) {
 
 async function getLoginInfo(ctx: ContextBase, version: string) {
     const form = new URLSearchParams();
-    form.append("continue", "https://chat.zalo.me/");
+    form.append("continue", "https://zalo.me/pc");
     form.append("v", version);
 
     return await request(ctx, "https://id.zalo.me/account/logininfo", {
@@ -117,7 +117,7 @@ async function getLoginInfo(ctx: ContextBase, version: string) {
             "sec-fetch-dest": "empty",
             "sec-fetch-mode": "cors",
             "sec-fetch-site": "same-origin",
-            Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fchat.zalo.me%2F",
+            Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fzalo.me%2Fpc",
             "Referrer-Policy": "strict-origin-when-cross-origin",
         },
         body: form,
@@ -130,7 +130,7 @@ async function getLoginInfo(ctx: ContextBase, version: string) {
 async function verifyClient(ctx: ContextBase, version: string) {
     const form = new URLSearchParams();
     form.append("type", "device");
-    form.append("continue", "https://chat.zalo.me/");
+    form.append("continue", "https://zalo.me/pc");
     form.append("v", version);
 
     return await request(ctx, "https://id.zalo.me/account/verify-client", {
@@ -145,7 +145,7 @@ async function verifyClient(ctx: ContextBase, version: string) {
             "sec-fetch-dest": "empty",
             "sec-fetch-mode": "cors",
             "sec-fetch-site": "same-origin",
-            Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fchat.zalo.me%2F",
+            Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fzalo.me%2Fpc",
             "Referrer-Policy": "strict-origin-when-cross-origin",
         },
         body: form,
@@ -171,7 +171,7 @@ async function generate(
     error_message: string;
 }> {
     const form = new URLSearchParams();
-    form.append("continue", "https://chat.zalo.me/");
+    form.append("continue", "https://zalo.me/pc");
     form.append("v", version);
 
     return await request(ctx, "https://id.zalo.me/account/authen/qr/generate", {
@@ -186,7 +186,7 @@ async function generate(
             "sec-fetch-dest": "empty",
             "sec-fetch-mode": "cors",
             "sec-fetch-site": "same-origin",
-            Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fchat.zalo.me%2F",
+            Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fzalo.me%2Fpc",
             "Referrer-Policy": "strict-origin-when-cross-origin",
         },
         body: form,
