@@ -1,10 +1,10 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, encodeAES, makeURL, request } from "../utils.js";
+import { apiFactory } from "../utils.js";
 
 export type ChangeAccountSettingResponse = "";
 
-export const changeAccountSettingFactory = apiFactory<ChangeAccountSettingResponse>()((api, ctx, resolveresolve) => {
-    const serviceURL = makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/update`);
+export const changeAccountSettingFactory = apiFactory<ChangeAccountSettingResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/update`);
 
     /**
      * Change account setting information
@@ -27,16 +27,16 @@ export const changeAccountSettingFactory = apiFactory<ChangeAccountSettingRespon
             language: language,
         };
 
-        const encryptedParams = encodeAES(ctx.secretKey, JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await request(serviceURL, {
+        const response = await utils.request(serviceURL, {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,
             }),
         });
 
-        return resolve(response);
+        return utils.resolve(response);
     };
 });
