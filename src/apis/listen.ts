@@ -11,6 +11,13 @@ type UploadEventData = {
     fileId: string;
 };
 
+export type WsPayload<T extends Record<string, unknown> = {}> = {
+    version: number;
+    cmd: number;
+    subCmd: number;
+    data: T;
+};
+
 export type OnMessageCallback = (message: Message) => any;
 
 export enum CloseReason {
@@ -23,6 +30,7 @@ interface ListenerEvents {
     closed: [reason: CloseReason];
     error: [error: any];
     message: [message: Message];
+    old_messages: [messages: Message[]];
     reaction: [reaction: Reaction];
     upload_attachment: [data: UploadEventData];
     undo: [data: Undo];
@@ -146,19 +154,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                             subCmd: 1,
                             data: { eventId: Date.now() },
                         };
-                        const encodedData = new TextEncoder().encode(JSON.stringify(payload.data));
-                        const dataLength = encodedData.length;
-
-                        const data = new DataView(Buffer.alloc(4 + dataLength).buffer);
-                        data.setUint8(0, payload.version);
-                        data.setInt32(1, payload.cmd, true);
-                        data.setInt8(3, payload.subCmd);
-
-                        encodedData.forEach((e, i) => {
-                            data.setUint8(4 + i, e);
-                        });
-
-                        ws.send(data);
+                        this.sendWs(payload);
                     };
 
                     this.pingInterval = setInterval(
@@ -268,6 +264,13 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     console.log();
                     if (ws.readyState !== WebSocket.CLOSED) ws.close(CloseReason.DuplicateConnection);
                 }
+
+                if (cmd == 510 && subCmd == 0) {
+                    const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    const { msgs } = parsedData;
+                    const responseMsgs = msgs.map((msg: any) => new UserMessage(this.ctx.uid, msg));
+                    this.emit("old_messages", responseMsgs);
+                }
             } catch (error) {
                 this.onErrorCallback(error);
                 this.emit("error", error);
@@ -280,6 +283,39 @@ export class Listener extends EventEmitter<ListenerEvents> {
             this.ws.close(CloseReason.ManualClosure);
             this.ws = null;
         }
+    }
+
+    public sendWs(payload: WsPayload) {
+        if (this.ws) {
+            const encodedData = new TextEncoder().encode(JSON.stringify(payload.data));
+            const dataLength = encodedData.length;
+
+            const data = new DataView(Buffer.alloc(4 + dataLength).buffer);
+            data.setUint8(0, payload.version);
+            data.setInt32(1, payload.cmd, true);
+            data.setInt8(3, payload.subCmd);
+
+            encodedData.forEach((e, i) => {
+                data.setUint8(4 + i, e);
+            });
+
+            this.ws.send(data);
+        }
+    }
+
+    /**
+     * Request old messages
+     *
+     * @param lastMsgId
+     */
+    public requestOldMessages(lastMsgId: string | null = null) {
+        const payload = {
+            version: 1,
+            cmd: 510,
+            subCmd: 0,
+            data: { first: true, reqId: "req_0", lastId: lastMsgId, preIds: [] },
+        };
+        this.sendWs(payload);
     }
 }
 
