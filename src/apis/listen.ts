@@ -1,7 +1,17 @@
 import EventEmitter from "events";
 import WebSocket from "ws";
-import { type GroupEvent, initializeGroupEvent, TGroupEvent } from "../models/GroupEvent.js";
-import { GroupMessage, UserMessage, Message, Reaction, Undo } from "../models/index.js";
+import { type GroupEvent, initializeGroupEvent, type TGroupEvent } from "../models/GroupEvent.js";
+import {
+    GroupMessage,
+    UserMessage,
+    Message,
+    Reaction,
+    Undo,
+    ThreadType,
+    GroupTyping,
+    Typing,
+    UserTyping,
+} from "../models/index.js";
 import { decodeEventData, getGroupEventType, logger } from "../utils.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import type { ContextSession } from "../context.js";
@@ -11,7 +21,7 @@ type UploadEventData = {
     fileId: string;
 };
 
-export type WsPayload<T extends Record<string, unknown> = {}> = {
+export type WsPayload<T = Record<string, unknown>> = {
     version: number;
     cmd: number;
     subCmd: number;
@@ -29,6 +39,7 @@ interface ListenerEvents {
     connected: [];
     closed: [reason: CloseReason];
     error: [error: any];
+    typing: [typing: Typing];
     message: [message: Message];
     old_messages: [messages: Message[]];
     reaction: [reaction: Reaction];
@@ -53,6 +64,8 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
     private selfListen;
     private pingInterval?: Timer;
+
+    private id = 0;
 
     constructor(
         private ctx: ContextSession,
@@ -154,7 +167,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                             subCmd: 1,
                             data: { eventId: Date.now() },
                         };
-                        this.sendWs(payload);
+                        this.sendWs(payload, false);
                     };
 
                     this.pingInterval = setInterval(
@@ -265,11 +278,34 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     if (ws.readyState !== WebSocket.CLOSED) ws.close(CloseReason.DuplicateConnection);
                 }
 
-                if (cmd == 510 && subCmd == 0) {
+                if (cmd == 510 && subCmd == 1) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { msgs } = parsedData;
                     const responseMsgs = msgs.map((msg: any) => new UserMessage(this.ctx.uid, msg));
                     this.emit("old_messages", responseMsgs);
+                }
+
+                if (cmd == 511 && subCmd == 1) {
+                    const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    const { groupMsgs } = parsedData;
+                    const responseMsgs = groupMsgs.map((msg: any) => new GroupMessage(this.ctx.uid, msg));
+                    this.emit("old_messages", responseMsgs);
+                }
+
+                if (cmd == 602 && subCmd == 0) {
+                    const parsedData = JSON.parse(parsed.data);
+                    const { actions } = parsedData?.data;
+
+                    for (const action of actions) {
+                        const data = JSON.parse(action.data);
+                        if (action.act_type == "typing") {
+                            const typingObject = new UserTyping(data);
+                            this.emit("typing", typingObject);
+                        } else if (action.act_type == "gtyping") {
+                            const typingObject = new GroupTyping(data);
+                            this.emit("typing", typingObject);
+                        }
+                    }
                 }
             } catch (error) {
                 this.onErrorCallback(error);
@@ -285,8 +321,10 @@ export class Listener extends EventEmitter<ListenerEvents> {
         }
     }
 
-    public sendWs(payload: WsPayload) {
+    public sendWs(payload: WsPayload, requireId: boolean = true) {
         if (this.ws) {
+            if (requireId) payload.data["req_id"] = `req_${this.id++}`;
+
             const encodedData = new TextEncoder().encode(JSON.stringify(payload.data));
             const dataLength = encodedData.length;
 
@@ -308,12 +346,12 @@ export class Listener extends EventEmitter<ListenerEvents> {
      *
      * @param lastMsgId
      */
-    public requestOldMessages(lastMsgId: string | null = null) {
+    public requestOldMessages(threadType: ThreadType, lastMsgId: string | null = null) {
         const payload = {
             version: 1,
-            cmd: 510,
-            subCmd: 0,
-            data: { first: true, reqId: "req_0", lastId: lastMsgId, preIds: [] },
+            cmd: threadType === ThreadType.User ? 510 : 511,
+            subCmd: 1,
+            data: { first: true, lastId: lastMsgId, preIds: [] },
         };
         this.sendWs(payload);
     }
