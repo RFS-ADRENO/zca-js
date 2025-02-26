@@ -297,13 +297,15 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     const { actions } = parsedData?.data;
 
                     for (const action of actions) {
-                        const data = JSON.parse(action.data);
+                        const data = JSON.parse(`{${action.data}}`);
                         if (action.act_type == "typing") {
-                            const typingObject = new UserTyping(data);
-                            this.emit("typing", typingObject);
-                        } else if (action.act_type == "gtyping") {
-                            const typingObject = new GroupTyping(data);
-                            this.emit("typing", typingObject);
+                            if (action.act == "typing") {
+                                const typingObject = new UserTyping(data);
+                                this.emit("typing", typingObject);
+                            } else if (action.act == "gtyping") {
+                                const typingObject = new GroupTyping(data);
+                                this.emit("typing", typingObject);
+                            }
                         }
                     }
                 }
