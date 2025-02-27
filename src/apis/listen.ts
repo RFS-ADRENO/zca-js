@@ -303,6 +303,9 @@ export class Listener extends EventEmitter<ListenerEvents> {
                                 const typingObject = new UserTyping(data);
                                 this.emit("typing", typingObject);
                             } else if (action.act == "gtyping") {
+                                // 26/02/2025
+                                // For a group with only two people, Zalo doesn't send a typing event.
+
                                 const typingObject = new GroupTyping(data);
                                 this.emit("typing", typingObject);
                             }
