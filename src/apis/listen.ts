@@ -293,8 +293,8 @@ export class Listener extends EventEmitter<ListenerEvents> {
                 }
 
                 if (cmd == 602 && subCmd == 0) {
-                    const parsedData = JSON.parse(parsed.data);
-                    const { actions } = parsedData?.data;
+                    const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    const { actions } = parsedData;
 
                     for (const action of actions) {
                         const data = JSON.parse(`{${action.data}}`);
