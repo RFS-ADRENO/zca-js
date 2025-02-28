@@ -10,6 +10,7 @@ import toughCookie from "tough-cookie";
 import { isContextSession, type ContextSession, type ContextBase } from "./context.js";
 import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { GroupEventType } from "./models/GroupEvent.js";
+import { FriendEventType } from "./models/FriendEvent.js";
 import type { API } from "./zalo.js";
 
 export const isBun = typeof Bun !== "undefined";
@@ -526,6 +527,26 @@ export function getGroupEventType(act: string) {
     if (act == "remind_topic") return GroupEventType.REMIND_TOPIC;
 
     return GroupEventType.UNKNOWN;
+}
+
+export function getFriendEventType(act: string) {
+    if (act == "add") return FriendEventType.ADD;
+    if (act == "remove") return FriendEventType.REMOVE;
+    if (act == "block") return FriendEventType.BLOCK;
+    if (act == "unblock") return FriendEventType.UNBLOCK;
+    if (act == "block_call") return FriendEventType.BLOCK_CALL;
+    if (act == "unblock_call") return FriendEventType.UNBLOCK_CALL;
+
+    if (act == "req_v2") return FriendEventType.REQUEST;
+    if (act == "reject") return FriendEventType.REJECT_REQUEST;
+    if (act == "undo_req") return FriendEventType.UNDO_REQUEST;
+
+    if (act == "seen_fr_req") return FriendEventType.SEEN_FRIEND_REQUEST;
+
+    if (act == "pin_unpin") return FriendEventType.PIN_UNPIN;
+    if (act == "pin_create") return FriendEventType.PIN_CREATE;
+
+    return FriendEventType.UNKNOWN;
 }
 
 type ZaloResponse<T> = {

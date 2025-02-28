@@ -1,6 +1,7 @@
 import EventEmitter from "events";
 import WebSocket from "ws";
 import { type GroupEvent, initializeGroupEvent, type TGroupEvent } from "../models/GroupEvent.js";
+import { type FriendEvent, initializeFriendEvent, type TFriendEvent } from "../models/FriendEvent.js";
 import {
     GroupMessage,
     UserMessage,
@@ -12,7 +13,7 @@ import {
     Typing,
     UserTyping,
 } from "../models/index.js";
-import { decodeEventData, getGroupEventType, logger } from "../utils.js";
+import { decodeEventData, getFriendEventType, getGroupEventType, logger } from "../utils.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import type { ContextSession } from "../context.js";
 
@@ -45,6 +46,7 @@ interface ListenerEvents {
     reaction: [reaction: Reaction];
     upload_attachment: [data: UploadEventData];
     undo: [data: Undo];
+    friend_event: [data: FriendEvent];
     group_event: [data: GroupEvent];
     cipher_key: [key: string];
 }
@@ -246,6 +248,35 @@ export class Listener extends EventEmitter<ListenerEvents> {
                             );
                             if (groupEvent.isSelf && !this.selfListen) continue;
                             this.emit("group_event", groupEvent);
+                        } else if (control.content.act_type == "fr") {
+                            // 28/02/2025
+                            // Zalo send both req and req_v2 event when user send friend request
+                            // Zalo itself doesn't seem to handle this properly either, so we gonna ignore the req event
+
+                            if (control.content.act == "req") continue;
+
+                            const friendEventData: TFriendEvent =
+                                typeof control.content.data == "string"
+                                    ? JSON.parse(control.content.data)
+                                    : control.content.data;
+
+                            // Handles the case when act is "pin_create" and params is a string
+                            if (
+                                typeof friendEventData == "object" &&
+                                "topic" in friendEventData &&
+                                typeof friendEventData.topic == "object" &&
+                                "params" in friendEventData.topic
+                            ) {
+                                friendEventData.topic.params = JSON.parse(`${friendEventData.topic.params}`);
+                            }
+
+                            const friendEvent = initializeFriendEvent(
+                                this.ctx.uid,
+                                friendEventData,
+                                getFriendEventType(control.content.act),
+                            );
+                            if (friendEvent.isSelf && !this.selfListen) continue;
+                            this.emit("friend_event", friendEvent);
                         }
                     }
                 }
