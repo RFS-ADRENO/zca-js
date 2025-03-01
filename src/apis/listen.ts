@@ -16,6 +16,8 @@ import {
 import { decodeEventData, getFriendEventType, getGroupEventType, logger } from "../utils.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import type { ContextSession } from "../context.js";
+import { type SeenMessage, GroupSeenMessage, UserSeenMessage } from "../models/SeenMessage.js";
+import { type DeliveredMessage, UserDeliveredMessage, GroupDeliveredMessage } from "../models/DeliveredMessage.js";
 
 type UploadEventData = {
     fileUrl: string;
@@ -43,6 +45,8 @@ interface ListenerEvents {
     typing: [typing: Typing];
     message: [message: Message];
     old_messages: [messages: Message[]];
+    seen_messages: [messages: SeenMessage[]];
+    delivered_messages: [messages: DeliveredMessage[]];
     reaction: [reaction: Reaction];
     upload_attachment: [data: UploadEventData];
     undo: [data: Undo];
@@ -341,6 +345,43 @@ export class Listener extends EventEmitter<ListenerEvents> {
                                 this.emit("typing", typingObject);
                             }
                         }
+                    }
+                }
+
+                if (cmd == 502 && subCmd == 0) {
+                    const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    const { delivereds: deliveredMsgs, seens: seenMsgs } = parsedData;
+
+                    if (Array.isArray(deliveredMsgs) && deliveredMsgs.length > 0) {
+                        let deliveredObjects = deliveredMsgs.map(
+                            (delivered: any) => new UserDeliveredMessage(delivered),
+                        );
+                        this.emit("delivered_messages", deliveredObjects);
+                    }
+
+                    if (Array.isArray(seenMsgs) && seenMsgs.length > 0) {
+                        let seenObjects = seenMsgs.map((seen: any) => new UserSeenMessage(seen));
+                        this.emit("seen_messages", seenObjects);
+                    }
+                }
+
+                if (cmd == 522 && subCmd == 0) {
+                    const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    const { delivereds: deliveredMsgs, groupSeens: groupSeenMsgs } = parsedData;
+
+                    if (Array.isArray(deliveredMsgs) && deliveredMsgs.length > 0) {
+                        let deliveredObjects = deliveredMsgs.map(
+                            (delivered: any) => new GroupDeliveredMessage(this.ctx.uid, delivered),
+                        );
+                        if (!this.selfListen)
+                            deliveredObjects = deliveredObjects.filter((delivered) => !delivered.isSelf);
+                        this.emit("delivered_messages", deliveredObjects);
+                    }
+
+                    if (Array.isArray(groupSeenMsgs) && groupSeenMsgs.length > 0) {
+                        let seenObjects = groupSeenMsgs.map((seen: any) => new GroupSeenMessage(this.ctx.uid, seen));
+                        if (!this.selfListen) seenObjects = seenObjects.filter((seen) => !seen.isSelf);
+                        this.emit("seen_messages", seenObjects);
                     }
                 }
             } catch (error) {

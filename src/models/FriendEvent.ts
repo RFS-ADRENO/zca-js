@@ -1,5 +1,3 @@
-import { ZaloApiError } from "../Errors/ZaloApiError.js";
-
 export enum FriendEventType {
     ADD,
     REMOVE,

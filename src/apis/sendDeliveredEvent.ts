@@ -46,10 +46,15 @@ export const sendDeliveredEventFactory = apiFactory<SendDeliveredEventResponse>(
      *
      * @param type Messages type (User or Group)
      * @param messages List of messages to send delivered event
+     * @param isSeen Whether the message is seen or not (default: false)
      *
      * @throws ZaloApiError
      */
-    return async function sendDeliveredEvent(type: ThreadType, messages: DeliveredEventMessageParams[]) {
+    return async function sendDeliveredEvent(
+        type: ThreadType,
+        messages: DeliveredEventMessageParams[],
+        isSeen: boolean = false,
+    ) {
         if (!type && type !== 0) throw new ZaloApiError("Missing type");
         if (!messages || !Array.isArray(messages))
             throw new ZaloApiError("Messages are missing or not in a valid array format.");
@@ -64,7 +69,7 @@ export const sendDeliveredEventFactory = apiFactory<SendDeliveredEventResponse>(
             throw new ZaloApiError("All messages must have the same idTo for Group thread");
 
         const msgInfos: MsgInfos = {
-            seen: 0,
+            seen: isSeen ? 1 : 0,
             data: messages.map((msg) => ({
                 cmi: msg.cliMsgId,
                 gmi: msg.msgId,
