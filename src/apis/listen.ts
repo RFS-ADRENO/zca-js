@@ -16,6 +16,7 @@ export type OnMessageCallback = (message: Message) => any;
 export enum CloseReason {
     ManualClosure = 1000,
     DuplicateConnection = 3000,
+    KickConnection = 3003
 }
 
 interface ListenerEvents {
