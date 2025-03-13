@@ -117,3 +117,5 @@ export type ContextSession = AppContextBase & AppContextExtended & { secretKey: 
 export function isContextSession(ctx: ContextBase): ctx is ContextSession {
     return !!ctx.secretKey;
 }
+
+export const MAX_MESSAGES_PER_SEND = 50;

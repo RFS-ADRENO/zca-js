@@ -1,14 +1,34 @@
 import EventEmitter from "events";
 import WebSocket from "ws";
-import { type GroupEvent, initializeGroupEvent, TGroupEvent } from "../models/GroupEvent.js";
-import { GroupMessage, UserMessage, Message, Reaction, Undo } from "../models/index.js";
-import { decodeEventData, getGroupEventType, logger } from "../utils.js";
+import { type GroupEvent, initializeGroupEvent, type TGroupEvent } from "../models/GroupEvent.js";
+import { type FriendEvent, initializeFriendEvent, type TFriendEvent } from "../models/FriendEvent.js";
+import {
+    GroupMessage,
+    UserMessage,
+    Message,
+    Reaction,
+    Undo,
+    ThreadType,
+    GroupTyping,
+    Typing,
+    UserTyping,
+} from "../models/index.js";
+import { decodeEventData, getFriendEventType, getGroupEventType, logger } from "../utils.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import type { ContextSession } from "../context.js";
+import { type SeenMessage, GroupSeenMessage, UserSeenMessage } from "../models/SeenMessage.js";
+import { type DeliveredMessage, UserDeliveredMessage, GroupDeliveredMessage } from "../models/DeliveredMessage.js";
 
 type UploadEventData = {
     fileUrl: string;
     fileId: string;
+};
+
+export type WsPayload<T = Record<string, unknown>> = {
+    version: number;
+    cmd: number;
+    subCmd: number;
+    data: T;
 };
 
 export type OnMessageCallback = (message: Message) => any;
@@ -23,10 +43,15 @@ interface ListenerEvents {
     connected: [];
     closed: [reason: CloseReason];
     error: [error: any];
+    typing: [typing: Typing];
     message: [message: Message];
+    old_messages: [messages: Message[]];
+    seen_messages: [messages: SeenMessage[]];
+    delivered_messages: [messages: DeliveredMessage[]];
     reaction: [reaction: Reaction];
     upload_attachment: [data: UploadEventData];
     undo: [data: Undo];
+    friend_event: [data: FriendEvent];
     group_event: [data: GroupEvent];
     cipher_key: [key: string];
 }
@@ -46,6 +71,8 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
     private selfListen;
     private pingInterval?: Timer;
+
+    private id = 0;
 
     constructor(
         private ctx: ContextSession,
@@ -147,19 +174,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                             subCmd: 1,
                             data: { eventId: Date.now() },
                         };
-                        const encodedData = new TextEncoder().encode(JSON.stringify(payload.data));
-                        const dataLength = encodedData.length;
-
-                        const data = new DataView(Buffer.alloc(4 + dataLength).buffer);
-                        data.setUint8(0, payload.version);
-                        data.setInt32(1, payload.cmd, true);
-                        data.setInt8(3, payload.subCmd);
-
-                        encodedData.forEach((e, i) => {
-                            data.setUint8(4 + i, e);
-                        });
-
-                        ws.send(data);
+                        this.sendWs(payload, false);
                     };
 
                     this.pingInterval = setInterval(
@@ -238,6 +253,35 @@ export class Listener extends EventEmitter<ListenerEvents> {
                             );
                             if (groupEvent.isSelf && !this.selfListen) continue;
                             this.emit("group_event", groupEvent);
+                        } else if (control.content.act_type == "fr") {
+                            // 28/02/2025
+                            // Zalo send both req and req_v2 event when user send friend request
+                            // Zalo itself doesn't seem to handle this properly either, so we gonna ignore the req event
+
+                            if (control.content.act == "req") continue;
+
+                            const friendEventData: TFriendEvent =
+                                typeof control.content.data == "string"
+                                    ? JSON.parse(control.content.data)
+                                    : control.content.data;
+
+                            // Handles the case when act is "pin_create" and params is a string
+                            if (
+                                typeof friendEventData == "object" &&
+                                "topic" in friendEventData &&
+                                typeof friendEventData.topic == "object" &&
+                                "params" in friendEventData.topic
+                            ) {
+                                friendEventData.topic.params = JSON.parse(`${friendEventData.topic.params}`);
+                            }
+
+                            const friendEvent = initializeFriendEvent(
+                                this.ctx.uid,
+                                friendEventData,
+                                getFriendEventType(control.content.act),
+                            );
+                            if (friendEvent.isSelf && !this.selfListen) continue;
+                            this.emit("friend_event", friendEvent);
                         }
                     }
                 }
@@ -269,6 +313,78 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     console.log();
                     if (ws.readyState !== WebSocket.CLOSED) ws.close(CloseReason.DuplicateConnection);
                 }
+
+                if (cmd == 510 && subCmd == 1) {
+                    const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    const { msgs } = parsedData;
+                    const responseMsgs = msgs.map((msg: any) => new UserMessage(this.ctx.uid, msg));
+                    this.emit("old_messages", responseMsgs);
+                }
+
+                if (cmd == 511 && subCmd == 1) {
+                    const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    const { groupMsgs } = parsedData;
+                    const responseMsgs = groupMsgs.map((msg: any) => new GroupMessage(this.ctx.uid, msg));
+                    this.emit("old_messages", responseMsgs);
+                }
+
+                if (cmd == 602 && subCmd == 0) {
+                    const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    const { actions } = parsedData;
+
+                    for (const action of actions) {
+                        const data = JSON.parse(`{${action.data}}`);
+                        if (action.act_type == "typing") {
+                            if (action.act == "typing") {
+                                const typingObject = new UserTyping(data);
+                                this.emit("typing", typingObject);
+                            } else if (action.act == "gtyping") {
+                                // 26/02/2025
+                                // For a group with only two people, Zalo doesn't send a typing event.
+
+                                const typingObject = new GroupTyping(data);
+                                this.emit("typing", typingObject);
+                            }
+                        }
+                    }
+                }
+
+                if (cmd == 502 && subCmd == 0) {
+                    const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    const { delivereds: deliveredMsgs, seens: seenMsgs } = parsedData;
+
+                    if (Array.isArray(deliveredMsgs) && deliveredMsgs.length > 0) {
+                        let deliveredObjects = deliveredMsgs.map(
+                            (delivered: any) => new UserDeliveredMessage(delivered),
+                        );
+                        this.emit("delivered_messages", deliveredObjects);
+                    }
+
+                    if (Array.isArray(seenMsgs) && seenMsgs.length > 0) {
+                        let seenObjects = seenMsgs.map((seen: any) => new UserSeenMessage(seen));
+                        this.emit("seen_messages", seenObjects);
+                    }
+                }
+
+                if (cmd == 522 && subCmd == 0) {
+                    const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    const { delivereds: deliveredMsgs, groupSeens: groupSeenMsgs } = parsedData;
+
+                    if (Array.isArray(deliveredMsgs) && deliveredMsgs.length > 0) {
+                        let deliveredObjects = deliveredMsgs.map(
+                            (delivered: any) => new GroupDeliveredMessage(this.ctx.uid, delivered),
+                        );
+                        if (!this.selfListen)
+                            deliveredObjects = deliveredObjects.filter((delivered) => !delivered.isSelf);
+                        this.emit("delivered_messages", deliveredObjects);
+                    }
+
+                    if (Array.isArray(groupSeenMsgs) && groupSeenMsgs.length > 0) {
+                        let seenObjects = groupSeenMsgs.map((seen: any) => new GroupSeenMessage(this.ctx.uid, seen));
+                        if (!this.selfListen) seenObjects = seenObjects.filter((seen) => !seen.isSelf);
+                        this.emit("seen_messages", seenObjects);
+                    }
+                }
             } catch (error) {
                 this.onErrorCallback(error);
                 this.emit("error", error);
@@ -281,6 +397,41 @@ export class Listener extends EventEmitter<ListenerEvents> {
             this.ws.close(CloseReason.ManualClosure);
             this.ws = null;
         }
+    }
+
+    public sendWs(payload: WsPayload, requireId: boolean = true) {
+        if (this.ws) {
+            if (requireId) payload.data["req_id"] = `req_${this.id++}`;
+
+            const encodedData = new TextEncoder().encode(JSON.stringify(payload.data));
+            const dataLength = encodedData.length;
+
+            const data = new DataView(Buffer.alloc(4 + dataLength).buffer);
+            data.setUint8(0, payload.version);
+            data.setInt32(1, payload.cmd, true);
+            data.setInt8(3, payload.subCmd);
+
+            encodedData.forEach((e, i) => {
+                data.setUint8(4 + i, e);
+            });
+
+            this.ws.send(data);
+        }
+    }
+
+    /**
+     * Request old messages
+     *
+     * @param lastMsgId
+     */
+    public requestOldMessages(threadType: ThreadType, lastMsgId: string | null = null) {
+        const payload = {
+            version: 1,
+            cmd: threadType === ThreadType.User ? 510 : 511,
+            subCmd: 1,
+            data: { first: true, lastId: lastMsgId, preIds: [] },
+        };
+        this.sendWs(payload);
     }
 }
 

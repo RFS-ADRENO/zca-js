@@ -43,20 +43,23 @@ async function main() {
 
 function prompt() {
     console.log();
-    rl.question("Bạn muốn giải mã hóa loại nào? \x1b[32m[1] HTTP(s)\x1b[0m, \x1b[38;5;165m[2] Websocket\x1b[0m, \x1b[38;5;15m[3] thoát?\x1b[0m: ", (answer) => {
-        if (answer == "1") {
-            console.clear();
-             console.log("\x1b[32m[ HTTP(s) ] Bắt đầu khởi động\x1b[0m");
-            decodeHTTP();
-        } else if (answer == "2") {
-            console.clear();
-              console.log("\x1b[38;5;165m[ WEBSOCKET ] Bắt đầu khởi động\x1b[0m")
-            decodeWebsocket();
-        } else if (answer == "3") exit();
-        else {
-            prompt();
-        }
-    });
+    rl.question(
+        "Bạn muốn giải mã hóa loại nào? \x1b[32m[1] HTTP(s)\x1b[0m, \x1b[38;5;165m[2] Websocket\x1b[0m, \x1b[38;5;15m[3] thoát?\x1b[0m: ",
+        (answer) => {
+            if (answer == "1") {
+                console.clear();
+                console.log("\x1b[32m[ HTTP(s) ] Bắt đầu khởi động\x1b[0m");
+                decodeHTTP();
+            } else if (answer == "2") {
+                console.clear();
+                console.log("\x1b[38;5;165m[ WEBSOCKET ] Bắt đầu khởi động\x1b[0m");
+                decodeWebsocket();
+            } else if (answer == "3") exit();
+            else {
+                prompt();
+            }
+        },
+    );
 }
 
 function decodeHTTP() {
@@ -97,31 +100,34 @@ async function decodeWebsocket() {
         cipher_key = await promptForCipherKey();
     }
 
-    rl.question("\n\x1b[38;5;165m[ WEBSOCKET ] Dán đoạn dữ liệu bị mã hóa hoặc gõ exit để thoát:\x1b[0m\n\n", async (encoded) => {
-        if (encoded.length == 0) return decodeWebsocket();
-        if (encoded == "exit") return prompt();
+    rl.question(
+        "\n\x1b[38;5;165m[ WEBSOCKET ] Dán đoạn dữ liệu bị mã hóa hoặc gõ exit để thoát:\x1b[0m\n\n",
+        async (encoded) => {
+            if (encoded.length == 0) return decodeWebsocket();
+            if (encoded == "exit") return prompt();
 
-        try {
-            const decoded = await decodeEventData({ data: encoded }, cipher_key);
-            if (decoded == null) {
+            try {
+                const decoded = await decodeEventData(JSON.parse(encoded), cipher_key);
+                if (decoded == null) {
+                    cannotDecodeAlert();
+                    return decodeWebsocket();
+                }
+
+                const parsed = JSON.stringify(decoded, null, 2);
+
+                console.log();
+                console.log("\x1b[38;5;165m=========== WEBSOCKET ===========\x1b[0m");
+                console.log(parsed);
+                console.log("\x1b[38;5;165m=================================\x1b[0m");
+                console.log();
+
+                return decodeWebsocket();
+            } catch {
                 cannotDecodeAlert();
                 return decodeWebsocket();
             }
-
-            const parsed = JSON.stringify(decoded, null, 2);
-
-            console.log();
-            console.log("\x1b[38;5;165m=========== WEBSOCKET ===========\x1b[0m");
-            console.log(parsed);
-            console.log("\x1b[38;5;165m=================================\x1b[0m");
-            console.log();
-
-            return decodeWebsocket();
-        } catch {
-            cannotDecodeAlert();
-            return decodeWebsocket();
-        }
-    });
+        },
+    );
 }
 
 function promptForFreshKey() {

@@ -9,8 +9,8 @@ export type { AddReactionResponse } from "./apis/addReaction.js";
 export type { AddUserToGroupResponse } from "./apis/addUserToGroup.js";
 export type { BlockUserResponse } from "./apis/blockUser.js";
 export type { BlockViewFeedResponse } from "./apis/blockViewFeed.js";
-export type { ChangeAccountAvatarResponse } from "./apis/changeAccountAvatar.js"
-export type { ChangeAccountSettingResponse } from "./apis/changeAccountSetting.js"
+export type { ChangeAccountAvatarResponse } from "./apis/changeAccountAvatar.js";
+export type { ChangeAccountSettingResponse } from "./apis/changeAccountSetting.js";
 export type { ChangeGroupAvatarResponse } from "./apis/changeGroupAvatar.js";
 export type { ChangeGroupNameResponse } from "./apis/changeGroupName.js";
 export type { ChangeGroupOwnerResponse } from "./apis/changeGroupOwner.js";
@@ -35,10 +35,13 @@ export type { PinConversationsResponse } from "./apis/pinConversations.js";
 export type { RemoveGroupDeputyResponse } from "./apis/removeGroupDeputy.js";
 export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js";
 export type { SendCardResponse, SendCardOptions } from "./apis/sendCard.js";
+export type { SendDeliveredEventResponse, DeliveredEventMessageParams } from "./apis/sendDeliveredEvent.js";
 export type { SendFriendRequestResponse } from "./apis/sendFriendRequest.js";
 export type { Mention, MessageContent, SendMessageResponse, SendMessageResult, Style } from "./apis/sendMessage.js";
 export type { SendReportResponse, SendReportOptions } from "./apis/sendReport.js";
 export type { SendStickerResponse } from "./apis/sendSticker.js";
+export type { SendSeenEventResponse, SeenEventMessageParams } from "./apis/sendSeenEvent.js";
+export type { SendTypingEventResponse, SendTypingEventOptions } from "./apis/sendTypingEvent.js";
 export type { SendVideoResponse, SendVideoOptions } from "./apis/sendVideo.js";
 export type { SendVoiceResponse, SendVoiceOptions } from "./apis/sendVoice.js";
 export type { UnBlockUserResponse } from "./apis/unblockUser.js";

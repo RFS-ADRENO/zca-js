@@ -10,6 +10,7 @@ import toughCookie from "tough-cookie";
 import { isContextSession, type ContextSession, type ContextBase } from "./context.js";
 import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { GroupEventType } from "./models/GroupEvent.js";
+import { FriendEventType } from "./models/FriendEvent.js";
 import type { API } from "./zalo.js";
 
 export const isBun = typeof Bun !== "undefined";
@@ -42,7 +43,7 @@ export function getSignKey(type: string, params: Record<string, any>) {
  * @param params
  * @param apiVersion automatically add zalo api version to url params
  * @returns
- * 
+ *
  */
 export function makeURL(
     ctx: ContextBase,
@@ -338,30 +339,39 @@ export async function getGifMetaData(filePath: string) {
 }
 
 export async function decodeEventData(parsed: any, cipherKey?: string) {
-    if (!cipherKey) return;
+    const rawData = parsed.data;
+    const encryptType: 0 | 1 | 2 | 3 = parsed.encrypt;
 
-    const eventData = parsed.data;
-    const decodedEventDataBuffer = decodeBase64ToBuffer(decodeURIComponent(eventData));
+    if (encryptType === 0) return JSON.parse(rawData);
 
-    if (decodedEventDataBuffer.length >= 48) {
-        const algorithm = {
-            name: "AES-GCM",
-            iv: decodedEventDataBuffer.subarray(0, 16),
-            tagLength: 128,
-            additionalData: decodedEventDataBuffer.subarray(16, 32),
-        };
-        const dataSource = decodedEventDataBuffer.subarray(32);
+    const decodedBuffer = decodeBase64ToBuffer(encryptType === 1 ? rawData : decodeURIComponent(rawData));
 
-        const cryptoKey = await crypto.subtle.importKey("raw", decodeBase64ToBuffer(cipherKey), algorithm, false, [
-            "decrypt",
-        ]);
-        const decryptedData = await crypto.subtle.decrypt(algorithm, cryptoKey, dataSource);
-        const decompressedData = pako.inflate(decryptedData);
-        const decodedData = decodeUnit8Array(decompressedData);
+    let decryptedBuffer: ArrayBuffer | Buffer = decodedBuffer;
+    if (encryptType !== 1) {
+        if (cipherKey && decodedBuffer.length >= 48) {
+            const algorithm = {
+                name: "AES-GCM",
+                iv: decodedBuffer.subarray(0, 16),
+                tagLength: 128,
+                additionalData: decodedBuffer.subarray(16, 32),
+            };
+            const dataSource = decodedBuffer.subarray(32);
 
-        if (!decodedData) return;
-        return JSON.parse(decodedData);
+            const cryptoKey = await crypto.subtle.importKey("raw", decodeBase64ToBuffer(cipherKey), algorithm, false, [
+                "decrypt",
+            ]);
+            decryptedBuffer = await crypto.subtle.decrypt(algorithm, cryptoKey, dataSource);
+        } else {
+            throw new ZaloApiError("Invalid data length or missing cipher key");
+        }
     }
+
+    const decompressedBuffer =
+        encryptType === 3 ? new Uint8Array(decryptedBuffer) : pako.inflate(decryptedBuffer as ArrayBuffer);
+    const decodedData = decodeUnit8Array(decompressedBuffer);
+
+    if (!decodedData) return;
+    return JSON.parse(decodedData);
 }
 
 export function getMd5LargeFileObject(filePath: string, fileSize: number) {
@@ -517,6 +527,26 @@ export function getGroupEventType(act: string) {
     if (act == "remind_topic") return GroupEventType.REMIND_TOPIC;
 
     return GroupEventType.UNKNOWN;
+}
+
+export function getFriendEventType(act: string) {
+    if (act == "add") return FriendEventType.ADD;
+    if (act == "remove") return FriendEventType.REMOVE;
+    if (act == "block") return FriendEventType.BLOCK;
+    if (act == "unblock") return FriendEventType.UNBLOCK;
+    if (act == "block_call") return FriendEventType.BLOCK_CALL;
+    if (act == "unblock_call") return FriendEventType.UNBLOCK_CALL;
+
+    if (act == "req_v2") return FriendEventType.REQUEST;
+    if (act == "reject") return FriendEventType.REJECT_REQUEST;
+    if (act == "undo_req") return FriendEventType.UNDO_REQUEST;
+
+    if (act == "seen_fr_req") return FriendEventType.SEEN_FRIEND_REQUEST;
+
+    if (act == "pin_unpin") return FriendEventType.PIN_UNPIN;
+    if (act == "pin_create") return FriendEventType.PIN_CREATE;
+
+    return FriendEventType.UNKNOWN;
 }
 
 type ZaloResponse<T> = {
