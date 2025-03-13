@@ -287,8 +287,10 @@ export async function request(ctx: ContextBase, url: string, options?: RequestIn
     };
 
     const response = await ctx.options.polyfill(url, _options);
-    if (response.headers.has("set-cookie") && !raw) {
-        for (const cookie of response.headers.getSetCookie()) {
+    const setCookieRaw = response.headers.get("set-cookie");
+    if (setCookieRaw && !raw) {
+        const splitCookies = setCookieRaw.split(", ");
+        for (const cookie of splitCookies) {
             const parsed = toughCookie.Cookie.parse(cookie);
             try {
                 if (parsed) await ctx.cookie.setCookie(parsed, origin);
