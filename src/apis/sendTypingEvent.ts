@@ -28,7 +28,7 @@ export const sendTypingEventFactory = apiFactory<SendTypingEventResponse>()((api
     return async function sendTypingEvent<T extends ThreadType>(id: string, options: SendTypingEventOptions<T>) {
         if (!id) throw new ZaloApiError("Missing id");
         if (!options) throw new ZaloApiError("Missing options");
-        if (!options.type) throw new ZaloApiError("Missing options type");
+        if (options.type == null || options.type == undefined) throw new ZaloApiError("Missing options type");
 
         const { type } = options;
         if (type == ThreadType.User && !("destType" in options))
