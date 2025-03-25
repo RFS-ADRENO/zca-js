@@ -5,7 +5,7 @@ export * from "./zalo.js";
 // API RESPONSE TYPES
 export type { AcceptFriendRequestResponse } from "./apis/acceptFriendRequest.js";
 export type { AddGroupDeputyResponse } from "./apis/addGroupDeputy.js";
-export type { AddReactionResponse } from "./apis/addReaction.js";
+export type { AddReactionResponse, CustomReaction } from "./apis/addReaction.js";
 export type { AddUserToGroupResponse } from "./apis/addUserToGroup.js";
 export type { BlockUserResponse } from "./apis/blockUser.js";
 export type { BlockViewFeedResponse } from "./apis/blockViewFeed.js";
