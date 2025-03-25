@@ -36,7 +36,7 @@ export type OnMessageCallback = (message: Message) => any;
 export enum CloseReason {
     ManualClosure = 1000,
     DuplicateConnection = 3000,
-    KickConnection = 3003
+    KickConnection = 3003,
 }
 
 interface ListenerEvents {
@@ -49,6 +49,7 @@ interface ListenerEvents {
     seen_messages: [messages: SeenMessage[]];
     delivered_messages: [messages: DeliveredMessage[]];
     reaction: [reaction: Reaction];
+    old_reactions: [reactions: Reaction[]];
     upload_attachment: [data: UploadEventData];
     undo: [data: Undo];
     friend_event: [data: FriendEvent];
@@ -307,11 +308,14 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     }
                 }
 
-                if (version == 1 && cmd == 3000 && subCmd == 0) {
-                    console.log();
-                    logger(this.ctx).error("Another connection is opened, closing this one");
-                    console.log();
-                    if (ws.readyState !== WebSocket.CLOSED) ws.close(CloseReason.DuplicateConnection);
+                if (cmd == 610 || cmd == 611) {
+                    const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    const isGroup = cmd == 611;
+
+                    const reacts = parsedData[isGroup ? "reactGroups" : "reacts"] as any[];
+                    const reactionObjects = reacts.map((react: any) => new Reaction(this.ctx.uid, react, isGroup));
+
+                    this.emit("old_reactions", reactionObjects);
                 }
 
                 if (cmd == 510 && subCmd == 1) {
@@ -385,6 +389,13 @@ export class Listener extends EventEmitter<ListenerEvents> {
                         this.emit("seen_messages", seenObjects);
                     }
                 }
+
+                if (version == 1 && cmd == 3000 && subCmd == 0) {
+                    console.log();
+                    logger(this.ctx).error("Another connection is opened, closing this one");
+                    console.log();
+                    if (ws.readyState !== WebSocket.CLOSED) ws.close(CloseReason.DuplicateConnection);
+                }
             } catch (error) {
                 this.onErrorCallback(error);
                 this.emit("error", error);
@@ -428,6 +439,21 @@ export class Listener extends EventEmitter<ListenerEvents> {
         const payload = {
             version: 1,
             cmd: threadType === ThreadType.User ? 510 : 511,
+            subCmd: 1,
+            data: { first: true, lastId: lastMsgId, preIds: [] },
+        };
+        this.sendWs(payload);
+    }
+
+    /**
+     * Request old messages
+     *
+     * @param lastMsgId
+     */
+    public requestOldReactions(threadType: ThreadType, lastMsgId: string | null = null) {
+        const payload = {
+            version: 1,
+            cmd: threadType === ThreadType.User ? 610 : 611,
             subCmd: 1,
             data: { first: true, lastId: lastMsgId, preIds: [] },
         };
