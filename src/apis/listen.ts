@@ -278,7 +278,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
                             const friendEvent = initializeFriendEvent(
                                 this.ctx.uid,
-                                friendEventData,
+                                typeof friendEventData == "number" ? control.content.data : friendEventData,
                                 getFriendEventType(control.content.act),
                             );
                             if (friendEvent.isSelf && !this.selfListen) continue;
