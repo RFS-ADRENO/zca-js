@@ -26,7 +26,7 @@ bun install zca-js # or npm install zca-js
 
 ## Documentation
 
-See [API Documentation](https://zca.tdung.co/) for more details.
+See [API Documentation](https://tdung.gitbook.io/zca-js) for more details.
 
 ## Basic Usages
 
