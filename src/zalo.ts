@@ -55,6 +55,7 @@ import { undoFactory } from "./apis/undo.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { checkUpdate } from "./update.js";
+import { keepAliveFactory } from "./apis/keepAlive.js";
 
 export type Cookie = {
     domain: string;
@@ -229,6 +230,7 @@ export class API {
     public getStickers: ReturnType<typeof getStickersFactory>;
     public getStickersDetail: ReturnType<typeof getStickersDetailFactory>;
     public getUserInfo: ReturnType<typeof getUserInfoFactory>;
+    public keepAlive: ReturnType<typeof keepAliveFactory>;
     public lockPoll: ReturnType<typeof lockPollFactory>;
     public pinConversations: ReturnType<typeof pinConversationsFactory>;
     public removeGroupDeputy: ReturnType<typeof removeGroupDeputyFactory>;
@@ -282,6 +284,7 @@ export class API {
         this.getStickers = getStickersFactory(ctx, this);
         this.getStickersDetail = getStickersDetailFactory(ctx, this);
         this.getUserInfo = getUserInfoFactory(ctx, this);
+        this.keepAlive = keepAliveFactory(ctx, this);
         this.lockPoll = lockPollFactory(ctx, this);
         this.pinConversations = pinConversationsFactory(ctx, this);
         this.removeGroupDeputy = removeGroupDeputyFactory(ctx, this);
