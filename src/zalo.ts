@@ -1,7 +1,14 @@
 import { Listener } from "./apis/listen.js";
 import { getServerInfo, login } from "./apis/login.js";
-import { createContext, isContextSession, type ContextBase, type ContextSession, type Options } from "./context.js";
-import { generateZaloUUID, logger, makeURL } from "./utils.js";
+import {
+    createContext,
+    isContextSession,
+    type ZPWServiceMap,
+    type ContextBase,
+    type ContextSession,
+    type Options,
+} from "./context.js";
+import { generateZaloUUID, logger } from "./utils.js";
 
 import toughCookie from "tough-cookie";
 import { acceptFriendRequestFactory } from "./apis/acceptFriendRequest.js";
@@ -35,8 +42,9 @@ import { getQRFactory } from "./apis/getQR.js";
 import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
 import { getUserInfoFactory } from "./apis/getUserInfo.js";
+import { keepAliveFactory } from "./apis/keepAlive.js";
 import { lockPollFactory } from "./apis/lockPoll.js";
-import { loginQR, type LoginQRCallback, LoginQRCallbackEventType } from "./apis/loginQR.js";
+import { loginQR, LoginQRCallbackEventType, type LoginQRCallback } from "./apis/loginQR.js";
 import { pinConversationsFactory } from "./apis/pinConversations.js";
 import { removeGroupDeputyFactory } from "./apis/removeGroupDeputy.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
@@ -55,7 +63,6 @@ import { undoFactory } from "./apis/undo.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { checkUpdate } from "./update.js";
-import { keepAliveFactory } from "./apis/keepAlive.js";
 
 export type Cookie = {
     domain: string;
@@ -145,11 +152,7 @@ export class Zalo {
 
         logger(ctx).info("Logged in as", loginData.data.uid);
 
-        return new API(
-            ctx,
-            loginData.data.zpw_service_map_v3,
-            loginData.data.zpw_ws
-        );
+        return new API(ctx, loginData.data.zpw_service_map_v3, loginData.data.zpw_ws);
     }
 
     public async loginQR(
@@ -196,7 +199,7 @@ export class Zalo {
 }
 
 export class API {
-    public zpwServiceMap: Record<string, string[]>;
+    public zpwServiceMap: ZPWServiceMap;
     public listener: Listener;
 
     public acceptFriendRequest: ReturnType<typeof acceptFriendRequestFactory>;
@@ -249,7 +252,7 @@ export class API {
     public undo: ReturnType<typeof undoFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
 
-    constructor(ctx: ContextSession, zpwServiceMap: Record<string, string[]>, wsUrls: string[]) {
+    constructor(ctx: ContextSession, zpwServiceMap: ZPWServiceMap, wsUrls: string[]) {
         this.zpwServiceMap = zpwServiceMap;
         this.listener = new Listener(ctx, wsUrls);
 
