@@ -411,7 +411,7 @@ export function getMd5LargeFileObject(filePath: string, fileSize: number) {
 
 export const logger = (ctx: ContextBase) => ({
     verbose: (...args: any[]) => {
-        if (ctx.options.logging) console.log("\x1b[2m🚀 VERBOSE\x1b[0m", ...args);
+        if (ctx.options.logging) console.log("\x1b[35m🚀 VERBOSE\x1b[0m", ...args);
     },
     info: (...args: any[]) => {
         if (ctx.options.logging) console.log("\x1b[34mINFO\x1b[0m", ...args);
