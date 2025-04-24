@@ -31,7 +31,7 @@ type SocketSettings = {
         [key: string]: {
             max?: number;
             times: number[] | number;
-        }
+        };
     };
     debug: {
         enable: boolean;
@@ -82,6 +82,11 @@ export type AppContextBase = {
             [key: string]: any;
             sharefile: ShareFileSettings;
             socket: SocketSettings;
+        };
+        keepalive: {
+            alway_keepalive: number;
+            keepalive_duration: number;
+            time_deactive: number;
         };
     };
     extraVer: ExtraVer;
