@@ -147,9 +147,7 @@ export class Zalo {
         return new API(
             ctx,
             loginData.data.zpw_service_map_v3,
-            makeURL(ctx, loginData.data.zpw_ws[0], {
-                t: Date.now(),
-            }),
+            loginData.data.zpw_ws
         );
     }
 
@@ -249,9 +247,9 @@ export class API {
     public undo: ReturnType<typeof undoFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
 
-    constructor(ctx: ContextSession, zpwServiceMap: Record<string, string[]>, wsUrl: string) {
+    constructor(ctx: ContextSession, zpwServiceMap: Record<string, string[]>, wsUrls: string[]) {
         this.zpwServiceMap = zpwServiceMap;
-        this.listener = new Listener(ctx, wsUrl);
+        this.listener = new Listener(ctx, wsUrls);
 
         this.acceptFriendRequest = acceptFriendRequestFactory(ctx, this);
         this.addGroupDeputy = addGroupDeputyFactory(ctx, this);

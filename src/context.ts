@@ -25,6 +25,38 @@ type ShareFileSettings = {
     restricted_ext_file: string[];
 };
 
+type SocketSettings = {
+    rotate_error_codes: number[];
+    retries: {
+        [key: string]: {
+            max?: number;
+            times: number[] | number;
+        }
+    };
+    debug: {
+        enable: boolean;
+    };
+    ping_interval: number;
+    reset_endpoint: number;
+    queue_ctrl_actionid_map: {
+        "611_0": string;
+        "610_1": string;
+        "610_0": string;
+        "603_0": string;
+        "611_1": string;
+    };
+    close_and_retry_codes: number[];
+    max_msg_size: number;
+    enable_ctrl_socket: boolean;
+    reconnect_after_fallback: boolean;
+    enable_chat_socket: boolean;
+    submit_wss_log: boolean;
+    disable_lp: boolean;
+    offline_monitor: {
+        enable: boolean;
+    };
+};
+
 type ExtraVer = {
     phonebook: number;
     conv_label: string;
@@ -49,6 +81,7 @@ export type AppContextBase = {
         features: {
             [key: string]: any;
             sharefile: ShareFileSettings;
+            socket: SocketSettings;
         };
     };
     extraVer: ExtraVer;
