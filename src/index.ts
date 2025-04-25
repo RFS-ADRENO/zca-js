@@ -26,6 +26,7 @@ export type { FindUserResponse } from "./apis/findUser.js";
 export type { GetAllFriendsResponse } from "./apis/getAllFriends.js";
 export type { GetAllGroupsResponse } from "./apis/getAllGroups.js";
 export type { ExtraInfo, GridInfoMap, GroupInfo, GroupInfoResponse, PendingApprove } from "./apis/getGroupInfo.js";
+export type { GetGroupMembersInfoResponse, MemberProfile } from "./apis/getGroupMembersInfo.js";
 export type { GetQRResponse } from "./apis/getQR.js";
 export type { StickerDetailResponse } from "./apis/getStickersDetail.js";
 export type { PollOption, PollDetailResponse } from "./apis/getPollDetail.js";
