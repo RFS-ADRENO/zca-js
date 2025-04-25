@@ -625,30 +625,20 @@ export async function resolveResponse<T = any>(
     return result.data as T;
 }
 
+export type FactoryUtils<T> = {
+    makeURL: (baseURL: string, params?: Record<string, any>, apiVersion?: boolean) => ReturnType<typeof makeURL>;
+    encodeAES: (data: any, t?: number) => ReturnType<typeof encodeAES>;
+    request: (url: string, options?: RequestInit, raw?: boolean) => ReturnType<typeof request>;
+    logger: ReturnType<typeof logger>;
+    resolve: (
+        res: Response,
+        cb?: (result: ZaloResponse<unknown>) => T,
+        isEncrypted?: boolean,
+    ) => ReturnType<typeof resolveResponse<T>>;
+};
+
 export function apiFactory<T>() {
-    return <
-        K extends (
-            api: API,
-            ctx: ContextSession,
-            utils: {
-                makeURL: (
-                    baseURL: string,
-                    params?: Record<string, any>,
-                    apiVersion?: boolean,
-                ) => ReturnType<typeof makeURL>;
-                encodeAES: (data: any, t?: number) => ReturnType<typeof encodeAES>;
-                request: (url: string, options?: RequestInit, raw?: boolean) => ReturnType<typeof request>;
-                logger: ReturnType<typeof logger>;
-                resolve: (
-                    res: Response,
-                    cb?: (result: ZaloResponse<unknown>) => T,
-                    isEncrypted?: boolean,
-                ) => ReturnType<typeof resolveResponse<T>>;
-            },
-        ) => any,
-    >(
-        callback: K,
-    ) => {
+    return <K extends (api: API, ctx: ContextSession, utils: FactoryUtils<T>) => any>(callback: K) => {
         return (ctx: ContextBase, api: API) => {
             if (!isContextSession(ctx)) throw new ZaloApiError("Invalid context " + JSON.stringify(ctx, null, 2));
 
@@ -663,7 +653,8 @@ export function apiFactory<T>() {
                     return request(ctx, url, options, raw);
                 },
                 logger: logger(ctx),
-                resolve: (res: Response, cb?: (result: ZaloResponse<unknown>) => T, isEncrypted?: boolean) => resolveResponse<T>(ctx, res, cb, isEncrypted),
+                resolve: (res: Response, cb?: (result: ZaloResponse<unknown>) => T, isEncrypted?: boolean) =>
+                    resolveResponse<T>(ctx, res, cb, isEncrypted),
             };
 
             return callback(api, ctx, utils) as ReturnType<K>;

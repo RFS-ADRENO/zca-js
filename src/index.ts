@@ -30,7 +30,7 @@ export type { GetQRResponse } from "./apis/getQR.js";
 export type { StickerDetailResponse } from "./apis/getStickersDetail.js";
 export type { PollOption, PollDetailResponse } from "./apis/getPollDetail.js";
 export type { ProfileInfo, UserInfoResponse } from "./apis/getUserInfo.js";
-export type { KeepAliveResponse } from "./apis/keepAlive.js"
+export type { KeepAliveResponse } from "./apis/keepAlive.js";
 export type { LockPollResponse } from "./apis/lockPoll.js";
 export type { PinConversationsResponse } from "./apis/pinConversations.js";
 export type { RemoveGroupDeputyResponse } from "./apis/removeGroupDeputy.js";
@@ -49,6 +49,8 @@ export type { UnBlockUserResponse } from "./apis/unblockUser.js";
 export type { UndoResponse, UndoOptions } from "./apis/undo.js";
 export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType } from "./apis/uploadAttachment.js";
 export type { LoginQRCallback, LoginQRCallbackEvent } from "./apis/loginQR.js";
+
+export type { CustomAPICallback, CustomAPIProps } from "./apis/custom.js";
 
 // Others
 export { ReportReason } from "./apis/sendReport.js";

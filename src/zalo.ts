@@ -64,6 +64,8 @@ import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { checkUpdate } from "./update.js";
 
+import { customFactory } from "./apis/custom.js";
+
 export type Cookie = {
     domain: string;
     expirationDate: number;
@@ -252,6 +254,8 @@ export class API {
     public undo: ReturnType<typeof undoFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
 
+    public custom: ReturnType<typeof customFactory>;
+
     constructor(ctx: ContextSession, zpwServiceMap: ZPWServiceMap, wsUrls: string[]) {
         this.zpwServiceMap = zpwServiceMap;
         this.listener = new Listener(ctx, wsUrls);
@@ -305,5 +309,7 @@ export class API {
         this.unblockUser = unblockUserFactory(ctx, this);
         this.undo = undoFactory(ctx, this);
         this.uploadAttachment = uploadAttachmentFactory(ctx, this);
+
+        this.custom = customFactory(ctx, this);
     }
 }
