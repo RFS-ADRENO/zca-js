@@ -292,6 +292,34 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
         };
     }
 
+    function handleStyles(params: Record<any, any>, styles?: Style[]) {
+        if (styles)
+            Object.assign(params, {
+                textProperties: JSON.stringify({
+                    styles: styles.map((e) => {
+                        const styleFinal = {
+                            ...e,
+                            indentSize: undefined,
+                            st:
+                                e.st == TextStyle.Indent
+                                    ? TextStyle.Indent.replace("$", `${e.indentSize ?? 1}0`)
+                                    : e.st,
+                        };
+
+                        removeUndefinedKeys(styleFinal);
+                        return styleFinal;
+                    }),
+                    ver: 0,
+                }),
+            });
+    }
+
+    function handleUrgency(params: Record<any, any>, urgency?: Urgency) {
+        if (urgency == Urgency.Important || urgency == Urgency.Urgent) {
+            Object.assign(params, { metaData: { urgency } });
+        }
+    }
+
     async function handleMessage(
         { msg, styles, urgency, mentions, quote, ttl }: MessageContent,
         threadId: string,
@@ -344,34 +372,10 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                   grid: isGroupMessage ? threadId : undefined,
               };
 
-        if (styles) {
-            Object.assign(params, {
-                textProperties: JSON.stringify({
-                    styles: styles.map((e) => {
-                        const styleFinal = {
-                            ...e,
-                            indentSize: undefined,
-                            st:
-                                e.st == TextStyle.Indent
-                                    ? TextStyle.Indent.replace("$", `${e.indentSize ?? 1}0`)
-                                    : e.st,
-                        };
+        handleStyles(params, styles);
+        handleUrgency(params, urgency);
 
-                        removeUndefinedKeys(styleFinal);
-                        return styleFinal;
-                    }),
-                    ver: 0,
-                }),
-            });
-        }
-
-        if (urgency == Urgency.Important || urgency == Urgency.Urgent) {
-            Object.assign(params, { metaData: { urgency } });
-        }
-
-        for (const key in params) {
-            if (params[key as keyof typeof params] === undefined) delete params[key as keyof typeof params];
-        }
+        removeUndefinedKeys(params);
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
@@ -392,7 +396,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
     }
 
     async function handleAttachment(
-        { msg, attachments, mentions, quote, ttl }: MessageContent,
+        { msg, attachments, mentions, quote, ttl, urgency }: MessageContent,
         threadId: string,
         type: ThreadType,
     ) {
@@ -509,6 +513,8 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                 }
             }
 
+            handleUrgency(data.params, urgency);
+
             removeUndefinedKeys(data.params);
             const encryptedParams = utils.encodeAES(JSON.stringify(data.params));
             if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
@@ -549,6 +555,8 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                 totalChunk: 1,
                 chunkId: 1,
             };
+
+            handleUrgency(params, urgency);
 
             removeUndefinedKeys(params);
             const encryptedParams = utils.encodeAES(JSON.stringify(params));
@@ -605,7 +613,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
         if (!threadId) throw new ZaloApiError("Missing threadId");
         if (typeof message == "string") message = { msg: message };
 
-        let { msg, quote, attachments, mentions, ttl } = message;
+        let { msg, quote, attachments, mentions, ttl, styles, urgency } = message;
 
         if (!msg && (!attachments || (attachments && attachments.length == 0)))
             throw new ZaloApiError("Missing message content");
@@ -634,7 +642,11 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                 msg = "";
                 mentions = undefined;
             }
-            const handledData = await handleAttachment({ msg, mentions, attachments, quote, ttl }, threadId, type);
+            const handledData = await handleAttachment(
+                { msg, mentions, attachments, quote, ttl, styles, urgency },
+                threadId,
+                type,
+            );
             responses.attachment = await send(handledData);
             msg = "";
         }
