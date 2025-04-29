@@ -1,7 +1,7 @@
 import FormData from "form-data";
 import fs from "node:fs/promises";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { GroupMessage, UserMessage, ThreadType } from "../models/index.js";
+import { ThreadType, type TMessage } from "../models/index.js";
 import {
     apiFactory,
     getClientMessageType,
@@ -22,6 +22,18 @@ export type SendMessageResponse = {
     attachment: SendMessageResult[];
 };
 
+export type SendMessageQuote = {
+    content: TMessage["content"];
+    msgType: TMessage["msgType"];
+    propertyExt: TMessage["propertyExt"];
+
+    uidFrom: TMessage["uidFrom"];
+    msgId: TMessage["msgId"];
+    cliMsgId: TMessage["cliMsgId"];
+    ts: TMessage["ts"];
+    ttl: TMessage["ttl"];
+};
+
 const attachmentUrlType = {
     image: "photo_original/send?",
     gif: "gif?",
@@ -29,8 +41,8 @@ const attachmentUrlType = {
     others: "asyncfile/msg?",
 };
 
-function prepareQMSGAttach(quote: UserMessage | GroupMessage) {
-    const quoteData = quote.data;
+function prepareQMSGAttach(quote: SendMessageQuote) {
+    const quoteData = quote;
     if (typeof quoteData.content == "string") return quoteData.propertyExt;
     if (quoteData.msgType == "chat.todo")
         return {
@@ -51,8 +63,8 @@ function prepareQMSGAttach(quote: UserMessage | GroupMessage) {
     };
 }
 
-function prepareQMSG(quote: UserMessage | GroupMessage) {
-    const quoteData = quote.data;
+function prepareQMSG(quote: SendMessageQuote) {
+    const quoteData = quote;
     if (quoteData.msgType == "chat.todo" && typeof quoteData.content != "string") {
         return JSON.parse(quoteData.content.params).item.content;
     }
@@ -156,7 +168,7 @@ export type MessageContent = {
     /**
      * Quoted message (optional)
      */
-    quote?: UserMessage | GroupMessage;
+    quote?: SendMessageQuote;
     /**
      * Mentions in the message (optional)
      */
@@ -286,20 +298,17 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
         type: ThreadType,
     ) {
         if (!msg || msg.length == 0) throw new ZaloApiError("Missing message content");
-        const isValidInstance = quote instanceof UserMessage || quote instanceof GroupMessage;
-        if (quote && !isValidInstance) throw new ZaloApiError("Invalid quote message");
         const isGroupMessage = type == ThreadType.Group;
 
         const { mentionsFinal, msgFinal } = handleMentions(type, msg, mentions);
         msg = msgFinal;
 
-        const quoteData = quote?.data;
-        if (quoteData) {
-            if (typeof quoteData.content != "string" && quoteData.msgType == "webchat") {
+        if (quote) {
+            if (typeof quote.content != "string" && quote.msgType == "webchat") {
                 throw new ZaloApiError("This kind of `webchat` quote type is not available");
             }
 
-            if (quoteData.msgType == "group.poll") {
+            if (quote.msgType == "group.poll") {
                 throw new ZaloApiError("The `group.poll` quote type is not available");
             }
         }
@@ -312,16 +321,16 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                   message: msg,
                   clientId: Date.now(),
                   mentionInfo: isMentionsValid ? JSON.stringify(mentionsFinal) : undefined,
-                  qmsgOwner: quoteData!.uidFrom,
-                  qmsgId: quoteData!.msgId,
-                  qmsgCliId: quoteData!.cliMsgId,
-                  qmsgType: getClientMessageType(quoteData!.msgType),
-                  qmsgTs: quoteData!.ts,
-                  qmsg: typeof quoteData!.content == "string" ? quoteData!.content : prepareQMSG(quote),
+                  qmsgOwner: quote.uidFrom,
+                  qmsgId: quote.msgId,
+                  qmsgCliId: quote.cliMsgId,
+                  qmsgType: getClientMessageType(quote.msgType),
+                  qmsgTs: quote.ts,
+                  qmsg: typeof quote.content == "string" ? quote.content : prepareQMSG(quote),
                   imei: isGroupMessage ? undefined : ctx.imei,
                   visibility: isGroupMessage ? 0 : undefined,
                   qmsgAttach: isGroupMessage ? JSON.stringify(prepareQMSGAttach(quote)) : undefined,
-                  qmsgTTL: quoteData!.ttl,
+                  qmsgTTL: quote.ttl,
                   ttl: ttl ?? 0,
               }
             : {

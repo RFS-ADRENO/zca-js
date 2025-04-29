@@ -39,7 +39,7 @@ export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js"
 export type { SendCardResponse, SendCardOptions } from "./apis/sendCard.js";
 export type { SendDeliveredEventResponse, DeliveredEventMessageParams } from "./apis/sendDeliveredEvent.js";
 export type { SendFriendRequestResponse } from "./apis/sendFriendRequest.js";
-export type { Mention, MessageContent, SendMessageResponse, SendMessageResult, Style } from "./apis/sendMessage.js";
+export type { Mention, MessageContent, SendMessageResponse, SendMessageQuote, SendMessageResult, Style } from "./apis/sendMessage.js";
 export type { SendReportResponse, SendReportOptions } from "./apis/sendReport.js";
 export type { SendStickerResponse } from "./apis/sendSticker.js";
 export type { SendSeenEventResponse, SeenEventMessageParams } from "./apis/sendSeenEvent.js";
