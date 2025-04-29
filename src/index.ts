@@ -27,6 +27,7 @@ export type { GetAllFriendsResponse } from "./apis/getAllFriends.js";
 export type { GetAllGroupsResponse } from "./apis/getAllGroups.js";
 export type { ExtraInfo, GridInfoMap, GroupInfo, GroupInfoResponse, PendingApprove } from "./apis/getGroupInfo.js";
 export type { GetGroupMembersInfoResponse, MemberProfile } from "./apis/getGroupMembersInfo.js";
+export type { GetLabelsResponse } from "./apis/getLabels.js";
 export type { GetQRResponse } from "./apis/getQR.js";
 export type { StickerDetailResponse } from "./apis/getStickersDetail.js";
 export type { PollOption, PollDetailResponse } from "./apis/getPollDetail.js";
@@ -48,6 +49,7 @@ export type { SendVideoResponse, SendVideoOptions } from "./apis/sendVideo.js";
 export type { SendVoiceResponse, SendVoiceOptions } from "./apis/sendVoice.js";
 export type { UnBlockUserResponse } from "./apis/unblockUser.js";
 export type { UndoResponse, UndoOptions } from "./apis/undo.js";
+export type { UpdateLabelsResponse, UpdateLabelParams } from "./apis/updateLabels.js"
 export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType } from "./apis/uploadAttachment.js";
 export type { LoginQRCallback, LoginQRCallbackEvent } from "./apis/loginQR.js";
 

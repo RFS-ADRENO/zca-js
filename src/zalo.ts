@@ -66,6 +66,8 @@ import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { checkUpdate } from "./update.js";
 
 import { customFactory } from "./apis/custom.js";
+import { getLabelsFactory } from "./apis/getLabels.js";
+import { updateLabelsFactory } from "./apis/updateLabels.js";
 
 export type Cookie = {
     domain: string;
@@ -230,6 +232,7 @@ export class API {
     public getCookie: ReturnType<typeof getCookieFactory>;
     public getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
     public getGroupMembersInfo: ReturnType<typeof getGroupMembersInfoFactory>;
+    public getLabels: ReturnType<typeof getLabelsFactory>;
     public getOwnId: ReturnType<typeof getOwnIdFactory>;
     public getPollDetail: ReturnType<typeof getPollDetailFactory>;
     public getContext: ReturnType<typeof getContextFactory>;
@@ -254,6 +257,7 @@ export class API {
     public sendVoice: ReturnType<typeof sendVoiceFactory>;
     public unblockUser: ReturnType<typeof unblockUserFactory>;
     public undo: ReturnType<typeof undoFactory>;
+    public updateLabels: ReturnType<typeof updateLabelsFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
 
     public custom: ReturnType<typeof customFactory>;
@@ -287,6 +291,7 @@ export class API {
         this.getCookie = getCookieFactory(ctx, this);
         this.getGroupInfo = getGroupInfoFactory(ctx, this);
         this.getGroupMembersInfo = getGroupMembersInfoFactory(ctx, this);
+        this.getLabels = getLabelsFactory(ctx, this);
         this.getOwnId = getOwnIdFactory(ctx, this);
         this.getPollDetail = getPollDetailFactory(ctx, this);
         this.getContext = getContextFactory(ctx, this);
@@ -311,6 +316,7 @@ export class API {
         this.sendVoice = sendVoiceFactory(ctx, this);
         this.unblockUser = unblockUserFactory(ctx, this);
         this.undo = undoFactory(ctx, this);
+        this.updateLabels = updateLabelsFactory(ctx, this);
         this.uploadAttachment = uploadAttachmentFactory(ctx, this);
 
         this.custom = customFactory(ctx, this);
