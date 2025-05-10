@@ -409,6 +409,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     const { actions } = parsedData;
 
                     for (const action of actions) {
+                        if (!action.data) continue;
                         const data = JSON.parse(`{${action.data}}`);
                         if (action.act_type == "typing") {
                             if (action.act == "typing") {
