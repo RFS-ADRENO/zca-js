@@ -34,6 +34,7 @@ export type { PollOption, PollDetailResponse } from "./apis/getPollDetail.js";
 export type { ProfileInfo, UserInfoResponse } from "./apis/getUserInfo.js";
 export type { KeepAliveResponse } from "./apis/keepAlive.js";
 export type { LockPollResponse } from "./apis/lockPoll.js";
+export type { OnlineStatusResponse } from "./apis/onlineStatus.js";
 export type { ParseLinkResponse } from "./apis/parseLink.js";
 export type { PinConversationsResponse } from "./apis/pinConversations.js";
 export type { RemoveGroupDeputyResponse } from "./apis/removeGroupDeputy.js";
@@ -48,10 +49,8 @@ export type { SendSeenEventResponse, SeenEventMessageParams } from "./apis/sendS
 export type { SendTypingEventResponse, SendTypingEventOptions } from "./apis/sendTypingEvent.js";
 export type { SendVideoResponse, SendVideoOptions } from "./apis/sendVideo.js";
 export type { SendVoiceResponse, SendVoiceOptions } from "./apis/sendVoice.js";
-export type { ShowOnlineStatusResponse } from "./apis/showOnlineStatus.js";
 export type { UnBlockUserResponse } from "./apis/unblockUser.js";
 export type { UndoResponse, UndoOptions } from "./apis/undo.js";
-export type { UnShowOnlineStatusResponse } from "./apis/unshowOnlineStatus.js";
 export type { UpdateLabelsResponse, UpdateLabelParams } from "./apis/updateLabels.js"
 export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType } from "./apis/uploadAttachment.js";
 export type { LoginQRCallback, LoginQRCallbackEvent } from "./apis/loginQR.js";

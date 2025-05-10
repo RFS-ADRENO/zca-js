@@ -46,6 +46,7 @@ import { getUserInfoFactory } from "./apis/getUserInfo.js";
 import { keepAliveFactory } from "./apis/keepAlive.js";
 import { lockPollFactory } from "./apis/lockPoll.js";
 import { loginQR, LoginQRCallbackEventType, type LoginQRCallback } from "./apis/loginQR.js";
+import { onlineStatusFactory } from "./apis/onlineStatus.js";
 import { parseLinkFactory } from "./apis/parseLink.js";
 import { pinConversationsFactory } from "./apis/pinConversations.js";
 import { removeGroupDeputyFactory } from "./apis/removeGroupDeputy.js";
@@ -60,10 +61,8 @@ import { sendStickerFactory } from "./apis/sendSticker.js";
 import { sendTypingEventFactory } from "./apis/sendTypingEvent.js";
 import { sendVideoFactory } from "./apis/sendVideo.js";
 import { sendVoiceFactory } from "./apis/sendVoice.js";
-import { showOnlineStatusFactory } from "./apis/showOnlineStatus.js";
 import { unblockUserFactory } from "./apis/unblockUser.js";
 import { undoFactory } from "./apis/undo.js";
-import { unshowOnlineStatusFactory } from "./apis/unshowOnlineStatus.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { checkUpdate } from "./update.js";
@@ -245,6 +244,7 @@ export class API {
     public getUserInfo: ReturnType<typeof getUserInfoFactory>;
     public keepAlive: ReturnType<typeof keepAliveFactory>;
     public lockPoll: ReturnType<typeof lockPollFactory>;
+    public onlineStatus: ReturnType<typeof onlineStatusFactory>;
     public parseLink: ReturnType<typeof parseLinkFactory>;
     public pinConversations: ReturnType<typeof pinConversationsFactory>;
     public removeGroupDeputy: ReturnType<typeof removeGroupDeputyFactory>;
@@ -259,10 +259,8 @@ export class API {
     public sendTypingEvent: ReturnType<typeof sendTypingEventFactory>;
     public sendVideo: ReturnType<typeof sendVideoFactory>;
     public sendVoice: ReturnType<typeof sendVoiceFactory>;
-    public showOnlineStatus: ReturnType<typeof showOnlineStatusFactory>;
     public unblockUser: ReturnType<typeof unblockUserFactory>;
     public undo: ReturnType<typeof undoFactory>;
-    public unshowOnlineStatus: ReturnType<typeof unshowOnlineStatusFactory>;
     public updateLabels: ReturnType<typeof updateLabelsFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
 
@@ -307,6 +305,7 @@ export class API {
         this.getUserInfo = getUserInfoFactory(ctx, this);
         this.keepAlive = keepAliveFactory(ctx, this);
         this.lockPoll = lockPollFactory(ctx, this);
+        this.onlineStatus = onlineStatusFactory(ctx, this);
         this.parseLink = parseLinkFactory(ctx, this);
         this.pinConversations = pinConversationsFactory(ctx, this);
         this.removeGroupDeputy = removeGroupDeputyFactory(ctx, this);
@@ -321,10 +320,8 @@ export class API {
         this.sendTypingEvent = sendTypingEventFactory(ctx, this);
         this.sendVideo = sendVideoFactory(ctx, this);
         this.sendVoice = sendVoiceFactory(ctx, this);
-        this.showOnlineStatus = showOnlineStatusFactory(ctx, this);
         this.unblockUser = unblockUserFactory(ctx, this);
         this.undo = undoFactory(ctx, this);
-        this.unshowOnlineStatus = unshowOnlineStatusFactory(ctx, this);
         this.updateLabels = updateLabelsFactory(ctx, this);
         this.uploadAttachment = uploadAttachmentFactory(ctx, this);
 

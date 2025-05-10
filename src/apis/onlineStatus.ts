@@ -1,19 +1,21 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type ShowOnlineStatusResponse = {};
+export type OnlineStatusResponse = {};
 
-export const showOnlineStatusFactory = apiFactory<ShowOnlineStatusResponse>()((api, ctx, utils) => {
+export const onlineStatusFactory = apiFactory<OnlineStatusResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`https://wpa.chat.zalo.me/api/setting/update`);
 
     /**
-     * Show online status
+     * Online status
      *
+     * @param status 1 is online, 0 is offline
+     * 
      * @throws ZaloApiError
      */
-    return async function showOnlineStatus() {
+    return async function onlineStatus(status: number) {
         const params = {
-            show_online_status: 1,
+            show_online_status: status,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
