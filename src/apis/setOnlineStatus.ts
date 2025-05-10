@@ -7,7 +7,7 @@ export const setOnlineStatusFactory = apiFactory<SetOnlineStatusResponse>()((api
     const serviceURL = utils.makeURL(`https://wpa.chat.zalo.me/api/setting/update`);
 
     /**
-     * Online status
+     * Set online status - implement managing online status visibility
      *
      * @param status 1 is online, 0 is offline
      * 

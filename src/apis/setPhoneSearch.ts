@@ -7,7 +7,7 @@ export const setPhoneSearchFactory = apiFactory<SetPhoneSearchResponse>()((api, 
     const serviceURL = utils.makeURL(`https://wpa.chat.zalo.me/api/setting/update`);
 
     /**
-     * Set phone search
+     * Set phone search - implement managing phone search visibility
      *
      * @param status 1 is online, 0 is offline
      * 
