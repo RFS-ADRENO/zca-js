@@ -18,7 +18,7 @@ export type { ChangeFriendAliasResponse } from "./apis/changeFriendAlias.js";
 export type { CreateGroupResponse } from "./apis/createGroup.js";
 export type { CreateNoteResponse, CreateNoteOptions } from "./apis/createNote.js";
 export type { CreatePollResponse, CreatePollOptions } from "./apis/createPoll.js";
-export type { DeleteMessageResponse } from "./apis/deleteMessage.js";
+export type { DeleteMessageResponse, DeleteMessageOptions } from "./apis/deleteMessage.js";
 export type { DisperseGroupResponse } from "./apis/disperseGroup.js";
 export type { EditNoteResponse } from "./apis/editNote.js";
 export type { FetchAccountInfoResponse } from "./apis/fetchAccountInfo.js";
@@ -27,6 +27,7 @@ export type { GetAllFriendsResponse } from "./apis/getAllFriends.js";
 export type { GetAllGroupsResponse } from "./apis/getAllGroups.js";
 export type { ExtraInfo, GridInfoMap, GroupInfo, GroupInfoResponse, PendingApprove } from "./apis/getGroupInfo.js";
 export type { GetGroupMembersInfoResponse, MemberProfile } from "./apis/getGroupMembersInfo.js";
+export type { GetLabelsResponse } from "./apis/getLabels.js";
 export type { GetQRResponse } from "./apis/getQR.js";
 export type { StickerDetailResponse } from "./apis/getStickersDetail.js";
 export type { PollOption, PollDetailResponse } from "./apis/getPollDetail.js";
@@ -39,7 +40,7 @@ export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js"
 export type { SendCardResponse, SendCardOptions } from "./apis/sendCard.js";
 export type { SendDeliveredEventResponse, DeliveredEventMessageParams } from "./apis/sendDeliveredEvent.js";
 export type { SendFriendRequestResponse } from "./apis/sendFriendRequest.js";
-export type { Mention, MessageContent, SendMessageResponse, SendMessageResult, Style } from "./apis/sendMessage.js";
+export type { Mention, MessageContent, SendMessageResponse, SendMessageQuote, SendMessageResult, Style } from "./apis/sendMessage.js";
 export type { SendReportResponse, SendReportOptions } from "./apis/sendReport.js";
 export type { SendStickerResponse } from "./apis/sendSticker.js";
 export type { SendSeenEventResponse, SeenEventMessageParams } from "./apis/sendSeenEvent.js";
@@ -48,6 +49,7 @@ export type { SendVideoResponse, SendVideoOptions } from "./apis/sendVideo.js";
 export type { SendVoiceResponse, SendVoiceOptions } from "./apis/sendVoice.js";
 export type { UnBlockUserResponse } from "./apis/unblockUser.js";
 export type { UndoResponse, UndoOptions } from "./apis/undo.js";
+export type { UpdateLabelsResponse, UpdateLabelParams } from "./apis/updateLabels.js"
 export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType } from "./apis/uploadAttachment.js";
 export type { LoginQRCallback, LoginQRCallbackEvent } from "./apis/loginQR.js";
 

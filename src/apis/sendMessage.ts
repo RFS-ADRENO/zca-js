@@ -1,7 +1,7 @@
 import FormData from "form-data";
 import fs from "node:fs/promises";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { GroupMessage, UserMessage, ThreadType } from "../models/index.js";
+import { ThreadType, type TMessage } from "../models/index.js";
 import {
     apiFactory,
     getClientMessageType,
@@ -22,6 +22,18 @@ export type SendMessageResponse = {
     attachment: SendMessageResult[];
 };
 
+export type SendMessageQuote = {
+    content: TMessage["content"];
+    msgType: TMessage["msgType"];
+    propertyExt: TMessage["propertyExt"];
+
+    uidFrom: TMessage["uidFrom"];
+    msgId: TMessage["msgId"];
+    cliMsgId: TMessage["cliMsgId"];
+    ts: TMessage["ts"];
+    ttl: TMessage["ttl"];
+};
+
 const attachmentUrlType = {
     image: "photo_original/send?",
     gif: "gif?",
@@ -29,8 +41,8 @@ const attachmentUrlType = {
     others: "asyncfile/msg?",
 };
 
-function prepareQMSGAttach(quote: UserMessage | GroupMessage) {
-    const quoteData = quote.data;
+function prepareQMSGAttach(quote: SendMessageQuote) {
+    const quoteData = quote;
     if (typeof quoteData.content == "string") return quoteData.propertyExt;
     if (quoteData.msgType == "chat.todo")
         return {
@@ -51,8 +63,8 @@ function prepareQMSGAttach(quote: UserMessage | GroupMessage) {
     };
 }
 
-function prepareQMSG(quote: UserMessage | GroupMessage) {
-    const quoteData = quote.data;
+function prepareQMSG(quote: SendMessageQuote) {
+    const quoteData = quote;
     if (quoteData.msgType == "chat.todo" && typeof quoteData.content != "string") {
         return JSON.parse(quoteData.content.params).item.content;
     }
@@ -156,7 +168,7 @@ export type MessageContent = {
     /**
      * Quoted message (optional)
      */
-    quote?: UserMessage | GroupMessage;
+    quote?: SendMessageQuote;
     /**
      * Mentions in the message (optional)
      */
@@ -280,62 +292,8 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
         };
     }
 
-    async function handleMessage(
-        { msg, styles, urgency, mentions, quote, ttl }: MessageContent,
-        threadId: string,
-        type: ThreadType,
-    ) {
-        if (!msg || msg.length == 0) throw new ZaloApiError("Missing message content");
-        const isValidInstance = quote instanceof UserMessage || quote instanceof GroupMessage;
-        if (quote && !isValidInstance) throw new ZaloApiError("Invalid quote message");
-        const isGroupMessage = type == ThreadType.Group;
-
-        const { mentionsFinal, msgFinal } = handleMentions(type, msg, mentions);
-        msg = msgFinal;
-
-        const quoteData = quote?.data;
-        if (quoteData) {
-            if (typeof quoteData.content != "string" && quoteData.msgType == "webchat") {
-                throw new ZaloApiError("This kind of `webchat` quote type is not available");
-            }
-
-            if (quoteData.msgType == "group.poll") {
-                throw new ZaloApiError("The `group.poll` quote type is not available");
-            }
-        }
-
-        const isMentionsValid = mentionsFinal.length > 0 && isGroupMessage;
-        const params = quote
-            ? {
-                  toid: isGroupMessage ? undefined : threadId,
-                  grid: isGroupMessage ? threadId : undefined,
-                  message: msg,
-                  clientId: Date.now(),
-                  mentionInfo: isMentionsValid ? JSON.stringify(mentionsFinal) : undefined,
-                  qmsgOwner: quoteData!.uidFrom,
-                  qmsgId: quoteData!.msgId,
-                  qmsgCliId: quoteData!.cliMsgId,
-                  qmsgType: getClientMessageType(quoteData!.msgType),
-                  qmsgTs: quoteData!.ts,
-                  qmsg: typeof quoteData!.content == "string" ? quoteData!.content : prepareQMSG(quote),
-                  imei: isGroupMessage ? undefined : ctx.imei,
-                  visibility: isGroupMessage ? 0 : undefined,
-                  qmsgAttach: isGroupMessage ? JSON.stringify(prepareQMSGAttach(quote)) : undefined,
-                  qmsgTTL: quoteData!.ttl,
-                  ttl: ttl ?? 0,
-              }
-            : {
-                  message: msg,
-                  clientId: Date.now(),
-                  mentionInfo: isMentionsValid ? JSON.stringify(mentionsFinal) : undefined,
-                  imei: isGroupMessage ? undefined : ctx.imei,
-                  ttl: ttl ?? 0,
-                  visibility: isGroupMessage ? 0 : undefined,
-                  toid: isGroupMessage ? undefined : threadId,
-                  grid: isGroupMessage ? threadId : undefined,
-              };
-
-        if (styles) {
+    function handleStyles(params: Record<any, any>, styles?: Style[]) {
+        if (styles)
             Object.assign(params, {
                 textProperties: JSON.stringify({
                     styles: styles.map((e) => {
@@ -354,15 +312,70 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                     ver: 0,
                 }),
             });
-        }
+    }
 
+    function handleUrgency(params: Record<any, any>, urgency?: Urgency) {
         if (urgency == Urgency.Important || urgency == Urgency.Urgent) {
             Object.assign(params, { metaData: { urgency } });
         }
+    }
 
-        for (const key in params) {
-            if (params[key as keyof typeof params] === undefined) delete params[key as keyof typeof params];
+    async function handleMessage(
+        { msg, styles, urgency, mentions, quote, ttl }: MessageContent,
+        threadId: string,
+        type: ThreadType,
+    ) {
+        if (!msg || msg.length == 0) throw new ZaloApiError("Missing message content");
+        const isGroupMessage = type == ThreadType.Group;
+
+        const { mentionsFinal, msgFinal } = handleMentions(type, msg, mentions);
+        msg = msgFinal;
+
+        if (quote) {
+            if (typeof quote.content != "string" && quote.msgType == "webchat") {
+                throw new ZaloApiError("This kind of `webchat` quote type is not available");
+            }
+
+            if (quote.msgType == "group.poll") {
+                throw new ZaloApiError("The `group.poll` quote type is not available");
+            }
         }
+
+        const isMentionsValid = mentionsFinal.length > 0 && isGroupMessage;
+        const params = quote
+            ? {
+                  toid: isGroupMessage ? undefined : threadId,
+                  grid: isGroupMessage ? threadId : undefined,
+                  message: msg,
+                  clientId: Date.now(),
+                  mentionInfo: isMentionsValid ? JSON.stringify(mentionsFinal) : undefined,
+                  qmsgOwner: quote.uidFrom,
+                  qmsgId: quote.msgId,
+                  qmsgCliId: quote.cliMsgId,
+                  qmsgType: getClientMessageType(quote.msgType),
+                  qmsgTs: quote.ts,
+                  qmsg: typeof quote.content == "string" ? quote.content : prepareQMSG(quote),
+                  imei: isGroupMessage ? undefined : ctx.imei,
+                  visibility: isGroupMessage ? 0 : undefined,
+                  qmsgAttach: isGroupMessage ? JSON.stringify(prepareQMSGAttach(quote)) : undefined,
+                  qmsgTTL: quote.ttl,
+                  ttl: ttl ?? 0,
+              }
+            : {
+                  message: msg,
+                  clientId: Date.now(),
+                  mentionInfo: isMentionsValid ? JSON.stringify(mentionsFinal) : undefined,
+                  imei: isGroupMessage ? undefined : ctx.imei,
+                  ttl: ttl ?? 0,
+                  visibility: isGroupMessage ? 0 : undefined,
+                  toid: isGroupMessage ? undefined : threadId,
+                  grid: isGroupMessage ? threadId : undefined,
+              };
+
+        handleStyles(params, styles);
+        handleUrgency(params, urgency);
+
+        removeUndefinedKeys(params);
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
@@ -383,7 +396,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
     }
 
     async function handleAttachment(
-        { msg, attachments, mentions, quote, ttl }: MessageContent,
+        { msg, attachments, mentions, quote, ttl, urgency }: MessageContent,
         threadId: string,
         type: ThreadType,
     ) {
@@ -500,6 +513,8 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                 }
             }
 
+            handleUrgency(data.params, urgency);
+
             removeUndefinedKeys(data.params);
             const encryptedParams = utils.encodeAES(JSON.stringify(data.params));
             if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
@@ -540,6 +555,8 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                 totalChunk: 1,
                 chunkId: 1,
             };
+
+            handleUrgency(params, urgency);
 
             removeUndefinedKeys(params);
             const encryptedParams = utils.encodeAES(JSON.stringify(params));
@@ -596,7 +613,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
         if (!threadId) throw new ZaloApiError("Missing threadId");
         if (typeof message == "string") message = { msg: message };
 
-        let { msg, quote, attachments, mentions, ttl } = message;
+        let { msg, quote, attachments, mentions, ttl, styles, urgency } = message;
 
         if (!msg && (!attachments || (attachments && attachments.length == 0)))
             throw new ZaloApiError("Missing message content");
@@ -625,7 +642,11 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                 msg = "";
                 mentions = undefined;
             }
-            const handledData = await handleAttachment({ msg, mentions, attachments, quote, ttl }, threadId, type);
+            const handledData = await handleAttachment(
+                { msg, mentions, attachments, quote, ttl, styles, urgency },
+                threadId,
+                type,
+            );
             responses.attachment = await send(handledData);
             msg = "";
         }

@@ -63,7 +63,7 @@ export type TReaction = {
     msgType: string;
     uidFrom: string;
     idTo: string;
-    dName: string;
+    dName?: string;
     content: {
         rMsg: { gMsgID: string; cMsgID: string; msgType: number }[];
         rIcon: Reactions;
