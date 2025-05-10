@@ -46,6 +46,7 @@ import { getUserInfoFactory } from "./apis/getUserInfo.js";
 import { keepAliveFactory } from "./apis/keepAlive.js";
 import { lockPollFactory } from "./apis/lockPoll.js";
 import { loginQR, LoginQRCallbackEventType, type LoginQRCallback } from "./apis/loginQR.js";
+import { parseLinkFactory } from "./apis/parseLink.js";
 import { pinConversationsFactory } from "./apis/pinConversations.js";
 import { removeGroupDeputyFactory } from "./apis/removeGroupDeputy.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
@@ -242,6 +243,7 @@ export class API {
     public getUserInfo: ReturnType<typeof getUserInfoFactory>;
     public keepAlive: ReturnType<typeof keepAliveFactory>;
     public lockPoll: ReturnType<typeof lockPollFactory>;
+    public parseLink: ReturnType<typeof parseLinkFactory>;
     public pinConversations: ReturnType<typeof pinConversationsFactory>;
     public removeGroupDeputy: ReturnType<typeof removeGroupDeputyFactory>;
     public removeUserFromGroup: ReturnType<typeof removeUserFromGroupFactory>;
@@ -301,6 +303,7 @@ export class API {
         this.getUserInfo = getUserInfoFactory(ctx, this);
         this.keepAlive = keepAliveFactory(ctx, this);
         this.lockPoll = lockPollFactory(ctx, this);
+        this.parseLink = parseLinkFactory(ctx, this);
         this.pinConversations = pinConversationsFactory(ctx, this);
         this.removeGroupDeputy = removeGroupDeputyFactory(ctx, this);
         this.removeUserFromGroup = removeUserFromGroupFactory(ctx, this);

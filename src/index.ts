@@ -34,6 +34,7 @@ export type { PollOption, PollDetailResponse } from "./apis/getPollDetail.js";
 export type { ProfileInfo, UserInfoResponse } from "./apis/getUserInfo.js";
 export type { KeepAliveResponse } from "./apis/keepAlive.js";
 export type { LockPollResponse } from "./apis/lockPoll.js";
+export type { ParseLinkResponse } from "./apis/parseLink.js";
 export type { PinConversationsResponse } from "./apis/pinConversations.js";
 export type { RemoveGroupDeputyResponse } from "./apis/removeGroupDeputy.js";
 export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js";
