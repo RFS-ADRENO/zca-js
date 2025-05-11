@@ -48,8 +48,7 @@ export type { SendSeenEventResponse, SeenEventMessageParams } from "./apis/sendS
 export type { SendTypingEventResponse, SendTypingEventOptions } from "./apis/sendTypingEvent.js";
 export type { SendVideoResponse, SendVideoOptions } from "./apis/sendVideo.js";
 export type { SendVoiceResponse, SendVoiceOptions } from "./apis/sendVoice.js";
-export type { SetOnlineStatusResponse } from "./apis/setOnlineStatus.js";
-export type { SetPhoneSearchResponse } from "./apis/setPhoneSearch.js";
+export type { SetSettingsAccountResponse } from "./apis/setSettingsAccount.js";
 export type { UnBlockUserResponse } from "./apis/unblockUser.js";
 export type { UndoResponse, UndoOptions } from "./apis/undo.js";
 export type { UpdateLabelsResponse, UpdateLabelParams } from "./apis/updateLabels.js"
