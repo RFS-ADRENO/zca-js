@@ -3,7 +3,17 @@ import { apiFactory } from "../utils.js";
 
 export type SetSettingsAccountResponse = {};
 
-export type SettingType = "phone_search" | "online_status";
+export type SettingType =
+      "view_birthday"
+    | "online_status"
+    | "seen_status"
+    | "receive_message"
+    | "accept_call"
+    | "phone_search"
+    | "find_me_via_qr"
+    | "common_group"
+    | "find_me_via_contact"
+    | "recommend_friend";
 
 export const setSettingsAccountFactory = apiFactory<SetSettingsAccountResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`https://wpa.chat.zalo.me/api/setting/update`);
@@ -11,15 +21,23 @@ export const setSettingsAccountFactory = apiFactory<SetSettingsAccountResponse>(
     /**
      * Set account settings - implement managing various account settings
      *
-     * @param type The type of setting to update ('phone_search' or 'online_status')
-     * @param status 1 is enabled/online, 0 is disabled/offline
+     * @param type The type of setting to update
+     * @param status
      *
      * @throws ZaloApiError
      */
     return async function setSettingsAccount(type: SettingType, status: number) {
         const params = {
-            ...(type === "phone_search" && { add_friend_via_phone: status }),
-            ...(type === "online_status" && { show_online_status: status }),
+            ...(type === "view_birthday" && { view_birthday: status }), // 1 is show full day/month/year | 2 is show day/month | 0 is hide
+            ...(type === "online_status" && { show_online_status: status }), // 1 is online | 0 is offline
+            ...(type === "seen_status" && { display_seen_status: status }), // 1 is show | 0 is hide
+            ...(type === "receive_message" && { receive_message: status }), // 1 is allow everyone to message | 2 is only friend
+            ...(type === "accept_call" && { accept_stranger_call: status }), // 2 is only friends | 3 is allow everyone to message | 4 is friends and person who contacted
+            ...(type === "phone_search" && { add_friend_via_phone: status }), // 1 is enable | 0 is disable
+            ...(type === "find_me_via_qr" && { add_friend_via_qr: status }), // 1 is enable | 0 is disable
+            ...(type === "common_group" && { add_friend_via_group: status }), // 1 is show common group | 0 is unshow common group
+            ...(type === "find_me_via_contact" && { add_friend_via_contact: status }), // 1 is enable | 0 is disable
+            ...(type === "recommend_friend" && { display_on_recommend_friend: status }), // 1 is recommend | 0 is not recommend
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
