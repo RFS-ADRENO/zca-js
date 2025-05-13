@@ -129,7 +129,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-bun.lock
 bun.lockb
 cookies.json
 credentials.json
