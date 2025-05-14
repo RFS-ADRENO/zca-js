@@ -562,8 +562,9 @@ async function handleZaloResponse(ctx, response, isEncrypted = true) {
     return result;
 }
 async function resolveResponse(ctx, res, cb, isEncrypted) {
+    const codeIgnore = [119];
     const result = await handleZaloResponse(ctx, res, isEncrypted);
-    if (result.error)
+    if (result.error && typeof result.error.code === "number" && codeIgnore.includes(result.error.code))
         throw new ZaloApiError.ZaloApiError(result.error.message, result.error.code);
     if (cb)
         return cb(result);

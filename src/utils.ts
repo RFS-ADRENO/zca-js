@@ -618,8 +618,9 @@ export async function resolveResponse<T = any>(
     cb?: (result: ZaloResponse<unknown>) => T,
     isEncrypted?: boolean,
 ) {
+    const codeIgnore = [119]
     const result = await handleZaloResponse<T>(ctx, res, isEncrypted);
-    if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
+    if (result.error && typeof result.error.code === "number" && codeIgnore.includes(result.error.code)) throw new ZaloApiError(result.error.message, result.error.code);
     if (cb) return cb(result);
 
     return result.data as T;
