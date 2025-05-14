@@ -46,6 +46,7 @@ import { getUserInfoFactory } from "./apis/getUserInfo.js";
 import { keepAliveFactory } from "./apis/keepAlive.js";
 import { lockPollFactory } from "./apis/lockPoll.js";
 import { loginQR, LoginQRCallbackEventType, type LoginQRCallback } from "./apis/loginQR.js";
+import { parseLinkFactory } from "./apis/parseLink.js";
 import { pinConversationsFactory } from "./apis/pinConversations.js";
 import { removeGroupDeputyFactory } from "./apis/removeGroupDeputy.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
@@ -59,6 +60,7 @@ import { sendStickerFactory } from "./apis/sendSticker.js";
 import { sendTypingEventFactory } from "./apis/sendTypingEvent.js";
 import { sendVideoFactory } from "./apis/sendVideo.js";
 import { sendVoiceFactory } from "./apis/sendVoice.js";
+import { setSettingsAccountFactory } from "./apis/setSettingsAccount.js";
 import { unblockUserFactory } from "./apis/unblockUser.js";
 import { undoFactory } from "./apis/undo.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
@@ -242,6 +244,7 @@ export class API {
     public getUserInfo: ReturnType<typeof getUserInfoFactory>;
     public keepAlive: ReturnType<typeof keepAliveFactory>;
     public lockPoll: ReturnType<typeof lockPollFactory>;
+    public parseLink: ReturnType<typeof parseLinkFactory>;
     public pinConversations: ReturnType<typeof pinConversationsFactory>;
     public removeGroupDeputy: ReturnType<typeof removeGroupDeputyFactory>;
     public removeUserFromGroup: ReturnType<typeof removeUserFromGroupFactory>;
@@ -255,6 +258,7 @@ export class API {
     public sendTypingEvent: ReturnType<typeof sendTypingEventFactory>;
     public sendVideo: ReturnType<typeof sendVideoFactory>;
     public sendVoice: ReturnType<typeof sendVoiceFactory>;
+    public setSettingsAccount: ReturnType<typeof setSettingsAccountFactory>;
     public unblockUser: ReturnType<typeof unblockUserFactory>;
     public undo: ReturnType<typeof undoFactory>;
     public updateLabels: ReturnType<typeof updateLabelsFactory>;
@@ -301,6 +305,7 @@ export class API {
         this.getUserInfo = getUserInfoFactory(ctx, this);
         this.keepAlive = keepAliveFactory(ctx, this);
         this.lockPoll = lockPollFactory(ctx, this);
+        this.parseLink = parseLinkFactory(ctx, this);
         this.pinConversations = pinConversationsFactory(ctx, this);
         this.removeGroupDeputy = removeGroupDeputyFactory(ctx, this);
         this.removeUserFromGroup = removeUserFromGroupFactory(ctx, this);
@@ -314,6 +319,7 @@ export class API {
         this.sendTypingEvent = sendTypingEventFactory(ctx, this);
         this.sendVideo = sendVideoFactory(ctx, this);
         this.sendVoice = sendVoiceFactory(ctx, this);
+        this.setSettingsAccount = setSettingsAccountFactory(ctx, this);
         this.unblockUser = unblockUserFactory(ctx, this);
         this.undo = undoFactory(ctx, this);
         this.updateLabels = updateLabelsFactory(ctx, this);
