@@ -12,6 +12,7 @@ import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { GroupEventType } from "./models/GroupEvent.js";
 import { FriendEventType } from "./models/FriendEvent.js";
 import type { API } from "./zalo.js";
+import type { AttachmentSource } from "./models/Attachment.js";
 
 export const isBun = typeof Bun !== "undefined";
 
@@ -376,7 +377,7 @@ export async function decodeEventData(parsed: any, cipherKey?: string) {
     return JSON.parse(decodedData);
 }
 
-export function getMd5LargeFileObject(filePath: string, fileSize: number) {
+export function getMd5LargeFileObject(source: AttachmentSource, fileSize: number) {
     return new Promise<{
         currentChunk: number;
         data: string;
@@ -385,7 +386,7 @@ export function getMd5LargeFileObject(filePath: string, fileSize: number) {
             chunks = Math.ceil(fileSize / chunkSize),
             currentChunk = 0,
             spark = new SparkMD5.ArrayBuffer(),
-            buffer = await fs.promises.readFile(filePath);
+            buffer = typeof source == "string" ? await fs.promises.readFile(source) : source.data;
 
         function loadNext() {
             let start = currentChunk * chunkSize,
