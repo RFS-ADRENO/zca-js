@@ -1,7 +1,7 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-type parseLinkMedia = {
+export type ParseLinkMedia = {
     type: number;
     count: number;
     mediaTitle: string;
@@ -10,7 +10,7 @@ type parseLinkMedia = {
     stream_icon: string;
 };
 
-type errorMaps = {
+export type ParseLinkErrorMaps = {
     [key: string]: number; // or Record<string, number>;
 };
 
@@ -20,9 +20,9 @@ export type ParseLinkResponse = {
     desc: string;
     src: string;
     href: string;
-    media: parseLinkMedia;
+    media: ParseLinkMedia;
     stream_icon: string;
-    error_maps: errorMaps;
+    error_maps: ParseLinkErrorMaps;
 };
 
 export const parseLinkFactory = apiFactory<ParseLinkResponse>()((api, ctx, utils) => {

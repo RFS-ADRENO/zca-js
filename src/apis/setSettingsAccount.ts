@@ -3,7 +3,7 @@ import { apiFactory } from "../utils.js";
 
 export type SetSettingsAccountResponse = {};
 
-export type SettingType =
+export type SetSettingType =
       "view_birthday"
     | "online_status"
     | "seen_status"
@@ -26,7 +26,7 @@ export const setSettingsAccountFactory = apiFactory<SetSettingsAccountResponse>(
      *
      * @throws ZaloApiError
      */
-    return async function setSettingsAccount(type: SettingType, status: number) {
+    return async function setSettingsAccount(type: SetSettingType, status: number) {
         const params = {
             ...(type === "view_birthday" && { view_birthday: status }), // 1 is show full day/month/year | 2 is show day/month | 0 is hide
             ...(type === "online_status" && { show_online_status: status }), // 1 is online | 0 is offline
