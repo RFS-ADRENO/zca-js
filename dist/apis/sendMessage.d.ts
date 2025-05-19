@@ -1,4 +1,5 @@
 import { ThreadType, type TMessage } from "../models/index.js";
+import type { AttachmentSource } from "../models/Attachment.js";
 export type SendMessageResult = {
     msgId: number;
 };
@@ -87,7 +88,7 @@ export type MessageContent = {
     /**
      * Attachments in the message (optional)
      */
-    attachments?: string[];
+    attachments?: AttachmentSource[];
     /**
      * Time to live in milisecond
      */

@@ -95,9 +95,9 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
         }
         return await Promise.all(requests);
     }
-    async function upthumb(filePath, url) {
+    async function upthumb(source, url) {
         let formData = new FormData();
-        let buffer = await fs.readFile(filePath);
+        let buffer = typeof source == "string" ? await fs.readFile(source) : source.data;
         formData.append("fileContent", buffer, {
             filename: "blob",
             contentType: "image/png",
@@ -230,12 +230,14 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
     async function handleAttachment({ msg, attachments, mentions, quote, ttl, urgency }, threadId, type) {
         if (!attachments || attachments.length == 0)
             throw new ZaloApiError("Missing attachments");
-        const firstExtFile = getFileExtension(attachments[0]);
+        const firstSource = attachments[0];
+        const isFilePath = typeof firstSource == "string";
+        const firstExtFile = getFileExtension(isFilePath ? firstSource : firstSource.filename);
         const isSingleFile = attachments.length == 1;
         const isGroupMessage = type == ThreadType.Group;
         const canBeDesc = isSingleFile && ["jpg", "jpeg", "png", "webp"].includes(firstExtFile);
-        const gifFiles = attachments.filter((e) => getFileExtension(e) == "gif");
-        attachments = attachments.filter((e) => getFileExtension(e) != "gif");
+        const gifFiles = attachments.filter((e) => getFileExtension(typeof e == "string" ? e : e.filename) == "gif");
+        attachments = attachments.filter((e) => getFileExtension(typeof e == "string" ? e : e.filename) != "gif");
         const uploadAttachment = attachments.length == 0 ? [] : await api.uploadAttachment(attachments, threadId, type);
         const attachmentsData = [];
         let indexInGroupLayout = uploadAttachment.length - 1;
@@ -336,13 +338,14 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
             attachmentsData.push(data);
         }
         for (const gif of gifFiles) {
-            const gifData = await getGifMetaData(gif);
+            const isFilePath = typeof gif == "string";
+            const gifData = isFilePath ? await getGifMetaData(gif) : Object.assign(Object.assign({}, gif.metadata), { fileName: gif.filename });
             if (isExceedMaxFileSize(gifData.totalSize))
-                throw new ZaloApiError(`File ${getFileName(gif)} size exceed maximum size of ${sharefile.max_size_share_file_v3}MB`);
+                throw new ZaloApiError(`File ${isFilePath ? getFileName(gif) : gif.filename} size exceed maximum size of ${sharefile.max_size_share_file_v3}MB`);
             const _upthumb = await upthumb(gif, serviceURLs.attachment[ThreadType.User]);
             const formData = new FormData();
-            formData.append("chunkContent", await fs.readFile(gif), {
-                filename: getFileName(gif),
+            formData.append("chunkContent", isFilePath ? await fs.readFile(gif) : gif.data, {
+                filename: isFilePath ? getFileName(gif) : gif.filename,
                 contentType: "application/octet-stream",
             });
             const params = {
@@ -416,7 +419,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
             attachment: [],
         };
         if (attachments && attachments.length > 0) {
-            const firstExtFile = getFileExtension(attachments[0]);
+            const firstExtFile = getFileExtension(typeof attachments[0] == "string" ? attachments[0] : attachments[0].filename);
             const isSingleFile = attachments.length == 1;
             const canBeDesc = isSingleFile && ["jpg", "jpeg", "png", "webp"].includes(firstExtFile);
             if ((!canBeDesc && msg.length > 0) || (msg.length > 0 && quote)) {

@@ -619,7 +619,7 @@ export async function resolveResponse<T = any>(
     cb?: (result: ZaloResponse<unknown>) => T,
     isEncrypted?: boolean,
 ) {
-    const codeIgnore = [119]
+    const codeIgnore = [119];
     const result = await handleZaloResponse<T>(ctx, res, isEncrypted);
     if (result.error) console.log("Error: ", result.error.message, result.error.code);
     if (cb) return cb(result);

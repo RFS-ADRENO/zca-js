@@ -332,10 +332,10 @@ export async function decodeEventData(parsed, cipherKey) {
         return;
     return JSON.parse(decodedData);
 }
-export function getMd5LargeFileObject(filePath, fileSize) {
+export function getMd5LargeFileObject(source, fileSize) {
     return new Promise(async (resolve, reject) => {
         let chunkSize = 2097152, // Read in chunks of 2MB
-        chunks = Math.ceil(fileSize / chunkSize), currentChunk = 0, spark = new SparkMD5.ArrayBuffer(), buffer = await fs.promises.readFile(filePath);
+        chunks = Math.ceil(fileSize / chunkSize), currentChunk = 0, spark = new SparkMD5.ArrayBuffer(), buffer = typeof source == "string" ? await fs.promises.readFile(source) : source.data;
         function loadNext() {
             let start = currentChunk * chunkSize, end = start + chunkSize >= fileSize ? fileSize : start + chunkSize;
             // @ts-ignore

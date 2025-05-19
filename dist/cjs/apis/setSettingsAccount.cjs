@@ -3,7 +3,7 @@
 var ZaloApiError = require('../Errors/ZaloApiError.cjs');
 var utils = require('../utils.cjs');
 
-const setSettingsAccountFactory = utils.apiFactory()((api, ctx, utils) => {
+const setSettingsAccountFactory = utils.apiFactory()((_api, _ctx, utils) => {
     const serviceURL = utils.makeURL(`https://wpa.chat.zalo.me/api/setting/update`);
     /**
      * Set account settings - implement managing various account settings
@@ -18,8 +18,7 @@ const setSettingsAccountFactory = utils.apiFactory()((api, ctx, utils) => {
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams)
             throw new ZaloApiError.ZaloApiError("Failed to encrypt params");
-        const urlWithParams = `${serviceURL}&params=${encodeURIComponent(encryptedParams)}`;
-        const response = await utils.request(urlWithParams, {
+        const response = await utils.request(utils.makeURL(serviceURL, { params: encryptedParams }), {
             method: "GET",
         });
         return utils.resolve(response);

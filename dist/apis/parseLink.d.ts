@@ -1,4 +1,4 @@
-type parseLinkMedia = {
+export type ParseLinkMedia = {
     type: number;
     count: number;
     mediaTitle: string;
@@ -6,7 +6,7 @@ type parseLinkMedia = {
     streamUrl: string;
     stream_icon: string;
 };
-type errorMaps = {
+export type ParseLinkErrorMaps = {
     [key: string]: number;
 };
 export type ParseLinkResponse = {
@@ -15,9 +15,8 @@ export type ParseLinkResponse = {
     desc: string;
     src: string;
     href: string;
-    media: parseLinkMedia;
+    media: ParseLinkMedia;
     stream_icon: string;
-    error_maps: errorMaps;
+    error_maps: ParseLinkErrorMaps;
 };
 export declare const parseLinkFactory: (ctx: import("../context.js").ContextBase, api: import("../zalo.js").API) => (link: string) => Promise<ParseLinkResponse>;
-export {};

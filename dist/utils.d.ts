@@ -3,6 +3,7 @@ import { type ContextSession, type ContextBase } from "./context.js";
 import { GroupEventType } from "./models/GroupEvent.js";
 import { FriendEventType } from "./models/FriendEvent.js";
 import type { API } from "./zalo.js";
+import type { AttachmentSource } from "./models/Attachment.js";
 export declare const isBun: boolean;
 /**
  * Get signed key for API requests.
@@ -80,7 +81,7 @@ export declare function getGifMetaData(filePath: string): Promise<{
     height: number | undefined;
 }>;
 export declare function decodeEventData(parsed: any, cipherKey?: string): Promise<any>;
-export declare function getMd5LargeFileObject(filePath: string, fileSize: number): Promise<{
+export declare function getMd5LargeFileObject(source: AttachmentSource, fileSize: number): Promise<{
     currentChunk: number;
     data: string;
 }>;

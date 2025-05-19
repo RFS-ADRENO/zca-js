@@ -1,3 +1,4 @@
+export * from "./Attachment.js";
 export * from "./Enum.js";
 export * from "./FriendEvent.js";
 export * from "./GroupEvent.js";
