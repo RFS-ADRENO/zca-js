@@ -3,8 +3,8 @@ import { apiFactory } from "../utils.js";
 
 export type SetSettingsAccountResponse = {};
 
-export type SettingType =
-      "view_birthday"
+export type SetSettingType =
+    | "view_birthday"
     | "online_status"
     | "seen_status"
     | "receive_message"
@@ -15,7 +15,7 @@ export type SettingType =
     | "find_me_via_contact"
     | "recommend_friend";
 
-export const setSettingsAccountFactory = apiFactory<SetSettingsAccountResponse>()((api, ctx, utils) => {
+export const setSettingsAccountFactory = apiFactory<SetSettingsAccountResponse>()((_api, _ctx, utils) => {
     const serviceURL = utils.makeURL(`https://wpa.chat.zalo.me/api/setting/update`);
 
     /**
@@ -26,7 +26,7 @@ export const setSettingsAccountFactory = apiFactory<SetSettingsAccountResponse>(
      *
      * @throws ZaloApiError
      */
-    return async function setSettingsAccount(type: SettingType, status: number) {
+    return async function setSettingsAccount(type: SetSettingType, status: number) {
         const params = {
             ...(type === "view_birthday" && { view_birthday: status }), // 1 is show full day/month/year | 2 is show day/month | 0 is hide
             ...(type === "online_status" && { show_online_status: status }), // 1 is online | 0 is offline
@@ -43,9 +43,7 @@ export const setSettingsAccountFactory = apiFactory<SetSettingsAccountResponse>(
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const urlWithParams = `${serviceURL}&params=${encodeURIComponent(encryptedParams)}`;
-
-        const response = await utils.request(urlWithParams, {
+        const response = await utils.request(utils.makeURL(serviceURL, { params: encryptedParams }), {
             method: "GET",
         });
 

@@ -12,6 +12,7 @@ import {
     getMd5LargeFileObject,
     resolveResponse,
 } from "../utils.js";
+import type { AttachmentSource } from "../models/Attachment.js";
 
 type ImageResponse = {
     normalUrl: string;
@@ -88,6 +89,7 @@ type AttachmentData =
               jxl: number;
               chunkId: number;
           };
+          source: AttachmentSource;
       }
     | {
           filePath: string;
@@ -106,6 +108,7 @@ type AttachmentData =
               jxl: number;
               chunkId: number;
           };
+          source: AttachmentSource;
       };
 
 const urlType = {
@@ -140,12 +143,12 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
      * @throws ZaloApiError
      */
     return async function uploadAttachment(
-        filePaths: string[],
+        sources: AttachmentSource[],
         threadId: string,
         type: ThreadType = ThreadType.User,
     ): Promise<UploadAttachmentType[]> {
-        if (!filePaths || filePaths.length == 0) throw new ZaloApiError("Missing filePaths");
-        if (isExceedMaxFile(filePaths.length)) throw new ZaloApiError("Exceed maximum file of " + sharefile.max_file);
+        if (!sources || sources.length == 0) throw new ZaloApiError("Missing filePaths");
+        if (isExceedMaxFile(sources.length)) throw new ZaloApiError("Exceed maximum file of " + sharefile.max_file);
         if (!threadId) throw new ZaloApiError("Missing threadId");
 
         const chunkSize = ctx.settings!.features.sharefile.chunk_size_file;
@@ -155,19 +158,26 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
         const typeParam = isGroupMessage ? "11" : "2";
 
         let clientId = Date.now();
-        for (const filePath of filePaths) {
-            if (!fs.existsSync(filePath)) throw new ZaloApiError("File not found");
+        for (const source of sources) {
+            const isFilePath = typeof source == "string";
+            const isBuffer = typeof source == "object" && source.data instanceof Buffer;
 
-            const extFile = getFileExtension(filePath);
-            const fileName = getFileName(filePath);
+            if (!isFilePath && !isBuffer) throw new ZaloApiError("Invalid source type");
+            if (!isFilePath && !source.filename) throw new ZaloApiError("Missing filename");
+
+            if (isFilePath && !fs.existsSync(source)) throw new ZaloApiError("File not found");
+
+            const extFile = getFileExtension(isFilePath ? source : source.filename);
+            const fileName = isFilePath ? getFileName(source) : source.filename;
 
             if (isExtensionValid(extFile) == false)
                 throw new ZaloApiError(`File extension "${extFile}" is not allowed`);
 
             const data: AttachmentData = {
-                filePath,
+                filePath: isFilePath ? source : source.filename,
                 chunkContent: [] as FormData[],
                 params: {},
+                source,
             } as AttachmentData;
 
             if (isGroupMessage) data.params.grid = threadId;
@@ -178,7 +188,7 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
                 case "jpeg":
                 case "png":
                 case "webp":
-                    let imageData = await getImageMetaData(filePath);
+                    let imageData = isFilePath ? await getImageMetaData(source) : { ...source.metadata, fileName };
                     if (isExceedMaxFileSize(imageData.totalSize!))
                         throw new ZaloApiError(
                             `File ${fileName} size exceed maximum size of ${sharefile.max_size_share_file_v3}MB`,
@@ -198,7 +208,7 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
 
                     break;
                 case "mp4":
-                    let videoSize = await getFileSize(filePath);
+                    let videoSize = isFilePath ? await getFileSize(source) : source.metadata.totalSize;
                     if (isExceedMaxFileSize(videoSize))
                         throw new ZaloApiError(
                             `File ${fileName} size exceed maximum size of ${sharefile.max_size_share_file_v3}MB`,
@@ -221,7 +231,7 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
 
                     break;
                 default:
-                    const fileSize = await getFileSize(filePath);
+                    const fileSize = isFilePath ? await getFileSize(source) : source.metadata.totalSize;
                     if (isExceedMaxFileSize(fileSize))
                         throw new ZaloApiError(
                             `File ${fileName} size exceed maximum size of ${sharefile.max_size_share_file_v3}MB`,
@@ -245,7 +255,7 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
                     break;
             }
 
-            const fileBuffer = await fs.promises.readFile(filePath);
+            const fileBuffer = isFilePath ? await fs.promises.readFile(source) : source.data;
             for (let i = 0; i < data.params.totalChunk; i++) {
                 const formData = new FormData();
                 const slicedBuffer = fileBuffer.subarray(i * chunkSize, (i + 1) * chunkSize);
@@ -294,7 +304,7 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
                                                 totalSize: data.fileData.totalSize,
                                                 fileName: data.fileData.fileName,
                                                 checksum: (
-                                                    await getMd5LargeFileObject(data.filePath, data.fileData.totalSize)
+                                                    await getMd5LargeFileObject(data.source, data.fileData.totalSize)
                                                 ).data,
                                             };
                                             results.push(result);
