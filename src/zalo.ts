@@ -215,7 +215,7 @@ export class API {
     public addUserToGroup: ReturnType<typeof addUserToGroupFactory>;
     public blockUser: ReturnType<typeof blockUserFactory>;
     public blockViewFeed: ReturnType<typeof blockViewFeedFactory>;
-    public changeAccountAvatar: ReturnType<typeof changeAccountAvatarFactory>;
+    // public changeAccountAvatar: ReturnType<typeof changeAccountAvatarFactory>;
     public changeAccountSetting: ReturnType<typeof changeAccountSettingFactory>;
     public changeGroupAvatar: ReturnType<typeof changeGroupAvatarFactory>;
     public changeGroupName: ReturnType<typeof changeGroupNameFactory>;
@@ -276,7 +276,7 @@ export class API {
         this.addUserToGroup = addUserToGroupFactory(ctx, this);
         this.blockUser = blockUserFactory(ctx, this);
         this.blockViewFeed = blockViewFeedFactory(ctx, this);
-        this.changeAccountAvatar = changeAccountAvatarFactory(ctx, this);
+        // this.changeAccountAvatar = changeAccountAvatarFactory(ctx, this);
         this.changeAccountSetting = changeAccountSettingFactory(ctx, this);
         this.changeGroupAvatar = changeGroupAvatarFactory(ctx, this);
         this.changeGroupName = changeGroupNameFactory(ctx, this);
