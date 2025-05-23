@@ -7,7 +7,6 @@ import { addReactionFactory } from "./apis/addReaction.js";
 import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
 import { blockUserFactory } from "./apis/blockUser.js";
 import { blockViewFeedFactory } from "./apis/blockViewFeed.js";
-import { changeAccountAvatarFactory } from "./apis/changeAccountAvatar.js";
 import { changeAccountSettingFactory } from "./apis/changeAccountSetting.js";
 import { changeFriendAliasFactory } from "./apis/changeFriendAlias.js";
 import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
@@ -102,7 +101,6 @@ export declare class API {
     addUserToGroup: ReturnType<typeof addUserToGroupFactory>;
     blockUser: ReturnType<typeof blockUserFactory>;
     blockViewFeed: ReturnType<typeof blockViewFeedFactory>;
-    changeAccountAvatar: ReturnType<typeof changeAccountAvatarFactory>;
     changeAccountSetting: ReturnType<typeof changeAccountSettingFactory>;
     changeGroupAvatar: ReturnType<typeof changeGroupAvatarFactory>;
     changeGroupName: ReturnType<typeof changeGroupNameFactory>;

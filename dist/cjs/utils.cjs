@@ -404,30 +404,6 @@ function strPadLeft(e, t, n) {
     const a = (e = "" + e).length;
     return a === n ? e : a > n ? e.slice(-2) : t.repeat(n - a) + e;
 }
-function formatTime(format, timestamp = Date.now()) {
-    const date = new Date(timestamp);
-    // using lib Intl
-    const options = {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        // hour12: false, // true or false is same <(")
-    };
-    const formatted = new Intl.DateTimeFormat("vi-VN", options).format(date);
-    if (format.includes("%H") || format.includes("%d")) {
-        return format
-            .replace("%H", date.getHours().toString().padStart(2, "0"))
-            .replace("%M", date.getMinutes().toString().padStart(2, "0"))
-            .replace("%S", date.getSeconds().toString().padStart(2, "0"))
-            .replace("%d", date.getDate().toString().padStart(2, "0"))
-            .replace("%m", (date.getMonth() + 1).toString().padStart(2, "0"))
-            .replace("%Y", date.getFullYear().toString());
-    }
-    return formatted;
-}
 function getFullTimeFromMillisecond(e) {
     let t = new Date(e);
     return (strPadLeft(t.getHours(), "0", 2) +
@@ -603,7 +579,6 @@ exports.decodeEventData = decodeEventData;
 exports.decodeUnit8Array = decodeUnit8Array;
 exports.decryptResp = decryptResp;
 exports.encodeAES = encodeAES;
-exports.formatTime = formatTime;
 exports.generateZaloUUID = generateZaloUUID;
 exports.getClientMessageType = getClientMessageType;
 exports.getDefaultHeaders = getDefaultHeaders;

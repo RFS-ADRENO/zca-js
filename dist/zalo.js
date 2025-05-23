@@ -9,7 +9,6 @@ import { addReactionFactory } from "./apis/addReaction.js";
 import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
 import { blockUserFactory } from "./apis/blockUser.js";
 import { blockViewFeedFactory } from "./apis/blockViewFeed.js";
-import { changeAccountAvatarFactory } from "./apis/changeAccountAvatar.js";
 import { changeAccountSettingFactory } from "./apis/changeAccountSetting.js";
 import { changeFriendAliasFactory } from "./apis/changeFriendAlias.js";
 import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
@@ -157,7 +156,7 @@ export class API {
         this.addUserToGroup = addUserToGroupFactory(ctx, this);
         this.blockUser = blockUserFactory(ctx, this);
         this.blockViewFeed = blockViewFeedFactory(ctx, this);
-        this.changeAccountAvatar = changeAccountAvatarFactory(ctx, this);
+        // this.changeAccountAvatar = changeAccountAvatarFactory(ctx, this);
         this.changeAccountSetting = changeAccountSettingFactory(ctx, this);
         this.changeGroupAvatar = changeGroupAvatarFactory(ctx, this);
         this.changeGroupName = changeGroupNameFactory(ctx, this);

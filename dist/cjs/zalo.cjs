@@ -11,7 +11,6 @@ var addReaction = require('./apis/addReaction.cjs');
 var addUserToGroup = require('./apis/addUserToGroup.cjs');
 var blockUser = require('./apis/blockUser.cjs');
 var blockViewFeed = require('./apis/blockViewFeed.cjs');
-var changeAccountAvatar = require('./apis/changeAccountAvatar.cjs');
 var changeAccountSetting = require('./apis/changeAccountSetting.cjs');
 var changeFriendAlias = require('./apis/changeFriendAlias.cjs');
 var changeGroupAvatar = require('./apis/changeGroupAvatar.cjs');
@@ -160,7 +159,7 @@ class API {
         this.addUserToGroup = addUserToGroup.addUserToGroupFactory(ctx, this);
         this.blockUser = blockUser.blockUserFactory(ctx, this);
         this.blockViewFeed = blockViewFeed.blockViewFeedFactory(ctx, this);
-        this.changeAccountAvatar = changeAccountAvatar.changeAccountAvatarFactory(ctx, this);
+        // this.changeAccountAvatar = changeAccountAvatarFactory(ctx, this);
         this.changeAccountSetting = changeAccountSetting.changeAccountSettingFactory(ctx, this);
         this.changeGroupAvatar = changeGroupAvatar.changeGroupAvatarFactory(ctx, this);
         this.changeGroupName = changeGroupName.changeGroupNameFactory(ctx, this);
