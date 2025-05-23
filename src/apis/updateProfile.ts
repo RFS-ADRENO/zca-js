@@ -3,20 +3,19 @@ import { apiFactory } from "../utils.js";
 
 export type ChangeAccountSettingResponse = "";
 
-export const changeAccountSettingFactory = apiFactory<ChangeAccountSettingResponse>()((api, ctx, utils) => {
+export const updateProfileFactory = apiFactory<ChangeAccountSettingResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/update`);
 
     /**
      * Change account setting information
      *
-     * @param name The new account name
+     * @param name Profile name wants to change
      * @param dob Date of birth wants to change (format: year-month-day)
      * @param gender Gender wants to change (0 = Male, 1 = Female)
-     * @param language Zalo language wants to change (default is vi = Vietnamese) || (en = English, my = Malaysia)
      *
      * @throws ZaloApiError
      */
-    return async function changeAccountSetting(name: string, dob: string, gender: number, language: string = "vi") {
+    return async function updateProfile(name: string, dob: `${string}-${string}-${string}`, gender: number) {
         const params = {
             profile: JSON.stringify({
                 name: name,
@@ -24,7 +23,7 @@ export const changeAccountSettingFactory = apiFactory<ChangeAccountSettingRespon
                 gender: gender,
             }),
             biz: JSON.stringify({}),
-            language: language,
+            language: ctx.language,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

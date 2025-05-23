@@ -17,8 +17,6 @@ import { addReactionFactory } from "./apis/addReaction.js";
 import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
 import { blockUserFactory } from "./apis/blockUser.js";
 import { blockViewFeedFactory } from "./apis/blockViewFeed.js";
-import { changeAccountAvatarFactory } from "./apis/changeAccountAvatar.js";
-import { changeAccountSettingFactory } from "./apis/changeAccountSetting.js";
 import { changeFriendAliasFactory } from "./apis/changeFriendAlias.js";
 import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
 import { changeGroupNameFactory } from "./apis/changeGroupName.js";
@@ -37,6 +35,7 @@ import { getContextFactory } from "./apis/getContext.js";
 import { getCookieFactory } from "./apis/getCookie.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
 import { getGroupMembersInfoFactory } from "./apis/getGroupMembersInfo.js";
+import { getLabelsFactory } from "./apis/getLabels.js";
 import { getOwnIdFactory } from "./apis/getOwnId.js";
 import { getPollDetailFactory } from "./apis/getPollDetail.js";
 import { getQRFactory } from "./apis/getQR.js";
@@ -63,13 +62,14 @@ import { sendVoiceFactory } from "./apis/sendVoice.js";
 import { setSettingsAccountFactory } from "./apis/setSettingsAccount.js";
 import { unblockUserFactory } from "./apis/unblockUser.js";
 import { undoFactory } from "./apis/undo.js";
+import { updateLabelsFactory } from "./apis/updateLabels.js";
+import { updateProfileFactory } from "./apis/updateProfile.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
+
 import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { checkUpdate } from "./update.js";
 
 import { customFactory } from "./apis/custom.js";
-import { getLabelsFactory } from "./apis/getLabels.js";
-import { updateLabelsFactory } from "./apis/updateLabels.js";
 
 export type Cookie = {
     domain: string;
@@ -216,7 +216,6 @@ export class API {
     public blockUser: ReturnType<typeof blockUserFactory>;
     public blockViewFeed: ReturnType<typeof blockViewFeedFactory>;
     // public changeAccountAvatar: ReturnType<typeof changeAccountAvatarFactory>;
-    public changeAccountSetting: ReturnType<typeof changeAccountSettingFactory>;
     public changeGroupAvatar: ReturnType<typeof changeGroupAvatarFactory>;
     public changeGroupName: ReturnType<typeof changeGroupNameFactory>;
     public changeGroupOwner: ReturnType<typeof changeGroupOwnerFactory>;
@@ -262,6 +261,7 @@ export class API {
     public unblockUser: ReturnType<typeof unblockUserFactory>;
     public undo: ReturnType<typeof undoFactory>;
     public updateLabels: ReturnType<typeof updateLabelsFactory>;
+    public updateProfile: ReturnType<typeof updateProfileFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
 
     public custom: ReturnType<typeof customFactory>;
@@ -277,7 +277,6 @@ export class API {
         this.blockUser = blockUserFactory(ctx, this);
         this.blockViewFeed = blockViewFeedFactory(ctx, this);
         // this.changeAccountAvatar = changeAccountAvatarFactory(ctx, this);
-        this.changeAccountSetting = changeAccountSettingFactory(ctx, this);
         this.changeGroupAvatar = changeGroupAvatarFactory(ctx, this);
         this.changeGroupName = changeGroupNameFactory(ctx, this);
         this.changeGroupOwner = changeGroupOwnerFactory(ctx, this);
@@ -323,6 +322,7 @@ export class API {
         this.unblockUser = unblockUserFactory(ctx, this);
         this.undo = undoFactory(ctx, this);
         this.updateLabels = updateLabelsFactory(ctx, this);
+        this.updateProfile = updateProfileFactory(ctx, this);
         this.uploadAttachment = uploadAttachmentFactory(ctx, this);
 
         this.custom = customFactory(ctx, this);
