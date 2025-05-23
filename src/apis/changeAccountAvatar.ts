@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import FormData from "form-data";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, getFileName, getFileSize, formatTime } from "../utils.js";
+import { apiFactory, getFileName, getFileSize, formatTime, getImageMetaData } from "../utils.js";
+import type { AttachmentSource } from "../models/Attachment.js";
 
 export type ChangeAccountAvatarResponse = "";
 
@@ -17,50 +18,43 @@ export const changeAccountAvatarFactory = apiFactory<ChangeAccountAvatarResponse
      * Change account avatar
      *
      * @param userId User ID of account want to change avatar
-     * @param filePath A path to the image to upload/change avatar
-     * @param width  Width of avatar image
-     * @param height Height of avatar image
-     * @param language Zalo website language ? (idk) <(") || (default is vi = Vietnamese) || (en = English, my = Malaysia)
-     * @param size Avatar image size (default = auto)
+     * @param source image source (file path or Buffer)
      *
      * @throws ZaloApiError
      */
     return async function changeAccountAvatar(
         userId: string,
-        filePath: string,
-        width: number = 500,
-        height: number = 500,
-        language: string = "vi",
-        size = null,
+        source: AttachmentSource,
     ) {
-        if (!fs.existsSync(filePath)) {
-            throw new ZaloApiError(`${filePath} not found`);
+        const isSourceFilePath = typeof source === "string";
+        if (isSourceFilePath && !fs.existsSync(source)) {
+            throw new ZaloApiError(`${source} not found`);
         }
 
-        const fileName = getFileName(filePath);
-        const fileSize = size || (await getFileSize(filePath)); // (await fs.promises.stat(filePath)).size
+        const fileName = isSourceFilePath ? getFileName(source) : source.filename;
+        const fileSize = isSourceFilePath ? (await getFileSize(source)) : source.metadata.totalSize;
 
         if (isExceedMaxFileSize(fileSize))
             throw new ZaloApiError(
                 `File ${fileName} size exceed maximum size of ${sharefile.max_size_share_file_v3}MB`,
             );
 
-        const fileContent = await fs.promises.readFile(filePath);
-        // const files: [string, Buffer][] = [["fileContent", fileContent]];
+        const fileContent = isSourceFilePath ? (await fs.promises.readFile(source)) : source.data;
+        const metadata = isSourceFilePath ? (await getImageMetaData(source)) : source.metadata;
 
         const params = {
             avatarSize: 120,
             clientId: String(userId + formatTime("%H:%M %d/%m/%Y")),
-            language: language,
+            language: ctx.language,
             metaData: JSON.stringify({
                 origin: {
-                    width: width,
-                    height: height,
+                    width: metadata.width,
+                    height: metadata.height,
                 },
                 processed: {
-                    width: width,
-                    height: height,
-                    size: Number(fileSize),
+                    width: metadata.width,
+                    height: metadata.height,
+                    size: metadata.totalSize,
                 },
             }),
         };
@@ -70,10 +64,9 @@ export const changeAccountAvatarFactory = apiFactory<ChangeAccountAvatarResponse
 
         const formData = new FormData();
         formData.append("params", encryptedParams);
-        // formData.append("fileContent", files);
         formData.append("fileContent", fileContent, {
             filename: fileName,
-            contentType: "image/jpg", // Cần xác định type nếu có
+            contentType: "image/jpg",
         });
 
         const response = await utils.request(serviceURL, {
