@@ -33,6 +33,7 @@ import { getAllFriendsFactory } from "./apis/getAllFriends.js";
 import { getAllGroupsFactory } from "./apis/getAllGroups.js";
 import { getContextFactory } from "./apis/getContext.js";
 import { getCookieFactory } from "./apis/getCookie.js";
+import { getFriendRequestFactory } from "./apis/getFriendRequest.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
 import { getGroupMembersInfoFactory } from "./apis/getGroupMembersInfo.js";
 import { getLabelsFactory } from "./apis/getLabels.js";
@@ -231,6 +232,7 @@ export class API {
     public getAllFriends: ReturnType<typeof getAllFriendsFactory>;
     public getAllGroups: ReturnType<typeof getAllGroupsFactory>;
     public getCookie: ReturnType<typeof getCookieFactory>;
+    public getFriendRequest: ReturnType<typeof getFriendRequestFactory>;
     public getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
     public getGroupMembersInfo: ReturnType<typeof getGroupMembersInfoFactory>;
     public getLabels: ReturnType<typeof getLabelsFactory>;
@@ -292,6 +294,7 @@ export class API {
         this.getAllFriends = getAllFriendsFactory(ctx, this);
         this.getAllGroups = getAllGroupsFactory(ctx, this);
         this.getCookie = getCookieFactory(ctx, this);
+        this.getFriendRequest = getFriendRequestFactory(ctx, this);
         this.getGroupInfo = getGroupInfoFactory(ctx, this);
         this.getGroupMembersInfo = getGroupMembersInfoFactory(ctx, this);
         this.getLabels = getLabelsFactory(ctx, this);
