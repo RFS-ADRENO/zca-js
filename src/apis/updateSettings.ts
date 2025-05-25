@@ -1,9 +1,9 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type SetSettingsAccountResponse = {};
+export type UpdateSettingsResponse = {};
 
-export type SetSettingType =
+export type UpdateSettingsType =
     | "view_birthday"
     | "online_status"
     | "seen_status"
@@ -15,7 +15,7 @@ export type SetSettingType =
     | "find_me_via_contact"
     | "recommend_friend";
 
-export const setSettingsAccountFactory = apiFactory<SetSettingsAccountResponse>()((_api, _ctx, utils) => {
+export const updateSettingsFactory = apiFactory<UpdateSettingsResponse>()((_api, _ctx, utils) => {
     const serviceURL = utils.makeURL(`https://wpa.chat.zalo.me/api/setting/update`);
 
     /**
@@ -26,7 +26,7 @@ export const setSettingsAccountFactory = apiFactory<SetSettingsAccountResponse>(
      *
      * @throws ZaloApiError
      */
-    return async function setSettingsAccount(type: SetSettingType, status: number) {
+    return async function updateSettings(type: UpdateSettingsType, status: number) {
         const params = {
             ...(type === "view_birthday" && { view_birthday: status }), // 1 is show full day/month/year | 2 is show day/month | 0 is hide
             ...(type === "online_status" && { show_online_status: status }), // 1 is online | 0 is offline

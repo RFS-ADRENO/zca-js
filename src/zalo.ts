@@ -60,11 +60,11 @@ import { sendStickerFactory } from "./apis/sendSticker.js";
 import { sendTypingEventFactory } from "./apis/sendTypingEvent.js";
 import { sendVideoFactory } from "./apis/sendVideo.js";
 import { sendVoiceFactory } from "./apis/sendVoice.js";
-import { setSettingsAccountFactory } from "./apis/setSettingsAccount.js";
 import { unblockUserFactory } from "./apis/unblockUser.js";
 import { undoFactory } from "./apis/undo.js";
 import { updateLabelsFactory } from "./apis/updateLabels.js";
 import { updateProfileFactory } from "./apis/updateProfile.js";
+import { updateSettingsFactory } from "./apis/updateSettings.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 
 import { ZaloApiError } from "./Errors/ZaloApiError.js";
@@ -259,11 +259,11 @@ export class API {
     public sendTypingEvent: ReturnType<typeof sendTypingEventFactory>;
     public sendVideo: ReturnType<typeof sendVideoFactory>;
     public sendVoice: ReturnType<typeof sendVoiceFactory>;
-    public setSettingsAccount: ReturnType<typeof setSettingsAccountFactory>;
     public unblockUser: ReturnType<typeof unblockUserFactory>;
     public undo: ReturnType<typeof undoFactory>;
     public updateLabels: ReturnType<typeof updateLabelsFactory>;
     public updateProfile: ReturnType<typeof updateProfileFactory>;
+    public updateSettings: ReturnType<typeof updateSettingsFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
 
     public custom: ReturnType<typeof customFactory>;
@@ -321,11 +321,11 @@ export class API {
         this.sendTypingEvent = sendTypingEventFactory(ctx, this);
         this.sendVideo = sendVideoFactory(ctx, this);
         this.sendVoice = sendVoiceFactory(ctx, this);
-        this.setSettingsAccount = setSettingsAccountFactory(ctx, this);
         this.unblockUser = unblockUserFactory(ctx, this);
         this.undo = undoFactory(ctx, this);
         this.updateLabels = updateLabelsFactory(ctx, this);
         this.updateProfile = updateProfileFactory(ctx, this);
+        this.updateSettings = updateSettingsFactory(ctx, this);
         this.uploadAttachment = uploadAttachmentFactory(ctx, this);
 
         this.custom = customFactory(ctx, this);
