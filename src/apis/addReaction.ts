@@ -1,6 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { ThreadType } from "../models/Enum.js";
-import type { Message } from "../models/Message.js";
 import { Reactions } from "../models/Reaction.js";
 import { apiFactory } from "../utils.js";
 
@@ -14,6 +13,15 @@ export type CustomReaction = {
     icon: string;
 };
 
+export type AddReactionDestination = {
+    data: {
+        msgId: string; // Global message ID
+        cliMsgId: string; // Client message ID
+    };
+    threadId: string; // Thread ID
+    type: ThreadType; // Thread type (User or Group)
+};
+
 export const addReactionFactory = apiFactory<AddReactionResponse>()((api, ctx, utils) => {
     const serviceURLs = {
         [ThreadType.User]: utils.makeURL(`${api.zpwServiceMap.reaction[0]}/api/message/reaction`),
@@ -24,16 +32,12 @@ export const addReactionFactory = apiFactory<AddReactionResponse>()((api, ctx, u
      * Add reaction to a message
      *
      * @param icon Reaction icon
-     * @param message Message object to react to
+     * @param dest Destination data including message IDs and thread information
      *
      * @throws ZaloApiError
      */
-    return async function addReaction(
-        icon: Reactions | CustomReaction,
-        message: Message,
-        type: ThreadType = ThreadType.User,
-    ) {
-        const serviceURL = serviceURLs[message.type];
+    return async function addReaction(icon: Reactions | CustomReaction, dest: AddReactionDestination) {
+        const serviceURL = serviceURLs[dest.type];
         let rType, source;
 
         if (typeof icon == "object") {
@@ -274,8 +278,8 @@ export const addReactionFactory = apiFactory<AddReactionResponse>()((api, ctx, u
                     message: JSON.stringify({
                         rMsg: [
                             {
-                                gMsgID: parseInt(message.data.msgId),
-                                cMsgID: parseInt(message.data.cliMsgId),
+                                gMsgID: parseInt(dest.data.msgId),
+                                cMsgID: parseInt(dest.data.cliMsgId),
                                 msgType: 1,
                             },
                         ],
@@ -288,10 +292,10 @@ export const addReactionFactory = apiFactory<AddReactionResponse>()((api, ctx, u
             ],
         };
 
-        if (type == ThreadType.User) {
-            params.toid = message.threadId;
+        if (dest.type == ThreadType.User) {
+            params.toid = dest.threadId;
         } else {
-            params.grid = message.threadId;
+            params.grid = dest.threadId;
             params.imei = ctx.imei;
         }
 
