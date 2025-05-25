@@ -24,6 +24,7 @@ export type { FetchAccountInfoResponse } from "./apis/fetchAccountInfo.js";
 export type { FindUserResponse } from "./apis/findUser.js";
 export type { GetAllFriendsResponse } from "./apis/getAllFriends.js";
 export type { GetAllGroupsResponse } from "./apis/getAllGroups.js";
+export type { GetFriendRequestResponse, CollapseMsgListConfig, RecommInfo, RecommItem, BizPkg } from "./apis/getFriendRequest.js";
 export type { ExtraInfo, GridInfoMap, GroupInfo, GroupInfoResponse, PendingApprove } from "./apis/getGroupInfo.js";
 export type { GetGroupMembersInfoResponse, MemberProfile } from "./apis/getGroupMembersInfo.js";
 export type { GetLabelsResponse } from "./apis/getLabels.js";
