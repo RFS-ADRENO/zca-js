@@ -12,7 +12,7 @@ export const changeGroupAvatarFactory = apiFactory<ChangeGroupAvatarResponse>()(
     /**
      * Change group avatar
      *
-     * @param avatarSource Path to the image file
+     * @param avatarSource Attachment source, can be a file path or an Attachment object
      * @param groupId Group ID
      *
      * @throws ZaloApiError
