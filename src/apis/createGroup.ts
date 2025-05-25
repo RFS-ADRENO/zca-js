@@ -1,4 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { AttachmentSource } from "../models/Attachment.js";
 import { apiFactory } from "../utils.js";
 
 export type CreateGroupResponse = {
@@ -8,6 +9,26 @@ export type CreateGroupResponse = {
     errorMembers: string[];
     error_data: Record<string, any>;
 };
+
+export type CreateGroupOptions = {
+    /**
+     * Group name
+     */
+    name?: string;
+    /**
+     * List of member IDs to add to the group
+     */
+    members: string[];
+    /**
+     * Avatar source, can be a file path or an Attachment object
+     */
+    avatarSource?: AttachmentSource;
+    /**
+     * Path to the avatar image file
+     * @deprecated Use `avatarSource` instead
+     */
+    avatarPath?: string
+}
 
 export const createGroupFactory = apiFactory<CreateGroupResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/create/v2`);
@@ -19,7 +40,7 @@ export const createGroupFactory = apiFactory<CreateGroupResponse>()((api, ctx, u
      *
      * @throws ZaloApiError
      */
-    return async function createGroup(options: { name?: string; members: string[]; avatarPath?: string }) {
+    return async function createGroup(options: CreateGroupOptions) {
         if (options.members.length == 0) throw new ZaloApiError("Group must have at least one member");
 
         const params: any = {
@@ -48,7 +69,8 @@ export const createGroupFactory = apiFactory<CreateGroupResponse>()((api, ctx, u
         });
 
         const data = await utils.resolve(response);
-        if (options.avatarPath) await api.changeGroupAvatar(data.groupId, options.avatarPath).catch(console.error);
+        options.avatarSource = options.avatarSource || options.avatarPath;
+        if (options.avatarSource) await api.changeGroupAvatar(options.avatarSource, data.groupId).catch(console.error);
 
         return data;
     };

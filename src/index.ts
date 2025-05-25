@@ -14,7 +14,7 @@ export type { ChangeGroupAvatarResponse } from "./apis/changeGroupAvatar.js";
 export type { ChangeGroupNameResponse } from "./apis/changeGroupName.js";
 export type { ChangeGroupOwnerResponse } from "./apis/changeGroupOwner.js";
 export type { ChangeFriendAliasResponse } from "./apis/changeFriendAlias.js";
-export type { CreateGroupResponse } from "./apis/createGroup.js";
+export type { CreateGroupResponse, CreateGroupOptions } from "./apis/createGroup.js";
 export type { CreateNoteResponse, CreateNoteOptions } from "./apis/createNote.js";
 export type { CreatePollResponse, CreatePollOptions } from "./apis/createPoll.js";
 export type { DeleteMessageResponse, DeleteMessageOptions } from "./apis/deleteMessage.js";
