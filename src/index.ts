@@ -42,6 +42,7 @@ export type { ParseLinkResponse, ParseLinkMedia, ParseLinkErrorMaps } from "./ap
 export type { PinConversationsResponse } from "./apis/pinConversations.js";
 export type { RemoveGroupDeputyResponse } from "./apis/removeGroupDeputy.js";
 export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js";
+export type { ResetHiddenConversPinResponse } from "./apis/resetHiddenConversPin.js";
 export type { SendCardResponse, SendCardOptions } from "./apis/sendCard.js";
 export type { SendDeliveredEventResponse, DeliveredEventMessageParams } from "./apis/sendDeliveredEvent.js";
 export type { SendFriendRequestResponse } from "./apis/sendFriendRequest.js";
