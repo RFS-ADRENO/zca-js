@@ -5,17 +5,16 @@ export * from "./zalo.js";
 // API RESPONSE TYPES
 export type { AcceptFriendRequestResponse } from "./apis/acceptFriendRequest.js";
 export type { AddGroupDeputyResponse } from "./apis/addGroupDeputy.js";
-export type { AddReactionResponse, CustomReaction } from "./apis/addReaction.js";
+export type { AddReactionResponse, CustomReaction, AddReactionDestination } from "./apis/addReaction.js";
 export type { AddUserToGroupResponse } from "./apis/addUserToGroup.js";
 export type { BlockUserResponse } from "./apis/blockUser.js";
 export type { BlockViewFeedResponse } from "./apis/blockViewFeed.js";
 export type { ChangeAccountAvatarResponse } from "./apis/changeAccountAvatar.js";
-export type { ChangeAccountSettingResponse } from "./apis/changeAccountSetting.js";
 export type { ChangeGroupAvatarResponse } from "./apis/changeGroupAvatar.js";
 export type { ChangeGroupNameResponse } from "./apis/changeGroupName.js";
 export type { ChangeGroupOwnerResponse } from "./apis/changeGroupOwner.js";
 export type { ChangeFriendAliasResponse } from "./apis/changeFriendAlias.js";
-export type { CreateGroupResponse } from "./apis/createGroup.js";
+export type { CreateGroupResponse, CreateGroupOptions } from "./apis/createGroup.js";
 export type { CreateNoteResponse, CreateNoteOptions } from "./apis/createNote.js";
 export type { CreatePollResponse, CreatePollOptions } from "./apis/createPoll.js";
 export type { DeleteMessageResponse, DeleteMessageOptions } from "./apis/deleteMessage.js";
@@ -25,6 +24,7 @@ export type { FetchAccountInfoResponse } from "./apis/fetchAccountInfo.js";
 export type { FindUserResponse } from "./apis/findUser.js";
 export type { GetAllFriendsResponse } from "./apis/getAllFriends.js";
 export type { GetAllGroupsResponse } from "./apis/getAllGroups.js";
+export type { GetFriendRequestResponse, CollapseMsgListConfig, RecommInfo, RecommItem, BizPkg } from "./apis/getFriendRequest.js";
 export type { ExtraInfo, GridInfoMap, GroupInfo, GroupInfoResponse, PendingApprove } from "./apis/getGroupInfo.js";
 export type { GetGroupMembersInfoResponse, MemberProfile } from "./apis/getGroupMembersInfo.js";
 export type { GetLabelsResponse } from "./apis/getLabels.js";
@@ -48,10 +48,11 @@ export type { SendSeenEventResponse, SeenEventMessageParams } from "./apis/sendS
 export type { SendTypingEventResponse, SendTypingEventOptions } from "./apis/sendTypingEvent.js";
 export type { SendVideoResponse, SendVideoOptions } from "./apis/sendVideo.js";
 export type { SendVoiceResponse, SendVoiceOptions } from "./apis/sendVoice.js";
-export type { SetSettingsAccountResponse, SetSettingType } from "./apis/setSettingsAccount.js";
 export type { UnBlockUserResponse } from "./apis/unblockUser.js";
 export type { UndoResponse, UndoOptions } from "./apis/undo.js";
 export type { UpdateLabelsResponse, UpdateLabelParams } from "./apis/updateLabels.js"
+export type { ChangeAccountSettingResponse } from "./apis/updateProfile.js";
+export type { UpdateSettingsResponse, UpdateSettingsType } from "./apis/updateSettings.js";
 export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType } from "./apis/uploadAttachment.js";
 export type { LoginQRCallback, LoginQRCallbackEvent } from "./apis/loginQR.js";
 
