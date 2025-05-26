@@ -68,6 +68,7 @@ import { unblockUserFactory } from "./apis/unblockUser.js";
 import { undoFactory } from "./apis/undo.js";
 import { updateHiddenConversPinFactory } from "./apis/updateHiddenConversPin.js";
 import { updateLabelsFactory } from "./apis/updateLabels.js";
+import { updateLangFactory } from "./apis/updateLang.js";
 import { updateProfileFactory } from "./apis/updateProfile.js";
 import { updateSettingsFactory } from "./apis/updateSettings.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
@@ -272,6 +273,7 @@ export class API {
     public undo: ReturnType<typeof undoFactory>;
     public updateHiddenConversPin: ReturnType<typeof updateHiddenConversPinFactory>;
     public updateLabels: ReturnType<typeof updateLabelsFactory>;
+    public updateLang: ReturnType<typeof updateLangFactory>;
     public updateProfile: ReturnType<typeof updateProfileFactory>;
     public updateSettings: ReturnType<typeof updateSettingsFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
@@ -339,6 +341,7 @@ export class API {
         this.undo = undoFactory(ctx, this);
         this.updateHiddenConversPin = updateHiddenConversPinFactory(ctx, this);
         this.updateLabels = updateLabelsFactory(ctx, this);
+        this.updateLang = updateLangFactory(ctx, this);
         this.updateProfile = updateProfileFactory(ctx, this);
         this.updateSettings = updateSettingsFactory(ctx, this);
         this.uploadAttachment = uploadAttachmentFactory(ctx, this);

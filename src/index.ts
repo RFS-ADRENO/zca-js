@@ -55,7 +55,8 @@ export type { SendVoiceResponse, SendVoiceOptions } from "./apis/sendVoice.js";
 export type { UnBlockUserResponse } from "./apis/unblockUser.js";
 export type { UndoResponse, UndoOptions } from "./apis/undo.js";
 export type { UpdateHiddenConversPinResponse } from "./apis/updateHiddenConversPin.js";
-export type { UpdateLabelsResponse, UpdateLabelParams } from "./apis/updateLabels.js"
+export type { UpdateLabelsResponse, UpdateLabelParams } from "./apis/updateLabels.js";
+export type { UpdateLangResponse } from "./apis/updateLang.js";
 export type { ChangeAccountSettingResponse } from "./apis/updateProfile.js";
 export type { UpdateSettingsResponse, UpdateSettingsType } from "./apis/updateSettings.js";
 export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType } from "./apis/uploadAttachment.js";
