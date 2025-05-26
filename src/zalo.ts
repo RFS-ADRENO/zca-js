@@ -44,6 +44,7 @@ import { getLabelsFactory } from "./apis/getLabels.js";
 import { getOwnIdFactory } from "./apis/getOwnId.js";
 import { getPollDetailFactory } from "./apis/getPollDetail.js";
 import { getQRFactory } from "./apis/getQR.js";
+import { getQuickMessageFactory } from "./apis/getQuickMessage.js";
 import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
 import { getUserInfoFactory } from "./apis/getUserInfo.js";
@@ -251,6 +252,7 @@ export class API {
     public getPollDetail: ReturnType<typeof getPollDetailFactory>;
     public getContext: ReturnType<typeof getContextFactory>;
     public getQR: ReturnType<typeof getQRFactory>;
+    public getQuickMessage: ReturnType<typeof getQuickMessageFactory>;
     public getStickers: ReturnType<typeof getStickersFactory>;
     public getStickersDetail: ReturnType<typeof getStickersDetailFactory>;
     public getUserInfo: ReturnType<typeof getUserInfoFactory>;
@@ -320,6 +322,7 @@ export class API {
         this.getPollDetail = getPollDetailFactory(ctx, this);
         this.getContext = getContextFactory(ctx, this);
         this.getQR = getQRFactory(ctx, this);
+        this.getQuickMessage = getQuickMessageFactory(ctx, this);
         this.getStickers = getStickersFactory(ctx, this);
         this.getStickersDetail = getStickersDetailFactory(ctx, this);
         this.getUserInfo = getUserInfoFactory(ctx, this);

@@ -33,6 +33,7 @@ export type { GetGroupMembersInfoResponse, MemberProfile } from "./apis/getGroup
 export type { GetLabelsResponse } from "./apis/getLabels.js";
 export type { GetMuteResponse, MuteEntriesInfo } from "./apis/getMute.js";
 export type { GetQRResponse } from "./apis/getQR.js";
+export type { GetQuickMessageResponse, QuickMessage, Message } from "./apis/getQuickMessage.js";
 export type { StickerDetailResponse } from "./apis/getStickersDetail.js";
 export type { PollOption, PollDetailResponse } from "./apis/getPollDetail.js";
 export type { ProfileInfo, UserInfoResponse } from "./apis/getUserInfo.js";
