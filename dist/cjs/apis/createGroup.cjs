@@ -38,8 +38,9 @@ const createGroupFactory = utils.apiFactory()((api, ctx, utils) => {
             method: "POST",
         });
         const data = await utils.resolve(response);
-        if (options.avatarPath)
-            await api.changeGroupAvatar(data.groupId, options.avatarPath).catch(console.error);
+        options.avatarSource = options.avatarSource || options.avatarPath;
+        if (options.avatarSource)
+            await api.changeGroupAvatar(options.avatarSource, data.groupId).catch(console.error);
         return data;
     };
 });

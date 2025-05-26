@@ -7,30 +7,34 @@ export const changeGroupAvatarFactory = apiFactory()((api, ctx, utils) => {
     /**
      * Change group avatar
      *
-     * @param avatarPath Path to the image file
+     * @param avatarSource Attachment source, can be a file path or an Attachment object
      * @param groupId Group ID
      *
      * @throws ZaloApiError
      */
-    return async function changeGroupAvatar(avatarPath, groupId) {
+    return async function changeGroupAvatar(avatarSource, groupId) {
         const params = {
             grid: groupId,
             avatarSize: 120,
             clientId: `g${groupId}${getFullTimeFromMillisecond(new Date().getTime())}`,
             imei: ctx.imei,
         };
-        const imageMetaData = await getImageMetaData(avatarPath);
+        const isSourceFilePath = typeof avatarSource == "string";
+        const imageMetaData = isSourceFilePath ? await getImageMetaData(avatarSource) : avatarSource.metadata;
         params.originWidth = imageMetaData.width || 1080;
         params.originHeight = imageMetaData.height || 1080;
+        const avatarData = isSourceFilePath ? fs.readFileSync(avatarSource) : avatarSource.data;
         const formData = new FormData();
-        formData.append("fileContent", fs.readFileSync(avatarPath), {
+        formData.append("fileContent", avatarData, {
             filename: "blob",
             contentType: "image/jpeg",
         });
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams)
             throw new ZaloApiError("Failed to encrypt params");
-        const response = await utils.request(serviceURL + `&params=${encodeURIComponent(encryptedParams)}`, {
+        const response = await utils.request(utils.makeURL(serviceURL, {
+            params: encryptedParams,
+        }), {
             method: "POST",
             headers: formData.getHeaders(),
             body: formData.getBuffer(),

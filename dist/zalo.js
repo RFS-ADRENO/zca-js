@@ -9,7 +9,6 @@ import { addReactionFactory } from "./apis/addReaction.js";
 import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
 import { blockUserFactory } from "./apis/blockUser.js";
 import { blockViewFeedFactory } from "./apis/blockViewFeed.js";
-import { changeAccountSettingFactory } from "./apis/changeAccountSetting.js";
 import { changeFriendAliasFactory } from "./apis/changeFriendAlias.js";
 import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
 import { changeGroupNameFactory } from "./apis/changeGroupName.js";
@@ -26,8 +25,10 @@ import { getAllFriendsFactory } from "./apis/getAllFriends.js";
 import { getAllGroupsFactory } from "./apis/getAllGroups.js";
 import { getContextFactory } from "./apis/getContext.js";
 import { getCookieFactory } from "./apis/getCookie.js";
+import { getFriendRequestFactory } from "./apis/getFriendRequest.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
 import { getGroupMembersInfoFactory } from "./apis/getGroupMembersInfo.js";
+import { getLabelsFactory } from "./apis/getLabels.js";
 import { getOwnIdFactory } from "./apis/getOwnId.js";
 import { getPollDetailFactory } from "./apis/getPollDetail.js";
 import { getQRFactory } from "./apis/getQR.js";
@@ -51,15 +52,15 @@ import { sendStickerFactory } from "./apis/sendSticker.js";
 import { sendTypingEventFactory } from "./apis/sendTypingEvent.js";
 import { sendVideoFactory } from "./apis/sendVideo.js";
 import { sendVoiceFactory } from "./apis/sendVoice.js";
-import { setSettingsAccountFactory } from "./apis/setSettingsAccount.js";
 import { unblockUserFactory } from "./apis/unblockUser.js";
 import { undoFactory } from "./apis/undo.js";
+import { updateLabelsFactory } from "./apis/updateLabels.js";
+import { updateProfileFactory } from "./apis/updateProfile.js";
+import { updateSettingsFactory } from "./apis/updateSettings.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { checkUpdate } from "./update.js";
 import { customFactory } from "./apis/custom.js";
-import { getLabelsFactory } from "./apis/getLabels.js";
-import { updateLabelsFactory } from "./apis/updateLabels.js";
 export class Zalo {
     constructor(options = {}) {
         this.options = options;
@@ -157,7 +158,6 @@ export class API {
         this.blockUser = blockUserFactory(ctx, this);
         this.blockViewFeed = blockViewFeedFactory(ctx, this);
         // this.changeAccountAvatar = changeAccountAvatarFactory(ctx, this);
-        this.changeAccountSetting = changeAccountSettingFactory(ctx, this);
         this.changeGroupAvatar = changeGroupAvatarFactory(ctx, this);
         this.changeGroupName = changeGroupNameFactory(ctx, this);
         this.changeGroupOwner = changeGroupOwnerFactory(ctx, this);
@@ -173,6 +173,7 @@ export class API {
         this.getAllFriends = getAllFriendsFactory(ctx, this);
         this.getAllGroups = getAllGroupsFactory(ctx, this);
         this.getCookie = getCookieFactory(ctx, this);
+        this.getFriendRequest = getFriendRequestFactory(ctx, this);
         this.getGroupInfo = getGroupInfoFactory(ctx, this);
         this.getGroupMembersInfo = getGroupMembersInfoFactory(ctx, this);
         this.getLabels = getLabelsFactory(ctx, this);
@@ -199,10 +200,11 @@ export class API {
         this.sendTypingEvent = sendTypingEventFactory(ctx, this);
         this.sendVideo = sendVideoFactory(ctx, this);
         this.sendVoice = sendVoiceFactory(ctx, this);
-        this.setSettingsAccount = setSettingsAccountFactory(ctx, this);
         this.unblockUser = unblockUserFactory(ctx, this);
         this.undo = undoFactory(ctx, this);
         this.updateLabels = updateLabelsFactory(ctx, this);
+        this.updateProfile = updateProfileFactory(ctx, this);
+        this.updateSettings = updateSettingsFactory(ctx, this);
         this.uploadAttachment = uploadAttachmentFactory(ctx, this);
         this.custom = customFactory(ctx, this);
     }

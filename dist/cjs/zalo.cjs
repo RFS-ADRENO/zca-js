@@ -11,7 +11,6 @@ var addReaction = require('./apis/addReaction.cjs');
 var addUserToGroup = require('./apis/addUserToGroup.cjs');
 var blockUser = require('./apis/blockUser.cjs');
 var blockViewFeed = require('./apis/blockViewFeed.cjs');
-var changeAccountSetting = require('./apis/changeAccountSetting.cjs');
 var changeFriendAlias = require('./apis/changeFriendAlias.cjs');
 var changeGroupAvatar = require('./apis/changeGroupAvatar.cjs');
 var changeGroupName = require('./apis/changeGroupName.cjs');
@@ -28,8 +27,10 @@ var getAllFriends = require('./apis/getAllFriends.cjs');
 var getAllGroups = require('./apis/getAllGroups.cjs');
 var getContext = require('./apis/getContext.cjs');
 var getCookie = require('./apis/getCookie.cjs');
+var getFriendRequest = require('./apis/getFriendRequest.cjs');
 var getGroupInfo = require('./apis/getGroupInfo.cjs');
 var getGroupMembersInfo = require('./apis/getGroupMembersInfo.cjs');
+var getLabels = require('./apis/getLabels.cjs');
 var getOwnId = require('./apis/getOwnId.cjs');
 var getPollDetail = require('./apis/getPollDetail.cjs');
 var getQR = require('./apis/getQR.cjs');
@@ -53,15 +54,15 @@ var sendSticker = require('./apis/sendSticker.cjs');
 var sendTypingEvent = require('./apis/sendTypingEvent.cjs');
 var sendVideo = require('./apis/sendVideo.cjs');
 var sendVoice = require('./apis/sendVoice.cjs');
-var setSettingsAccount = require('./apis/setSettingsAccount.cjs');
 var unblockUser = require('./apis/unblockUser.cjs');
 var undo = require('./apis/undo.cjs');
+var updateLabels = require('./apis/updateLabels.cjs');
+var updateProfile = require('./apis/updateProfile.cjs');
+var updateSettings = require('./apis/updateSettings.cjs');
 var uploadAttachment = require('./apis/uploadAttachment.cjs');
 var ZaloApiError = require('./Errors/ZaloApiError.cjs');
 var update = require('./update.cjs');
 var custom = require('./apis/custom.cjs');
-var getLabels = require('./apis/getLabels.cjs');
-var updateLabels = require('./apis/updateLabels.cjs');
 
 class Zalo {
     constructor(options = {}) {
@@ -160,7 +161,6 @@ class API {
         this.blockUser = blockUser.blockUserFactory(ctx, this);
         this.blockViewFeed = blockViewFeed.blockViewFeedFactory(ctx, this);
         // this.changeAccountAvatar = changeAccountAvatarFactory(ctx, this);
-        this.changeAccountSetting = changeAccountSetting.changeAccountSettingFactory(ctx, this);
         this.changeGroupAvatar = changeGroupAvatar.changeGroupAvatarFactory(ctx, this);
         this.changeGroupName = changeGroupName.changeGroupNameFactory(ctx, this);
         this.changeGroupOwner = changeGroupOwner.changeGroupOwnerFactory(ctx, this);
@@ -176,6 +176,7 @@ class API {
         this.getAllFriends = getAllFriends.getAllFriendsFactory(ctx, this);
         this.getAllGroups = getAllGroups.getAllGroupsFactory(ctx, this);
         this.getCookie = getCookie.getCookieFactory(ctx, this);
+        this.getFriendRequest = getFriendRequest.getFriendRequestFactory(ctx, this);
         this.getGroupInfo = getGroupInfo.getGroupInfoFactory(ctx, this);
         this.getGroupMembersInfo = getGroupMembersInfo.getGroupMembersInfoFactory(ctx, this);
         this.getLabels = getLabels.getLabelsFactory(ctx, this);
@@ -202,10 +203,11 @@ class API {
         this.sendTypingEvent = sendTypingEvent.sendTypingEventFactory(ctx, this);
         this.sendVideo = sendVideo.sendVideoFactory(ctx, this);
         this.sendVoice = sendVoice.sendVoiceFactory(ctx, this);
-        this.setSettingsAccount = setSettingsAccount.setSettingsAccountFactory(ctx, this);
         this.unblockUser = unblockUser.unblockUserFactory(ctx, this);
         this.undo = undo.undoFactory(ctx, this);
         this.updateLabels = updateLabels.updateLabelsFactory(ctx, this);
+        this.updateProfile = updateProfile.updateProfileFactory(ctx, this);
+        this.updateSettings = updateSettings.updateSettingsFactory(ctx, this);
         this.uploadAttachment = uploadAttachment.uploadAttachmentFactory(ctx, this);
         this.custom = custom.customFactory(ctx, this);
     }

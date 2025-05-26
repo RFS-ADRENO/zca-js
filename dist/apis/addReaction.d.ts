@@ -1,5 +1,4 @@
 import { ThreadType } from "../models/Enum.js";
-import type { Message } from "../models/Message.js";
 import { Reactions } from "../models/Reaction.js";
 export type AddReactionResponse = {
     msgIds: string;
@@ -9,4 +8,12 @@ export type CustomReaction = {
     source: number;
     icon: string;
 };
-export declare const addReactionFactory: (ctx: import("../context.js").ContextBase, api: import("../zalo.js").API) => (icon: Reactions | CustomReaction, message: Message, type?: ThreadType) => Promise<AddReactionResponse>;
+export type AddReactionDestination = {
+    data: {
+        msgId: string;
+        cliMsgId: string;
+    };
+    threadId: string;
+    type: ThreadType;
+};
+export declare const addReactionFactory: (ctx: import("../context.js").ContextBase, api: import("../zalo.js").API) => (icon: Reactions | CustomReaction, dest: AddReactionDestination) => Promise<AddReactionResponse>;

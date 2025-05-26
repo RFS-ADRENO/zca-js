@@ -127,6 +127,7 @@ class Listener extends EventEmitter {
         };
         ws.onclose = (event) => {
             this.reset();
+            this.emit("disconnected", event.code);
             const retry = retryOnClose && this.canRetry(event.code);
             if (retry && retryOnClose) {
                 const shouldRotate = this.shouldRotate(event.code);

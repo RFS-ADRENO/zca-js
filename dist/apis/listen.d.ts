@@ -23,6 +23,7 @@ export declare enum CloseReason {
 }
 interface ListenerEvents {
     connected: [];
+    disconnected: [reason: CloseReason];
     closed: [reason: CloseReason];
     error: [error: any];
     typing: [typing: Typing];

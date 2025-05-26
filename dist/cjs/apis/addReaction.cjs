@@ -14,12 +14,12 @@ const addReactionFactory = utils.apiFactory()((api, ctx, utils) => {
      * Add reaction to a message
      *
      * @param icon Reaction icon
-     * @param message Message object to react to
+     * @param dest Destination data including message IDs and thread information
      *
      * @throws ZaloApiError
      */
-    return async function addReaction(icon, message, type = Enum.ThreadType.User) {
-        const serviceURL = serviceURLs[message.type];
+    return async function addReaction(icon, dest) {
+        const serviceURL = serviceURLs[dest.type];
         let rType, source;
         if (typeof icon == "object") {
             rType = icon.rType;
@@ -257,8 +257,8 @@ const addReactionFactory = utils.apiFactory()((api, ctx, utils) => {
                     message: JSON.stringify({
                         rMsg: [
                             {
-                                gMsgID: parseInt(message.data.msgId),
-                                cMsgID: parseInt(message.data.cliMsgId),
+                                gMsgID: parseInt(dest.data.msgId),
+                                cMsgID: parseInt(dest.data.cliMsgId),
                                 msgType: 1,
                             },
                         ],
@@ -270,11 +270,11 @@ const addReactionFactory = utils.apiFactory()((api, ctx, utils) => {
                 },
             ],
         };
-        if (type == Enum.ThreadType.User) {
-            params.toid = message.threadId;
+        if (dest.type == Enum.ThreadType.User) {
+            params.toid = dest.threadId;
         }
         else {
-            params.grid = message.threadId;
+            params.grid = dest.threadId;
             params.imei = ctx.imei;
         }
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
