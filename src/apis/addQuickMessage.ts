@@ -16,24 +16,32 @@ export type QuickMessage = {
     media: null;
 };
 
-export type GetQuickMessageResponse = {
-    cursor: number;
-    version: number;
+export type AddQuickMessageResponse = {
     items: QuickMessage[];
+    version: number;
 };
 
-export const getQuickMessageFactory = apiFactory<GetQuickMessageResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.quick_message[0]}/api/quickmessage/list`);
+export const addQuickMessageFactory = apiFactory<AddQuickMessageResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.quick_message[0]}/api/quickmessage/create`);
 
     /**
-     * Get quick message
+     * Add quick message
+     *
+     * @param keyword - The keyword of the quick message
+     * @param title - The title of the quick message
+     *
+     * @notes còn bản có thể up ảnh mà nhiều case quá huhu (dùng tạm bản không có nhé)
      *
      * @throws ZaloApiError
      */
-    return async function getQuickMessage() {
+    return async function addQuickMessage(keyword: string, title: string) {
         const params = {
-            version: 0,
-            lang: 0,
+            keyword: keyword,
+            message: {
+                title: title,
+                params: "",
+            },
+            type: 0,
             imei: ctx.imei,
         };
 

@@ -5,6 +5,7 @@ export * from "./zalo.js";
 // API RESPONSE TYPES
 export type { AcceptFriendRequestResponse } from "./apis/acceptFriendRequest.js";
 export type { AddGroupDeputyResponse } from "./apis/addGroupDeputy.js";
+export type { AddQuickMessageResponse } from "./apis/addQuickMessage.js";
 export type { AddReactionResponse, CustomReaction, AddReactionDestination } from "./apis/addReaction.js";
 export type { AddUserToGroupResponse } from "./apis/addUserToGroup.js";
 export type { AutoDeleteMessageResponse, MessageTTL } from "./apis/autoDeleteMessage.js";
@@ -42,6 +43,7 @@ export type { LockPollResponse } from "./apis/lockPoll.js";
 export type { ParseLinkResponse, ParseLinkMedia, ParseLinkErrorMaps } from "./apis/parseLink.js";
 export type { PinConversationsResponse } from "./apis/pinConversations.js";
 export type { RemoveGroupDeputyResponse } from "./apis/removeGroupDeputy.js";
+export type { RemoveQuickMessageResponse } from "./apis/removeQuickMessage.js";
 export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js";
 export type { ResetHiddenConversPinResponse } from "./apis/resetHiddenConversPin.js";
 export type { SendCardResponse, SendCardOptions } from "./apis/sendCard.js";
@@ -60,6 +62,7 @@ export type { UpdateHiddenConversPinResponse } from "./apis/updateHiddenConversP
 export type { UpdateLabelsResponse, UpdateLabelParams } from "./apis/updateLabels.js";
 export type { UpdateLangResponse } from "./apis/updateLang.js";
 export type { ChangeAccountSettingResponse } from "./apis/updateProfile.js";
+export type { UpdateQuickMessageResponse } from "./apis/updateQuickMessage.js";
 export type { UpdateSettingsResponse, UpdateSettingsType } from "./apis/updateSettings.js";
 export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType } from "./apis/uploadAttachment.js";
 export type { LoginQRCallback, LoginQRCallbackEvent } from "./apis/loginQR.js";

@@ -13,6 +13,7 @@ import { generateZaloUUID, logger } from "./utils.js";
 import toughCookie from "tough-cookie";
 import { acceptFriendRequestFactory } from "./apis/acceptFriendRequest.js";
 import { addGroupDeputyFactory } from "./apis/addGroupDeputy.js";
+import { addQuickMessageFactory } from "./apis/addQuickMessage.js";
 import { addReactionFactory } from "./apis/addReaction.js";
 import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
 import { autoDeleteMessageFactory } from "./apis/autoDeleteMessage.js";
@@ -54,6 +55,7 @@ import { loginQR, LoginQRCallbackEventType, type LoginQRCallback } from "./apis/
 import { parseLinkFactory } from "./apis/parseLink.js";
 import { pinConversationsFactory } from "./apis/pinConversations.js";
 import { removeGroupDeputyFactory } from "./apis/removeGroupDeputy.js";
+import { removeQuickMessageFactory } from "./apis/removeQuickMessage.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
 import { resetHiddenConversPinFactory } from "./apis/resetHiddenConversPin.js";
 import { sendCardFactory } from "./apis/sendCard.js";
@@ -72,6 +74,7 @@ import { updateHiddenConversPinFactory } from "./apis/updateHiddenConversPin.js"
 import { updateLabelsFactory } from "./apis/updateLabels.js";
 import { updateLangFactory } from "./apis/updateLang.js";
 import { updateProfileFactory } from "./apis/updateProfile.js";
+import { updateQuickMessageFactory } from "./apis/updateQuickMessage.js";
 import { updateSettingsFactory } from "./apis/updateSettings.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 
@@ -220,6 +223,7 @@ export class API {
 
     public acceptFriendRequest: ReturnType<typeof acceptFriendRequestFactory>;
     public addGroupDeputy: ReturnType<typeof addGroupDeputyFactory>;
+    public addQuickMessage: ReturnType<typeof addQuickMessageFactory>;
     public addReaction: ReturnType<typeof addReactionFactory>;
     public addUserToGroup: ReturnType<typeof addUserToGroupFactory>;
     public autoDeleteMessage: ReturnType<typeof autoDeleteMessageFactory>;
@@ -261,6 +265,7 @@ export class API {
     public parseLink: ReturnType<typeof parseLinkFactory>;
     public pinConversations: ReturnType<typeof pinConversationsFactory>;
     public removeGroupDeputy: ReturnType<typeof removeGroupDeputyFactory>;
+    public removeQuickMessage: ReturnType<typeof removeQuickMessageFactory>;
     public removeUserFromGroup: ReturnType<typeof removeUserFromGroupFactory>;
     public resetHiddenConversPin: ReturnType<typeof resetHiddenConversPinFactory>;
     public sendCard: ReturnType<typeof sendCardFactory>;
@@ -280,6 +285,7 @@ export class API {
     public updateLang: ReturnType<typeof updateLangFactory>;
     public updateProfile: ReturnType<typeof updateProfileFactory>;
     public updateSettings: ReturnType<typeof updateSettingsFactory>;
+    public updateQuickMessage: ReturnType<typeof updateQuickMessageFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
 
     public custom: ReturnType<typeof customFactory>;
@@ -290,6 +296,7 @@ export class API {
 
         this.acceptFriendRequest = acceptFriendRequestFactory(ctx, this);
         this.addGroupDeputy = addGroupDeputyFactory(ctx, this);
+        this.addQuickMessage = addQuickMessageFactory(ctx, this);
         this.addReaction = addReactionFactory(ctx, this);
         this.addUserToGroup = addUserToGroupFactory(ctx, this);
         this.autoDeleteMessage = autoDeleteMessageFactory(ctx, this);
@@ -331,6 +338,7 @@ export class API {
         this.parseLink = parseLinkFactory(ctx, this);
         this.pinConversations = pinConversationsFactory(ctx, this);
         this.removeGroupDeputy = removeGroupDeputyFactory(ctx, this);
+        this.removeQuickMessage = removeQuickMessageFactory(ctx, this);
         this.removeUserFromGroup = removeUserFromGroupFactory(ctx, this);
         this.resetHiddenConversPin = resetHiddenConversPinFactory(ctx, this);
         this.sendCard = sendCardFactory(ctx, this);
@@ -350,6 +358,7 @@ export class API {
         this.updateLang = updateLangFactory(ctx, this);
         this.updateProfile = updateProfileFactory(ctx, this);
         this.updateSettings = updateSettingsFactory(ctx, this);
+        this.updateQuickMessage = updateQuickMessageFactory(ctx, this);
         this.uploadAttachment = uploadAttachmentFactory(ctx, this);
 
         this.custom = customFactory(ctx, this);
