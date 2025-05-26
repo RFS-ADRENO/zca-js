@@ -7,6 +7,7 @@ export type { AcceptFriendRequestResponse } from "./apis/acceptFriendRequest.js"
 export type { AddGroupDeputyResponse } from "./apis/addGroupDeputy.js";
 export type { AddReactionResponse, CustomReaction, AddReactionDestination } from "./apis/addReaction.js";
 export type { AddUserToGroupResponse } from "./apis/addUserToGroup.js";
+export type { AutoDeleteMessageResponse, MessageTTL } from "./apis/autoDeleteMessage.js";
 export type { BlockUserResponse } from "./apis/blockUser.js";
 export type { BlockViewFeedResponse } from "./apis/blockViewFeed.js";
 export type { ChangeAccountAvatarResponse } from "./apis/changeAccountAvatar.js";
@@ -25,6 +26,7 @@ export type { FindUserResponse } from "./apis/findUser.js";
 export type { GetAliasListResponse } from "./apis/getAliasList.js";
 export type { GetAllFriendsResponse } from "./apis/getAllFriends.js";
 export type { GetAllGroupsResponse } from "./apis/getAllGroups.js";
+export type { GetBizAccountResponse, DataBiz, SettingStartPage } from "./apis/getBizAccount.js";
 export type { GetFriendRequestResponse, CollapseMsgListConfig, RecommInfo, RecommItem, BizPkg } from "./apis/getFriendRequest.js";
 export type { ExtraInfo, GridInfoMap, GroupInfo, GroupInfoResponse, PendingApprove } from "./apis/getGroupInfo.js";
 export type { GetGroupMembersInfoResponse, MemberProfile } from "./apis/getGroupMembersInfo.js";
@@ -52,6 +54,7 @@ export type { SendVideoResponse, SendVideoOptions } from "./apis/sendVideo.js";
 export type { SendVoiceResponse, SendVoiceOptions } from "./apis/sendVoice.js";
 export type { UnBlockUserResponse } from "./apis/unblockUser.js";
 export type { UndoResponse, UndoOptions } from "./apis/undo.js";
+export type { UpdateHiddenConversPinResponse } from "./apis/updateHiddenConversPin.js";
 export type { UpdateLabelsResponse, UpdateLabelParams } from "./apis/updateLabels.js"
 export type { ChangeAccountSettingResponse } from "./apis/updateProfile.js";
 export type { UpdateSettingsResponse, UpdateSettingsType } from "./apis/updateSettings.js";
