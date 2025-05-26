@@ -64,7 +64,8 @@ export const createGroupFactory = apiFactory<CreateGroupResponse>()((api, ctx, u
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
-        const response = await utils.request(serviceURL + `&params=${encodeURIComponent(encryptedParams)}`, {
+        // const response = await utils.request(serviceURL + `&params=${encodeURIComponent(encryptedParams)}`, {
+        const response = await utils.request(utils.makeURL(serviceURL, { params: encryptedParams }), {
             method: "POST",
         });
 
