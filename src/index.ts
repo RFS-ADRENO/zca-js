@@ -20,8 +20,10 @@ export type { CreateGroupResponse, CreateGroupOptions } from "./apis/createGroup
 export type { CreateNoteResponse, CreateNoteOptions } from "./apis/createNote.js";
 export type { CreatePollResponse, CreatePollOptions } from "./apis/createPoll.js";
 export type { DeleteMessageResponse, DeleteMessageOptions } from "./apis/deleteMessage.js";
+export type { DisableGroupLinkResponse } from "./apis/disableGroupLink.js";
 export type { DisperseGroupResponse } from "./apis/disperseGroup.js";
 export type { EditNoteResponse } from "./apis/editNote.js";
+export type { EnableGroupLinkResponse } from "./apis/enableGroupLink.js";
 export type { FetchAccountInfoResponse } from "./apis/fetchAccountInfo.js";
 export type { FindUserResponse } from "./apis/findUser.js";
 export type { GetAliasListResponse } from "./apis/getAliasList.js";
