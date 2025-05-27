@@ -23,7 +23,7 @@ export type GetBizAccountResponse = {
     setting_start_page: SettingStartPage;
 };
 
-export const getBizAccountFactory = apiFactory<GetBizAccountResponse>()((api, ctx, utils) => {
+export const getBizAccountFactory = apiFactory<GetBizAccountResponse>()((api, _ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/friend/get-bizacc`);
 
     /**

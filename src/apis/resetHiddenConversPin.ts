@@ -3,7 +3,7 @@ import { apiFactory, encryptPin } from "../utils.js";
 
 export type ResetHiddenConversPinResponse = "";
 
-export const resetHiddenConversPinFactory = apiFactory<ResetHiddenConversPinResponse>()((api, ctx, utils) => {
+export const resetHiddenConversPinFactory = apiFactory<ResetHiddenConversPinResponse>()((api, _ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.conversation[0]}/api/hiddenconvers/reset`);
 
     /**
