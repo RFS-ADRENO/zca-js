@@ -27,8 +27,8 @@ export type CreateGroupOptions = {
      * Path to the avatar image file
      * @deprecated Use `avatarSource` instead
      */
-    avatarPath?: string
-}
+    avatarPath?: string;
+};
 
 export const createGroupFactory = apiFactory<CreateGroupResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/create/v2`);
