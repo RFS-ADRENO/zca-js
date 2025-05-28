@@ -12,13 +12,15 @@ export const removeQuickMessageFactory = apiFactory<RemoveQuickMessageResponse>(
     /**
      * Remove quick message
      *
-     * @param itemId - The id of the quick message to remove
+     * @param itemIds - The id(s) of the quick message(s) to remove (number or number[])
      *
      * @throws ZaloApiError
      */
-    return async function removeQuickMessage(itemId: number) {
+    return async function removeQuickMessage(itemIds: number | number[]) {
+        const idsArray = Array.isArray(itemIds) ? itemIds : [itemIds];
+        
         const params = {
-            itemIds: [itemId],
+            itemIds: idsArray,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
