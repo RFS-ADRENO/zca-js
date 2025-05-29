@@ -63,6 +63,7 @@ import { resetHiddenConversPinFactory } from "./apis/resetHiddenConversPin.js";
 import { sendCardFactory } from "./apis/sendCard.js";
 import { sendDeliveredEventFactory } from "./apis/sendDeliveredEvent.js";
 import { sendFriendRequestFactory } from "./apis/sendFriendRequest.js";
+import { sendLinkFactory } from "./apis/sendLink.js";
 import { sendMessageFactory } from "./apis/sendMessage.js";
 import { sendReportFactory } from "./apis/sendReport.js";
 import { sendSeenEventFactory } from "./apis/sendSeenEvent.js";
@@ -276,6 +277,7 @@ export class API {
     public sendCard: ReturnType<typeof sendCardFactory>;
     public sendDeliveredEvent: ReturnType<typeof sendDeliveredEventFactory>;
     public sendFriendRequest: ReturnType<typeof sendFriendRequestFactory>;
+    public sendLink: ReturnType<typeof sendLinkFactory>;
     public sendMessage: ReturnType<typeof sendMessageFactory>;
     public sendReport: ReturnType<typeof sendReportFactory>;
     public sendSeenEvent: ReturnType<typeof sendSeenEventFactory>;
@@ -352,6 +354,7 @@ export class API {
         this.sendCard = sendCardFactory(ctx, this);
         this.sendDeliveredEvent = sendDeliveredEventFactory(ctx, this);
         this.sendFriendRequest = sendFriendRequestFactory(ctx, this);
+        this.sendLink = sendLinkFactory(ctx, this);
         this.sendMessage = sendMessageFactory(ctx, this);
         this.sendReport = sendReportFactory(ctx, this);
         this.sendSeenEvent = sendSeenEventFactory(ctx, this);
