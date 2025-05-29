@@ -58,8 +58,6 @@ export const sendLinkFactory = apiFactory<SendLinkResponse>()((api, ctx, utils) 
             }),
         });
 
-        console.log(response);
-
         return utils.resolve(response);
     };
 });
