@@ -50,7 +50,7 @@ interface ListenerEvents {
     seen_messages: [messages: SeenMessage[]];
     delivered_messages: [messages: DeliveredMessage[]];
     reaction: [reaction: Reaction];
-    old_reactions: [reactions: Reaction[]];
+    old_reactions: [reactions: Reaction[], isGroup: boolean];
     upload_attachment: [data: UploadEventData];
     undo: [data: Undo];
     friend_event: [data: FriendEvent];
@@ -389,7 +389,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     const reacts = parsedData[isGroup ? "reactGroups" : "reacts"] as any[];
                     const reactionObjects = reacts.map((react: any) => new Reaction(this.ctx.uid, react, isGroup));
 
-                    this.emit("old_reactions", reactionObjects);
+                    this.emit("old_reactions", reactionObjects, isGroup);
                 }
 
                 if (cmd == 510 && subCmd == 1) {
