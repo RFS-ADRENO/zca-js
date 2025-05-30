@@ -23,6 +23,7 @@ export const sendLinkFactory = apiFactory<SendLinkResponse>()((api, ctx, utils) 
      * @param threadId Thread ID
      * @param type Thread type
      * @param ttl Time to live
+     * 
      * @throws ZaloApiError
      */
     return async function sendLink(link: string, threadId: string, type: ThreadType = ThreadType.User, ttl?: number) {
