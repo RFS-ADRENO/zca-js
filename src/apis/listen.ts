@@ -90,8 +90,8 @@ export class Listener extends EventEmitter<ListenerEvents> {
         private urls: string[],
     ) {
         super();
-        if (!ctx.cookie) throw new Error("Cookie is not available");
-        if (!ctx.userAgent) throw new Error("User agent is not available");
+        if (!ctx.cookie) throw new ZaloApiError("Cookie is not available");
+        if (!ctx.userAgent) throw new ZaloApiError("User agent is not available");
 
         this.wsURL = makeURL(this.ctx, this.urls[0], {
             t: Date.now(),
@@ -543,7 +543,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
 function getHeader(buffer: Buffer) {
     if (buffer.byteLength < 4) {
-        throw new Error("Invalid header");
+        throw new ZaloApiError("Invalid header");
     }
 
     return [buffer[0], buffer.readUInt16LE(1), buffer[3]];
