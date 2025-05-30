@@ -2,7 +2,10 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
 export type GetAliasListResponse = {
-    items: any[];
+    items: {
+        userId: string;
+        alias: string;
+    }[];
     updateTime: string;
 };
 
