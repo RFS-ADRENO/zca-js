@@ -46,7 +46,7 @@ interface ListenerEvents {
     error: [error: any];
     typing: [typing: Typing];
     message: [message: Message];
-    old_messages: [messages: Message[]];
+    old_messages: [messages: Message[], type: ThreadType];
     seen_messages: [messages: SeenMessage[]];
     delivered_messages: [messages: DeliveredMessage[]];
     reaction: [reaction: Reaction];
@@ -396,14 +396,14 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { msgs } = parsedData;
                     const responseMsgs = msgs.map((msg: any) => new UserMessage(this.ctx.uid, msg));
-                    this.emit("old_messages", responseMsgs);
+                    this.emit("old_messages", responseMsgs, ThreadType.User);
                 }
 
                 if (cmd == 511 && subCmd == 1) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { groupMsgs } = parsedData;
                     const responseMsgs = groupMsgs.map((msg: any) => new GroupMessage(this.ctx.uid, msg));
-                    this.emit("old_messages", responseMsgs);
+                    this.emit("old_messages", responseMsgs, ThreadType.Group);
                 }
 
                 if (cmd == 602 && subCmd == 0) {
