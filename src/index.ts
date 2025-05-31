@@ -5,6 +5,7 @@ export * from "./zalo.js";
 // API RESPONSE TYPES
 export type { AcceptFriendRequestResponse } from "./apis/acceptFriendRequest.js";
 export type { AddGroupDeputyResponse } from "./apis/addGroupDeputy.js";
+export type { AddHiddenConversPinResponse } from "./apis/addHiddenConversPin.js";
 export type { AddQuickMessageResponse } from "./apis/addQuickMessage.js";
 export type { AddReactionResponse, CustomReaction, AddReactionDestination } from "./apis/addReaction.js";
 export type { AddUnreadMarkResponse, Data } from "./apis/addUnreadMark.js";
@@ -47,6 +48,7 @@ export type { LockPollResponse } from "./apis/lockPoll.js";
 export type { ParseLinkResponse, ParseLinkMedia, ParseLinkErrorMaps } from "./apis/parseLink.js";
 export type { PinConversationsResponse } from "./apis/pinConversations.js";
 export type { RemoveGroupDeputyResponse } from "./apis/removeGroupDeputy.js";
+export type { RemoveHiddenConversPinResponse } from "./apis/removeHiddenConversPin.js";
 export type { RemoveQuickMessageResponse } from "./apis/removeQuickMessage.js";
 export type { RemoveUnreadMarkResponse } from "./apis/removeUnreadMark.js";
 export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js";

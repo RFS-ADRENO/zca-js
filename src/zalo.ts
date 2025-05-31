@@ -13,6 +13,7 @@ import { generateZaloUUID, logger } from "./utils.js";
 import toughCookie from "tough-cookie";
 import { acceptFriendRequestFactory } from "./apis/acceptFriendRequest.js";
 import { addGroupDeputyFactory } from "./apis/addGroupDeputy.js";
+import { addHiddenConversPinFactory } from "./apis/addHiddenConversPin.js";
 import { addQuickMessageFactory } from "./apis/addQuickMessage.js";
 import { addReactionFactory } from "./apis/addReaction.js";
 import { addUnreadMarkFactory } from "./apis/addUnreadMark.js";
@@ -59,6 +60,7 @@ import { loginQR, LoginQRCallbackEventType, type LoginQRCallback } from "./apis/
 import { parseLinkFactory } from "./apis/parseLink.js";
 import { pinConversationsFactory } from "./apis/pinConversations.js";
 import { removeGroupDeputyFactory } from "./apis/removeGroupDeputy.js";
+import { removeHiddenConversPinFactory } from "./apis/removeHiddenConversPin.js";
 import { removeQuickMessageFactory } from "./apis/removeQuickMessage.js";
 import { removeUnreadMarkFactory } from "./apis/removeUnreadMark.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
@@ -230,6 +232,7 @@ export class API {
 
     public acceptFriendRequest: ReturnType<typeof acceptFriendRequestFactory>;
     public addGroupDeputy: ReturnType<typeof addGroupDeputyFactory>;
+    public addHiddenConversPin: ReturnType<typeof addHiddenConversPinFactory>;
     public addQuickMessage: ReturnType<typeof addQuickMessageFactory>;
     public addReaction: ReturnType<typeof addReactionFactory>;
     public addUnreadMark: ReturnType<typeof addUnreadMarkFactory>;
@@ -276,6 +279,7 @@ export class API {
     public parseLink: ReturnType<typeof parseLinkFactory>;
     public pinConversations: ReturnType<typeof pinConversationsFactory>;
     public removeGroupDeputy: ReturnType<typeof removeGroupDeputyFactory>;
+    public removeHiddenConversPin: ReturnType<typeof removeHiddenConversPinFactory>;
     public removeQuickMessage: ReturnType<typeof removeQuickMessageFactory>;
     public removeUnreadMark: ReturnType<typeof removeUnreadMarkFactory>;
     public removeUserFromGroup: ReturnType<typeof removeUserFromGroupFactory>;
@@ -310,6 +314,7 @@ export class API {
 
         this.acceptFriendRequest = acceptFriendRequestFactory(ctx, this);
         this.addGroupDeputy = addGroupDeputyFactory(ctx, this);
+        this.addHiddenConversPin = addHiddenConversPinFactory(ctx, this);
         this.addQuickMessage = addQuickMessageFactory(ctx, this);
         this.addReaction = addReactionFactory(ctx, this);
         this.addUnreadMark = addUnreadMarkFactory(ctx, this);
@@ -356,6 +361,7 @@ export class API {
         this.parseLink = parseLinkFactory(ctx, this);
         this.pinConversations = pinConversationsFactory(ctx, this);
         this.removeGroupDeputy = removeGroupDeputyFactory(ctx, this);
+        this.removeHiddenConversPin = removeHiddenConversPinFactory(ctx, this);
         this.removeQuickMessage = removeQuickMessageFactory(ctx, this);
         this.removeUnreadMark = removeUnreadMarkFactory(ctx, this);
         this.removeUserFromGroup = removeUserFromGroupFactory(ctx, this);
