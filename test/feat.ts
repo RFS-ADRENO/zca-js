@@ -64,10 +64,7 @@ function prompt() {
 
 function decodeHTTP() {
     rl.question("\n\x1b[32m[ HTTP(s) ] Dán đoạn dữ liệu bị mã hóa hoặc gõ \x1b[37mexit\x1b[0m \x1b[32mđể thoát:\x1b[0m\n\n", (encoded) => {
-        if (encoded.length == 0) {
-            console.log("\x1b[33m[ ! ] Vui lòng nhập dữ liệu cần giải mã!\x1b[0m");
-            return decodeHTTP();
-        }
+        if (encoded.length == 0) return decodeHTTP();
         if (encoded == "exit") return prompt();
 
         if (encoded.startsWith('"') && encoded.endsWith('"')) encoded = JSON.parse(encoded);
@@ -106,10 +103,7 @@ async function decodeWebsocket() {
     rl.question(
         "\n\x1b[38;5;165m[ WEBSOCKET ] Dán đoạn dữ liệu bị mã hóa hoặc gõ \x1b[37mexit\x1b[0m \x1b[38;5;165mđể thoát:\x1b[0m\n\n",
         async (encoded) => {
-            if (encoded.length == 0) {
-                console.log("\x1b[33m[ ! ] Vui lòng nhập dữ liệu cần giải mã!\x1b[0m");
-                return decodeWebsocket();
-            }
+            if (encoded.length == 0) return decodeWebsocket();
             if (encoded == "exit") return prompt();
 
             try {
