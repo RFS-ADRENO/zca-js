@@ -26,6 +26,7 @@ export type { EditNoteResponse } from "./apis/editNote.js";
 export type { EnableGroupLinkResponse } from "./apis/enableGroupLink.js";
 export type { FetchAccountInfoResponse } from "./apis/fetchAccountInfo.js";
 export type { FindUserResponse } from "./apis/findUser.js";
+export type { ForwardMessageResponse, ForwardMessageParams, Success, Failed } from "./apis/forwardMessage.js";
 export type { GetAliasListResponse } from "./apis/getAliasList.js";
 export type { GetAllFriendsResponse } from "./apis/getAllFriends.js";
 export type { GetAllGroupsResponse } from "./apis/getAllGroups.js";
