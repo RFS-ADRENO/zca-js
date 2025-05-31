@@ -15,6 +15,7 @@ import { acceptFriendRequestFactory } from "./apis/acceptFriendRequest.js";
 import { addGroupDeputyFactory } from "./apis/addGroupDeputy.js";
 import { addQuickMessageFactory } from "./apis/addQuickMessage.js";
 import { addReactionFactory } from "./apis/addReaction.js";
+import { addUnreadMarkFactory } from "./apis/addUnreadMark.js";
 import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
 import { autoDeleteMessageFactory } from "./apis/autoDeleteMessage.js";
 import { blockUserFactory } from "./apis/blockUser.js";
@@ -59,6 +60,7 @@ import { parseLinkFactory } from "./apis/parseLink.js";
 import { pinConversationsFactory } from "./apis/pinConversations.js";
 import { removeGroupDeputyFactory } from "./apis/removeGroupDeputy.js";
 import { removeQuickMessageFactory } from "./apis/removeQuickMessage.js";
+import { removeUnreadMarkFactory } from "./apis/removeUnreadMark.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
 import { resetHiddenConversPinFactory } from "./apis/resetHiddenConversPin.js";
 import { sendCardFactory } from "./apis/sendCard.js";
@@ -230,6 +232,7 @@ export class API {
     public addGroupDeputy: ReturnType<typeof addGroupDeputyFactory>;
     public addQuickMessage: ReturnType<typeof addQuickMessageFactory>;
     public addReaction: ReturnType<typeof addReactionFactory>;
+    public addUnreadMark: ReturnType<typeof addUnreadMarkFactory>;
     public addUserToGroup: ReturnType<typeof addUserToGroupFactory>;
     public autoDeleteMessage: ReturnType<typeof autoDeleteMessageFactory>;
     public blockUser: ReturnType<typeof blockUserFactory>;
@@ -274,6 +277,7 @@ export class API {
     public pinConversations: ReturnType<typeof pinConversationsFactory>;
     public removeGroupDeputy: ReturnType<typeof removeGroupDeputyFactory>;
     public removeQuickMessage: ReturnType<typeof removeQuickMessageFactory>;
+    public removeUnreadMark: ReturnType<typeof removeUnreadMarkFactory>;
     public removeUserFromGroup: ReturnType<typeof removeUserFromGroupFactory>;
     public resetHiddenConversPin: ReturnType<typeof resetHiddenConversPinFactory>;
     public sendCard: ReturnType<typeof sendCardFactory>;
@@ -308,6 +312,7 @@ export class API {
         this.addGroupDeputy = addGroupDeputyFactory(ctx, this);
         this.addQuickMessage = addQuickMessageFactory(ctx, this);
         this.addReaction = addReactionFactory(ctx, this);
+        this.addUnreadMark = addUnreadMarkFactory(ctx, this);
         this.addUserToGroup = addUserToGroupFactory(ctx, this);
         this.autoDeleteMessage = autoDeleteMessageFactory(ctx, this);
         this.blockUser = blockUserFactory(ctx, this);
@@ -352,6 +357,7 @@ export class API {
         this.pinConversations = pinConversationsFactory(ctx, this);
         this.removeGroupDeputy = removeGroupDeputyFactory(ctx, this);
         this.removeQuickMessage = removeQuickMessageFactory(ctx, this);
+        this.removeUnreadMark = removeUnreadMarkFactory(ctx, this);
         this.removeUserFromGroup = removeUserFromGroupFactory(ctx, this);
         this.resetHiddenConversPin = resetHiddenConversPinFactory(ctx, this);
         this.sendCard = sendCardFactory(ctx, this);

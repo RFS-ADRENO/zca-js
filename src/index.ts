@@ -7,6 +7,7 @@ export type { AcceptFriendRequestResponse } from "./apis/acceptFriendRequest.js"
 export type { AddGroupDeputyResponse } from "./apis/addGroupDeputy.js";
 export type { AddQuickMessageResponse } from "./apis/addQuickMessage.js";
 export type { AddReactionResponse, CustomReaction, AddReactionDestination } from "./apis/addReaction.js";
+export type { AddUnreadMarkResponse, UnreadMarkParams, Data } from "./apis/addUnreadMark.js";
 export type { AddUserToGroupResponse } from "./apis/addUserToGroup.js";
 export type { AutoDeleteMessageResponse, MessageTTL } from "./apis/autoDeleteMessage.js";
 export type { BlockUserResponse } from "./apis/blockUser.js";
@@ -47,6 +48,7 @@ export type { ParseLinkResponse, ParseLinkMedia, ParseLinkErrorMaps } from "./ap
 export type { PinConversationsResponse } from "./apis/pinConversations.js";
 export type { RemoveGroupDeputyResponse } from "./apis/removeGroupDeputy.js";
 export type { RemoveQuickMessageResponse } from "./apis/removeQuickMessage.js";
+export type { RemoveUnreadMarkResponse } from "./apis/removeUnreadMark.js";
 export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js";
 export type { ResetHiddenConversPinResponse } from "./apis/resetHiddenConversPin.js";
 export type { SendCardResponse, SendCardOptions } from "./apis/sendCard.js";
