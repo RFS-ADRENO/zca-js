@@ -26,12 +26,12 @@ export const autoDeleteMessageFactory = apiFactory<AutoDeleteMessageResponse>()(
      *
      * @throws ZaloApiError
      */
-    return async function autoDeleteMessage(threadId: string, isGroup: boolean, ttl: number) {
+    return async function autoDeleteMessage(threadId: string, isGroup: boolean, ttl?: number) {
         const params = {
             threadId: threadId,
             isGroup: isGroup ? 1 : 0,
-            ttl: ttl,
-            language: ctx.language,
+            ttl: ttl ?? 0,
+            language: ctx.language, 
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
