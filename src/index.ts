@@ -7,7 +7,7 @@ export type { AcceptFriendRequestResponse } from "./apis/acceptFriendRequest.js"
 export type { AddGroupDeputyResponse } from "./apis/addGroupDeputy.js";
 export type { AddQuickMessageResponse } from "./apis/addQuickMessage.js";
 export type { AddReactionResponse, CustomReaction, AddReactionDestination } from "./apis/addReaction.js";
-export type { AddUnreadMarkResponse, UnreadMarkParams, Data } from "./apis/addUnreadMark.js";
+export type { AddUnreadMarkResponse, Data } from "./apis/addUnreadMark.js";
 export type { AddUserToGroupResponse } from "./apis/addUserToGroup.js";
 export type { AutoDeleteMessageResponse, MessageTTL } from "./apis/autoDeleteMessage.js";
 export type { BlockUserResponse } from "./apis/blockUser.js";

@@ -11,35 +11,29 @@ export type RemoveUnreadMarkResponse = {
     status: number;
 };
 
-export type UnreadMarkParams = {
-    threadId: string;
-    cliMsgId: string;
-    fromUid?: string;
-};
-
 export const removeUnreadMarkFactory = apiFactory<RemoveUnreadMarkResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.conversation[0]}/api/conv/removeUnreadMark`);
 
     /**
      * Remove unread mark from conversation
      *
-     * @param params Unread mark parameters
+     * @param threadId Thread ID
      * @param type Thread type (User/Group)
      *
      * @throws ZaloApiError
      */
-    return async function removeUnreadMark(params: UnreadMarkParams, type: ThreadType = ThreadType.User) {
+    return async function removeUnreadMark(threadId: string, type: ThreadType = ThreadType.User) {
         const timestamp = Date.now();
 
         const requestParams = {
             param: JSON.stringify({
-                convsGroup: type === ThreadType.Group ? [params.threadId] : [],
-                convsUser: type === ThreadType.User ? [params.threadId] : [],
+                convsGroup: type === ThreadType.Group ? [threadId] : [],
+                convsUser: type === ThreadType.User ? [threadId] : [],
                 convsGroupData:
                     type === ThreadType.Group
                         ? [
                               {
-                                  id: params.threadId,
+                                  id: threadId,
                                   ts: timestamp,
                               },
                           ]
@@ -48,7 +42,7 @@ export const removeUnreadMarkFactory = apiFactory<RemoveUnreadMarkResponse>()((a
                     type === ThreadType.User
                         ? [
                               {
-                                  id: params.threadId,
+                                  id: threadId,
                                   ts: timestamp,
                               },
                           ]

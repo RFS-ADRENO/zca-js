@@ -11,24 +11,20 @@ export type AddUnreadMarkResponse = {
     status: number;
 };
 
-export type UnreadMarkParams = {
-    threadId: string;
-    cliMsgId: string;
-};
-
 export const addUnreadMarkFactory = apiFactory<AddUnreadMarkResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.conversation[0]}/api/conv/addUnreadMark`);
 
     /**
      * Add unread mark to conversation
      *
-     * @param params Unread mark parameters
+     * @param threadId Thread ID
      * @param type Thread type (User/Group)
      *
      * @throws ZaloApiError
      */
-    return async function addUnreadMark(params: UnreadMarkParams, type: ThreadType = ThreadType.User) {
+    return async function addUnreadMark(threadId: string, type: ThreadType = ThreadType.User) {
         const timestamp = Date.now();
+        const timestampString = Date.now().toString();
 
         const requestParams = {
             param: JSON.stringify({
@@ -36,8 +32,8 @@ export const addUnreadMarkFactory = apiFactory<AddUnreadMarkResponse>()((api, ct
                     type === ThreadType.Group
                         ? [
                               {
-                                  id: params.threadId,
-                                  cliMsgId: params.cliMsgId,
+                                  id: threadId,
+                                  cliMsgId: timestampString,
                                   fromUid: "0",
                                   ts: timestamp,
                               },
@@ -47,8 +43,8 @@ export const addUnreadMarkFactory = apiFactory<AddUnreadMarkResponse>()((api, ct
                     type === ThreadType.User
                         ? [
                               {
-                                  id: params.threadId,
-                                  cliMsgId: params.cliMsgId,
+                                  id: threadId,
+                                  cliMsgId: timestampString,
                                   fromUid: "0",
                                   ts: timestamp,
                               },
