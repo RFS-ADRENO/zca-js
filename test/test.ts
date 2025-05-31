@@ -39,7 +39,17 @@ listener.onMessage((message) => {
                         api.sendMessage(
                             {
                                 msg: "reply",
-                                quote: message,
+                                // quote: message,
+                                quote: {
+                                    content: message.data.content,
+                                    msgType: message.data.msgType,
+                                    propertyExt: message.data.propertyExt,
+                                    uidFrom: message.data.uidFrom,
+                                    msgId: message.data.msgId,
+                                    cliMsgId: message.data.cliMsgId,
+                                    ts: message.data.ts,
+                                    ttl: message.data.ttl,
+                                },
                             },
                             message.threadId,
                             message.type,
