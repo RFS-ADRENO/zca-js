@@ -32,15 +32,18 @@ export type { ForwardMessageResponse, ForwardMessageParams, Success, Failed } fr
 export type { GetAliasListResponse } from "./apis/getAliasList.js";
 export type { GetAllFriendsResponse } from "./apis/getAllFriends.js";
 export type { GetAllGroupsResponse } from "./apis/getAllGroups.js";
+export type { GetAutoDeleteMessageResponse, ConversInfo } from "./apis/getAutoDeleteMessage.js";
 export type { GetBizAccountResponse, DataBiz, SettingStartPage } from "./apis/getBizAccount.js";
 export type { GetFriendRequestResponse, CollapseMsgListConfig, RecommInfo, RecommItem, BizPkg } from "./apis/getFriendRequest.js";
 export type { ExtraInfo, GridInfoMap, GroupInfo, GroupInfoResponse, PendingApprove } from "./apis/getGroupInfo.js";
 export type { GetGroupMembersInfoResponse, MemberProfile } from "./apis/getGroupMembersInfo.js";
+export type { GetHiddenConversPinResponse, ThreadInfo } from "./apis/getHiddenConversPin.js";
 export type { GetLabelsResponse } from "./apis/getLabels.js";
 export type { GetMuteResponse, MuteEntriesInfo } from "./apis/getMute.js";
 export type { GetQRResponse } from "./apis/getQR.js";
 export type { GetQuickMessageResponse, QuickMessage, Message } from "./apis/getQuickMessage.js";
 export type { StickerDetailResponse } from "./apis/getStickersDetail.js";
+export type { GetUnreadMarkResponse } from "./apis/getUnreadMark.js";
 export type { PollOption, PollDetailResponse } from "./apis/getPollDetail.js";
 export type { ProfileInfo, UserInfoResponse } from "./apis/getUserInfo.js";
 export type { KeepAliveResponse } from "./apis/keepAlive.js";
