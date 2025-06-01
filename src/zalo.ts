@@ -28,6 +28,7 @@ import { changeGroupOwnerFactory } from "./apis/changeGroupOwner.js";
 import { createGroupFactory } from "./apis/createGroup.js";
 import { createNoteFactory } from "./apis/createNote.js";
 import { createPollFactory } from "./apis/createPoll.js";
+import { deleteChatFactory } from "./apis/deleteChat.js";
 import { deleteMessageFactory } from "./apis/deleteMessage.js";
 import { disableGroupLinkFactory } from "./apis/disableGroupLink.js";
 import { disperseGroupFactory } from "./apis/disperseGroup.js";
@@ -252,6 +253,7 @@ export class API {
     public createGroup: ReturnType<typeof createGroupFactory>;
     public createNote: ReturnType<typeof createNoteFactory>;
     public createPoll: ReturnType<typeof createPollFactory>;
+    public deleteChat: ReturnType<typeof deleteChatFactory>;
     public deleteMessage: ReturnType<typeof deleteMessageFactory>;
     public disableGroupLink: ReturnType<typeof disableGroupLinkFactory>;
     public disperseGroup: ReturnType<typeof disperseGroupFactory>;
@@ -338,6 +340,7 @@ export class API {
         this.createGroup = createGroupFactory(ctx, this);
         this.createNote = createNoteFactory(ctx, this);
         this.createPoll = createPollFactory(ctx, this);
+        this.deleteChat = deleteChatFactory(ctx, this);
         this.deleteMessage = deleteMessageFactory(ctx, this);
         this.disableGroupLink = disableGroupLinkFactory(ctx, this);
         this.disperseGroup = disperseGroupFactory(ctx, this);

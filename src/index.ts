@@ -21,6 +21,7 @@ export type { ChangeFriendAliasResponse } from "./apis/changeFriendAlias.js";
 export type { CreateGroupResponse, CreateGroupOptions } from "./apis/createGroup.js";
 export type { CreateNoteResponse, CreateNoteOptions } from "./apis/createNote.js";
 export type { CreatePollResponse, CreatePollOptions } from "./apis/createPoll.js";
+export type { DeleteChatResponse, ConverInfo } from "./apis/deleteChat.js";
 export type { DeleteMessageResponse, DeleteMessageOptions } from "./apis/deleteMessage.js";
 export type { DisableGroupLinkResponse } from "./apis/disableGroupLink.js";
 export type { DisperseGroupResponse } from "./apis/disperseGroup.js";
