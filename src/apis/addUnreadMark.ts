@@ -57,7 +57,7 @@ export const addUnreadMarkFactory = apiFactory<AddUnreadMarkResponse>()((api, ct
         const encryptedParams = utils.encodeAES(JSON.stringify(requestParams));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await utils.request(serviceURL.toString(), {
+        const response = await utils.request(serviceURL, {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,
