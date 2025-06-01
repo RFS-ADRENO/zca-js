@@ -81,6 +81,7 @@ import { sendVideoFactory } from "./apis/sendVideo.js";
 import { sendVoiceFactory } from "./apis/sendVoice.js";
 import { unblockUserFactory } from "./apis/unblockUser.js";
 import { undoFactory } from "./apis/undo.js";
+import { updateAutoDeleteMessageFactory } from "./apis/updateAutoDeleteMessage.js";
 import { updateGroupSettingsFactory } from "./apis/updateGroupSettings.js";
 import { updateHiddenConversPinFactory } from "./apis/updateHiddenConversPin.js";
 import { updateLabelsFactory } from "./apis/updateLabels.js";
@@ -303,6 +304,7 @@ export class API {
     public sendVoice: ReturnType<typeof sendVoiceFactory>;
     public unblockUser: ReturnType<typeof unblockUserFactory>;
     public undo: ReturnType<typeof undoFactory>;
+    public updateAutoDeleteMessage: ReturnType<typeof updateAutoDeleteMessageFactory>;
     public updateGroupSettings: ReturnType<typeof updateGroupSettingsFactory>;
     public updateHiddenConversPin: ReturnType<typeof updateHiddenConversPinFactory>;
     public updateLabels: ReturnType<typeof updateLabelsFactory>;
@@ -388,6 +390,7 @@ export class API {
         this.sendVoice = sendVoiceFactory(ctx, this);
         this.unblockUser = unblockUserFactory(ctx, this);
         this.undo = undoFactory(ctx, this);
+        this.updateAutoDeleteMessage = updateAutoDeleteMessageFactory(ctx, this);
         this.updateHiddenConversPin = updateHiddenConversPinFactory(ctx, this);
         this.updateGroupSettings = updateGroupSettingsFactory(ctx, this);
         this.updateLabels = updateLabelsFactory(ctx, this);

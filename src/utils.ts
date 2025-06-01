@@ -684,8 +684,10 @@ export function encryptPin(pin: number): string {
  * @param pin 4-digit PIN to verify
  * @returns true if the PIN matches the hash
  */
-// const isValid = decryptPin(encryptedPin, 1234); // true
-// const isInvalid = decryptPin(encryptedPin, 5678); // false
+// const encryptedPin = api.getHiddenConversPin().pin;
+// checking pin created..
+// const isValid = decryptPin(encryptedPin, 1234); // true if pin created is 1234
+// const isInvalid = decryptPin(encryptedPin, 5678); // false if not pin created is 5678
 export function decryptPin(encryptedPin: string, pin?: number): boolean {
     if (pin !== undefined) {
         const pinStr = pin.toString().padStart(4, "0");

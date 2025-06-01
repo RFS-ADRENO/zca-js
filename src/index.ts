@@ -69,6 +69,7 @@ export type { SendVideoResponse, SendVideoOptions } from "./apis/sendVideo.js";
 export type { SendVoiceResponse, SendVoiceOptions } from "./apis/sendVoice.js";
 export type { UnBlockUserResponse } from "./apis/unblockUser.js";
 export type { UndoResponse, UndoOptions } from "./apis/undo.js";
+export type { UpdateAutoDeleteMessageResponse } from "./apis/updateAutoDeleteMessage.js";
 export type { UpdateGroupSettingsResponse, UpdateGroupSettingsOptions } from "./apis/updateGroupSettings.js";
 export type { UpdateHiddenConversPinResponse } from "./apis/updateHiddenConversPin.js";
 export type { UpdateLabelsResponse, UpdateLabelParams } from "./apis/updateLabels.js";
