@@ -8,20 +8,20 @@ export type ConversInfo = {
     createdAt: number;
 };
 
-export type GetAutoDeleteMessageResponse = {
+export type GetAutoDeleteChatResponse = {
     convers: ConversInfo[];
 };
 
-export const getAutoDeleteMessageFactory = apiFactory<GetAutoDeleteMessageResponse>()((api, _ctx, utils) => {
+export const getAutoDeleteChatFactory = apiFactory<GetAutoDeleteChatResponse>()((api, _ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.conversation[0]}/api/conv/autodelete/getConvers`);
 
     /**
-     * Get auto delete message
+     * Get auto delete chat
      *
      * @throws ZaloApiError
      *
      */
-    return async function getAutoDeleteMessage() {
+    return async function getAutoDeleteChat() {
         const params = {};
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

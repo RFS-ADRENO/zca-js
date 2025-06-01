@@ -12,21 +12,21 @@ export enum MessageTTL {
     FIVE_DAYS = 432000000,
 }
 
-export type AutoDeleteMessageResponse = "";
+export type AutoDeleteChatResponse = "";
 
-export const autoDeleteMessageFactory = apiFactory<AutoDeleteMessageResponse>()((api, ctx, utils) => {
+export const autoDeleteChatFactory = apiFactory<AutoDeleteChatResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.conversation[0]}/api/conv/autodelete/updateConvers`);
 
     /**
-     * Auto delete message
+     * Auto delete chat
      *
-     * @param threadId The thread ID to auto delete message
+     * @param threadId The thread ID to auto delete chat
      * @param isGroup Whether the thread is a group (0 = not a group, 1 = is a group)
-     * @param ttl The time to live of the message (in milliseconds)
+     * @param ttl The time to live of the chat (in milliseconds)
      *
      * @throws ZaloApiError
      */
-    return async function autoDeleteMessage(threadId: string, isGroup: boolean, ttl?: number) {
+    return async function autoDeleteChat(threadId: string, isGroup: boolean, ttl?: number) {
         const params = {
             threadId: threadId,
             isGroup: isGroup ? 1 : 0,

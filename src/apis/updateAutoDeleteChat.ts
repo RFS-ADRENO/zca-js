@@ -2,13 +2,13 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type UpdateAutoDeleteMessageResponse = "";
+export type UpdateAutoDeleteChatResponse = "";
 
-export const updateAutoDeleteMessageFactory = apiFactory<UpdateAutoDeleteMessageResponse>()((api, ctx, utils) => {
+export const updateAutoDeleteChatFactory = apiFactory<UpdateAutoDeleteChatResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.conversation[0]}/api/conv/autodelete/updateConvers`);
 
     /**
-     * Update auto delete message
+     * Update auto delete chat
      * 
      * @param threadId - The ID of the thread to update
      * @param isGroup - Whether the thread is a group
@@ -17,7 +17,7 @@ export const updateAutoDeleteMessageFactory = apiFactory<UpdateAutoDeleteMessage
      * @throws ZaloApiError
      *
      */
-    return async function updateAutoDeleteMessage(threadId: string, isGroup: ThreadType = ThreadType.Group, ttl?: number) {
+    return async function updateAutoDeleteChat(threadId: string, isGroup: ThreadType = ThreadType.Group, ttl?: number) {
         const params = {
             "threadId": threadId,
             "isGroup": isGroup === ThreadType.Group ? 1 : 0,
