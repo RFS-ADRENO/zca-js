@@ -28,11 +28,11 @@ interface ListenerEvents {
     error: [error: any];
     typing: [typing: Typing];
     message: [message: Message];
-    old_messages: [messages: Message[]];
+    old_messages: [messages: Message[], type: ThreadType];
     seen_messages: [messages: SeenMessage[]];
     delivered_messages: [messages: DeliveredMessage[]];
     reaction: [reaction: Reaction];
-    old_reactions: [reactions: Reaction[]];
+    old_reactions: [reactions: Reaction[], isGroup: boolean];
     upload_attachment: [data: UploadEventData];
     undo: [data: Undo];
     friend_event: [data: FriendEvent];

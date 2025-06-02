@@ -20,9 +20,9 @@ export class Listener extends EventEmitter {
         this.urls = urls;
         this.id = 0;
         if (!ctx.cookie)
-            throw new Error("Cookie is not available");
+            throw new ZaloApiError("Cookie is not available");
         if (!ctx.userAgent)
-            throw new Error("User agent is not available");
+            throw new ZaloApiError("User agent is not available");
         this.wsURL = makeURL(this.ctx, this.urls[0], {
             t: Date.now(),
         });
@@ -283,19 +283,19 @@ export class Listener extends EventEmitter {
                     const isGroup = cmd == 611;
                     const reacts = parsedData[isGroup ? "reactGroups" : "reacts"];
                     const reactionObjects = reacts.map((react) => new Reaction(this.ctx.uid, react, isGroup));
-                    this.emit("old_reactions", reactionObjects);
+                    this.emit("old_reactions", reactionObjects, isGroup);
                 }
                 if (cmd == 510 && subCmd == 1) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { msgs } = parsedData;
                     const responseMsgs = msgs.map((msg) => new UserMessage(this.ctx.uid, msg));
-                    this.emit("old_messages", responseMsgs);
+                    this.emit("old_messages", responseMsgs, ThreadType.User);
                 }
                 if (cmd == 511 && subCmd == 1) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { groupMsgs } = parsedData;
                     const responseMsgs = groupMsgs.map((msg) => new GroupMessage(this.ctx.uid, msg));
-                    this.emit("old_messages", responseMsgs);
+                    this.emit("old_messages", responseMsgs, ThreadType.Group);
                 }
                 if (cmd == 602 && subCmd == 0) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
@@ -419,7 +419,7 @@ export class Listener extends EventEmitter {
 }
 function getHeader(buffer) {
     if (buffer.byteLength < 4) {
-        throw new Error("Invalid header");
+        throw new ZaloApiError("Invalid header");
     }
     return [buffer[0], buffer.readUInt16LE(1), buffer[3]];
 }

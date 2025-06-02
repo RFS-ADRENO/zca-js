@@ -3,23 +3,20 @@
 var ZaloApiError = require('../Errors/ZaloApiError.cjs');
 var utils = require('../utils.cjs');
 
-const removeGroupDeputyFactory = utils.apiFactory()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/admins/remove`);
+const getAliasListFactory = utils.apiFactory()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.alias[0]}/api/alias/list`);
     /**
-     * Remove group deputy
+     * Get alias list
      *
-     * @param memberId user Id or list of user Ids
-     * @param groupId group Id
+     * @param count Page size (default: 100)
+     * @param page Page number (default: 1)
      *
      * @throws ZaloApiError
-     *
      */
-    return async function removeGroupDeputy(memberId, groupId) {
-        if (!Array.isArray(memberId))
-            memberId = [memberId];
+    return async function getAliasList(count = 100, page = 1) {
         const params = {
-            grid: groupId,
-            members: memberId,
+            page,
+            count,
             imei: ctx.imei,
         };
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
@@ -32,4 +29,4 @@ const removeGroupDeputyFactory = utils.apiFactory()((api, ctx, utils) => {
     };
 });
 
-exports.removeGroupDeputyFactory = removeGroupDeputyFactory;
+exports.getAliasListFactory = getAliasListFactory;

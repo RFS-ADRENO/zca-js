@@ -1,22 +1,14 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
-export const addGroupDeputyFactory = apiFactory()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/admins/add`);
+export const getMuteFactory = apiFactory()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/getmute`);
     /**
-     * Add group deputy
-     *
-     * @param memberId user Id or list of user Ids
-     * @param groupId group Id
+     * Get mute
      *
      * @throws ZaloApiError
-     *
      */
-    return async function addGroupDeputy(memberId, groupId) {
-        if (!Array.isArray(memberId))
-            memberId = [memberId];
+    return async function getMute() {
         const params = {
-            grid: groupId,
-            members: memberId,
             imei: ctx.imei,
         };
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

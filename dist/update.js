@@ -1,6 +1,6 @@
 import { compare } from "semver";
 import { isBun, logger } from "./utils.js";
-const VERSION = "2.0.0-beta.21";
+const VERSION = "2.0.0-beta.24";
 const NPM_REGISTRY = "https://registry.npmjs.org/zca-js";
 export async function checkUpdate(ctx) {
     if (!ctx.options.checkUpdate)
