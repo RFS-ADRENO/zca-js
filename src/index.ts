@@ -68,6 +68,7 @@ export type { SendSeenEventResponse, SeenEventMessageParams } from "./apis/sendS
 export type { SendTypingEventResponse, SendTypingEventOptions } from "./apis/sendTypingEvent.js";
 export type { SendVideoResponse, SendVideoOptions } from "./apis/sendVideo.js";
 export type { SendVoiceResponse, SendVoiceOptions } from "./apis/sendVoice.js";
+export type { SetMuteResponse } from "./apis/setMute.js";
 export type { UnBlockUserResponse } from "./apis/unblockUser.js";
 export type { UndoResponse, UndoOptions } from "./apis/undo.js";
 export type { UpdateAutoDeleteChatResponse } from "./apis/updateAutoDeleteChat.js";
@@ -84,7 +85,9 @@ export type { LoginQRCallback, LoginQRCallbackEvent } from "./apis/loginQR.js";
 export type { CustomAPICallback, CustomAPIProps } from "./apis/custom.js";
 
 // Others
-export { ReportReason } from "./apis/sendReport.js";
+export { MessageTTL } from "./apis/autoDeleteChat.js";
 export { CloseReason } from "./apis/listen.js";
-export { Urgency, TextStyle } from "./apis/sendMessage.js";
 export { LoginQRCallbackEventType } from "./apis/loginQR.js";
+export { Urgency, TextStyle } from "./apis/sendMessage.js";
+export { ReportReason } from "./apis/sendReport.js";
+export { MuteDuration, MuteAction } from "./apis/setMute.js";
