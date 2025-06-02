@@ -30,7 +30,7 @@ export const deleteChatFactory = apiFactory<DeleteChatResponse>()((api, ctx, uti
      *
      * @throws ZaloApiError
      */
-    return async function deleteChat(threadId: string, converInfo: ConverInfo, type: ThreadType = ThreadType.User) {
+    return async function deleteChat(converInfo: ConverInfo, threadId: string, type: ThreadType = ThreadType.User) {
         const timestampString = Date.now().toString();
 
         const params =

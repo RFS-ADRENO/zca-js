@@ -28,9 +28,9 @@ export const autoDeleteChatFactory = apiFactory<AutoDeleteChatResponse>()((api, 
      * @throws ZaloApiError
      */
     return async function autoDeleteChat(
+        ttl: MessageTTL | number = MessageTTL.NO_DELETE,
         threadId: string,
         type: ThreadType = ThreadType.User,
-        ttl: MessageTTL | number = MessageTTL.NO_DELETE,
     ) {
         const params = {
             threadId: threadId,
