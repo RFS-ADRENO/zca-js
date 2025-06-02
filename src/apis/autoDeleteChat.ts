@@ -21,9 +21,9 @@ export const autoDeleteChatFactory = apiFactory<AutoDeleteChatResponse>()((api, 
     /**
      * Auto delete chat
      *
+     * @param ttl The time to live of the chat (in milliseconds). Use MessageTTL enum for predefined values
      * @param threadId The thread ID to auto delete chat
      * @param type Type of thread (User or Group)
-     * @param ttl The time to live of the chat (in milliseconds). Use MessageTTL enum for predefined values
      *
      * @throws ZaloApiError
      */

@@ -26,8 +26,8 @@ export const updateGroupSettingsFactory = apiFactory<UpdateGroupSettingsResponse
     /**
      * Update group settings
      *
-     * @param groupId Group ID
      * @param options Options
+     * @param groupId Group ID
      *
      * @throws ZaloApiError
      */

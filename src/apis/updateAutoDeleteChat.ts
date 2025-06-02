@@ -10,12 +10,11 @@ export const updateAutoDeleteChatFactory = apiFactory<UpdateAutoDeleteChatRespon
     /**
      * Update auto delete chat
      * 
+     * @param ttl - The time to live for the autoDeleteMessage of API
      * @param threadId - The ID of the thread to update
      * @param isGroup - Whether the thread is a group
-     * @param ttl - The time to live for the autoDeleteMessage of API
      *
      * @throws ZaloApiError
-     *
      */
     return async function updateAutoDeleteChat(ttl: number = 0, threadId: string, isGroup: ThreadType = ThreadType.Group) {
         const params = {

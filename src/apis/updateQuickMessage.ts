@@ -26,12 +26,11 @@ export const updateQuickMessageFactory = apiFactory<UpdateQuickMessageResponse>(
 
     /**
      * Update quick message
-     *
-     * @param itemId - The id of the quick message to update
+     * @notes còn bản có thể up ảnh mà nhiều case quá huhu (dùng tạm bản không có nhé)
+     * 
      * @param keyword - The keyword of the quick message
      * @param title - The title of the quick message
-     * 
-     * @notes còn bản có thể up ảnh mà nhiều case quá huhu (dùng tạm bản không có nhé)
+     * @param itemId - The id of the quick message to update
      *
      * @throws ZaloApiError
      */

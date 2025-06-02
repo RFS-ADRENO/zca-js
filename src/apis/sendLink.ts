@@ -24,10 +24,9 @@ export const sendLinkFactory = apiFactory<SendLinkResponse>()((api, ctx, utils) 
     /**
      * Send link
      *
-     * @param link Link
+     * @param params Link and ttl parameters
      * @param threadId Thread ID
      * @param type Thread type
-     * @param ttl Time to live
      *
      * @throws ZaloApiError
      */

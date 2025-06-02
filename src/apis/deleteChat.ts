@@ -24,8 +24,8 @@ export const deleteChatFactory = apiFactory<DeleteChatResponse>()((api, ctx, uti
     /**
      * Delete chat
      *
-     * @param threadId Thread ID (toid for User, grid for Group)
      * @param converInfo Conversation info containing ownerId and globalMsgId
+     * @param threadId Thread ID (toid for User, grid for Group)
      * @param type Thread type
      *
      * @throws ZaloApiError
