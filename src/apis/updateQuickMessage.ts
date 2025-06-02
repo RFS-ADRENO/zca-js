@@ -35,7 +35,7 @@ export const updateQuickMessageFactory = apiFactory<UpdateQuickMessageResponse>(
      *
      * @throws ZaloApiError
      */
-    return async function updateQuickMessage(itemId: number, keyword: string, title: string) {
+    return async function updateQuickMessage(keyword: string, title: string, itemId: number) {
         const params = {
             itemId: itemId,
             keyword: keyword,

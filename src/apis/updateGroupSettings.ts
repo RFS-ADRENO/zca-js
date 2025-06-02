@@ -31,7 +31,7 @@ export const updateGroupSettingsFactory = apiFactory<UpdateGroupSettingsResponse
      *
      * @throws ZaloApiError
      */
-    return async function updateGroupSettings(groupId: string, options: UpdateGroupSettingsOptions) {
+    return async function updateGroupSettings(options: UpdateGroupSettingsOptions, groupId: string) {
         const params = {
             blockName: options.blockName ? 0 : 1,
             signAdminMsg: options.signAdminMsg ? 1 : 0,

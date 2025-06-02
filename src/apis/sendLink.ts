@@ -2,6 +2,11 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { ThreadType } from "../models/Enum.js";
 import { apiFactory } from "../utils.js";
 
+export type SendLinkParams = {
+    link: string;
+    ttl?: number;
+};
+
 export type SendLinkResponse = {
     msgId: string;
 };
@@ -23,13 +28,13 @@ export const sendLinkFactory = apiFactory<SendLinkResponse>()((api, ctx, utils) 
      * @param threadId Thread ID
      * @param type Thread type
      * @param ttl Time to live
-     * 
+     *
      * @throws ZaloApiError
      */
-    return async function sendLink(link: string, threadId: string, type: ThreadType = ThreadType.User, ttl?: number) {
-        const res = await api.parseLink(link);
+    return async function sendLink(params: SendLinkParams, threadId: string, type: ThreadType = ThreadType.User) {
+        const res = await api.parseLink(params.link);
 
-        const params: any = {
+        const requestParams: any = {
             href: res.data.href,
             src: res.data.src,
             title: res.data.title,
@@ -37,19 +42,19 @@ export const sendLinkFactory = apiFactory<SendLinkResponse>()((api, ctx, utils) 
             thumb: res.data.thumb,
             type: 0,
             media: JSON.stringify(res.data.media),
-            ttl: ttl ?? 0,
+            ttl: params.ttl ?? 0,
             clientId: Date.now(),
         };
 
         if (type == ThreadType.Group) {
-            params.grid = threadId;
-            params.imei = ctx.imei;
+            requestParams.grid = threadId;
+            requestParams.imei = ctx.imei;
         } else {
-            params.toId = threadId;
-            params.mentionInfo = "";
+            requestParams.toId = threadId;
+            requestParams.mentionInfo = "";
         }
 
-        const encryptedParams = utils.encodeAES(JSON.stringify(params));
+        const encryptedParams = utils.encodeAES(JSON.stringify(requestParams));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
         const response = await utils.request(serviceURL[type].toString(), {
