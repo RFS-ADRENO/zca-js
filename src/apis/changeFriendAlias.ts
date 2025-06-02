@@ -13,7 +13,6 @@ export const changeFriendAliasFactory = apiFactory<ChangeFriendAliasResponse>()(
      * @param friendId friend id
      *
      * @throws ZaloApiError
-     *
      */
     return async function changeFriendAlias(alias: string, friendId: string) {
         const params = {
