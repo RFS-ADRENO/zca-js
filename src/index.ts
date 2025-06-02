@@ -51,6 +51,7 @@ export type { KeepAliveResponse } from "./apis/keepAlive.js";
 export type { LockPollResponse } from "./apis/lockPoll.js";
 export type { ParseLinkResponse, ParseLinkMedia, ParseLinkErrorMaps } from "./apis/parseLink.js";
 export type { PinConversationsResponse } from "./apis/pinConversations.js";
+export type { RemoveFriendAliasResponse } from "./apis/removeFriendAlias.js";
 export type { RemoveGroupDeputyResponse } from "./apis/removeGroupDeputy.js";
 export type { RemoveHiddenConversPinResponse } from "./apis/removeHiddenConversPin.js";
 export type { RemoveQuickMessageResponse } from "./apis/removeQuickMessage.js";
