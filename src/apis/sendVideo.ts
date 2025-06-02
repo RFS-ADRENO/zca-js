@@ -103,7 +103,7 @@ export const sendVideoFactory = apiFactory<SendVideoResponse>()((api, ctx, utils
             }),
         };
 
-        // @TODO later
+        // @TODO: later
         // if (typeof message !== "string" && message.mention) {
         //     params.mentionInfo = message.mention;
         // }

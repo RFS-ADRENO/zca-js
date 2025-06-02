@@ -13,7 +13,9 @@ export type UpdateSettingsType =
     | "find_me_via_qr"
     | "common_group"
     | "find_me_via_contact"
-    | "recommend_friend";
+    | "recommend_friend"
+    | "archive_chat"
+    | "quick_msg";
 
 export const updateSettingsFactory = apiFactory<UpdateSettingsResponse>()((_api, _ctx, utils) => {
     const serviceURL = utils.makeURL(`https://wpa.chat.zalo.me/api/setting/update`);
@@ -38,6 +40,8 @@ export const updateSettingsFactory = apiFactory<UpdateSettingsResponse>()((_api,
             ...(type === "common_group" && { add_friend_via_group: status }), // 1 is show common group | 0 is unshow common group
             ...(type === "find_me_via_contact" && { add_friend_via_contact: status }), // 1 is enable | 0 is disable
             ...(type === "recommend_friend" && { display_on_recommend_friend: status }), // 1 is recommend | 0 is not recommend
+            ...(type === "archive_chat" && { archivedChatStatus: status }), // 1 is enable | 0 is disable
+            ...(type === "quick_msg" && { quickMessageStatus: status }), // 1 is enable | 0 is disable
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

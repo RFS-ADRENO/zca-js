@@ -1,24 +1,21 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type ChangeFriendAliasResponse = "";
+export type RemoveFriendAliasResponse = "";
 
-export const changeFriendAliasFactory = apiFactory<ChangeFriendAliasResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.alias[0]}/api/alias/update`);
+export const removeFriendAliasFactory = apiFactory<RemoveFriendAliasResponse>()((api, _ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.alias[0]}/api/alias/remove`);
 
     /**
-     * Change friend's alias
+     * Remove friend's alias
      *
-     * @param alias new alias (nickname - bietdanh)
      * @param friendId friend id
      *
      * @throws ZaloApiError
      */
-    return async function changeFriendAlias(alias: string, friendId: string) {
+    return async function removeFriendAlias(friendId: string) {
         const params = {
             friendId: friendId,
-            alias: alias,
-            imei: ctx.imei,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

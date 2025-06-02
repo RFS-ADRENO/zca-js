@@ -1,24 +1,21 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type ChangeFriendAliasResponse = "";
+export type DisableGroupLinkResponse = "";
 
-export const changeFriendAliasFactory = apiFactory<ChangeFriendAliasResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.alias[0]}/api/alias/update`);
+export const disableGroupLinkFactory = apiFactory<DisableGroupLinkResponse>()((api, _ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/link/disable`);
 
     /**
-     * Change friend's alias
+     * Disable group link
      *
-     * @param alias new alias (nickname - bietdanh)
-     * @param friendId friend id
+     * @param groupId The group id
      *
      * @throws ZaloApiError
      */
-    return async function changeFriendAlias(alias: string, friendId: string) {
+    return async function disableGroupLink(groupId: string) {
         const params = {
-            friendId: friendId,
-            alias: alias,
-            imei: ctx.imei,
+            grid: groupId,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

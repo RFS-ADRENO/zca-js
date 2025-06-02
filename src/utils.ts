@@ -666,3 +666,33 @@ export function apiFactory<T>() {
 export function generateZaloUUID(userAgent: string) {
     return crypto.randomUUID() + "-" + cryptojs.MD5(userAgent).toString();
 }
+
+/**
+ * Encrypts a 4-digit PIN to a 32-character hex string
+ * @param pin 4-digit PIN number
+ * @returns 32-character hex string
+ */
+export function encryptPin(pin: number): string {
+    const pinStr = pin.toString().padStart(4, "0");
+    return crypto.createHash("md5").update(pinStr).digest("hex");
+}
+
+/**
+ * Decrypts a 32-character hex string back to 4-digit PIN
+ * Note: This is a one-way hash, so we can only verify if a PIN matches the hash
+ * @param encryptedPin 32-character hex string
+ * @param pin 4-digit PIN to verify
+ * @returns true if the PIN matches the hash
+ */
+// const encryptedPin = api.getHiddenConversPin().pin;
+// checking pin created..
+// const isValid = decryptPin(encryptedPin, 1234); // true if pin created is 1234
+// const isInvalid = decryptPin(encryptedPin, 5678); // false if not pin created is 5678
+export function decryptPin(encryptedPin: string, pin?: number): boolean {
+    if (pin !== undefined) {
+        const pinStr = pin.toString().padStart(4, "0");
+        const hash = crypto.createHash("md5").update(pinStr).digest("hex");
+        return hash === encryptedPin;
+    }
+    return false;
+}

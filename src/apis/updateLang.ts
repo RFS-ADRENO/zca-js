@@ -1,24 +1,22 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type ChangeFriendAliasResponse = "";
+export type UpdateLangResponse = "";
 
-export const changeFriendAliasFactory = apiFactory<ChangeFriendAliasResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.alias[0]}/api/alias/update`);
+export const updateLangFactory = apiFactory<UpdateLangResponse>()((api, _ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/updatelang`);
 
     /**
-     * Change friend's alias
+     * Update language
      *
-     * @param alias new alias (nickname - bietdanh)
-     * @param friendId friend id
+     * @param language language to update (VI, EN)
      *
      * @throws ZaloApiError
+     *
      */
-    return async function changeFriendAlias(alias: string, friendId: string) {
+    return async function updateLang(language: string = "VI") {
         const params = {
-            friendId: friendId,
-            alias: alias,
-            imei: ctx.imei,
+            language: language,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
