@@ -1,4 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import { ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export enum MessageTTL {
@@ -21,17 +22,21 @@ export const autoDeleteChatFactory = apiFactory<AutoDeleteChatResponse>()((api, 
      * Auto delete chat
      *
      * @param threadId The thread ID to auto delete chat
-     * @param isGroup Whether the thread is a group (0 = not a group, 1 = is a group)
-     * @param ttl The time to live of the chat (in milliseconds)
+     * @param type Type of thread (User or Group)
+     * @param ttl The time to live of the chat (in milliseconds). Use MessageTTL enum for predefined values
      *
      * @throws ZaloApiError
      */
-    return async function autoDeleteChat(threadId: string, isGroup: boolean, ttl?: number) {
+    return async function autoDeleteChat(
+        threadId: string,
+        type: ThreadType = ThreadType.User,
+        ttl: MessageTTL | number = MessageTTL.NO_DELETE,
+    ) {
         const params = {
             threadId: threadId,
-            isGroup: isGroup ? 1 : 0,
-            ttl: ttl ?? 0,
-            language: ctx.language, 
+            isGroup: type === ThreadType.Group ? 1 : 0,
+            ttl: ttl,
+            clientLang: ctx.language,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
