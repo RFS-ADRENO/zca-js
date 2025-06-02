@@ -70,7 +70,7 @@ export type { SendSeenEventResponse, SeenEventMessageParams } from "./apis/sendS
 export type { SendTypingEventResponse, SendTypingEventOptions } from "./apis/sendTypingEvent.js";
 export type { SendVideoResponse, SendVideoOptions } from "./apis/sendVideo.js";
 export type { SendVoiceResponse, SendVoiceOptions } from "./apis/sendVoice.js";
-export type { SetMuteResponse } from "./apis/setMute.js";
+export type { SetMuteResponse, SetMuteParams } from "./apis/setMute.js";
 export type { UnBlockUserResponse } from "./apis/unblockUser.js";
 export type { UndoResponse, UndoOptions } from "./apis/undo.js";
 export type { UpdateAutoDeleteChatResponse } from "./apis/updateAutoDeleteChat.js";
