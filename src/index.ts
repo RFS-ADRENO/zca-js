@@ -86,7 +86,7 @@ export type { LoginQRCallback, LoginQRCallbackEvent } from "./apis/loginQR.js";
 
 export type { CustomAPICallback, CustomAPIProps } from "./apis/custom.js";
 
-// Others
+// Others (Enum)
 export { MessageTTL } from "./apis/autoDeleteChat.js";
 export { CloseReason } from "./apis/listen.js";
 export { LoginQRCallbackEventType } from "./apis/loginQR.js";
