@@ -9,8 +9,8 @@ export const changeFriendAliasFactory = apiFactory<ChangeFriendAliasResponse>()(
     /**
      * Change friend's alias
      *
-     * @param alias
-     * @param friendId
+     * @param alias new alias (nickname - bietdanh)
+     * @param friendId friend id
      *
      * @throws ZaloApiError
      *
@@ -25,9 +25,7 @@ export const changeFriendAliasFactory = apiFactory<ChangeFriendAliasResponse>()(
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const urlWithParams = `${serviceURL}&params=${encodeURIComponent(encryptedParams)}`;
-
-        const response = await utils.request(urlWithParams, {
+        const response = await utils.request(utils.makeURL(serviceURL, { params: encryptedParams }), {
             method: "GET",
         });
 

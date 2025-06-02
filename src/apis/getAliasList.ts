@@ -1,26 +1,29 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type AddGroupDeputyResponse = "";
+export type GetAliasListResponse = {
+    items: {
+        userId: string;
+        alias: string;
+    }[];
+    updateTime: string;
+};
 
-export const addGroupDeputyFactory = apiFactory<AddGroupDeputyResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/admins/add`);
+export const getAliasListFactory = apiFactory<GetAliasListResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.alias[0]}/api/alias/list`);
 
     /**
-     * Add group deputy
-     *
-     * @param memberId user Id or list of user Ids
-     * @param groupId group Id
+     * Get alias list
+     * 
+     * @param count Page size (default: 100)
+     * @param page Page number (default: 1)
      *
      * @throws ZaloApiError
-     *
      */
-    return async function addGroupDeputy(memberId: string | string[], groupId: string) {
-        if (!Array.isArray(memberId)) memberId = [memberId];
-
+    return async function getAliasList(count: number = 100, page: number = 1) {
         const params = {
-            grid: groupId,
-            members: memberId,
+            page,
+            count,
             imei: ctx.imei,
         };
 
