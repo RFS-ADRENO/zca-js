@@ -3,6 +3,13 @@ import { ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type ListReminderParams = {
+    /**
+     * Board type for listing reminders:
+     * - 1: Default board type
+     * - 2: Second board type
+     * - 3: Third board type
+     */
+    board_type?: number;
     page?: number;
     count?: number;
 };
@@ -70,7 +77,7 @@ export const getListReminderFactory = apiFactory<GetListReminderResponse>()((api
                 type === ThreadType.User
                     ? {
                           uid: threadId,
-                          board_type: 1,
+                          board_type: params.board_type || 1,
                           page: params.page || 1,
                           count: params.count || 20,
                           last_id: 0,
