@@ -1,4 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import { ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type ReminderParams = {
@@ -12,14 +13,17 @@ export type CreateReminderOptions = {
     pinAct?: boolean;
 };
 
+// type of group and user
 export type CreateReminderResponse = {
-    editorId: string;
+    editorId?: string;
     emoji: string;
     color: number;
-    groupId: string;
-    creatorId: string;
+    groupId?: string;
+    creatorId?: string;
+    creatorUid?: string;
+    toUid?: string;
     editTime: number;
-    eventType: number;
+    eventType?: number;
     params: ReminderParams;
     type: number;
     duration: number;
@@ -28,11 +32,16 @@ export type CreateReminderResponse = {
     createTime: number;
     repeat: number;
     startTime: number;
-    id: string;
+    id?: string;
+    reminderId?: string;
+    endTime: number;
 };
 
 export const createReminderFactory = apiFactory<CreateReminderResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group_board[0]}/api/board/topic/createv2`);
+    const serviceURL = {
+        [ThreadType.User]: utils.makeURL(`${api.zpwServiceMap.group_board[0]}/api/board/oneone/create`),
+        [ThreadType.Group]: utils.makeURL(`${api.zpwServiceMap.group_board[0]}/api/board/topic/createv2`),
+    };
 
     /**
      * Create a reminder in a group
@@ -41,31 +50,54 @@ export const createReminderFactory = apiFactory<CreateReminderResponse>()((api, 
      * @param options.emoji reminder emoji
      * @param options.title reminder title
      * @param options.pinAct Pin action (pin reminder)
-     * @param groupId Group ID to create note from
+     * @param threadId Group ID to create note from
+     * @param type Thread type (User or Group)
      *
      * @throws ZaloApiError
      */
-    return async function createReminder(options: CreateReminderOptions, groupId: string) {
-        const params = {
-            grid: groupId,
-            type: 0,
-            color: -16777216, // TODO: options.color
-            emoji: options.emoji || "",
-            startTime: -1,
-            duration: -1,
-            params: JSON.stringify({
-                title: options.title,
-            }),
-            repeat: 0,
-            src: 1,
-            imei: ctx.imei,
-            pinAct: options.pinAct ? 1 : 0,
-        };
+    return async function createReminder(
+        options: CreateReminderOptions,
+        threadId: string,
+        type: ThreadType = ThreadType.User,
+    ) {
+        const params =
+            type === ThreadType.User
+                ? {
+                      toUid: threadId,
+                      type: 0,
+                      color: -16245706,
+                      emoji: options.emoji || "⏰",
+                      startTime: Date.now(),
+                      duration: -1,
+                      params: {
+                          title: options.title,
+                      },
+                      needPin: options.pinAct || false,
+                      repeat: 0,
+                      // creatorUid: ctx.uid,
+                      src: 3,
+                      imei: ctx.imei,
+                  }
+                : {
+                      grid: threadId,
+                      type: 0,
+                      color: -16777216,
+                      emoji: options.emoji || "",
+                      startTime: -1,
+                      duration: -1,
+                      params: JSON.stringify({
+                          title: options.title,
+                      }),
+                      repeat: 0,
+                      src: 1,
+                      imei: ctx.imei,
+                      pinAct: options.pinAct ? 1 : 0,
+                  };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await utils.request(serviceURL, {
+        const response = await utils.request(serviceURL[type].toString(), {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,
