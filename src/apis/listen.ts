@@ -46,11 +46,11 @@ interface ListenerEvents {
     error: [error: any];
     typing: [typing: Typing];
     message: [message: Message];
-    old_messages: [messages: Message[]];
+    old_messages: [messages: Message[], type: ThreadType];
     seen_messages: [messages: SeenMessage[]];
     delivered_messages: [messages: DeliveredMessage[]];
     reaction: [reaction: Reaction];
-    old_reactions: [reactions: Reaction[]];
+    old_reactions: [reactions: Reaction[], isGroup: boolean];
     upload_attachment: [data: UploadEventData];
     undo: [data: Undo];
     friend_event: [data: FriendEvent];
@@ -90,8 +90,8 @@ export class Listener extends EventEmitter<ListenerEvents> {
         private urls: string[],
     ) {
         super();
-        if (!ctx.cookie) throw new Error("Cookie is not available");
-        if (!ctx.userAgent) throw new Error("User agent is not available");
+        if (!ctx.cookie) throw new ZaloApiError("Cookie is not available");
+        if (!ctx.userAgent) throw new ZaloApiError("User agent is not available");
 
         this.wsURL = makeURL(this.ctx, this.urls[0], {
             t: Date.now(),
@@ -389,21 +389,21 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     const reacts = parsedData[isGroup ? "reactGroups" : "reacts"] as any[];
                     const reactionObjects = reacts.map((react: any) => new Reaction(this.ctx.uid, react, isGroup));
 
-                    this.emit("old_reactions", reactionObjects);
+                    this.emit("old_reactions", reactionObjects, isGroup);
                 }
 
                 if (cmd == 510 && subCmd == 1) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { msgs } = parsedData;
                     const responseMsgs = msgs.map((msg: any) => new UserMessage(this.ctx.uid, msg));
-                    this.emit("old_messages", responseMsgs);
+                    this.emit("old_messages", responseMsgs, ThreadType.User);
                 }
 
                 if (cmd == 511 && subCmd == 1) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { groupMsgs } = parsedData;
                     const responseMsgs = groupMsgs.map((msg: any) => new GroupMessage(this.ctx.uid, msg));
-                    this.emit("old_messages", responseMsgs);
+                    this.emit("old_messages", responseMsgs, ThreadType.Group);
                 }
 
                 if (cmd == 602 && subCmd == 0) {
@@ -543,7 +543,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
 function getHeader(buffer: Buffer) {
     if (buffer.byteLength < 4) {
-        throw new Error("Invalid header");
+        throw new ZaloApiError("Invalid header");
     }
 
     return [buffer[0], buffer.readUInt16LE(1), buffer[3]];
