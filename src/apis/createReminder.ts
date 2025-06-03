@@ -45,7 +45,8 @@ export const createReminderFactory = apiFactory<CreateReminderResponse>()((api, 
 
     /**
      * Create a reminder in a group
-     *
+     * @TODO: options.color
+     * 
      * @param options reminder options
      * @param options.emoji reminder emoji
      * @param options.title reminder title
