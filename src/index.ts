@@ -49,6 +49,7 @@ export type { PollOption, PollDetailResponse } from "./apis/getPollDetail.js";
 export type { GetQRResponse } from "./apis/getQR.js";
 export type { GetQuickMessageResponse, QuickMessage, Message } from "./apis/getQuickMessage.js";
 export type { GetReminderResponse, ResponseMemInfo, ParamsInfo } from "./apis/getReminder.js";
+export type { GetReminderEventResponse } from "./apis/getReminderEvent.js";
 export type { StickerDetailResponse } from "./apis/getStickersDetail.js";
 export type { GetUnreadMarkResponse } from "./apis/getUnreadMark.js";
 export type { ProfileInfo, UserInfoResponse } from "./apis/getUserInfo.js";

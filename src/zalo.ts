@@ -59,6 +59,7 @@ import { getPollDetailFactory } from "./apis/getPollDetail.js";
 import { getQRFactory } from "./apis/getQR.js";
 import { getQuickMessageFactory } from "./apis/getQuickMessage.js";
 import { getReminderFactory } from "./apis/getReminder.js";
+import { getReminderEventFactory } from "./apis/getReminderEvent.js";
 import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
 import { getUnreadMarkFactory } from "./apis/getUnreadMark.js";
@@ -294,6 +295,7 @@ export class API {
     public getQR: ReturnType<typeof getQRFactory>;
     public getQuickMessage: ReturnType<typeof getQuickMessageFactory>;
     public getReminder: ReturnType<typeof getReminderFactory>;
+    public getReminderEvent: ReturnType<typeof getReminderEventFactory>;
     public getStickers: ReturnType<typeof getStickersFactory>;
     public getStickersDetail: ReturnType<typeof getStickersDetailFactory>;
     public getUnreadMark: ReturnType<typeof getUnreadMarkFactory>;
@@ -391,6 +393,7 @@ export class API {
         this.getQR = getQRFactory(ctx, this);
         this.getQuickMessage = getQuickMessageFactory(ctx, this);
         this.getReminder = getReminderFactory(ctx, this);
+        this.getReminderEvent = getReminderEventFactory(ctx, this);
         this.getStickers = getStickersFactory(ctx, this);
         this.getStickersDetail = getStickersDetailFactory(ctx, this);
         this.getUnreadMark = getUnreadMarkFactory(ctx, this);

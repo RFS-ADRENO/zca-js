@@ -11,6 +11,17 @@ export type CreateReminderOptions = {
     title: string;
     emoji?: string;
     pinAct?: boolean;
+    creatorUid?: string;
+    startTime?: number;
+    duration?: number;
+    /**
+     * Repeat mode for the reminder:
+     * - 0: No repeat
+     * - 1: Daily repeat
+     * - 2: Weekly repeat
+     * - 3: Monthly repeat
+     */
+    repeat?: number;
 };
 
 // type of group and user
@@ -46,7 +57,7 @@ export const createReminderFactory = apiFactory<CreateReminderResponse>()((api, 
     /**
      * Create a reminder in a group
      * @TODO: options.color
-     * 
+     *
      * @param options reminder options
      * @param options.emoji reminder emoji
      * @param options.title reminder title
@@ -68,29 +79,29 @@ export const createReminderFactory = apiFactory<CreateReminderResponse>()((api, 
                       type: 0,
                       color: -16245706,
                       emoji: options.emoji || "⏰",
-                      startTime: Date.now(),
-                      duration: -1,
+                      startTime: options.startTime || Date.now(),
+                      duration: options.duration || -1,
                       params: {
                           title: options.title,
                       },
                       needPin: options.pinAct || false,
-                      repeat: 0,
-                      // creatorUid: ctx.uid,
+                      repeat: options.repeat || 0,
+                      creatorUid: options.creatorUid,
                       src: 3,
                       imei: ctx.imei,
                   }
                 : {
                       grid: threadId,
                       type: 0,
-                      color: -16777216,
-                      emoji: options.emoji || "",
-                      startTime: -1,
-                      duration: -1,
+                      color: -16245706, // -16777216
+                      emoji: options.emoji || "⏰",
+                      startTime: options.startTime || Date.now(),
+                      duration: options.duration || -1,
                       params: JSON.stringify({
                           title: options.title,
                       }),
-                      repeat: 0,
-                      src: 1,
+                      repeat: options.repeat || 0,
+                      src: 3,
                       imei: ctx.imei,
                       pinAct: options.pinAct ? 1 : 0,
                   };
