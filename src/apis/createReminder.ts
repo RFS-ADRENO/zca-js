@@ -57,7 +57,7 @@ export const createReminderFactory = apiFactory<CreateReminderResponse>()((api, 
                 title: options.title,
             }),
             repeat: 0,
-            src: 1, // TODO: check src 3
+            src: 1,
             imei: ctx.imei,
             pinAct: options.pinAct ? 1 : 0,
         };
