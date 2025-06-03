@@ -50,6 +50,7 @@ import { getGroupMembersInfoFactory } from "./apis/getGroupMembersInfo.js";
 import { getHiddenConversPinFactory } from "./apis/getHiddenConversPin.js";
 import { getMuteFactory } from "./apis/getMute.js";
 import { getLabelsFactory } from "./apis/getLabels.js";
+import { getListPollFactory } from "./apis/getListPoll.js";
 import { getListReminderFactory } from "./apis/getListReminder.js";
 import { getOwnIdFactory } from "./apis/getOwnId.js";
 import { getPollDetailFactory } from "./apis/getPollDetail.js";
@@ -280,6 +281,7 @@ export class API {
     public getHiddenConversPin: ReturnType<typeof getHiddenConversPinFactory>;
     public getMute: ReturnType<typeof getMuteFactory>;
     public getLabels: ReturnType<typeof getLabelsFactory>;
+    public getListPoll: ReturnType<typeof getListPollFactory>;
     public getListReminder: ReturnType<typeof getListReminderFactory>;
     public getOwnId: ReturnType<typeof getOwnIdFactory>;
     public getPollDetail: ReturnType<typeof getPollDetailFactory>;
@@ -372,6 +374,7 @@ export class API {
         this.getGroupMembersInfo = getGroupMembersInfoFactory(ctx, this);
         this.getHiddenConversPin = getHiddenConversPinFactory(ctx, this);
         this.getLabels = getLabelsFactory(ctx, this);
+        this.getListPoll = getListPollFactory(ctx, this);
         this.getListReminder = getListReminderFactory(ctx, this);
         this.getMute = getMuteFactory(ctx, this);
         this.getOwnId = getOwnIdFactory(ctx, this);

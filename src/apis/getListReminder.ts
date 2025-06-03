@@ -2,8 +2,8 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
 export type ListReminderParams = {
-    page: number;
-    count: number;
+    page?: number;
+    count?: number;
 };
 
 export type ResponseMemInfo = {

@@ -40,7 +40,8 @@ export type { ExtraInfo, GridInfoMap, GroupInfo, GroupInfoResponse, PendingAppro
 export type { GetGroupMembersInfoResponse, MemberProfile } from "./apis/getGroupMembersInfo.js";
 export type { GetHiddenConversPinResponse, ThreadInfo } from "./apis/getHiddenConversPin.js";
 export type { GetLabelsResponse } from "./apis/getLabels.js";
-export type { GetListReminderResponse, ReminderItem, RepeatInfo } from "./apis/getListReminder.js";
+export type { GetListPollResponse, ListPollParams, ListPollOption, PollData, NoteData, BoardItem } from "./apis/getListPoll.js";
+export type { GetListReminderResponse, ListReminderParams, ReminderItem, RepeatInfo } from "./apis/getListReminder.js";
 export type { GetMuteResponse, MuteEntriesInfo } from "./apis/getMute.js";
 export type { GetQRResponse } from "./apis/getQR.js";
 export type { GetQuickMessageResponse, QuickMessage, Message } from "./apis/getQuickMessage.js";
