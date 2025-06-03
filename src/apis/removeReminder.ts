@@ -2,7 +2,7 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type RemoveReminderResponse = "";
+export type RemoveReminderResponse = "" | number;
 
 export const removeReminderFactory = apiFactory<RemoveReminderResponse>()((api, ctx, utils) => {
     const serviceURL = {
