@@ -11,10 +11,10 @@ export const removeReminderFactory = apiFactory<RemoveReminderResponse>()((api, 
     };
 
     /**
-     * Remove a reminder in a group
+     * Remove a reminder in a (user/group)
      *
-     * @param topicId Topic ID to remove reminder from
-     * @param threadId Group ID to remove reminder from
+     * @param topicId (Reminder/Topic) ID to remove reminder from
+     * @param threadId (User/Group) ID to remove reminder from
      * @param type Thread type (User or Group)
      *
      * @throws ZaloApiError
