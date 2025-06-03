@@ -65,6 +65,7 @@ import { getUnreadMarkFactory } from "./apis/getUnreadMark.js";
 import { getUserInfoFactory } from "./apis/getUserInfo.js";
 import { inviteUserToGroupsFactory } from "./apis/inviteUserToGroups.js";
 import { keepAliveFactory } from "./apis/keepAlive.js";
+import { lastOnlineFactory } from "./apis/lastOnline.js";
 import { lockPollFactory } from "./apis/lockPoll.js";
 import { loginQR, LoginQRCallbackEventType, type LoginQRCallback } from "./apis/loginQR.js";
 import { parseLinkFactory } from "./apis/parseLink.js";
@@ -299,6 +300,7 @@ export class API {
     public getUserInfo: ReturnType<typeof getUserInfoFactory>;
     public inviteUserToGroups: ReturnType<typeof inviteUserToGroupsFactory>;
     public keepAlive: ReturnType<typeof keepAliveFactory>;
+    public lastOnline: ReturnType<typeof lastOnlineFactory>;
     public lockPoll: ReturnType<typeof lockPollFactory>;
     public parseLink: ReturnType<typeof parseLinkFactory>;
     public pinConversations: ReturnType<typeof pinConversationsFactory>;
@@ -395,6 +397,7 @@ export class API {
         this.getUserInfo = getUserInfoFactory(ctx, this);
         this.inviteUserToGroups = inviteUserToGroupsFactory(ctx, this);
         this.keepAlive = keepAliveFactory(ctx, this);
+        this.lastOnline = lastOnlineFactory(ctx, this);
         this.lockPoll = lockPollFactory(ctx, this);
         this.parseLink = parseLinkFactory(ctx, this);
         this.pinConversations = pinConversationsFactory(ctx, this);
