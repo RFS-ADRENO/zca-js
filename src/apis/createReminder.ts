@@ -1,14 +1,10 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { ThreadType } from "../models/index.js";
-import { apiFactory } from "../utils.js";
-
-export type ReminderParams = {
-    title: string;
-    setTitle: boolean;
-};
+import { apiFactory, hexToNegativeColor } from "../utils.js";
 
 export type CreateReminderOptions = {
     title: string;
+    color?: string;
     emoji?: string;
     pinAct?: boolean;
     creatorUid?: string;
@@ -22,6 +18,11 @@ export type CreateReminderOptions = {
      * - 3: Monthly repeat
      */
     repeat?: number;
+};
+
+export type ReminderParams = {
+    title: string;
+    setTitle: boolean;
 };
 
 // type of group and user
@@ -56,12 +57,16 @@ export const createReminderFactory = apiFactory<CreateReminderResponse>()((api, 
 
     /**
      * Create a reminder in a group
-     * @TODO: options.color
      *
      * @param options reminder options
-     * @param options.emoji reminder emoji
      * @param options.title reminder title
+     * @param options.color reminder color (hex color code - #0A7AFF/ 0A7AFF)
+     * @param options.emoji reminder emoji
      * @param options.pinAct Pin action (pin reminder)
+     * @param options.creatorUid Creator UID
+     * @param options.startTime Start time
+     * @param options.duration Duration
+     * @param options.repeat Repeat mode for the reminder
      * @param threadId Group ID to create note from
      * @param type Thread type (User or Group)
      *
@@ -77,7 +82,7 @@ export const createReminderFactory = apiFactory<CreateReminderResponse>()((api, 
                 ? {
                       toUid: threadId,
                       type: 0,
-                      color: -16245706,
+                      color: options.color ? hexToNegativeColor(options.color) : -16245706,
                       emoji: options.emoji || "⏰",
                       startTime: options.startTime || Date.now(),
                       duration: options.duration || -1,
@@ -93,7 +98,7 @@ export const createReminderFactory = apiFactory<CreateReminderResponse>()((api, 
                 : {
                       grid: threadId,
                       type: 0,
-                      color: -16245706, // -16777216
+                      color: options.color ? hexToNegativeColor(options.color) : -16245706,
                       emoji: options.emoji || "⏰",
                       startTime: options.startTime || Date.now(),
                       duration: options.duration || -1,

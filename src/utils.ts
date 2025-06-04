@@ -683,11 +683,13 @@ export function encryptPin(pin: number): string {
  * @param encryptedPin 32-character hex string
  * @param pin 4-digit PIN to verify
  * @returns true if the PIN matches the hash
+ *
+ * @example
+ * const encryptedPin = api.getHiddenConversPin().pin;
+ * checking pin created..
+ * const isValid = decryptPin(encryptedPin, 1234); // true if pin created is 1234
+ * const isInvalid = decryptPin(encryptedPin, 5678); // false if not pin created is 5678
  */
-// const encryptedPin = api.getHiddenConversPin().pin;
-// checking pin created..
-// const isValid = decryptPin(encryptedPin, 1234); // true if pin created is 1234
-// const isInvalid = decryptPin(encryptedPin, 5678); // false if not pin created is 5678
 export function decryptPin(encryptedPin: string, pin?: number): boolean {
     if (pin !== undefined) {
         const pinStr = pin.toString().padStart(4, "0");
@@ -695,4 +697,45 @@ export function decryptPin(encryptedPin: string, pin?: number): boolean {
         return hash === encryptedPin;
     }
     return false;
+}
+
+/**
+ * Converts a hex color code to a negative color number used by Zalo API
+ * @param hex Hex color code (e.g. '#00FF00' or '00FF00')
+ * @returns Negative color number (e.g. -16711936)
+ * 
+ * @example
+ * const negativeColor = hexToNegativeColor('#00FF00'); // Result: -16711936
+ */
+export function hexToNegativeColor(hex: string): number {
+    if (!hex.startsWith("#")) {
+        hex = "#" + hex;
+    }
+
+    // rgb no alpha
+    // const decimal = parseInt(hex.slice(1), 16);
+    // return decimal - 4294967296;
+
+    // rgb with alpha
+    let hexValue = hex.slice(1);
+    if (hexValue.length === 6) {
+        hexValue = "FF" + hexValue;
+    }
+    const decimal = parseInt(hexValue, 16);
+    return decimal > 0x7FFFFFFF ? decimal - 4294967296 : decimal;
+}
+/**
+ * Converts a negative color number from Zalo API to hex color code
+ * @param negativeColor Negative color number (e.g. -16711936)
+ * @returns Hex color code (e.g. '#00FF00')
+ * 
+ * @example
+ * const hexColor = negativeColorToHex(-16711936); // Result: '#00FF00'
+ */
+export function negativeColorToHex(negativeColor: number): string {
+    // Add 2^32 to get positive number
+    const positiveColor = negativeColor + 4294967296;
+
+    // return "#" + positiveColor.toString(16).padStart(6, "0"); // rgb no alpha
+    return "#" + positiveColor.toString(16).slice(-6).padStart(6, "0");
 }
