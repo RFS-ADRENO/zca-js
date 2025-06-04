@@ -724,6 +724,7 @@ export function hexToNegativeColor(hex: string): number {
     const decimal = parseInt(hexValue, 16);
     return decimal > 0x7FFFFFFF ? decimal - 4294967296 : decimal;
 }
+
 /**
  * Converts a negative color number from Zalo API to hex color code
  * @param negativeColor Negative color number (e.g. -16711936)
@@ -737,5 +738,5 @@ export function negativeColorToHex(negativeColor: number): string {
     const positiveColor = negativeColor + 4294967296;
 
     // return "#" + positiveColor.toString(16).padStart(6, "0"); // rgb no alpha
-    return "#" + positiveColor.toString(16).slice(-6).padStart(6, "0");
+    return "#" + positiveColor.toString(16).slice(-6).padStart(6, "0"); // rgb with alpha
 }
