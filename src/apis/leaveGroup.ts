@@ -12,6 +12,7 @@ export const leaveGroupFactory = apiFactory<LeaveGroupResponse>()((api, ctx, uti
      * Leave group
      *
      * @param groupId - The ID of the group(s) to leave
+     * @param silent - Turn on/off silent leave group
      *
      * @throws ZaloApiError
      */
