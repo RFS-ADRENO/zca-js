@@ -78,16 +78,16 @@ export const getListReminderFactory = apiFactory<GetListReminderResponse>()((api
                     ? {
                           uid: threadId,
                           board_type: 1,
-                          page: params.page || 1,
-                          count: params.count || 20,
+                          page: params.page ?? 1,
+                          count: params.count ?? 20,
                           last_id: 0,
                           last_type: 0,
                       }
                     : {
                           group_id: threadId,
-                          board_type: params.board_type || 1,
-                          page: params.page || 1,
-                          count: params.count || 20,
+                          board_type: params.board_type ?? 1,
+                          page: params.page ?? 1,
+                          count: params.count ?? 20,
                           last_id: 0,
                           last_type: 0,
                       },

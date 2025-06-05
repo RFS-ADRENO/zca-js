@@ -73,8 +73,8 @@ export const getListPollFactory = apiFactory<GetListPollResponse>()((api, ctx, u
         const requestParams = {
             group_id: groupId,
             board_type: 0,
-            page: params.page || 1,
-            count: params.count || 20,
+            page: params.page ?? 1,
+            count: params.count ?? 20,
             last_id: 0,
             last_type: 0,
             imei: ctx.imei,
