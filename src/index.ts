@@ -35,6 +35,7 @@ export type { GetAllFriendsResponse } from "./apis/getAllFriends.js";
 export type { GetAllGroupsResponse } from "./apis/getAllGroups.js";
 export type { GetArchivedChatListResponse } from "./apis/getArchivedChatList.js";
 export type { GetAutoDeleteChatResponse, ConversInfo } from "./apis/getAutoDeleteChat.js";
+export type { GetAvatarListResponse, AvatarListOptions, PhotoInfo } from "./apis/getAvatarList.js";
 export type { GetBizAccountResponse, DataBiz, SettingStartPage } from "./apis/getBizAccount.js";
 export type { GetFriendBoardListResponse } from "./apis/getFriendBoardList.js";
 export type { GetFriendRequestResponse, CollapseMsgListConfig, RecommInfo, RecommItem, BizPkg } from "./apis/getFriendRequest.js";

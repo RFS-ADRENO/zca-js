@@ -42,6 +42,7 @@ import { getAllFriendsFactory } from "./apis/getAllFriends.js";
 import { getAllGroupsFactory } from "./apis/getAllGroups.js";
 import { getArchivedChatListFactory } from "./apis/getArchivedChatList.js";
 import { getAutoDeleteChatFactory } from "./apis/getAutoDeleteChat.js";
+import { getAvatarListFactory } from "./apis/getAvatarList.js";
 import { getBizAccountFactory } from "./apis/getBizAccount.js";
 import { getContextFactory } from "./apis/getContext.js";
 import { getCookieFactory } from "./apis/getCookie.js";
@@ -282,6 +283,7 @@ export class API {
     public getAllGroups: ReturnType<typeof getAllGroupsFactory>;
     public getArchivedChatList: ReturnType<typeof getArchivedChatListFactory>;
     public getAutoDeleteChat: ReturnType<typeof getAutoDeleteChatFactory>;
+    public getAvatarList: ReturnType<typeof getAvatarListFactory>;
     public getBizAccount: ReturnType<typeof getBizAccountFactory>;
     public getContext: ReturnType<typeof getContextFactory>;
     public getCookie: ReturnType<typeof getCookieFactory>;
@@ -384,6 +386,7 @@ export class API {
         this.getAllGroups = getAllGroupsFactory(ctx, this);
         this.getArchivedChatList = getArchivedChatListFactory(ctx, this);
         this.getAutoDeleteChat = getAutoDeleteChatFactory(ctx, this);
+        this.getAvatarList = getAvatarListFactory(ctx, this);
         this.getBizAccount = getBizAccountFactory(ctx, this);
         this.getContext = getContextFactory(ctx, this);
         this.getCookie = getCookieFactory(ctx, this);
