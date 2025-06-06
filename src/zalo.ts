@@ -84,6 +84,7 @@ import { removeReminderFactory } from "./apis/removeReminder.js";
 import { removeUnreadMarkFactory } from "./apis/removeUnreadMark.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
 import { resetHiddenConversPinFactory } from "./apis/resetHiddenConversPin.js";
+import { reuseAvatarFactory } from "./apis/reuseAvatar.js";
 import { sendCardFactory } from "./apis/sendCard.js";
 import { sendDeliveredEventFactory } from "./apis/sendDeliveredEvent.js";
 import { sendFriendRequestFactory } from "./apis/sendFriendRequest.js";
@@ -324,6 +325,7 @@ export class API {
     public removeUnreadMark: ReturnType<typeof removeUnreadMarkFactory>;
     public removeUserFromGroup: ReturnType<typeof removeUserFromGroupFactory>;
     public resetHiddenConversPin: ReturnType<typeof resetHiddenConversPinFactory>;
+    public reuseAvatar: ReturnType<typeof reuseAvatarFactory>;
     public sendCard: ReturnType<typeof sendCardFactory>;
     public sendDeliveredEvent: ReturnType<typeof sendDeliveredEventFactory>;
     public sendFriendRequest: ReturnType<typeof sendFriendRequestFactory>;
@@ -427,6 +429,7 @@ export class API {
         this.removeUnreadMark = removeUnreadMarkFactory(ctx, this);
         this.removeUserFromGroup = removeUserFromGroupFactory(ctx, this);
         this.resetHiddenConversPin = resetHiddenConversPinFactory(ctx, this);
+        this.reuseAvatar = reuseAvatarFactory(ctx, this);
         this.sendCard = sendCardFactory(ctx, this);
         this.sendDeliveredEvent = sendDeliveredEventFactory(ctx, this);
         this.sendFriendRequest = sendFriendRequestFactory(ctx, this);

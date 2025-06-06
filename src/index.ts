@@ -72,6 +72,7 @@ export type { RemoveReminderResponse } from "./apis/removeReminder.js";
 export type { RemoveUnreadMarkResponse } from "./apis/removeUnreadMark.js";
 export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js";
 export type { ResetHiddenConversPinResponse } from "./apis/resetHiddenConversPin.js";
+export type { ReuseAvatarResponse } from "./apis/reuseAvatar.js";
 export type { SendCardResponse, SendCardOptions } from "./apis/sendCard.js";
 export type { SendDeliveredEventResponse, DeliveredEventMessageParams } from "./apis/sendDeliveredEvent.js";
 export type { SendFriendRequestResponse } from "./apis/sendFriendRequest.js";
