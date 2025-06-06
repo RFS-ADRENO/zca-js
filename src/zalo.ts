@@ -45,6 +45,7 @@ import { getAutoDeleteChatFactory } from "./apis/getAutoDeleteChat.js";
 import { getBizAccountFactory } from "./apis/getBizAccount.js";
 import { getContextFactory } from "./apis/getContext.js";
 import { getCookieFactory } from "./apis/getCookie.js";
+import { getFriendBoardListFactory } from "./apis/getFriendBoardList.js";
 import { getFriendRequestFactory } from "./apis/getFriendRequest.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
 import { getGroupMembersInfoFactory } from "./apis/getGroupMembersInfo.js";
@@ -284,6 +285,7 @@ export class API {
     public getBizAccount: ReturnType<typeof getBizAccountFactory>;
     public getContext: ReturnType<typeof getContextFactory>;
     public getCookie: ReturnType<typeof getCookieFactory>;
+    public getFriendBoardList: ReturnType<typeof getFriendBoardListFactory>;
     public getFriendRequest: ReturnType<typeof getFriendRequestFactory>;
     public getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
     public getGroupMembersInfo: ReturnType<typeof getGroupMembersInfoFactory>;
@@ -385,6 +387,7 @@ export class API {
         this.getBizAccount = getBizAccountFactory(ctx, this);
         this.getContext = getContextFactory(ctx, this);
         this.getCookie = getCookieFactory(ctx, this);
+        this.getFriendBoardList = getFriendBoardListFactory(ctx, this);
         this.getFriendRequest = getFriendRequestFactory(ctx, this);
         this.getGroupInfo = getGroupInfoFactory(ctx, this);
         this.getGroupMembersInfo = getGroupMembersInfoFactory(ctx, this);
