@@ -1,21 +1,24 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type UpdateLangResponse = "";
+export type GetReminderEventResponse = {
+    rejectMember: string[];
+    acceptMember: string[];
+};
 
-export const updateLangFactory = apiFactory<UpdateLangResponse>()((api, _ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/updatelang`);
+export const getReminderEventFactory = apiFactory<GetReminderEventResponse>()((api, _ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group_board[0]}/api/board/topic/listResponseEvent`);
 
     /**
-     * Update language
+     * Get reminder event
      *
-     * @param language language to update (VI, EN)
+     * @param eventId event id
      *
      * @throws ZaloApiError
      */
-    return async function updateLang(language: string = "VI") {
+    return async function getReminderEvent(eventId: string) {
         const params = {
-            language: language,
+            eventId: eventId
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

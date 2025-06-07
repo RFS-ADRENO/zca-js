@@ -1,21 +1,30 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type UpdateLangResponse = "";
+export type Settings = {
+    show_online_status: boolean;
+};
 
-export const updateLangFactory = apiFactory<UpdateLangResponse>()((api, _ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/updatelang`);
+export type LastOnlineResponse = {
+    settings: Settings;
+    lastOnline: number;
+};
+
+export const lastOnlineFactory = apiFactory<LastOnlineResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/lastOnline`);
 
     /**
-     * Update language
+     * Get last online
      *
-     * @param language language to update (VI, EN)
+     * @param uid User ID
      *
      * @throws ZaloApiError
      */
-    return async function updateLang(language: string = "VI") {
+    return async function lastOnline(uid: string) {
         const params = {
-            language: language,
+            uid: uid,
+            conv_type: 1,
+            imei: ctx.imei,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

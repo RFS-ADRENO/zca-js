@@ -1,21 +1,23 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type UpdateLangResponse = "";
+export type ReuseAvatarResponse = null;
 
-export const updateLangFactory = apiFactory<UpdateLangResponse>()((api, _ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/updatelang`);
+export const reuseAvatarFactory = apiFactory<ReuseAvatarResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/reuse-avatar`);
 
     /**
-     * Update language
+     * Reuse avatar
      *
-     * @param language language to update (VI, EN)
+     * @param photoId photo id
      *
      * @throws ZaloApiError
      */
-    return async function updateLang(language: string = "VI") {
+    return async function reuseAvatar(photoId: string) {
         const params = {
-            language: language,
+            photoId: photoId,
+            isPostSocial: 0,
+            imei: ctx.imei,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
