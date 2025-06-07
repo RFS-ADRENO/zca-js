@@ -25,7 +25,7 @@ export type { DeleteChatResponse, ConverInfo } from "./apis/deleteChat.js";
 export type { DeleteMessageResponse, DeleteMessageOptions } from "./apis/deleteMessage.js";
 export type { DisableGroupLinkResponse } from "./apis/disableGroupLink.js";
 export type { DisperseGroupResponse } from "./apis/disperseGroup.js";
-export type { EditNoteResponse } from "./apis/editNote.js";
+export type { EditReminderResponse, EditReminderOptions, EditReminderParams, UserReminderResponse, GroupReminderResponse } from "./apis/editReminder.js";
 export type { EnableGroupLinkResponse } from "./apis/enableGroupLink.js";
 export type { FetchAccountInfoResponse } from "./apis/fetchAccountInfo.js";
 export type { FindUserResponse } from "./apis/findUser.js";

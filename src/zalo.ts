@@ -32,7 +32,7 @@ import { deleteChatFactory } from "./apis/deleteChat.js";
 import { deleteMessageFactory } from "./apis/deleteMessage.js";
 import { disableGroupLinkFactory } from "./apis/disableGroupLink.js";
 import { disperseGroupFactory } from "./apis/disperseGroup.js";
-import { editNoteFactory } from "./apis/editNote.js";
+import { editReminderFactory } from "./apis/editReminder.js";
 import { enableGroupLinkFactory } from "./apis/enableGroupLink.js";
 import { fetchAccountInfoFactory } from "./apis/fetchAccountInfo.js";
 import { findUserFactory } from "./apis/findUser.js";
@@ -274,7 +274,7 @@ export class API {
     public deleteMessage: ReturnType<typeof deleteMessageFactory>;
     public disableGroupLink: ReturnType<typeof disableGroupLinkFactory>;
     public disperseGroup: ReturnType<typeof disperseGroupFactory>;
-    public editNote: ReturnType<typeof editNoteFactory>;
+    public editReminder: ReturnType<typeof editReminderFactory>;
     public enableGroupLink: ReturnType<typeof enableGroupLinkFactory>;
     public fetchAccountInfo: ReturnType<typeof fetchAccountInfoFactory>;
     public findUser: ReturnType<typeof findUserFactory>;
@@ -378,7 +378,7 @@ export class API {
         this.deleteMessage = deleteMessageFactory(ctx, this);
         this.disableGroupLink = disableGroupLinkFactory(ctx, this);
         this.disperseGroup = disperseGroupFactory(ctx, this);
-        this.editNote = editNoteFactory(ctx, this);
+        this.editReminder = editReminderFactory(ctx, this);
         this.enableGroupLink = enableGroupLinkFactory(ctx, this);
         this.fetchAccountInfo = fetchAccountInfoFactory(ctx, this);
         this.findUser = findUserFactory(ctx, this);
