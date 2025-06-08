@@ -98,7 +98,7 @@ export const getListReminderFactory = apiFactory<GetListReminderResponse>()((api
         const encryptedParams = utils.encodeAES(JSON.stringify(requestParams));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await utils.request(utils.makeURL(serviceURL[type].toString(), { params: encryptedParams }), {
+        const response = await utils.request(utils.makeURL(serviceURL[type], { params: encryptedParams }), {
             method: "GET",
         });
 

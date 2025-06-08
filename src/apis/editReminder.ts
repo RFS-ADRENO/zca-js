@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { ThreadType } from "../models/Enum.js";
+import { ThreadType } from "../models/index.js";
 import { apiFactory, hexToNegativeColor } from "../utils.js";
 
 export type EditReminderOptions = {
@@ -118,7 +118,7 @@ export const editReminderFactory = apiFactory<EditReminderResponse>()((api, ctx,
         const encryptedParams = utils.encodeAES(JSON.stringify(requestParams));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await utils.request(serviceURL[type].toString(), {
+        const response = await utils.request(serviceURL[type], {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,
