@@ -27,6 +27,8 @@ export enum GroupEventType {
     REJECT_REMIND,
     REMIND_TOPIC,
 
+    UPDATE_AVATAR,
+
     UNKNOWN,
 }
 
@@ -89,20 +91,20 @@ export type TGroupEventBase = {
     groupName: string;
     sourceId: string;
     updateMembers: Member[];
-    groupSetting: GroupSetting;
+    groupSetting: GroupSetting | null;
     groupTopic: GroupTopic | null;
-    info: GroupInfo;
-    extraData: GroupExtraData;
+    info: GroupInfo | null;
+    extraData: GroupExtraData | null;
     time: string;
-    avt: null;
-    fullAvt: null;
+    avt: string | null;
+    fullAvt: string | null;
     isAdd: number;
     hideGroupInfo: number;
     version: string;
     groupType: number;
-    clientId: number;
-    errorMap: Record<string, any>;
-    e2ee: number;
+    clientId?: number;
+    errorMap?: Record<string, any>;
+    e2ee?: number;
 };
 
 export type TGroupEventJoinRequest = {
