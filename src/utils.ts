@@ -423,6 +423,13 @@ export const logger = (ctx: ContextBase) => ({
     error: (...args: any[]) => {
         if (ctx.options.logging) console.log("\x1b[31mERROR\x1b[0m", ...args);
     },
+    success: (...args: any[]) => {
+        if (ctx.options.logging) console.log("\x1b[32mSUCCESS\x1b[0m", ...args);
+    },
+    timestamp: (...args: any[]) => {
+        const now = new Date().toISOString();
+        if (ctx.options.logging) console.log(`\x1b[90m[${now}]\x1b[0m`, ...args);
+    },
 });
 
 export function getClientMessageType(msgType: string) {
@@ -703,7 +710,7 @@ export function decryptPin(encryptedPin: string, pin?: number): boolean {
  * Converts a hex color code to a negative color number used by Zalo API
  * @param hex Hex color code (e.g. '#00FF00' or '00FF00')
  * @returns Negative color number (e.g. -16711936)
- * 
+ *
  * @example
  * const negativeColor = hexToNegativeColor('#00FF00'); // Result: -16711936
  */
@@ -722,14 +729,14 @@ export function hexToNegativeColor(hex: string): number {
         hexValue = "FF" + hexValue;
     }
     const decimal = parseInt(hexValue, 16);
-    return decimal > 0x7FFFFFFF ? decimal - 4294967296 : decimal;
+    return decimal > 0x7fffffff ? decimal - 4294967296 : decimal;
 }
 
 /**
  * Converts a negative color number from Zalo API to hex color code
  * @param negativeColor Negative color number (e.g. -16711936)
  * @returns Hex color code (e.g. '#00FF00')
- * 
+ *
  * @example
  * const hexColor = negativeColorToHex(-16711936); // Result: '#00FF00'
  */
