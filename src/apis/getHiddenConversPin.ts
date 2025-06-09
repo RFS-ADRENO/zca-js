@@ -1,23 +1,27 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type ChangeFriendAliasResponse = "";
+export type ThreadInfo = {
+    is_group: number;
+    thread_id: string;
+};
 
-export const changeFriendAliasFactory = apiFactory<ChangeFriendAliasResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.alias[0]}/api/alias/update`);
+export type GetHiddenConversPinResponse = {
+    pin: string;
+    threads: ThreadInfo[];
+};
+
+export const getHiddenConversPinFactory = apiFactory<GetHiddenConversPinResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.conversation[0]}/api/hiddenconvers/get-all`);
 
     /**
-     * Change friend's alias
-     *
-     * @param alias new alias (nickname - bietdanh)
-     * @param friendId friend id
+     * Get hidden convers pin
      *
      * @throws ZaloApiError
+     *
      */
-    return async function changeFriendAlias(alias: string, friendId: string) {
+    return async function getHiddenConversPin() {
         const params = {
-            friendId: friendId,
-            alias: alias,
             imei: ctx.imei,
         };
 

@@ -27,8 +27,8 @@ export type CreateGroupOptions = {
      * Path to the avatar image file
      * @deprecated Use `avatarSource` instead
      */
-    avatarPath?: string
-}
+    avatarPath?: string;
+};
 
 export const createGroupFactory = apiFactory<CreateGroupResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/create/v2`);
@@ -64,7 +64,6 @@ export const createGroupFactory = apiFactory<CreateGroupResponse>()((api, ctx, u
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
-        // const response = await utils.request(serviceURL + `&params=${encodeURIComponent(encryptedParams)}`, {
         const response = await utils.request(utils.makeURL(serviceURL, { params: encryptedParams }), {
             method: "POST",
         });

@@ -15,6 +15,7 @@ export type ParseLinkErrorMaps = {
 };
 
 export type ParseLinkResponse = {
+    data: any; // @TODO: add for sendLink
     thumb: string;
     title: string;
     desc: string;

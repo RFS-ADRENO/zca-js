@@ -289,7 +289,7 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
                         )
                         .then(async (response) => {
                             /**
-                             * @todo better type rather than any
+                             * @TODO: better type rather than any
                              */
                             const resData = await resolveResponse(ctx, response);
 
