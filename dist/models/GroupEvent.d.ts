@@ -20,7 +20,8 @@ export declare enum GroupEventType {
     ACCEPT_REMIND = 18,
     REJECT_REMIND = 19,
     REMIND_TOPIC = 20,
-    UNKNOWN = 21
+    UPDATE_AVATAR = 21,
+    UNKNOWN = 22
 }
 export type Member = {
     id: string;
@@ -76,20 +77,20 @@ export type TGroupEventBase = {
     groupName: string;
     sourceId: string;
     updateMembers: Member[];
-    groupSetting: GroupSetting;
+    groupSetting: GroupSetting | null;
     groupTopic: GroupTopic | null;
-    info: GroupInfo;
-    extraData: GroupExtraData;
+    info: GroupInfo | null;
+    extraData: GroupExtraData | null;
     time: string;
-    avt: null;
-    fullAvt: null;
+    avt: string | null;
+    fullAvt: string | null;
     isAdd: number;
     hideGroupInfo: number;
     version: string;
     groupType: number;
-    clientId: number;
-    errorMap: Record<string, any>;
-    e2ee: number;
+    clientId?: number;
+    errorMap?: Record<string, any>;
+    e2ee?: number;
 };
 export type TGroupEventJoinRequest = {
     uids: string[];

@@ -23,7 +23,8 @@ exports.GroupEventType = void 0;
     GroupEventType[GroupEventType["ACCEPT_REMIND"] = 18] = "ACCEPT_REMIND";
     GroupEventType[GroupEventType["REJECT_REMIND"] = 19] = "REJECT_REMIND";
     GroupEventType[GroupEventType["REMIND_TOPIC"] = 20] = "REMIND_TOPIC";
-    GroupEventType[GroupEventType["UNKNOWN"] = 21] = "UNKNOWN";
+    GroupEventType[GroupEventType["UPDATE_AVATAR"] = 21] = "UPDATE_AVATAR";
+    GroupEventType[GroupEventType["UNKNOWN"] = 22] = "UNKNOWN";
 })(exports.GroupEventType || (exports.GroupEventType = {}));
 function initializeGroupEvent(uid, data, type) {
     const threadId = "group_id" in data ? data.group_id : data.groupId;

@@ -66,6 +66,7 @@ type LoginInfo = {
         boards: string[];
         downloadStickerUrl: string[];
         sp_contact: string[];
+        zcloud_up_file: string[];
         media_store_send2me: string[];
         push_act: string[];
         aext: string[];

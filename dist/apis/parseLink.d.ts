@@ -10,6 +10,7 @@ export type ParseLinkErrorMaps = {
     [key: string]: number;
 };
 export type ParseLinkResponse = {
+    data: any;
     thumb: string;
     title: string;
     desc: string;

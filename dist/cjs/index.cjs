@@ -9,10 +9,11 @@ var Reaction = require('./models/Reaction.cjs');
 var Typing = require('./models/Typing.cjs');
 var Undo = require('./models/Undo.cjs');
 var zalo = require('./zalo.cjs');
-var sendReport = require('./apis/sendReport.cjs');
+var autoDeleteChat = require('./apis/autoDeleteChat.cjs');
 var listen = require('./apis/listen.cjs');
-var sendMessage = require('./apis/sendMessage.cjs');
 var loginQR = require('./apis/loginQR.cjs');
+var sendMessage = require('./apis/sendMessage.cjs');
+var sendReport = require('./apis/sendReport.cjs');
 
 
 
@@ -47,13 +48,17 @@ exports.UserTyping = Typing.UserTyping;
 exports.Undo = Undo.Undo;
 exports.API = zalo.API;
 exports.Zalo = zalo.Zalo;
-Object.defineProperty(exports, "ReportReason", {
+Object.defineProperty(exports, "MessageTTL", {
 	enumerable: true,
-	get: function () { return sendReport.ReportReason; }
+	get: function () { return autoDeleteChat.MessageTTL; }
 });
 Object.defineProperty(exports, "CloseReason", {
 	enumerable: true,
 	get: function () { return listen.CloseReason; }
+});
+Object.defineProperty(exports, "LoginQRCallbackEventType", {
+	enumerable: true,
+	get: function () { return loginQR.LoginQRCallbackEventType; }
 });
 Object.defineProperty(exports, "TextStyle", {
 	enumerable: true,
@@ -63,7 +68,7 @@ Object.defineProperty(exports, "Urgency", {
 	enumerable: true,
 	get: function () { return sendMessage.Urgency; }
 });
-Object.defineProperty(exports, "LoginQRCallbackEventType", {
+Object.defineProperty(exports, "ReportReason", {
 	enumerable: true,
-	get: function () { return loginQR.LoginQRCallbackEventType; }
+	get: function () { return sendReport.ReportReason; }
 });

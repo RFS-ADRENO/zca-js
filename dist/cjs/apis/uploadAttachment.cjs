@@ -153,7 +153,7 @@ const uploadAttachmentFactory = utils.apiFactory()((api, ctx, utils$1) => {
                 })
                     .then(async (response) => {
                     /**
-                     * @todo better type rather than any
+                     * @TODO: better type rather than any
                      */
                     const resData = await utils.resolveResponse(ctx, response);
                     if (resData && resData.fileId != -1 && resData.photoId != -1)

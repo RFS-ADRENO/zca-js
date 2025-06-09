@@ -71,7 +71,7 @@ const sendVideoFactory = utils.apiFactory()((api, ctx, utils) => {
                 title: (_e = options.msg) !== null && _e !== void 0 ? _e : "",
             }),
         };
-        // @TODO later
+        // @TODO: later
         // if (typeof message !== "string" && message.mention) {
         //     params.mentionInfo = message.mention;
         // }

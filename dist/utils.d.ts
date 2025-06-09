@@ -118,4 +118,18 @@ export type FactoryUtils<T> = {
 };
 export declare function apiFactory<T>(): <K extends (api: API, ctx: ContextSession, utils: FactoryUtils<T>) => any>(callback: K) => (ctx: ContextBase, api: API) => ReturnType<K>;
 export declare function generateZaloUUID(userAgent: string): string;
+/**
+ * Encrypts a 4-digit PIN to a 32-character hex string
+ * @param pin 4-digit PIN number
+ * @returns 32-character hex string
+ */
+export declare function encryptPin(pin: number): string;
+/**
+ * Decrypts a 32-character hex string back to 4-digit PIN
+ * Note: This is a one-way hash, so we can only verify if a PIN matches the hash
+ * @param encryptedPin 32-character hex string
+ * @param pin 4-digit PIN to verify
+ * @returns true if the PIN matches the hash
+ */
+export declare function decryptPin(encryptedPin: string, pin?: number): boolean;
 export {};

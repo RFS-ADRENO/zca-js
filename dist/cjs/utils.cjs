@@ -440,6 +440,8 @@ function getGroupEventType(act) {
         return GroupEvent.GroupEventType.BLOCK_MEMBER;
     if (act == "update_setting")
         return GroupEvent.GroupEventType.UPDATE_SETTING;
+    if (act == "update_avatar")
+        return GroupEvent.GroupEventType.UPDATE_AVATAR;
     if (act == "update")
         return GroupEvent.GroupEventType.UPDATE;
     if (act == "new_link")
@@ -570,6 +572,15 @@ function apiFactory() {
 function generateZaloUUID(userAgent) {
     return crypto.randomUUID() + "-" + cryptojs.MD5(userAgent).toString();
 }
+/**
+ * Encrypts a 4-digit PIN to a 32-character hex string
+ * @param pin 4-digit PIN number
+ * @returns 32-character hex string
+ */
+function encryptPin(pin) {
+    const pinStr = pin.toString().padStart(4, "0");
+    return crypto.createHash("md5").update(pinStr).digest("hex");
+}
 
 exports.ParamsEncryptor = ParamsEncryptor;
 exports.apiFactory = apiFactory;
@@ -579,6 +590,7 @@ exports.decodeEventData = decodeEventData;
 exports.decodeUnit8Array = decodeUnit8Array;
 exports.decryptResp = decryptResp;
 exports.encodeAES = encodeAES;
+exports.encryptPin = encryptPin;
 exports.generateZaloUUID = generateZaloUUID;
 exports.getClientMessageType = getClientMessageType;
 exports.getDefaultHeaders = getDefaultHeaders;

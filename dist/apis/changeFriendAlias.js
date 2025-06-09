@@ -9,7 +9,6 @@ export const changeFriendAliasFactory = apiFactory()((api, ctx, utils) => {
      * @param friendId friend id
      *
      * @throws ZaloApiError
-     *
      */
     return async function changeFriendAlias(alias, friendId) {
         const params = {
