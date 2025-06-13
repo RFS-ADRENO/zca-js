@@ -87,6 +87,7 @@ export type { SendVoiceResponse, SendVoiceOptions } from "./apis/sendVoice.js";
 export type { SetMuteResponse, SetMuteParams } from "./apis/setMute.js";
 export type { UnBlockUserResponse } from "./apis/unblockUser.js";
 export type { UndoResponse, UndoOptions } from "./apis/undo.js";
+export type { UndoSendFriendRequestResponse, UndoSendFriendRequestOptions } from "./apis/undoSendFriendRequest.js";
 export type { UpdateAutoDeleteChatResponse } from "./apis/updateAutoDeleteChat.js";
 export type { UpdateGroupSettingsResponse, UpdateGroupSettingsOptions } from "./apis/updateGroupSettings.js";
 export type { UpdateHiddenConversPinResponse } from "./apis/updateHiddenConversPin.js";
