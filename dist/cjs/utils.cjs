@@ -542,7 +542,7 @@ async function handleZaloResponse(ctx, response, isEncrypted = true) {
 async function resolveResponse(ctx, res, cb, isEncrypted) {
     const result = await handleZaloResponse(ctx, res, isEncrypted);
     if (result.error)
-        console.log("Error: ", result.error.message, result.error.code);
+        throw new Error(result.error.message);
     if (cb)
         return cb(result);
     return result.data;
