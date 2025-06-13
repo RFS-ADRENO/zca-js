@@ -214,7 +214,7 @@ export class API {
         this.getBizAccount = getBizAccountFactory(ctx, this);
         this.getCookie = getCookieFactory(ctx, this);
         this.getFriendRequest = getFriendRequestFactory(ctx, this);
-        this.getRecommendRequestFactory = getRecommendRequestFactory(ctx, this);
+        this.getRecommendRequest = getRecommendRequestFactory(ctx, this);
         this.getGroupInfo = getGroupInfoFactory(ctx, this);
         this.getGroupMembersInfo = getGroupMembersInfoFactory(ctx, this);
         this.getHiddenConversPin = getHiddenConversPinFactory(ctx, this);

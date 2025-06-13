@@ -217,7 +217,7 @@ class API {
         this.getBizAccount = getBizAccount.getBizAccountFactory(ctx, this);
         this.getCookie = getCookie.getCookieFactory(ctx, this);
         this.getFriendRequest = getFriendRequest.getFriendRequestFactory(ctx, this);
-        this.getRecommendRequestFactory = getRecommendRequest.getRecommendRequestFactory(ctx, this);
+        this.getRecommendRequest = getRecommendRequest.getRecommendRequestFactory(ctx, this);
         this.getGroupInfo = getGroupInfo.getGroupInfoFactory(ctx, this);
         this.getGroupMembersInfo = getGroupMembersInfo.getGroupMembersInfoFactory(ctx, this);
         this.getHiddenConversPin = getHiddenConversPin.getHiddenConversPinFactory(ctx, this);

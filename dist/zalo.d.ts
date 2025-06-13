@@ -158,7 +158,7 @@ export declare class API {
     getBizAccount: ReturnType<typeof getBizAccountFactory>;
     getCookie: ReturnType<typeof getCookieFactory>;
     getFriendRequest: ReturnType<typeof getFriendRequestFactory>;
-    getRecommendRequestFactory: ReturnType<typeof getRecommendRequestFactory>;
+    getRecommendRequest: ReturnType<typeof getRecommendRequestFactory>;
     getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
     getGroupMembersInfo: ReturnType<typeof getGroupMembersInfoFactory>;
     getHiddenConversPin: ReturnType<typeof getHiddenConversPinFactory>;
