@@ -35,6 +35,7 @@ import { getBizAccountFactory } from "./apis/getBizAccount.js";
 import { getContextFactory } from "./apis/getContext.js";
 import { getCookieFactory } from "./apis/getCookie.js";
 import { getFriendRequestFactory } from "./apis/getFriendRequest.js";
+import { getRecommendRequestFactory } from "./apis/getRecommendRequest.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
 import { getGroupMembersInfoFactory } from "./apis/getGroupMembersInfo.js";
 import { getHiddenConversPinFactory } from "./apis/getHiddenConversPin.js";
@@ -157,6 +158,7 @@ export declare class API {
     getBizAccount: ReturnType<typeof getBizAccountFactory>;
     getCookie: ReturnType<typeof getCookieFactory>;
     getFriendRequest: ReturnType<typeof getFriendRequestFactory>;
+    getRecommendRequestFactory: ReturnType<typeof getRecommendRequestFactory>;
     getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
     getGroupMembersInfo: ReturnType<typeof getGroupMembersInfoFactory>;
     getHiddenConversPin: ReturnType<typeof getHiddenConversPinFactory>;

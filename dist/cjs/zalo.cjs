@@ -39,6 +39,7 @@ var getBizAccount = require('./apis/getBizAccount.cjs');
 var getContext = require('./apis/getContext.cjs');
 var getCookie = require('./apis/getCookie.cjs');
 var getFriendRequest = require('./apis/getFriendRequest.cjs');
+var getRecommendRequest = require('./apis/getRecommendRequest.cjs');
 var getGroupInfo = require('./apis/getGroupInfo.cjs');
 var getGroupMembersInfo = require('./apis/getGroupMembersInfo.cjs');
 var getHiddenConversPin = require('./apis/getHiddenConversPin.cjs');
@@ -216,6 +217,7 @@ class API {
         this.getBizAccount = getBizAccount.getBizAccountFactory(ctx, this);
         this.getCookie = getCookie.getCookieFactory(ctx, this);
         this.getFriendRequest = getFriendRequest.getFriendRequestFactory(ctx, this);
+        this.getRecommendRequestFactory = getRecommendRequest.getRecommendRequestFactory(ctx, this);
         this.getGroupInfo = getGroupInfo.getGroupInfoFactory(ctx, this);
         this.getGroupMembersInfo = getGroupMembersInfo.getGroupMembersInfoFactory(ctx, this);
         this.getHiddenConversPin = getHiddenConversPin.getHiddenConversPinFactory(ctx, this);

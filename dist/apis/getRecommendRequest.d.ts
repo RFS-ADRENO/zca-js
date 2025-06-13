@@ -1,16 +1,16 @@
-export type CollapseMsgListConfig = {
+export type CollapseMsgListConfig1 = {
     collapseId: number;
     collapseXItem: number;
     collapseYItem: number;
 };
-export type RecommInfo = {
+export type RecommInfo1 = {
     source: number;
     message: string;
 };
-export type BizPkg = {
+export type BizPkg1 = {
     pkgId: number;
 };
-export type DataInfo = {
+export type DataInfo1 = {
     userId: string;
     zaloName: string;
     displayName: string;
@@ -23,18 +23,18 @@ export type DataInfo = {
     recommType: number;
     recommSrc: number;
     recommTime: number;
-    recommInfo: RecommInfo;
-    bizPkg: BizPkg;
+    recommInfo: RecommInfo1;
+    bizPkg: BizPkg1;
     isSeenFriendReq: boolean;
 };
-export type RecommItem = {
+export type RecommItem1 = {
     recommItemType: number;
-    dataInfo: DataInfo;
+    dataInfo: DataInfo1;
 };
-export type GetFriendRequestResponse = {
+export type getRecommendRequestResponse = {
     expiredDuration: number;
-    collapseMsgListConfig: CollapseMsgListConfig;
-    recommItems: RecommItem[];
+    collapseMsgListConfig: CollapseMsgListConfig1;
+    recommItems: RecommItem1[];
     isSend?: any;
 };
-export declare const getFriendRequestFactory: (ctx: import("../context.js").ContextBase, api: import("../zalo.js").API) => () => Promise<GetFriendRequestResponse>;
+export declare const getRecommendRequestFactory: (ctx: import("../context.js").ContextBase, api: import("../zalo.js").API) => () => Promise<getRecommendRequestResponse>;

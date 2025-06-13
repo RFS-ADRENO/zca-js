@@ -1,22 +1,22 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type CollapseMsgListConfig = {
+export type CollapseMsgListConfig1 = {
     collapseId: number;
     collapseXItem: number;
     collapseYItem: number;
 };
 
-export type RecommInfo = {
+export type RecommInfo1 = {
     source: number;
     message: string;
 };
 
-export type BizPkg = {
+export type BizPkg1 = {
     pkgId: number;
 };
 
-export type DataInfo = {
+export type DataInfo1 = {
     userId: string;
     zaloName: string;
     displayName: string;
@@ -29,25 +29,24 @@ export type DataInfo = {
     recommType: number;
     recommSrc: number;
     recommTime: number;
-    recommInfo: RecommInfo;
-    bizPkg: BizPkg;
+    recommInfo: RecommInfo1;
+    bizPkg: BizPkg1;
     isSeenFriendReq: boolean;
 };
 
-export type RecommItem = {
+export type RecommItem1 = {
     recommItemType: number;
-    dataInfo: DataInfo;
+    dataInfo: DataInfo1;
 };
 
-export type GetFriendRequestResponse = {
+export type getRecommendRequestResponse = {
     expiredDuration: number;
-    collapseMsgListConfig: CollapseMsgListConfig;
-    recommItems: RecommItem[];
+    collapseMsgListConfig: CollapseMsgListConfig1;
+    recommItems: RecommItem1[];
     isSend?: any;
 };
 
-export const getFriendRequestFactory = apiFactory<GetFriendRequestResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/requested/list`);
+export const getRecommendRequestFactory = apiFactory<getRecommendRequestResponse>()((api, ctx, utils) => {
     const services2URL = utils.makeURL(`${api.zpwServiceMap.friend[1]}/api/friend/recommendsv2/list`);
 
     /**
@@ -55,7 +54,7 @@ export const getFriendRequestFactory = apiFactory<GetFriendRequestResponse>()((a
      *
      * @throws ZaloApiError
      */
-    return async function getFriendRequest() {
+    return async function getRecommendRequest() {
         const params = {
             imei: ctx.imei,
         };
@@ -63,14 +62,10 @@ export const getFriendRequestFactory = apiFactory<GetFriendRequestResponse>()((a
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await utils.request(utils.makeURL(serviceURL, { params: encryptedParams }), {
-            method: "GET",
-        });
-
         const response2 = await utils.request(utils.makeURL(services2URL, { params: encryptedParams }), {
             method: "GET",
         });
 
-        return utils.resolve(response);
+        return utils.resolve(response2);
     };
 });

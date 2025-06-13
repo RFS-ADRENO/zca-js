@@ -45,6 +45,7 @@ import { getBizAccountFactory } from "./apis/getBizAccount.js";
 import { getContextFactory } from "./apis/getContext.js";
 import { getCookieFactory } from "./apis/getCookie.js";
 import { getFriendRequestFactory } from "./apis/getFriendRequest.js";
+import { getRecommendRequestFactory } from "./apis/getRecommendRequest.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
 import { getGroupMembersInfoFactory } from "./apis/getGroupMembersInfo.js";
 import { getHiddenConversPinFactory } from "./apis/getHiddenConversPin.js";
@@ -272,6 +273,7 @@ export class API {
     public getBizAccount: ReturnType<typeof getBizAccountFactory>;
     public getCookie: ReturnType<typeof getCookieFactory>;
     public getFriendRequest: ReturnType<typeof getFriendRequestFactory>;
+    public getRecommendRequestFactory: ReturnType<typeof getRecommendRequestFactory>;
     public getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
     public getGroupMembersInfo: ReturnType<typeof getGroupMembersInfoFactory>;
     public getHiddenConversPin: ReturnType<typeof getHiddenConversPinFactory>;
@@ -362,6 +364,7 @@ export class API {
         this.getBizAccount = getBizAccountFactory(ctx, this);
         this.getCookie = getCookieFactory(ctx, this);
         this.getFriendRequest = getFriendRequestFactory(ctx, this);
+        this.getRecommendRequestFactory = getRecommendRequestFactory(ctx, this);
         this.getGroupInfo = getGroupInfoFactory(ctx, this);
         this.getGroupMembersInfo = getGroupMembersInfoFactory(ctx, this);
         this.getHiddenConversPin = getHiddenConversPinFactory(ctx, this);

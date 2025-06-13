@@ -36,6 +36,7 @@ export type { GetAllGroupsResponse } from "./apis/getAllGroups.js";
 export type { GetAutoDeleteChatResponse, ConversInfo } from "./apis/getAutoDeleteChat.js";
 export type { GetBizAccountResponse, DataBiz, SettingStartPage } from "./apis/getBizAccount.js";
 export type { GetFriendRequestResponse, CollapseMsgListConfig, RecommInfo, RecommItem, BizPkg } from "./apis/getFriendRequest.js";
+export type { getRecommendRequestResponse, CollapseMsgListConfig1, RecommInfo1, RecommItem1, BizPkg1 } from "./apis/getRecommendRequest.js";
 export type { ExtraInfo, GridInfoMap, GroupInfo, GroupInfoResponse, PendingApprove } from "./apis/getGroupInfo.js";
 export type { GetGroupMembersInfoResponse, MemberProfile } from "./apis/getGroupMembersInfo.js";
 export type { GetHiddenConversPinResponse, ThreadInfo } from "./apis/getHiddenConversPin.js";
