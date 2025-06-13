@@ -99,7 +99,7 @@ import { sendVoiceFactory } from "./apis/sendVoice.js";
 import { setMuteFactory } from "./apis/setMute.js";
 import { unblockUserFactory } from "./apis/unblockUser.js";
 import { undoFactory } from "./apis/undo.js";
-import { undoSendFriendRequestFactory } from "./apis/undoSendFriendRequest.js";
+import { undoFriendRequestFactory } from "./apis/undoFriendRequest.js";
 import { updateAutoDeleteChatFactory } from "./apis/updateAutoDeleteChat.js";
 import { updateGroupSettingsFactory } from "./apis/updateGroupSettings.js";
 import { updateHiddenConversPinFactory } from "./apis/updateHiddenConversPin.js";
@@ -341,7 +341,7 @@ export class API {
     public setMute: ReturnType<typeof setMuteFactory>;
     public unblockUser: ReturnType<typeof unblockUserFactory>;
     public undo: ReturnType<typeof undoFactory>;
-    public undoSendFriendRequest: ReturnType<typeof undoSendFriendRequestFactory>;
+    public undoFriendRequest: ReturnType<typeof undoFriendRequestFactory>;
     public updateAutoDeleteChat: ReturnType<typeof updateAutoDeleteChatFactory>;
     public updateGroupSettings: ReturnType<typeof updateGroupSettingsFactory>;
     public updateHiddenConversPin: ReturnType<typeof updateHiddenConversPinFactory>;
@@ -446,7 +446,7 @@ export class API {
         this.setMute = setMuteFactory(ctx, this);
         this.unblockUser = unblockUserFactory(ctx, this);
         this.undo = undoFactory(ctx, this);
-        this.undoSendFriendRequest = undoSendFriendRequestFactory(ctx, this);
+        this.undoFriendRequest = undoFriendRequestFactory(ctx, this);
         this.updateAutoDeleteChat = updateAutoDeleteChatFactory(ctx, this);
         this.updateGroupSettings = updateGroupSettingsFactory(ctx, this);
         this.updateHiddenConversPin = updateHiddenConversPinFactory(ctx, this);

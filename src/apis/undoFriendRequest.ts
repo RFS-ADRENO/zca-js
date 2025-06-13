@@ -1,13 +1,13 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type UndoSendFriendRequestOptions = {
+export type UndoFriendRequestOptions = {
     fid: string;
 };
 
-export type UndoSendFriendRequestResponse = "";
+export type UndoFriendRequestResponse = "";
 
-export const undoSendFriendRequestFactory = apiFactory<UndoSendFriendRequestResponse>()((api, _ctx, utils) => {
+export const undoFriendRequestFactory = apiFactory<UndoFriendRequestResponse>()((api, _ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/undo`);
 
     /**
@@ -17,7 +17,7 @@ export const undoSendFriendRequestFactory = apiFactory<UndoSendFriendRequestResp
      *  
      * @throws ZaloApiError
      */
-    return async function undoSendFriendRequest(options: UndoSendFriendRequestOptions) {
+    return async function undoFriendRequest(options: UndoFriendRequestOptions) {
         const params = {
             fid: options.fid,
         };
