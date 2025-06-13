@@ -5,7 +5,6 @@ var utils = require('../utils.cjs');
 
 const getFriendRequestFactory = utils.apiFactory()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/requested/list`);
-    const services2URL = utils.makeURL(`${api.zpwServiceMap.friend[1]}/api/friend/recommendsv2/list`);
     /**
      * Get friend requests
      *
@@ -19,9 +18,6 @@ const getFriendRequestFactory = utils.apiFactory()((api, ctx, utils) => {
         if (!encryptedParams)
             throw new ZaloApiError.ZaloApiError("Failed to encrypt params");
         const response = await utils.request(utils.makeURL(serviceURL, { params: encryptedParams }), {
-            method: "GET",
-        });
-        await utils.request(utils.makeURL(services2URL, { params: encryptedParams }), {
             method: "GET",
         });
         return utils.resolve(response);

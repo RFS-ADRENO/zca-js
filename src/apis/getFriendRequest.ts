@@ -48,7 +48,6 @@ export type GetFriendRequestResponse = {
 
 export const getFriendRequestFactory = apiFactory<GetFriendRequestResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/requested/list`);
-    const services2URL = utils.makeURL(`${api.zpwServiceMap.friend[1]}/api/friend/recommendsv2/list`);
 
     /**
      * Get friend requests
@@ -64,10 +63,6 @@ export const getFriendRequestFactory = apiFactory<GetFriendRequestResponse>()((a
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
         const response = await utils.request(utils.makeURL(serviceURL, { params: encryptedParams }), {
-            method: "GET",
-        });
-
-        const response2 = await utils.request(utils.makeURL(services2URL, { params: encryptedParams }), {
             method: "GET",
         });
 

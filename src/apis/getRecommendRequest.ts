@@ -47,7 +47,7 @@ export type getRecommendRequestResponse = {
 };
 
 export const getRecommendRequestFactory = apiFactory<getRecommendRequestResponse>()((api, ctx, utils) => {
-    const services2URL = utils.makeURL(`${api.zpwServiceMap.friend[1]}/api/friend/recommendsv2/list`);
+    const services2URL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/recommendsv2/list`);
 
     /**
      * Get friend requests
