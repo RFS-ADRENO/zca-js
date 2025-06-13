@@ -3,7 +3,7 @@ import { apiFactory } from "../utils.js";
 
 export type UndoSendFriendRequestOptions = {
     fid: string;
-}
+};
 
 export type UndoSendFriendRequestResponse = "";
 
