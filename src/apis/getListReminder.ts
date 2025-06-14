@@ -14,22 +14,7 @@ export type ListReminderParams = {
     count?: number;
 };
 
-export type ResponseMemInfo = {
-    rejectMember: number;
-    myResp: number;
-    acceptMember: number;
-};
-
-export type ParamsInfo = {
-    title: string;
-    setTitle: boolean;
-};
-
-export type RepeatInfo = {
-    list_ts: any[];
-};
-
-export type ReminderItem = {
+export type GetListReminderResponse = {
     editorId: string;
     emoji: string;
     color: number;
@@ -37,19 +22,26 @@ export type ReminderItem = {
     creatorId: string;
     editTime: number;
     eventType: number;
-    responseMem: ResponseMemInfo;
-    params: ParamsInfo;
+    responseMem: {
+        rejectMember: number;
+        myResp: number;
+        acceptMember: number;
+    };
+    params: {
+        title: string;
+        setTitle: boolean;
+    };
     type: number;
     duration: number;
-    repeatInfo: RepeatInfo;
+    repeatInfo: {
+        list_ts: any[];
+    };
     repeatData: any[];
     createTime: number;
     repeat: number;
     startTime: number;
     id: string;
-};
-
-export type GetListReminderResponse = ReminderItem[];
+}[];
 
 export const getListReminderFactory = apiFactory<GetListReminderResponse>()((api, ctx, utils) => {
     const serviceURL = {

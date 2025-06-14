@@ -1,12 +1,10 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type Settings = {
-    show_online_status: boolean;
-};
-
 export type LastOnlineResponse = {
-    settings: Settings;
+    settings: {
+        show_online_status: boolean;
+    };
     lastOnline: number;
 };
 

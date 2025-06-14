@@ -2,16 +2,6 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import type { GroupSetting } from "../models/GroupEvent.js";
 import { apiFactory } from "../utils.js";
 
-export type LinkGroupMember = {
-    id: string;
-    dName: string;
-    zaloName: string;
-    avatar: string;
-    avatar_25: string;
-    accountStatus: number;
-    type: number;
-};
-
 export type LinkGroupInfoResponse = {
     groupId: string;
     name: string;
@@ -21,7 +11,15 @@ export type LinkGroupInfoResponse = {
     avt: string;
     fullAvt: string;
     adminIds: string[];
-    currentMems: LinkGroupMember[];
+    currentMems: {
+        id: string;
+        dName: string;
+        zaloName: string;
+        avatar: string;
+        avatar_25: string;
+        accountStatus: number;
+        type: number;
+    }[];
     admins: any[];
     hasMoreMember: number;
     subType: number;

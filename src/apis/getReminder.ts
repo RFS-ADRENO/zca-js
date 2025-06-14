@@ -1,17 +1,6 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type ResponseMemInfo = {
-    rejectMember: number;
-    myResp: number;
-    acceptMember: number;
-};
-
-export type ParamsInfo = {
-    title: string;
-    setTitle: boolean;
-};
-
 export type GetReminderResponse = {
     editorId: string;
     emoji: string;
@@ -20,8 +9,15 @@ export type GetReminderResponse = {
     creatorId: string;
     editTime: number;
     eventType: number;
-    responseMem: ResponseMemInfo;
-    params: ParamsInfo;
+    responseMem: {
+        rejectMember: number;
+        myResp: number;
+        acceptMember: number;
+    };
+    params: {
+        title: string;
+        setTitle: boolean;
+    };
     type: number;
     duration: number;
     repeatInfo: null;

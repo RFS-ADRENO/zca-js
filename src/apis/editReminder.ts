@@ -21,11 +21,6 @@ export type EditReminderOptions = {
     repeat?: number;
 };
 
-export type EditReminderParams = {
-    title: string;
-    setTitle: boolean;
-};
-
 export type UserReminderResponse = {
     creatorUid: string;
     toUid: string;
@@ -37,7 +32,10 @@ export type UserReminderResponse = {
     startTime: number;
     editTime: number;
     endTime: number;
-    params: EditReminderParams;
+    params: {
+        title: string;
+        setTitle: boolean;
+    };
     type: number;
 };
 
@@ -49,7 +47,10 @@ export type GroupReminderResponse = {
     creatorId: string;
     editTime: number;
     eventType: number;
-    params: EditReminderParams;
+    params: {
+        title: string;
+        setTitle: boolean;
+    };
     type: number;
     duration: number;
     repeatInfo: null;

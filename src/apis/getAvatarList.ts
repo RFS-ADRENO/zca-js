@@ -6,18 +6,16 @@ export type AvatarListOptions = {
     count?: number;
 };
 
-export type PhotoInfo = {
-    photoId: string;
-    thumbnail: string;
-    url: string;
-    bkUrl: string;
-};
-
 export type GetAvatarListResponse = {
     albumId: string;
     nextPhotoId: string;
     hasMore: number;
-    photos: PhotoInfo[];
+    photos: {
+        photoId: string;
+        thumbnail: string;
+        url: string;
+        bkUrl: string;
+    }[];
 };
 
 export const getAvatarListFactory = apiFactory<GetAvatarListResponse>()((api, ctx, utils) => {

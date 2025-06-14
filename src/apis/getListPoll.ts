@@ -6,18 +6,16 @@ export type ListPollParams = {
     count?: number;
 };
 
-export type ListPollOption = {
-    content: string;
-    votes: number;
-    voted: boolean;
-    voters: string[];
-    option_id: number;
-};
-
-export type PollData = {
+export type BoardItemPollData = {
     creator: string;
     question: string;
-    options: ListPollOption[];
+    options: {
+        content: string;
+        votes: number;
+        voted: boolean;
+        voters: string[];
+        option_id: number;
+    }[];
     joined: boolean;
     closed: boolean;
     poll_id: number;
@@ -32,7 +30,7 @@ export type PollData = {
     num_vote: number;
 };
 
-export type NoteData = {
+export type BoardItemNoteData = {
     id: string;
     type: number;
     color: number;
@@ -49,7 +47,7 @@ export type NoteData = {
 
 export type BoardItem = {
     boardType: number;
-    data: PollData | NoteData;
+    data: BoardItemPollData | BoardItemNoteData;
 };
 
 export type GetListPollResponse = {
