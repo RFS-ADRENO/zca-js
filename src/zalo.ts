@@ -76,6 +76,7 @@ import { lockPollFactory } from "./apis/lockPoll.js";
 import { loginQR, LoginQRCallbackEventType, type LoginQRCallback } from "./apis/loginQR.js";
 import { parseLinkFactory } from "./apis/parseLink.js";
 import { pinConversationsFactory } from "./apis/pinConversations.js";
+import { removeFriendFactory } from "./apis/removeFriend.js";
 import { removeFriendAliasFactory } from "./apis/removeFriendAlias.js";
 import { removeGroupDeputyFactory } from "./apis/removeGroupDeputy.js";
 import { removeHiddenConversPinFactory } from "./apis/removeHiddenConversPin.js";
@@ -318,6 +319,7 @@ export class API {
     public lockPoll: ReturnType<typeof lockPollFactory>;
     public parseLink: ReturnType<typeof parseLinkFactory>;
     public pinConversations: ReturnType<typeof pinConversationsFactory>;
+    public removeFriend: ReturnType<typeof removeFriendFactory>;
     public removeFriendAlias: ReturnType<typeof removeFriendAliasFactory>;
     public removeGroupDeputy: ReturnType<typeof removeGroupDeputyFactory>;
     public removeHiddenConversPin: ReturnType<typeof removeHiddenConversPinFactory>;
@@ -423,6 +425,7 @@ export class API {
         this.lockPoll = lockPollFactory(ctx, this);
         this.parseLink = parseLinkFactory(ctx, this);
         this.pinConversations = pinConversationsFactory(ctx, this);
+        this.removeFriend = removeFriendFactory(ctx, this);
         this.removeFriendAlias = removeFriendAliasFactory(ctx, this);
         this.removeGroupDeputy = removeGroupDeputyFactory(ctx, this);
         this.removeHiddenConversPin = removeHiddenConversPinFactory(ctx, this);
