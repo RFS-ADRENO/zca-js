@@ -76,46 +76,71 @@ export const sendVideoFactory = apiFactory<SendVideoResponse>()((api, ctx, utils
             throw new ZaloApiError(`Unable to get video content: ${error?.message || error}`);
         }
 
-        const params: any = {
-            clientId: String(clientId),
-            ttl: options.ttl ?? 0,
-            zsource: 704,
-            msgType: 5,
-            msgInfo: JSON.stringify({
-                videoUrl: options.videoUrl,
-                thumbUrl: options.thumbnailUrl,
-                duration: options.duration ?? 0,
-                width: options.width ?? 1280,
-                height: options.height ?? 720,
-                fileSize: fileSize,
-                properties: {
-                    color: -1,
-                    size: -1,
-                    type: 1003,
-                    subType: 0,
-                    ext: {
-                        sSrcType: -1,
-                        sSrcStr: "",
-                        msg_warning_type: 0,
-                    },
-                },
-                title: options.msg ?? "",
-            }),
-        };
+        const params =
+            type === ThreadType.User
+                ? {
+                      toId: threadId,
+                      clientId: String(clientId),
+                      ttl: options.ttl ?? 0,
+                      zsource: 704,
+                      msgType: 5,
+                      msgInfo: JSON.stringify({
+                          videoUrl: options.videoUrl,
+                          thumbUrl: options.thumbnailUrl,
+                          duration: options.duration ?? 0,
+                          width: options.width ?? 1280,
+                          height: options.height ?? 720,
+                          fileSize: fileSize,
+                          properties: {
+                              color: -1,
+                              size: -1,
+                              type: 1003,
+                              subType: 0,
+                              ext: {
+                                  sSrcType: -1,
+                                  sSrcStr: "",
+                                  msg_warning_type: 0,
+                              },
+                          },
+                          title: options.msg ?? "",
+                      }),
+                      imei: ctx.imei,
+                  }
+                : {
+                      grid: threadId,
+                      visibility: 0,
+                      clientId: String(clientId),
+                      ttl: options.ttl ?? 0,
+                      zsource: 704,
+                      msgType: 5,
+                      msgInfo: JSON.stringify({
+                          videoUrl: options.videoUrl,
+                          thumbUrl: options.thumbnailUrl,
+                          duration: options.duration ?? 0,
+                          width: options.width ?? 1280,
+                          height: options.height ?? 720,
+                          fileSize: fileSize,
+                          properties: {
+                              color: -1,
+                              size: -1,
+                              type: 1003,
+                              subType: 0,
+                              ext: {
+                                  sSrcType: -1,
+                                  sSrcStr: "",
+                                  msg_warning_type: 0,
+                              },
+                          },
+                          title: options.msg ?? "",
+                      }),
+                      imei: ctx.imei,
+                  };
 
         // @TODO: later
         // if (typeof message !== "string" && message.mention) {
         //     params.mentionInfo = message.mention;
         // }
-
-        if (type === 0) {
-            params.toId = threadId;
-            params.imei = ctx.imei;
-        } else if (type === 1) {
-            params.visibility = 0;
-            params.grid = threadId;
-            params.imei = ctx.imei;
-        } else {
+        if (type !== ThreadType.User && type !== ThreadType.Group) {
             throw new ZaloApiError("Thread type is invalid");
         }
 

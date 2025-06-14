@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { DestType, ThreadType } from "../models/Enum.js";
+import { DestType, ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type SendTypingEventResponse = {
@@ -45,7 +45,7 @@ export const sendTypingEventFactory = apiFactory<SendTypingEventResponse>()((api
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await utils.request(serviceURL[type].toString(), {
+        const response = await utils.request(serviceURL[type], {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,

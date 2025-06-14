@@ -1,21 +1,26 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type UpdateLangResponse = "";
+export type GetFriendBoardListResponse = {
+    data: string[];
+    version: number;
+};
 
-export const updateLangFactory = apiFactory<UpdateLangResponse>()((api, _ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/updatelang`);
+export const getFriendBoardListFactory = apiFactory<GetFriendBoardListResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend_board[0]}/api/friendboard/list`);
 
     /**
-     * Update language
+     * Get friend board list
      *
-     * @param language language to update (VI, EN)
+     * @param conversationId conversation id
      *
      * @throws ZaloApiError
      */
-    return async function updateLang(language: string = "VI") {
+    return async function getFriendBoardList(conversationId: string) {
         const params = {
-            language: language,
+            conversationId: conversationId,
+            version: 0,
+            imei: ctx.imei,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
