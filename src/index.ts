@@ -38,7 +38,7 @@ export type { GetAutoDeleteChatResponse, ConversInfo } from "./apis/getAutoDelet
 export type { GetAvatarListResponse, AvatarListOptions } from "./apis/getAvatarList.js";
 export type { GetBizAccountResponse, DataBiz, SettingStartPage } from "./apis/getBizAccount.js";
 export type { GetFriendBoardListResponse } from "./apis/getFriendBoardList.js";
-export type { GetFriendRequestResponse, CollapseMsgListConfig, RecommInfo, RecommItem, BizPkg } from "./apis/getFriendRequest.js";
+export type { GetFriendRequestResponse } from "./apis/getFriendRequest.js";
 export type { ExtraInfo, GridInfoMap, GroupInfo, GroupInfoResponse, PendingApprove } from "./apis/getGroupInfo.js";
 export type { GetGroupMembersInfoResponse, MemberProfile } from "./apis/getGroupMembersInfo.js";
 export type { GetHiddenConversPinResponse, ThreadInfo } from "./apis/getHiddenConversPin.js";
@@ -50,6 +50,7 @@ export type { GetPinConversationsResponse } from "./apis/getPinConversations.js"
 export type { PollOption, PollDetailResponse } from "./apis/getPollDetail.js";
 export type { GetQRResponse } from "./apis/getQR.js";
 export type { GetQuickMessageResponse, QuickMessage, Message } from "./apis/getQuickMessage.js";
+export type { GetRecvFriendRequestResponse, CollapseMsgListConfig, RecommInfo, RecommItem, BizPkg } from "./apis/getRecvFriendRequest.js";
 export type { GetReminderResponse } from "./apis/getReminder.js";
 export type { GetReminderEventResponse } from "./apis/getReminderEvent.js";
 export type { StickerDetailResponse } from "./apis/getStickersDetail.js";

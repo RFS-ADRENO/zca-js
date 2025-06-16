@@ -60,6 +60,7 @@ import { getPinConversationsFactory } from "./apis/getPinConversations.js";
 import { getPollDetailFactory } from "./apis/getPollDetail.js";
 import { getQRFactory } from "./apis/getQR.js";
 import { getQuickMessageFactory } from "./apis/getQuickMessage.js";
+import { getRecvFriendRequestFactory } from "./apis/getRecvFriendRequest.js";
 import { getReminderFactory } from "./apis/getReminder.js";
 import { getReminderEventFactory } from "./apis/getReminderEvent.js";
 import { getStickersFactory } from "./apis/getStickers.js";
@@ -304,6 +305,7 @@ export class API {
     public getPollDetail: ReturnType<typeof getPollDetailFactory>;
     public getQR: ReturnType<typeof getQRFactory>;
     public getQuickMessage: ReturnType<typeof getQuickMessageFactory>;
+    public getRecvFriendRequest: ReturnType<typeof getRecvFriendRequestFactory>;
     public getReminder: ReturnType<typeof getReminderFactory>;
     public getReminderEvent: ReturnType<typeof getReminderEventFactory>;
     public getStickers: ReturnType<typeof getStickersFactory>;
@@ -410,6 +412,7 @@ export class API {
         this.getPollDetail = getPollDetailFactory(ctx, this);
         this.getQR = getQRFactory(ctx, this);
         this.getQuickMessage = getQuickMessageFactory(ctx, this);
+        this.getRecvFriendRequest = getRecvFriendRequestFactory(ctx, this);
         this.getReminder = getReminderFactory(ctx, this);
         this.getReminderEvent = getReminderEventFactory(ctx, this);
         this.getStickers = getStickersFactory(ctx, this);
