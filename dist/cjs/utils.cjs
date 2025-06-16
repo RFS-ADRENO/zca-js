@@ -84,9 +84,9 @@ class ParamsEncryptor {
         const t = (e, t) => {
             const { even: n } = ParamsEncryptor.processStr(e), { even: a, odd: s } = ParamsEncryptor.processStr(t);
             if (!n || !a || !s)
-                return false;
+                return !1;
             const i = n.slice(0, 8).join("") + a.slice(0, 12).join("") + s.reverse().slice(0, 12).join("");
-            return (this.encryptKey = i), true;
+            return (this.encryptKey = i), !0;
         };
         if (!this.zcid || !this.zcid_ext)
             throw new ZaloApiError.ZaloApiError("createEncryptKey: zcid or zcid_ext is null");
@@ -99,7 +99,7 @@ class ParamsEncryptor {
         catch (n) {
             e < 3 && this.createEncryptKey(e + 1);
         }
-        return true;
+        return !0;
     }
     getParams() {
         return this.zcid
@@ -402,7 +402,7 @@ function getClientMessageType(msgType) {
 }
 function strPadLeft(e, t, n) {
     const a = (e = "" + e).length;
-    return a === n ? e : a > n ? e.slice(-2) : t.repeat(n - a) + e;
+    return a === n ? e : a > n ? e.slice(-n) : t.repeat(n - a) + e;
 }
 function getFullTimeFromMillisecond(e) {
     let t = new Date(e);

@@ -56,6 +56,7 @@ interface ListenerEvents {
     friend_event: [data: FriendEvent];
     group_event: [data: GroupEvent];
     cipher_key: [key: string];
+    alias_friends: [];
 }
 
 export class Listener extends EventEmitter<ListenerEvents> {
@@ -357,6 +358,9 @@ export class Listener extends EventEmitter<ListenerEvents> {
                             );
                             if (friendEvent.isSelf && !this.selfListen) continue;
                             this.emit("friend_event", friendEvent);
+                        }
+                        else if(control.content.act_type == "alias") {
+                            this.emit("alias_friends")
                         }
                     }
                 }

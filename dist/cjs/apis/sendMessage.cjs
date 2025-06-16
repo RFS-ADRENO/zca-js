@@ -436,7 +436,7 @@ const sendMessageFactory = utils.apiFactory()((api, ctx, utils$1) => {
                 msg = "";
                 mentions = undefined;
             }
-            const handledData = await handleAttachment({ msg, mentions, attachments, quote, ttl, urgency }, threadId, type);
+            const handledData = await handleAttachment({ msg, mentions, attachments, quote, ttl, styles, urgency }, threadId, type);
             responses.attachment = await send(handledData);
             msg = "";
         }

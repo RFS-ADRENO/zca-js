@@ -38,6 +38,7 @@ interface ListenerEvents {
     friend_event: [data: FriendEvent];
     group_event: [data: GroupEvent];
     cipher_key: [key: string];
+    alias_friends: [];
 }
 export declare class Listener extends EventEmitter<ListenerEvents> {
     private ctx;

@@ -52,7 +52,7 @@ export declare class ParamsEncryptor {
     static encodeAES(e: string, message: string, type: "hex" | "base64", uppercase: boolean, s?: number): string | null;
 }
 export declare function decryptResp(key: string, data: string): Record<string, any> | null | string;
-export declare function decodeBase64ToBuffer(data: string): Buffer<ArrayBuffer>;
+export declare function decodeBase64ToBuffer(data: string): Buffer;
 export declare function decodeUnit8Array(data: Uint8Array): string | null;
 export declare function encodeAES(secretKey: string, data: any, t?: number): string | null;
 export declare function decodeAES(secretKey: string, data: string, t?: number): string | null;

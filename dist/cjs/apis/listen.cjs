@@ -265,6 +265,9 @@ class Listener extends EventEmitter {
                                 continue;
                             this.emit("friend_event", friendEvent);
                         }
+                        else if (control.content.act_type == "alias") {
+                            this.emit("alias_friends");
+                        }
                     }
                 }
                 if (cmd == 612) {
