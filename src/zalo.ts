@@ -26,6 +26,7 @@ import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
 import { changeGroupNameFactory } from "./apis/changeGroupName.js";
 import { changeGroupOwnerFactory } from "./apis/changeGroupOwner.js";
 import { createGroupFactory } from "./apis/createGroup.js";
+import { createNoteGroupFactory } from "./apis/createNoteGroup.js";
 import { createPollFactory } from "./apis/createPoll.js";
 import { createReminderFactory } from "./apis/createReminder.js";
 import { deleteChatFactory } from "./apis/deleteChat.js";
@@ -271,6 +272,7 @@ export class API {
     public changeGroupName: ReturnType<typeof changeGroupNameFactory>;
     public changeGroupOwner: ReturnType<typeof changeGroupOwnerFactory>;
     public createGroup: ReturnType<typeof createGroupFactory>;
+    public createNoteGroup: ReturnType<typeof createNoteGroupFactory>;
     public createPoll: ReturnType<typeof createPollFactory>;
     public createReminder: ReturnType<typeof createReminderFactory>;
     public deleteChat: ReturnType<typeof deleteChatFactory>;
@@ -378,6 +380,7 @@ export class API {
         this.changeGroupName = changeGroupNameFactory(ctx, this);
         this.changeGroupOwner = changeGroupOwnerFactory(ctx, this);
         this.createGroup = createGroupFactory(ctx, this);
+        this.createNoteGroup = createNoteGroupFactory(ctx, this);
         this.createPoll = createPollFactory(ctx, this);
         this.createReminder = createReminderFactory(ctx, this);
         this.deleteChat = deleteChatFactory(ctx, this);
