@@ -44,7 +44,7 @@ export const createNoteGroupFactory = apiFactory<CreateNoteGroupResponse>()((api
         const params = {
             grid: groupId,
             type: 0,
-            color: options.color ? hexToNegativeColor(options.color) : -16777216,
+            color: options.color && options.color.trim() ? hexToNegativeColor(options.color) : -16777216,
             emoji: options.emoji ?? "",
             startTime: -1,
             duration: -1,
