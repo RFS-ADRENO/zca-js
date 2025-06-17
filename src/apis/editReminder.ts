@@ -113,7 +113,7 @@ export const editReminderFactory = apiFactory<EditReminderResponse>()((api, ctx,
                       topicId: options.topicId,
                       repeat: options.repeat ?? 0,
                       imei: ctx.imei,
-                      pinAct: options.pinAct ? 2 : 1,
+                      pinAct: options.pinAct ? 1 : 2,
                   };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(requestParams));
