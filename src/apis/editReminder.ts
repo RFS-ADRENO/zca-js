@@ -96,7 +96,7 @@ export const editReminderFactory = apiFactory<EditReminderResponse>()((api, ctx,
                       params: JSON.stringify({
                           title: options.title,
                       }),
-                      needPin: options.pinAct ?? false,
+                      needPin: options.pinAct ? true : false,
                       reminderId: options.topicId,
                       repeat: options.repeat ?? 0,
                   }
