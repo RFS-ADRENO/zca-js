@@ -36,13 +36,13 @@ export const createNoteGroupFactory = apiFactory<CreateNoteGroupResponse>()((api
      * @param options.color note color
      * @param options.emoji note emoji
      * @param options.pinAct pin action (pin note)
-     * @param threadId group id
+     * @param groupId group id
      *
      * @throws ZaloApiError
      */
-    return async function createNoteGroup(options: CreateNoteGroupOptions, threadId: string) {
+    return async function createNoteGroup(options: CreateNoteGroupOptions, groupId: string) {
         const params = {
-            grid: threadId,
+            grid: groupId,
             type: 0,
             color: options.color ? hexToNegativeColor(options.color) : -16777216,
             emoji: options.emoji ?? "",
