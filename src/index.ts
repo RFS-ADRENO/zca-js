@@ -22,6 +22,7 @@ export type { CreateGroupResponse, CreateGroupOptions } from "./apis/createGroup
 export type { CreateNoteGroupResponse, CreateNoteGroupOptions } from "./apis/createNoteGroup.js";
 export type { CreatePollResponse, CreatePollOptions } from "./apis/createPoll.js";
 export type { CreateReminderResponse, CreateReminderOptions } from "./apis/createReminder.js";
+export type { DeleteAvatarListResponse, DeleteAvatarListOptions } from "./apis/deleteAvatarList.js";
 export type { DeleteChatResponse, ConverInfo } from "./apis/deleteChat.js";
 export type { DeleteMessageResponse, DeleteMessageOptions } from "./apis/deleteMessage.js";
 export type { DisableGroupLinkResponse } from "./apis/disableGroupLink.js";
