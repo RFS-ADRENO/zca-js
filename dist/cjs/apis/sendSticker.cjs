@@ -51,7 +51,7 @@ const sendStickerFactory = utils.apiFactory()((api, ctx, utils$1) => {
         const encryptedParams = utils$1.encodeAES(JSON.stringify(params));
         if (!encryptedParams)
             throw new ZaloApiError.ZaloApiError("Failed to encrypt message");
-        const response = await utils$1.request(serviceURL[type].toString(), {
+        const response = await utils$1.request(serviceURL[type], {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,

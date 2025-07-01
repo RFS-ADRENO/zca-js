@@ -22,7 +22,7 @@ const sendVoiceFactory = utils.apiFactory()((api, ctx, utils) => {
      * @throws ZaloApiError
      */
     return async function sendVoice(options, threadId, type = Enum.ThreadType.User) {
-        var _a;
+        var _a, _b;
         let fileSize = null;
         let clientId = Date.now().toString();
         try {
@@ -34,27 +34,35 @@ const sendVoiceFactory = utils.apiFactory()((api, ctx, utils) => {
         catch (error) {
             throw new ZaloApiError.ZaloApiError(`Unable to get voice content: ${(error === null || error === void 0 ? void 0 : error.message) || error}`);
         }
-        const params = {
-            ttl: (_a = options.ttl) !== null && _a !== void 0 ? _a : 0,
-            zsource: -1,
-            msgType: 3,
-            clientId: clientId,
-            msgInfo: JSON.stringify({
-                voiceUrl: options.voiceUrl,
-                m4aUrl: options.voiceUrl,
-                fileSize: fileSize !== null && fileSize !== void 0 ? fileSize : 0,
-            }),
-        };
-        if (type === 0) {
-            params.toId = threadId;
-            params.imei = ctx.imei;
-        }
-        else if (type === 1) {
-            params.visibility = 0;
-            params.grid = threadId;
-            params.imei = ctx.imei;
-        }
-        else {
+        const params = type === Enum.ThreadType.User
+            ? {
+                toId: threadId,
+                ttl: (_a = options.ttl) !== null && _a !== void 0 ? _a : 0,
+                zsource: -1,
+                msgType: 3,
+                clientId: clientId,
+                msgInfo: JSON.stringify({
+                    voiceUrl: options.voiceUrl,
+                    m4aUrl: options.voiceUrl,
+                    fileSize: fileSize !== null && fileSize !== void 0 ? fileSize : 0,
+                }),
+                imei: ctx.imei,
+            }
+            : {
+                grid: threadId,
+                visibility: 0,
+                ttl: (_b = options.ttl) !== null && _b !== void 0 ? _b : 0,
+                zsource: -1,
+                msgType: 3,
+                clientId: clientId,
+                msgInfo: JSON.stringify({
+                    voiceUrl: options.voiceUrl,
+                    m4aUrl: options.voiceUrl,
+                    fileSize: fileSize !== null && fileSize !== void 0 ? fileSize : 0,
+                }),
+                imei: ctx.imei,
+            };
+        if (type !== Enum.ThreadType.User && type !== Enum.ThreadType.Group) {
             throw new ZaloApiError.ZaloApiError("Thread type is invalid");
         }
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

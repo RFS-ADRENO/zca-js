@@ -3,7 +3,7 @@ import { apiFactory } from "../utils.js";
 export const getFriendRequestFactory = apiFactory()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/requested/list`);
     /**
-     * Get friend requests
+     * Get friend requested
      *
      * @throws ZaloApiError
      */

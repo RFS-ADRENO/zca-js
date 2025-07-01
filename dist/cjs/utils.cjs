@@ -374,6 +374,15 @@ const logger = (ctx) => ({
         if (ctx.options.logging)
             console.log("\x1b[31mERROR\x1b[0m", ...args);
     },
+    success: (...args) => {
+        if (ctx.options.logging)
+            console.log("\x1b[32mSUCCESS\x1b[0m", ...args);
+    },
+    timestamp: (...args) => {
+        const now = new Date().toISOString();
+        if (ctx.options.logging)
+            console.log(`\x1b[90m[${now}]\x1b[0m`, ...args);
+    },
 });
 function getClientMessageType(msgType) {
     if (msgType === "webchat")
@@ -403,6 +412,30 @@ function getClientMessageType(msgType) {
 function strPadLeft(e, t, n) {
     const a = (e = "" + e).length;
     return a === n ? e : a > n ? e.slice(-n) : t.repeat(n - a) + e;
+}
+function formatTime(format, timestamp = Date.now()) {
+    const date = new Date(timestamp);
+    // using lib Intl
+    const options = {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        // hour12: false, // true or false is same <(")
+    };
+    const formatted = new Intl.DateTimeFormat("vi-VN", options).format(date);
+    if (format.includes("%H") || format.includes("%d")) {
+        return format
+            .replace("%H", date.getHours().toString().padStart(2, "0"))
+            .replace("%M", date.getMinutes().toString().padStart(2, "0"))
+            .replace("%S", date.getSeconds().toString().padStart(2, "0"))
+            .replace("%d", date.getDate().toString().padStart(2, "0"))
+            .replace("%m", (date.getMonth() + 1).toString().padStart(2, "0"))
+            .replace("%Y", date.getFullYear().toString());
+    }
+    return formatted;
 }
 function getFullTimeFromMillisecond(e) {
     let t = new Date(e);
@@ -581,6 +614,29 @@ function encryptPin(pin) {
     const pinStr = pin.toString().padStart(4, "0");
     return crypto.createHash("md5").update(pinStr).digest("hex");
 }
+/**
+ * Converts a hex color code to a negative color number used by Zalo API
+ * @param hex Hex color code (e.g. '#00FF00' or '00FF00')
+ * @returns Negative color number (e.g. -16711936)
+ *
+ * @example
+ * const negativeColor = hexToNegativeColor('#00FF00'); // Result: -16711936
+ */
+function hexToNegativeColor(hex) {
+    if (!hex.startsWith("#")) {
+        hex = "#" + hex;
+    }
+    // rgb no alpha
+    // const decimal = parseInt(hex.slice(1), 16);
+    // return decimal - 4294967296;
+    // rgb with alpha
+    let hexValue = hex.slice(1);
+    if (hexValue.length === 6) {
+        hexValue = "FF" + hexValue;
+    }
+    const decimal = parseInt(hexValue, 16);
+    return decimal > 0x7fffffff ? decimal - 4294967296 : decimal;
+}
 
 exports.ParamsEncryptor = ParamsEncryptor;
 exports.apiFactory = apiFactory;
@@ -591,6 +647,7 @@ exports.decodeUnit8Array = decodeUnit8Array;
 exports.decryptResp = decryptResp;
 exports.encodeAES = encodeAES;
 exports.encryptPin = encryptPin;
+exports.formatTime = formatTime;
 exports.generateZaloUUID = generateZaloUUID;
 exports.getClientMessageType = getClientMessageType;
 exports.getDefaultHeaders = getDefaultHeaders;
@@ -605,6 +662,7 @@ exports.getImageMetaData = getImageMetaData;
 exports.getMd5LargeFileObject = getMd5LargeFileObject;
 exports.getSignKey = getSignKey;
 exports.handleZaloResponse = handleZaloResponse;
+exports.hexToNegativeColor = hexToNegativeColor;
 exports.isBun = isBun;
 exports.logger = logger;
 exports.makeURL = makeURL;

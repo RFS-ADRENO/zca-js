@@ -3,24 +3,27 @@
 var ZaloApiError = require('../Errors/ZaloApiError.cjs');
 var utils = require('../utils.cjs');
 
-const createNoteFactory = utils.apiFactory()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group_board[0]}/api/board/topic/createv2`);
+const createNoteGroupFactory = utils.apiFactory()((api, ctx, utils$1) => {
+    const serviceURL = utils$1.makeURL(`${api.zpwServiceMap.group_board[0]}/api/board/topic/createv2`);
     /**
      * Create a note in a group
      *
      * @param options note options
      * @param options.title note title
-     * @param options.pinAct Pin action (pin note)
-     * @param groupId Group ID to create note from
+     * @param options.color note color
+     * @param options.emoji note emoji
+     * @param options.pinAct pin action (pin note)
+     * @param groupId group id
      *
      * @throws ZaloApiError
      */
-    return async function createNote(options, groupId) {
+    return async function createNoteGroup(options, groupId) {
+        var _a;
         const params = {
             grid: groupId,
             type: 0,
-            color: -16777216,
-            emoji: "",
+            color: options.color && options.color.trim() ? utils.hexToNegativeColor(options.color) : -16777216,
+            emoji: (_a = options.emoji) !== null && _a !== void 0 ? _a : "",
             startTime: -1,
             duration: -1,
             params: JSON.stringify({
@@ -31,17 +34,17 @@ const createNoteFactory = utils.apiFactory()((api, ctx, utils) => {
             imei: ctx.imei,
             pinAct: options.pinAct ? 1 : 0,
         };
-        const encryptedParams = utils.encodeAES(JSON.stringify(params));
+        const encryptedParams = utils$1.encodeAES(JSON.stringify(params));
         if (!encryptedParams)
             throw new ZaloApiError.ZaloApiError("Failed to encrypt params");
-        const response = await utils.request(serviceURL, {
+        const response = await utils$1.request(serviceURL, {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,
             }),
         });
-        return utils.resolve(response);
+        return utils$1.resolve(response);
     };
 });
 
-exports.createNoteFactory = createNoteFactory;
+exports.createNoteGroupFactory = createNoteGroupFactory;

@@ -6,7 +6,7 @@ var utils = require('../utils.cjs');
 const getFriendRequestFactory = utils.apiFactory()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/requested/list`);
     /**
-     * Get friend requests
+     * Get friend requested
      *
      * @throws ZaloApiError
      */

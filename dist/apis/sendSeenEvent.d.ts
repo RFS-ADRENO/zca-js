@@ -1,4 +1,4 @@
-import { ThreadType } from "../models/Enum.js";
+import { ThreadType } from "../models/index.js";
 export type SendSeenEventResponse = {
     status: number;
 };

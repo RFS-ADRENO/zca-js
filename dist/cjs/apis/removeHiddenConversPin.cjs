@@ -2,6 +2,9 @@
 
 var ZaloApiError = require('../Errors/ZaloApiError.cjs');
 var Enum = require('../models/Enum.cjs');
+require('../models/FriendEvent.cjs');
+require('../models/GroupEvent.cjs');
+require('../models/Reaction.cjs');
 var utils = require('../utils.cjs');
 
 const removeHiddenConversPinFactory = utils.apiFactory()((api, ctx, utils) => {

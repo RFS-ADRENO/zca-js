@@ -2,6 +2,9 @@
 
 var ZaloApiError = require('../Errors/ZaloApiError.cjs');
 var Enum = require('../models/Enum.cjs');
+require('../models/FriendEvent.cjs');
+require('../models/GroupEvent.cjs');
+require('../models/Reaction.cjs');
 var utils = require('../utils.cjs');
 
 const sendTypingEventFactory = utils.apiFactory()((api, ctx, utils) => {
@@ -32,7 +35,7 @@ const sendTypingEventFactory = utils.apiFactory()((api, ctx, utils) => {
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams)
             throw new ZaloApiError.ZaloApiError("Failed to encrypt params");
-        const response = await utils.request(serviceURL[type].toString(), {
+        const response = await utils.request(serviceURL[type], {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,

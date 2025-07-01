@@ -1,4 +1,4 @@
-import { ThreadType } from "../models/Enum.js";
+import { ThreadType } from "../models/index.js";
 import { Reactions } from "../models/Reaction.js";
 export type AddReactionResponse = {
     msgIds: string;

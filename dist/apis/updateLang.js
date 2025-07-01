@@ -8,7 +8,6 @@ export const updateLangFactory = apiFactory()((api, _ctx, utils) => {
      * @param language language to update (VI, EN)
      *
      * @throws ZaloApiError
-     *
      */
     return async function updateLang(language = "VI") {
         const params = {

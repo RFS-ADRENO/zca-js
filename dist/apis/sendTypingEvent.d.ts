@@ -1,4 +1,4 @@
-import { DestType, ThreadType } from "../models/Enum.js";
+import { DestType, ThreadType } from "../models/index.js";
 export type SendTypingEventResponse = {
     status: number;
 };

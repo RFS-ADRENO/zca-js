@@ -90,6 +90,8 @@ export declare const logger: (ctx: ContextBase) => {
     info: (...args: any[]) => void;
     warn: (...args: any[]) => void;
     error: (...args: any[]) => void;
+    success: (...args: any[]) => void;
+    timestamp: (...args: any[]) => void;
 };
 export declare function getClientMessageType(msgType: string): 1 | 32 | 31 | 36 | 37 | 38 | 44 | 46 | 49 | 43;
 export declare function strPadLeft(e: any, t: string, n: number): any;
@@ -130,6 +132,30 @@ export declare function encryptPin(pin: number): string;
  * @param encryptedPin 32-character hex string
  * @param pin 4-digit PIN to verify
  * @returns true if the PIN matches the hash
+ *
+ * @example
+ * const encryptedPin = api.getHiddenConversPin().pin;
+ * checking pin created..
+ * const isValid = decryptPin(encryptedPin, 1234); // true if pin created is 1234
+ * const isInvalid = decryptPin(encryptedPin, 5678); // false if not pin created is 5678
  */
 export declare function decryptPin(encryptedPin: string, pin?: number): boolean;
+/**
+ * Converts a hex color code to a negative color number used by Zalo API
+ * @param hex Hex color code (e.g. '#00FF00' or '00FF00')
+ * @returns Negative color number (e.g. -16711936)
+ *
+ * @example
+ * const negativeColor = hexToNegativeColor('#00FF00'); // Result: -16711936
+ */
+export declare function hexToNegativeColor(hex: string): number;
+/**
+ * Converts a negative color number from Zalo API to hex color code
+ * @param negativeColor Negative color number (e.g. -16711936)
+ * @returns Hex color code (e.g. '#00FF00')
+ *
+ * @example
+ * const hexColor = negativeColorToHex(-16711936); // Result: '#00FF00'
+ */
+export declare function negativeColorToHex(negativeColor: number): string;
 export {};
