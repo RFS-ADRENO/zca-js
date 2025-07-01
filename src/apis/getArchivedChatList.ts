@@ -1,21 +1,24 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type UpdateLangResponse = "";
+export type GetArchivedChatListResponse = {
+    items: any[]; // TODO: check type
+    version: number;
+};
 
-export const updateLangFactory = apiFactory<UpdateLangResponse>()((api, _ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/updatelang`);
+export const getArchivedChatListFactory = apiFactory<GetArchivedChatListResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.label[0]}/api/archivedchat/list`);
 
     /**
-     * Update language
-     *
-     * @param language language to update (VI, EN)
+     * Get arcnived chat list
      *
      * @throws ZaloApiError
+     *
      */
-    return async function updateLang(language: string = "VI") {
+    return async function getArchivedChatList() {
         const params = {
-            language: language,
+            version: 1,
+            imei: ctx.imei,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
