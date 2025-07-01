@@ -15,7 +15,7 @@
         "build:clean": "rimraf dist",
         "build:esm": "tsc",
         "build:cjs": "rollup -c rollup.config.js",
-        "build": "bun run build:clean && bun run build:esm && bun run build:cjs",
+        "build": "npm run build:clean && npm run build:esm && npm run build:cjs",
         "test:feat": "bun run test/feat.ts",
         "prettier": "prettier --write ."
     },
@@ -57,8 +57,8 @@
         "@types/spark-md5": "^3.0.4",
         "@types/ws": "^8.5.11",
         "prettier": "^3.3.3",
-        "rimraf": "^5.0.10",
+        "rimraf": "^6.0.1",
         "rollup": "^4.24.0",
-        "typescript": "^5.5.3"
+        "typescript": "^5.8.3"
     }
 }

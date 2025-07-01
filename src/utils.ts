@@ -519,6 +519,7 @@ export function getGroupEventType(act: string) {
     if (act == "remove_member") return GroupEventType.REMOVE_MEMBER;
     if (act == "block_member") return GroupEventType.BLOCK_MEMBER;
     if (act == "update_setting") return GroupEventType.UPDATE_SETTING;
+    if (act == "update_avatar") return GroupEventType.UPDATE_AVATAR;
     if (act == "update") return GroupEventType.UPDATE;
     if (act == "new_link") return GroupEventType.NEW_LINK;
     if (act == "add_admin") return GroupEventType.ADD_ADMIN;
@@ -626,8 +627,9 @@ export async function resolveResponse<T = any>(
     cb?: (result: ZaloResponse<unknown>) => T,
     isEncrypted?: boolean,
 ) {
+    const codeIgnore = [119];
     const result = await handleZaloResponse<T>(ctx, res, isEncrypted);
-    if (result.error) throw new ZaloApiError(result.error.message, result.error.code);
+    if (result.error) throw new Error(result.error.message);
     if (cb) return cb(result);
 
     return result.data as T;
