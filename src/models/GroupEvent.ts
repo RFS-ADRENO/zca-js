@@ -295,7 +295,7 @@ export function initializeGroupEvent(uid: string, data: TGroupEvent, type: Group
             type,
             data: baseData,
             threadId,
-            isSelf: baseData.updateMembers.some((member) => member.id == uid) || baseData.sourceId == uid,
+            isSelf: baseData.updateMembers?.some((member) => member.id == uid) || baseData.sourceId == uid,
         };
     }
 }
