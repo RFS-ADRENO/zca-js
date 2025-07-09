@@ -2,7 +2,7 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type SendLinkParams = {
+export type SendLinkOptions = {
     link: string;
     ttl?: number;
 };
@@ -24,16 +24,16 @@ export const sendLinkFactory = apiFactory<SendLinkResponse>()((api, ctx, utils) 
     /**
      * Send link
      *
-     * @param params Link and ttl parameters
+     * @param options Link and ttl parameters
      * @param threadId Thread ID
      * @param type Thread type
      *
      * @throws ZaloApiError
      */
-    return async function sendLink(params: SendLinkParams, threadId: string, type: ThreadType = ThreadType.User) {
-        const res = await api.parseLink(params.link);
+    return async function sendLink(options: SendLinkOptions, threadId: string, type: ThreadType = ThreadType.User) {
+        const res = await api.parseLink({ link: options.link });
 
-        const requestParams: any = {
+        const params: any = {
             href: res.data.href,
             src: res.data.src,
             title: res.data.title,
@@ -41,19 +41,19 @@ export const sendLinkFactory = apiFactory<SendLinkResponse>()((api, ctx, utils) 
             thumb: res.data.thumb,
             type: 0,
             media: JSON.stringify(res.data.media),
-            ttl: params.ttl ?? 0,
+            ttl: options.ttl ?? 0,
             clientId: Date.now(),
         };
 
         if (type == ThreadType.Group) {
-            requestParams.grid = threadId;
-            requestParams.imei = ctx.imei;
+            params.grid = threadId;
+            params.imei = ctx.imei;
         } else {
-            requestParams.toId = threadId;
-            requestParams.mentionInfo = "";
+            params.toId = threadId;
+            params.mentionInfo = "";
         }
 
-        const encryptedParams = utils.encodeAES(JSON.stringify(requestParams));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
         const response = await utils.request(serviceURL[type], {
