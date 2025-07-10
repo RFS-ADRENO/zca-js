@@ -38,7 +38,6 @@ export const getReminderFactory = apiFactory<GetReminderResponse>()((api, ctx, u
      * @param groupId Group ID to get reminder from
      *
      * @throws ZaloApiError
-     *
      */
     return async function getReminder(eventId: string, groupId: string) {
         const params = {

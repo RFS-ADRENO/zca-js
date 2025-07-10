@@ -13,7 +13,6 @@ export const getPinConversationsFactory = apiFactory<GetPinConversationsResponse
      * Get pin conversations
      *
      * @throws ZaloApiError
-     *
      */
     return async function getPinConversations() {
         const params = {
