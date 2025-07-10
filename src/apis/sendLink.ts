@@ -3,6 +3,7 @@ import { ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type SendLinkOptions = {
+    msg?: string;
     link: string;
     ttl?: number;
 };
@@ -34,12 +35,18 @@ export const sendLinkFactory = apiFactory<SendLinkResponse>()((api, ctx, utils) 
         const res = await api.parseLink({ link: options.link });
 
         const params: any = {
+            msg:
+                options.msg && options.msg.trim()
+                    ? options.msg.includes(options.link)
+                        ? options.msg
+                        : options.msg + " " + options.link
+                    : options.link, // If leave msg blank, options.link will be automatically assigned
             href: res.data.href,
             src: res.data.src,
             title: res.data.title,
             desc: res.data.desc,
             thumb: res.data.thumb,
-            type: 0,
+            type: 2, // 0
             media: JSON.stringify(res.data.media),
             ttl: options.ttl ?? 0,
             clientId: Date.now(),
@@ -48,6 +55,7 @@ export const sendLinkFactory = apiFactory<SendLinkResponse>()((api, ctx, utils) 
         if (type == ThreadType.Group) {
             params.grid = threadId;
             params.imei = ctx.imei;
+            // params.mentionInfo = "[]";
         } else {
             params.toId = threadId;
             params.mentionInfo = "";
