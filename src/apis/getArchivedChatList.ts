@@ -13,7 +13,6 @@ export const getArchivedChatListFactory = apiFactory<GetArchivedChatListResponse
      * Get arcnived chat list
      *
      * @throws ZaloApiError
-     *
      */
     return async function getArchivedChatList() {
         const params = {
