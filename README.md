@@ -1,8 +1,10 @@
 # ZCA-JS
 
-This is an unofficial Zalo API for personal account. It work by simulating the browser to interact with Zalo Web.
+> [!NOTE]
+> This is an unofficial Zalo API for personal account. It work by simulating the browser to interact with Zalo Web.
 
-**Warning**: Using this API could get your account locked or banned. We are not responsible for any issues that may happen. Use it at your own risk.
+> [!WARNING]
+> Using this API could get your account locked or banned. We are not responsible for any issues that may happen. Use it at your own risk.
 
 ## Table of Contents
 
@@ -69,7 +71,8 @@ api.listener.on("message", (message) => {
 api.listener.start();
 ```
 
-**Note**: Only one web listener can run per account at a time. If you open Zalo in the browser while the listener is active, the listener will be automatically stopped.
+> [!NOTE]
+> Only one web listener can run per account at a time. If you open Zalo in the browser while the listener is active, the listener will be automatically stopped.
 
 ### Send a message
 

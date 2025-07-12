@@ -405,7 +405,6 @@ We follow [Semantic Versioning](https://semver.org/):
 
 - [ ] All tests pass
 - [ ] Documentation is updated
-- [ ] CHANGELOG.md is updated
 - [ ] Version is bumped in package.json
 - [ ] Build is successful
 - [ ] Release notes are prepared
@@ -449,7 +448,8 @@ npm publish
 
 ### Unofficial API Library
 
-⚠️ **Important**: zca-js is an unofficial API library for Zalo. Please be aware of:
+> [!IMPORTANT]
+> ⚠️ zca-js is an unofficial API library for Zalo. Please be aware of:
 
 - **Account Risk**: Using this API may result in account suspension
 - **Terms of Service**: Respect Zalo's ToS in your contributions
