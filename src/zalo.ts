@@ -205,7 +205,7 @@ export class Zalo {
 
         ctx.extraVer = serverInfo.extra_ver;
 
-        if (!isContextSession(ctx)) throw new Error("Khởi tạo ngữ cảnh thát bại.");
+        if (!isContextSession(ctx)) throw new Error("Khởi tạo ngữ cảnh thất bại.");
 
         logger(ctx).info("Logged in as", loginData.data.uid);
 

@@ -1,8 +1,10 @@
 # ZCA-JS
 
-This is an unofficial Zalo API for personal account. It work by simulating the browser to interact with Zalo Web.
+> [!NOTE]
+> This is an unofficial Zalo API for personal account. It work by simulating the browser to interact with Zalo Web.
 
-**Warning**: Using this API could get your account locked or banned. We are not responsible for any issues that may happen. Use it at your own risk.
+> [!WARNING]
+> Using this API could get your account locked or banned. We are not responsible for any issues that may happen. Use it at your own risk.
 
 ## Table of Contents
 
@@ -69,7 +71,8 @@ api.listener.on("message", (message) => {
 api.listener.start();
 ```
 
-**Note**: Only one web listener can run per account at a time. If you open Zalo in the browser while the listener is active, the listener will be automatically stopped.
+> [!IMPORTANT]
+> Only one web listener can run per account at a time. If you open Zalo in the browser while the listener is active, the listener will be automatically stopped.
 
 ### Send a message
 
@@ -133,12 +136,22 @@ See [examples](examples) folder for more details.
 
 ## Projects
 
+-   [ZaloDataExtractor](https://github.com/JustKemForFun/ZaloDataExtractor) - ZaloDataExtractor là công cụ trích xuất thông tin cần thiết như IMEI, Cookie và User-Agent từ Zalo Web.
 -   [MultiZlogin](https://github.com/ChickenAI/multizlogin) - Hệ thống quản lý đa tài khoản Zalo, hỗ trợ đăng nhập và quản lý nhiều tài khoản Zalo cùng lúc, tích hợp proxy và webhook.
--   [n8n-nodes-zalo-tools](https://github.com/ChickenAI/zalo-node) - N8N node cho Zalo cá nhân
+-   [n8n-nodes-zalo-tools](https://github.com/ChickenAI/zalo-node) - N8N node cho Zalo cá nhân.
 
 ## Contributing
 
-We welcome contributions from the community.
+We welcome contributions from the community! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to:
+
+- 🐛 Report bugs and issues
+- ✨ Suggest new features
+- 🔧 Submit code contributions
+- 📚 Improve documentation
+- 🧪 Add or improve tests
+- 🔒 Report security vulnerabilities
+
+For more information, please read our [Code of Conduct](CODE_OF_CONDUCT.md) and [Security Policy](SECURITY.md).
 
 ## License
 
