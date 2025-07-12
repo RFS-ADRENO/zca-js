@@ -71,7 +71,7 @@ api.listener.on("message", (message) => {
 api.listener.start();
 ```
 
-> [!NOTE]
+> [!IMPORTANT]
 > Only one web listener can run per account at a time. If you open Zalo in the browser while the listener is active, the listener will be automatically stopped.
 
 ### Send a message
