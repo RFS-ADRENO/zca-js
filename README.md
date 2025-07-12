@@ -139,7 +139,16 @@ See [examples](examples) folder for more details.
 
 ## Contributing
 
-We welcome contributions from the community.
+We welcome contributions from the community! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to:
+
+- 🐛 Report bugs and issues
+- ✨ Suggest new features
+- 🔧 Submit code contributions
+- 📚 Improve documentation
+- 🧪 Add or improve tests
+- 🔒 Report security vulnerabilities
+
+For more information, please read our [Code of Conduct](CODE_OF_CONDUCT.md) and [Security Policy](SECURITY.md).
 
 ## License
 
