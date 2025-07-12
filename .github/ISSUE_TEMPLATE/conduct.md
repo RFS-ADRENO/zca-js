@@ -1,7 +1,7 @@
 ---
 name: Code of Conduct Violation
 about: Report a violation of our Code of Conduct
-title: "[CONDUCT] "
+title: "[CONDUCT]"
 labels: ["CONDUCT", "community"]
 assignees: ""
 ---
