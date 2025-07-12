@@ -1,12 +1,14 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory } from "../utils.js";
+import { apiFactory, hexToNegativeColor } from "../utils.js";
 
-export type CreateNoteOptions = {
+export type CreateNoteGroupOptions = {
     title: string;
+    color?: string;
+    emoji?: string;
     pinAct?: boolean;
 };
 
-export type CreateNoteResponse = {
+export type CreateNoteGroupResponse = {
     id: string;
     type: number;
     color: number;
@@ -23,7 +25,7 @@ export type CreateNoteResponse = {
     repeat: number;
 };
 
-export const createNoteFactory = apiFactory<CreateNoteResponse>()((api, ctx, utils) => {
+export const createNoteGroupFactory = apiFactory<CreateNoteGroupResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group_board[0]}/api/board/topic/createv2`);
 
     /**
@@ -31,17 +33,19 @@ export const createNoteFactory = apiFactory<CreateNoteResponse>()((api, ctx, uti
      *
      * @param options note options
      * @param options.title note title
-     * @param options.pinAct Pin action (pin note)
-     * @param groupId Group ID to create note from
+     * @param options.color note color
+     * @param options.emoji note emoji
+     * @param options.pinAct pin action (pin note)
+     * @param groupId group id
      *
      * @throws ZaloApiError
      */
-    return async function createNote(options: CreateNoteOptions, groupId: string) {
+    return async function createNoteGroup(options: CreateNoteGroupOptions, groupId: string) {
         const params = {
             grid: groupId,
             type: 0,
-            color: -16777216,
-            emoji: "",
+            color: options.color && options.color.trim() ? hexToNegativeColor(options.color) : -16777216,
+            emoji: options.emoji ?? "",
             startTime: -1,
             duration: -1,
             params: JSON.stringify({

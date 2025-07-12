@@ -1,21 +1,22 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type UpdateLangResponse = "";
+export type GetPinConversationsResponse = {
+    conversations: string[];
+    version: number;
+};
 
-export const updateLangFactory = apiFactory<UpdateLangResponse>()((api, _ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/updatelang`);
+export const getPinConversationsFactory = apiFactory<GetPinConversationsResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.conversation[0]}/api/pinconvers/list`);
 
     /**
-     * Update language
-     *
-     * @param language language to update (VI, EN)
+     * Get pin conversations
      *
      * @throws ZaloApiError
      */
-    return async function updateLang(language: string = "VI") {
+    return async function getPinConversations() {
         const params = {
-            language: language,
+            imei: ctx.imei,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

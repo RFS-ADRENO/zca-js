@@ -1,7 +1,7 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type SendFriendRequestResponse = ""; // add response after
+export type SendFriendRequestResponse = "";
 
 export const sendFriendRequestFactory = apiFactory<SendFriendRequestResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/sendreq`);

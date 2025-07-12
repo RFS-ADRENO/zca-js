@@ -1,21 +1,22 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type UpdateLangResponse = "";
+export type JoinGroupResponse = "";
 
-export const updateLangFactory = apiFactory<UpdateLangResponse>()((api, _ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/updatelang`);
+export const joinGroupFactory = apiFactory<JoinGroupResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/link/join`);
 
     /**
-     * Update language
+     * Join group
      *
-     * @param language language to update (VI, EN)
+     * @param link - The link join group
      *
      * @throws ZaloApiError
      */
-    return async function updateLang(language: string = "VI") {
+    return async function joinGroup(link: string) {
         const params = {
-            language: language,
+            link: link,
+            clientLang: ctx.language,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

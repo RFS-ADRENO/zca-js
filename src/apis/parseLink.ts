@@ -1,13 +1,8 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type ParseLinkMedia = {
-    type: number;
-    count: number;
-    mediaTitle: string;
-    artist: string;
-    streamUrl: string;
-    stream_icon: string;
+export type ParseLinkOptions = {
+    link: string;
 };
 
 export type ParseLinkErrorMaps = {
@@ -15,14 +10,22 @@ export type ParseLinkErrorMaps = {
 };
 
 export type ParseLinkResponse = {
-    data: any; // @TODO: add for sendLink
-    thumb: string;
-    title: string;
-    desc: string;
-    src: string;
-    href: string;
-    media: ParseLinkMedia;
-    stream_icon: string;
+    data: {
+        thumb: string;
+        title: string;
+        desc: string;
+        src: string;
+        href: string;
+        media: {
+            type: number;
+            count: number;
+            mediaTitle: string;
+            artist: string;
+            streamUrl: string;
+            stream_icon: string;
+        };
+        stream_icon: string;
+    };
     error_maps: ParseLinkErrorMaps;
 };
 
@@ -32,14 +35,14 @@ export const parseLinkFactory = apiFactory<ParseLinkResponse>()((api, ctx, utils
     /**
      * Parse link
      *
-     * @param link link to parse
+     * @param options link to parse
      *
      * @throws ZaloApiError
      *
      */
-    return async function parseLink(link: string) {
+    return async function parseLink(options: ParseLinkOptions) {
         const params = {
-            link: link,
+            link: options.link,
             version: 1, // version 0 is not available errorMaps || version 1 is errorMaps (for response)
             imei: ctx.imei,
         };

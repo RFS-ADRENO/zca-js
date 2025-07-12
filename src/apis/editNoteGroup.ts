@@ -1,7 +1,15 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory } from "../utils.js";
+import { apiFactory, hexToNegativeColor } from "../utils.js";
 
-export type EditNoteResponse = {
+export type EditNoteGroupOptions = {
+    title: string;
+    topicId: string;
+    color?: string;
+    emoji?: string;
+    pinAct?: boolean;
+};
+
+export type EditNoteGroupResponse = {
     id: string;
     type: number;
     color: number;
@@ -19,34 +27,36 @@ export type EditNoteResponse = {
     repeat: number;
 };
 
-export const editNoteFactory = apiFactory<EditNoteResponse>()((api, ctx, utils) => {
+export const editNoteGroupFactory = apiFactory<EditNoteGroupResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group_board[0]}/api/board/topic/updatev2`);
 
     /**
      * Edit an existing note in a group
      *
-     * @param title note title
-     * @param topicId Topic ID to edit note from
+     * @param options.title note title
+     * @param options.topicId Topic ID to edit note from
+     * @param options.color note color
+     * @param options.emoji note emoji
+     * @param options.pinAct pin action (pin note)
      * @param groupId Group ID to create note from
      *
      * @throws ZaloApiError
      */
-    return async function editNote(title: string, topicId: string, groupId: string) {
+    return async function editNoteGroup(options: EditNoteGroupOptions, groupId: string) {
         const params = {
             grid: groupId,
             type: 0,
-            color: -16777216,
-            emoji: "",
+            color: options.color && options.color.trim() ? hexToNegativeColor(options.color) : -16777216,
+            emoji: options.emoji ?? "",
             startTime: -1,
             duration: -1,
             params: JSON.stringify({
-                title: title,
-                extra: "",
+                title: options.title,
             }),
-            topicId: topicId,
+            topicId: options.topicId,
             repeat: 0,
             imei: ctx.imei,
-            pinAct: 2,
+            pinAct: options.pinAct ? 1 : 2,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

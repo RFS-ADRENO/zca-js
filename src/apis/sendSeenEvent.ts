@@ -1,6 +1,6 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { MAX_MESSAGES_PER_SEND } from "../context.js";
-import { ThreadType } from "../models/Enum.js";
+import { ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type SendSeenEventResponse = {
@@ -95,7 +95,7 @@ export const sendSeenEventFactory = apiFactory<SendSeenEventResponse>()((api, ct
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await utils.request(serviceURL[type].toString(), {
+        const response = await utils.request(serviceURL[type], {
             method: "POST",
             body: new URLSearchParams({
                 params: encryptedParams,
