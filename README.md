@@ -133,6 +133,7 @@ See [examples](examples) folder for more details.
 
 ## Projects
 
+-   [ZaloDataExtractor](https://github.com/JustKemForFun/ZaloDataExtractor) - ZaloDataExtractor is a tool that extracts essential information like IMEI, Cookies, and User-Agent from the Zalo Web.
 -   [MultiZlogin](https://github.com/ChickenAI/multizlogin) - Hệ thống quản lý đa tài khoản Zalo, hỗ trợ đăng nhập và quản lý nhiều tài khoản Zalo cùng lúc, tích hợp proxy và webhook.
 -   [n8n-nodes-zalo-tools](https://github.com/ChickenAI/zalo-node) - N8N node cho Zalo cá nhân
 
