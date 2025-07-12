@@ -35,7 +35,7 @@
         "zalo",
         "api"
     ],
-    "author": "RFS-ADRENO, truong9c2208",
+    "author": "RFS-ADRENO, truong9c2208, JustKemForFun",
     "license": "MIT",
     "dependencies": {
         "crypto-js": "^4.2.0",
