@@ -2,12 +2,10 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type Data = {
-    updateId: number;
-};
-
 export type AddUnreadMarkResponse = {
-    data: Data;
+    data: {
+        updateId: number;
+    };
     status: number;
 };
 
@@ -64,6 +62,15 @@ export const addUnreadMarkFactory = apiFactory<AddUnreadMarkResponse>()((api, ct
             }),
         });
 
-        return utils.resolve(response);
+        return utils.resolve(response, (result) => {
+            if (typeof (result.data as { data: unknown; }).data === "string") {
+                return {
+                    data: JSON.parse((result.data as { data: string }).data),
+                    status: (result.data as { status: number }).status,
+                };
+            }
+
+            return result.data as AddUnreadMarkResponse;
+        });
     };
 });
