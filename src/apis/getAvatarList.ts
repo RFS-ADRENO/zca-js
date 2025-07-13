@@ -1,11 +1,6 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type AvatarListOptions = {
-    page?: number;
-    count?: number;
-};
-
 export type GetAvatarListResponse = {
     albumId: string;
     nextPhotoId: string;
@@ -24,15 +19,16 @@ export const getAvatarListFactory = apiFactory<GetAvatarListResponse>()((api, ct
     /**
      * Get avatar list
      *
-     * @param options options
+     * @param count The number of avatars to fetch (default: 50)
+     * @param page The page number to fetch (default: 1)
      *
      * @throws ZaloApiError
      */
-    return async function getAvatarList(options: AvatarListOptions) {
+    return async function getAvatarList(count: number = 50, page: number = 1) {
         const params = {
-            page: options.page ?? 1,
+            page,
             albumId: "0",
-            count: options.count ?? 50,
+            count,
             imei: ctx.imei,
         };
 
