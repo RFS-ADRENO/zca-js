@@ -7,3 +7,10 @@ export enum DestType {
     User = 3,
     Page = 5,
 }
+
+export enum ReminderRepeatMode {
+    None = 0,
+    Daily = 1,
+    Weekly = 2,
+    Monthly = 3,
+}

@@ -1,13 +1,6 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { ThreadType } from "../models/index.js";
+import { ReminderRepeatMode, ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
-
-export enum ReminderRepeatMode {
-    None = 0,
-    Daily = 1,
-    Weekly = 2,
-    Monthly = 3,
-}
 
 export type CreateReminderOptions = {
     title: string;

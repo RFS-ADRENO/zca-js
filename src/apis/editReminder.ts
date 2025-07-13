@@ -1,34 +1,23 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { ThreadType } from "../models/index.js";
+import { ReminderRepeatMode, ThreadType } from "../models/index.js";
 import { apiFactory, hexToNegativeColor } from "../utils.js";
 
 export type EditReminderOptions = {
     title: string;
     topicId: string;
-    creatorUid: string;
-    color?: string;
     emoji?: string;
-    pinAct?: boolean;
     startTime?: number;
-    duration?: number;
-    /**
-     * Repeat mode for the reminder:
-     * - 0: No repeat
-     * - 1: Daily repeat
-     * - 2: Weekly repeat
-     * - 3: Monthly repeat
-     */
-    repeat?: number;
+    repeat?: ReminderRepeatMode;
 };
 
-export type UserReminderResponse = {
+export type ReminderResponseUser = {
     creatorUid: string;
     toUid: string;
     emoji: string;
     color: number;
     reminderId: string;
     createTime: number;
-    repeat: number;
+    repeat: ReminderRepeatMode;
     startTime: number;
     editTime: number;
     endTime: number;
@@ -39,7 +28,7 @@ export type UserReminderResponse = {
     type: number;
 };
 
-export type GroupReminderResponse = {
+export type ReminderResponseGroup = {
     editorId: string;
     emoji: string;
     color: number;
@@ -61,7 +50,7 @@ export type GroupReminderResponse = {
     id: string;
 };
 
-export type EditReminderResponse = UserReminderResponse | GroupReminderResponse;
+export type EditReminderResponse = ReminderResponseUser | ReminderResponseGroup;
 
 export const editReminderFactory = apiFactory<EditReminderResponse>()((api, ctx, utils) => {
     const serviceURL = {
@@ -86,34 +75,33 @@ export const editReminderFactory = apiFactory<EditReminderResponse>()((api, ctx,
         const requestParams =
             type === ThreadType.User
                 ? {
-                      creatorUid: options.creatorUid,
-                      toUid: threadId,
-                      type: 0,
-                      color: options.color && options.color.trim() ? hexToNegativeColor(options.color) : -16777216,
-                      emoji: options.emoji ?? "",
-                      startTime: options.startTime ?? Date.now(),
-                      duration: options.duration ?? -1,
-                      params: JSON.stringify({
-                          title: options.title,
+                      objectData: JSON.stringify({
+                          toUid: threadId,
+                          type: 0,
+                          color: -16777216,
+                          emoji: options.emoji ?? "",
+                          startTime: options.startTime ?? Date.now(),
+                          duration: -1,
+                          params: { title: options.title },
+                          needPin: false,
+                          reminderId: options.topicId,
+                          repeat: options.repeat ?? 0,
                       }),
-                      needPin: options.pinAct ? true : false,
-                      reminderId: options.topicId,
-                      repeat: options.repeat ?? 0,
                   }
                 : {
                       grid: threadId,
                       type: 0,
-                      color: options.color && options.color.trim() ? hexToNegativeColor(options.color) : -16777216,
+                      color: -16777216,
                       emoji: options.emoji ?? "",
                       startTime: options.startTime ?? Date.now(),
-                      duration: options.duration ?? -1,
+                      duration: -1,
                       params: JSON.stringify({
                           title: options.title,
                       }),
                       topicId: options.topicId,
                       repeat: options.repeat ?? 0,
                       imei: ctx.imei,
-                      pinAct: options.pinAct ? 1 : 2,
+                      pinAct: 2,
                   };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(requestParams));
