@@ -3,8 +3,6 @@ import { apiFactory, hexToNegativeColor } from "../utils.js";
 
 export type CreateNoteGroupOptions = {
     title: string;
-    color?: string;
-    emoji?: string;
     pinAct?: boolean;
 };
 
@@ -33,8 +31,6 @@ export const createNoteGroupFactory = apiFactory<CreateNoteGroupResponse>()((api
      *
      * @param options note options
      * @param options.title note title
-     * @param options.color note color
-     * @param options.emoji note emoji
      * @param options.pinAct pin action (pin note)
      * @param groupId group id
      *
@@ -44,8 +40,8 @@ export const createNoteGroupFactory = apiFactory<CreateNoteGroupResponse>()((api
         const params = {
             grid: groupId,
             type: 0,
-            color: options.color && options.color.trim() ? hexToNegativeColor(options.color) : -16777216,
-            emoji: options.emoji ?? "",
+            color: -16777216,
+            emoji: "",
             startTime: -1,
             duration: -1,
             params: JSON.stringify({
@@ -67,6 +63,12 @@ export const createNoteGroupFactory = apiFactory<CreateNoteGroupResponse>()((api
             }),
         });
 
-        return utils.resolve(response);
+        return utils.resolve(response, (result) => {
+            if (typeof (result.data as { params: unknown; }).params === "string") {
+                (result.data as CreateNoteGroupResponse).params = JSON.parse((result.data as { params: string }).params);
+            }
+
+            return result.data as CreateNoteGroupResponse;
+        });
     };
 });
