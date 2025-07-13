@@ -1,11 +1,7 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type DeleteAvatarListOptions = {
-    photoId: string | string[];
-};
-
-export type DeleteAvatarListResponse = {
+export type DeleteAvatarResponse = {
     delPhotoIds: string[];
     errMap: {
         [key: string]: {
@@ -14,18 +10,17 @@ export type DeleteAvatarListResponse = {
     };
 };
 
-export const deleteAvatarListFactory = apiFactory<DeleteAvatarListResponse>()((api, ctx, utils) => {
+export const deleteAvatarFactory = apiFactory<DeleteAvatarResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/del-avatars`);
 
     /**
-     * Delete avatar list
+     * Delete avatar from avatar list
      *
-     * @param options.photoId avatar photo ID(s) to delete - can be a single string or array of strings
+     * @param photoId avatar photo ID(s) to delete - can be a single string or array of strings
      *
      * @throws ZaloApiError
      */
-    return async function deleteAvatarList(options: DeleteAvatarListOptions) {
-        const { photoId } = options;
+    return async function deleteAvatar(photoId: string | string[]) {
         const photoIds = Array.isArray(photoId) ? photoId : [photoId];
         const delPhotos = photoIds.map((id) => ({ photoId: id }));
 
