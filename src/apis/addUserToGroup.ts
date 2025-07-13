@@ -2,8 +2,8 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
 export type AddUserToGroupResponse = {
-    errorMemebers: string[];
-    error_data: Record<string, any>;
+    errorMembers: string[];
+    error_data: Record<string, string[]>;
 };
 
 export const addUserToGroupFactory = apiFactory<AddUserToGroupResponse>()((api, ctx, utils) => {
