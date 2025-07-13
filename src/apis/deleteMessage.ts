@@ -6,11 +6,14 @@ export type DeleteMessageResponse = {
     status: number;
 };
 
-export type DeleteMessageOptions = {
-    cliMsgId: string;
-    msgId: string;
-    uidFrom: string;
-    onlyMe?: boolean;
+export type DeleteMessageDestination = {
+    data: {
+        cliMsgId: string;
+        msgId: string;
+        uidFrom: string;
+    };
+    threadId: string;
+    type?: ThreadType;
 };
 
 export const deleteMessageFactory = apiFactory<DeleteMessageResponse>()((api, ctx, utils) => {
@@ -21,34 +24,34 @@ export const deleteMessageFactory = apiFactory<DeleteMessageResponse>()((api, ct
     /**
      * Delete a message
      *
-     * @param options Delete target data
+     * @param dest Delete target
      * @param onlyMe Delete message for only you
      *
      * @throws ZaloApiError
      */
-    return async function deleteMessage(
-        options: DeleteMessageOptions,
-        threadId: string,
-        type: ThreadType = ThreadType.User,
-    ) {
+    return async function deleteMessage(dest: DeleteMessageDestination, onlyMe = false) {
+        const { threadId, type = ThreadType.User, data } = dest;
         const isGroup = type === ThreadType.Group;
-        const isSelf = ctx.uid == options.uidFrom;
+        const isSelf = ctx.uid == data.uidFrom;
 
-        if (isSelf && options.onlyMe === false)
+        if (isSelf && onlyMe === false)
             throw new ZaloApiError("To delete your message for everyone, use undo api instead");
+
+        if (!isGroup && onlyMe === false)
+            throw new ZaloApiError("Can't delete message for everyone in a private chat");
 
         const params: any = {
             [isGroup ? "grid" : "toid"]: threadId,
             cliMsgId: Date.now(),
             msgs: [
                 {
-                    cliMsgId: options.cliMsgId,
-                    globalMsgId: options.msgId,
-                    ownerId: options.uidFrom,
+                    cliMsgId: data.cliMsgId,
+                    globalMsgId: data.msgId,
+                    ownerId: data.uidFrom,
                     destId: threadId,
                 },
             ],
-            onlyMe: options.onlyMe ? 1 : 0,
+            onlyMe: onlyMe ? 1 : 0,
         };
 
         if (!isGroup) {
