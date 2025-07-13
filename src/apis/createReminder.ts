@@ -1,50 +1,56 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { ThreadType } from "../models/index.js";
-import { apiFactory, hexToNegativeColor } from "../utils.js";
+import { apiFactory } from "../utils.js";
+
+export enum ReminderRepeatMode {
+    None = 0,
+    Daily = 1,
+    Weekly = 2,
+    Monthly = 3,
+}
 
 export type CreateReminderOptions = {
     title: string;
-    color?: string;
     emoji?: string;
-    pinAct?: boolean;
-    creatorUid?: string;
     startTime?: number;
-    duration?: number;
-    /**
-     * Repeat mode for the reminder:
-     * - 0: No repeat
-     * - 1: Daily repeat
-     * - 2: Weekly repeat
-     * - 3: Monthly repeat
-     */
-    repeat?: number;
+    repeat?: ReminderRepeatMode;
 };
 
-// type of group and user
-export type CreateReminderResponse = {
-    editorId?: string;
-    emoji: string;
+export type CreateReminderResponse = CreateReminderResponseUser | CreateReminderResponseGroup;
+
+export type CreateReminderResponseUser = {
+  creatorUid: string,
+  toUid: string,
+  emoji: string,
+  color: number,
+  reminderId: string,
+  createTime: number,
+  repeat: ReminderRepeatMode,
+  startTime: number,
+  editTime: number,
+  endTime: number,
+  params: {
+    title: string,
+    setTitle: boolean,
+  },
+  type: number,
+}
+
+export type CreateReminderResponseGroup = {
+    id: string;
+    type: number;
     color: number;
-    groupId?: string;
-    creatorId?: string;
-    creatorUid?: string;
-    toUid?: string;
-    editTime: number;
-    eventType?: number;
+    emoji: string;
+    startTime: number;
+    duration: number;
     params: {
         title: string;
-        setTitle: boolean;
     };
-    type: number;
-    duration: number;
-    repeatInfo: null;
-    repeatData: any[];
+    creatorId: string;
+    editorId: string;
     createTime: number;
-    repeat: number;
-    startTime: number;
-    id?: string;
-    reminderId?: string;
-    endTime: number;
+    editTime: number;
+    repeat: ReminderRepeatMode;
 };
 
 export const createReminderFactory = apiFactory<CreateReminderResponse>()((api, ctx, utils) => {
@@ -57,14 +63,6 @@ export const createReminderFactory = apiFactory<CreateReminderResponse>()((api, 
      * Create a reminder in a group
      *
      * @param options reminder options
-     * @param options.title reminder title
-     * @param options.color reminder color (hex color code - #0A7AFF/ 0A7AFF)
-     * @param options.emoji reminder emoji
-     * @param options.pinAct Pin action (pin reminder)
-     * @param options.creatorUid Creator UID
-     * @param options.startTime Start time
-     * @param options.duration Duration
-     * @param options.repeat Repeat mode for the reminder
      * @param threadId Group ID to create note from
      * @param type Thread type (User or Group)
      *
@@ -74,39 +72,39 @@ export const createReminderFactory = apiFactory<CreateReminderResponse>()((api, 
         options: CreateReminderOptions,
         threadId: string,
         type: ThreadType = ThreadType.User,
-    ) {
+    ): Promise<CreateReminderResponse> {
         const params =
             type === ThreadType.User
                 ? {
-                      toUid: threadId,
-                      type: 0,
-                      color: options.color && options.color.trim() ? hexToNegativeColor(options.color) : -16245706,
-                      emoji: options.emoji ?? "⏰",
-                      startTime: options.startTime ?? Date.now(),
-                      duration: options.duration ?? -1,
-                      params: {
-                          title: options.title,
-                      },
-                      needPin: options.pinAct ?? false,
-                      repeat: options.repeat ?? 0,
-                      creatorUid: options.creatorUid,
-                      src: 3,
+                      objectData: JSON.stringify({
+                          toUid: threadId,
+                          type: 0,
+                          color: -16245706,
+                          emoji: options.emoji ?? "⏰",
+                          startTime: options.startTime ?? Date.now(),
+                          duration: -1,
+                          params: { title: options.title },
+                          needPin: false,
+                          repeat: options.repeat ?? ReminderRepeatMode.None,
+                          creatorUid: ctx.uid, // Note: for some reason, you can put any valid UID here instead of your own and it still works, atleast for mobile
+                          src: 1,
+                      }),
                       imei: ctx.imei,
                   }
                 : {
                       grid: threadId,
                       type: 0,
-                      color: options.color && options.color.trim() ? hexToNegativeColor(options.color) : -16245706,
+                      color: -16245706,
                       emoji: options.emoji ?? "⏰",
                       startTime: options.startTime ?? Date.now(),
-                      duration: options.duration ?? -1,
+                      duration: -1,
                       params: JSON.stringify({
                           title: options.title,
                       }),
-                      repeat: options.repeat ?? 0,
-                      src: 3,
+                      repeat: options.repeat ?? ReminderRepeatMode.None,
+                      src: 1,
                       imei: ctx.imei,
-                      pinAct: options.pinAct ? 1 : 0,
+                      pinAct: 0,
                   };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
