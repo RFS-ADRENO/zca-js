@@ -4,7 +4,7 @@ import { Reactions } from "../models/Reaction.js";
 import { apiFactory } from "../utils.js";
 
 export type AddReactionResponse = {
-    msgIds: string;
+    msgIds: number[];
 };
 
 export type CustomReaction = {
@@ -309,6 +309,14 @@ export const addReactionFactory = apiFactory<AddReactionResponse>()((api, ctx, u
             }),
         });
 
-        return utils.resolve(response);
+        return utils.resolve(response, (result) => {
+            if (typeof (result.data as { msgIds: unknown }).msgIds === "string") {
+                return {
+                    msgIds: JSON.parse((result.data as { msgIds: string }).msgIds),
+                };
+            }
+
+            return result.data as AddReactionResponse;
+        });
     };
 });
