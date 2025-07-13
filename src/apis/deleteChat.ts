@@ -6,9 +6,19 @@ export type DeleteChatResponse = {
     status: number;
 };
 
-export type ConverInfo = {
-    ownerId: string; // no hope <(")
-    globalMsgId: string; // no hope <(")
+export type DeleteChatLastMessage = {
+    /**
+     * Last message owner ID to delete backwards
+     */
+    ownerId: string;
+    /**
+     * Last message client ID to delete backwards
+     */
+    cliMsgId: string;
+    /**
+     * Last message global ID to delete backwards
+     */
+    globalMsgId: string;
 };
 
 export const deleteChatFactory = apiFactory<DeleteChatResponse>()((api, ctx, utils) => {
@@ -24,13 +34,13 @@ export const deleteChatFactory = apiFactory<DeleteChatResponse>()((api, ctx, uti
     /**
      * Delete chat
      *
-     * @param converInfo Conversation info containing ownerId and globalMsgId
-     * @param threadId Thread ID (toid for User, grid for Group)
+     * @param lastMessage Last message info
+     * @param threadId Thread ID
      * @param type Thread type
      *
      * @throws ZaloApiError
      */
-    return async function deleteChat(converInfo: ConverInfo, threadId: string, type: ThreadType = ThreadType.User) {
+    return async function deleteChat(lastMessage: DeleteChatLastMessage, threadId: string, type: ThreadType = ThreadType.User) {
         const timestampString = Date.now().toString();
 
         const params =
@@ -38,20 +48,14 @@ export const deleteChatFactory = apiFactory<DeleteChatResponse>()((api, ctx, uti
                 ? {
                       toid: threadId,
                       cliMsgId: timestampString,
-                      conver: {
-                          ...converInfo,
-                          cliMsgId: timestampString,
-                      },
+                      conver: lastMessage,
                       onlyMe: 1,
                       imei: ctx.imei,
                   }
                 : {
                       grid: threadId,
                       cliMsgId: timestampString,
-                      conver: {
-                          ...converInfo,
-                          cliMsgId: timestampString,
-                      },
+                      conver: lastMessage,
                       onlyMe: 1,
                       imei: ctx.imei,
                   };
