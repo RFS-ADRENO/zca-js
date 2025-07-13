@@ -1,15 +1,13 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type ConversInfo = {
-    destId: string;
-    isGroup: boolean;
-    ttl: number;
-    createdAt: number;
-};
-
 export type GetAutoDeleteChatResponse = {
-    convers: ConversInfo[];
+    convers: {
+        destId: string;
+        isGroup: boolean;
+        ttl: number;
+        createdAt: number;
+    }[];
 };
 
 export const getAutoDeleteChatFactory = apiFactory<GetAutoDeleteChatResponse>()((api, _ctx, utils) => {
