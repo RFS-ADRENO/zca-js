@@ -1,11 +1,18 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, hexToNegativeColor } from "../utils.js";
+import { apiFactory } from "../utils.js";
 
 export type EditNoteGroupOptions = {
+    /**
+     * New note title
+     */
     title: string;
+    /**
+     * Topic ID to edit note from
+     */
     topicId: string;
-    color?: string;
-    emoji?: string;
+    /**
+     * Should the note be pinned?
+     */
     pinAct?: boolean;
 };
 
@@ -33,11 +40,7 @@ export const editNoteGroupFactory = apiFactory<EditNoteGroupResponse>()((api, ct
     /**
      * Edit an existing note in a group
      *
-     * @param options.title note title
-     * @param options.topicId Topic ID to edit note from
-     * @param options.color note color
-     * @param options.emoji note emoji
-     * @param options.pinAct pin action (pin note)
+     * @param options Options for editing the note
      * @param groupId Group ID to create note from
      *
      * @throws ZaloApiError
@@ -46,8 +49,8 @@ export const editNoteGroupFactory = apiFactory<EditNoteGroupResponse>()((api, ct
         const params = {
             grid: groupId,
             type: 0,
-            color: options.color && options.color.trim() ? hexToNegativeColor(options.color) : -16777216,
-            emoji: options.emoji ?? "",
+            color: -16777216,
+            emoji: "",
             startTime: -1,
             duration: -1,
             params: JSON.stringify({
