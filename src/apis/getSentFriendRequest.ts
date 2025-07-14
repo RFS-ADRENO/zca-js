@@ -2,7 +2,7 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
 export type GetSentFriendRequestResponse = {
-    [key: string]: {
+    [userId: string]: {
         userId: string;
         zaloName: string;
         displayName: string;
