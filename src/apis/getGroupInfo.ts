@@ -5,11 +5,9 @@ import { apiFactory } from "../utils.js";
 export type GroupInfoResponse = {
     removedsGroup: string[];
     unchangedsGroup: string[];
-    gridInfoMap: GridInfoMap;
-};
-
-export type GridInfoMap = {
-    [groupId: string]: GroupInfo;
+    gridInfoMap: {
+        [groupId: string]: GroupInfo;
+    };
 };
 
 export type GroupInfo = {
