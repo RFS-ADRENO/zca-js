@@ -1,47 +1,29 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { ThreadType } from "../models/index.js";
+import { ReminderGroup, ReminderUser } from "../models/Reminder.js";
 import { apiFactory } from "../utils.js";
 
-export type ListReminderParams = {
-    /**
-     * Board type for group listing reminders:
-     * - 1: Default board type
-     * - 2: Second board type
-     * - 3: Third board type
-     */
-    board_type?: number;
+export type ListReminderOptions = {
     page?: number;
     count?: number;
 };
 
-export type GetListReminderResponse = {
-    editorId: string;
-    emoji: string;
-    color: number;
+export type ReminderListUser = ReminderUser;
+export type ReminderListGroup = ReminderGroup & {
     groupId: string;
-    creatorId: string;
-    editTime: number;
     eventType: number;
     responseMem: {
         rejectMember: number;
         myResp: number;
         acceptMember: number;
     };
-    params: {
-        title: string;
-        setTitle: boolean;
-    };
-    type: number;
-    duration: number;
     repeatInfo: {
         list_ts: any[];
     };
     repeatData: any[];
-    createTime: number;
-    repeat: number;
-    startTime: number;
-    id: string;
-}[];
+};
+
+export type GetListReminderResponse = (ReminderListUser & ReminderListGroup)[];
 
 export const getListReminderFactory = apiFactory<GetListReminderResponse>()((api, ctx, utils) => {
     const serviceURL = {
@@ -52,14 +34,14 @@ export const getListReminderFactory = apiFactory<GetListReminderResponse>()((api
     /**
      * Get list reminder
      *
-     * @param params - The parameters for the request
+     * @param options - The options for the request
      * @param threadId - The ID of the thread
      * @param type - The type of the thread (User or Group)
      *
      * @throws ZaloApiError
      */
     return async function getListReminder(
-        params: ListReminderParams,
+        options: ListReminderOptions,
         threadId: string,
         type: ThreadType = ThreadType.User,
     ) {
@@ -69,16 +51,16 @@ export const getListReminderFactory = apiFactory<GetListReminderResponse>()((api
                     ? {
                           uid: threadId,
                           board_type: 1,
-                          page: params.page ?? 1,
-                          count: params.count ?? 20,
+                          page: options.page ?? 1,
+                          count: options.count ?? 20,
                           last_id: 0,
                           last_type: 0,
                       }
                     : {
                           group_id: threadId,
-                          board_type: params.board_type ?? 1,
-                          page: params.page ?? 1,
-                          count: params.count ?? 20,
+                          board_type: 1,
+                          page: options.page ?? 1,
+                          count: options.count ?? 20,
                           last_id: 0,
                           last_type: 0,
                       },
@@ -93,6 +75,8 @@ export const getListReminderFactory = apiFactory<GetListReminderResponse>()((api
             method: "GET",
         });
 
-        return utils.resolve(response);
+        return utils.resolve(response, (result) => {
+            return JSON.parse(result.data as string) as GetListReminderResponse;
+        });
     };
 });

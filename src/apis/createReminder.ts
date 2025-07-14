@@ -1,5 +1,6 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { ReminderRepeatMode, ThreadType } from "../models/index.js";
+import { ReminderGroup, ReminderUser } from "../models/Reminder.js";
 import { apiFactory } from "../utils.js";
 
 export type CreateReminderOptions = {
@@ -9,42 +10,7 @@ export type CreateReminderOptions = {
     repeat?: ReminderRepeatMode;
 };
 
-export type CreateReminderResponse = CreateReminderResponseUser | CreateReminderResponseGroup;
-
-export type CreateReminderResponseUser = {
-  creatorUid: string,
-  toUid: string,
-  emoji: string,
-  color: number,
-  reminderId: string,
-  createTime: number,
-  repeat: ReminderRepeatMode,
-  startTime: number,
-  editTime: number,
-  endTime: number,
-  params: {
-    title: string,
-    setTitle: boolean,
-  },
-  type: number,
-}
-
-export type CreateReminderResponseGroup = {
-    id: string;
-    type: number;
-    color: number;
-    emoji: string;
-    startTime: number;
-    duration: number;
-    params: {
-        title: string;
-    };
-    creatorId: string;
-    editorId: string;
-    createTime: number;
-    editTime: number;
-    repeat: ReminderRepeatMode;
-};
+export type CreateReminderResponse = ReminderUser | ReminderGroup;
 
 export const createReminderFactory = apiFactory<CreateReminderResponse>()((api, ctx, utils) => {
     const serviceURL = {

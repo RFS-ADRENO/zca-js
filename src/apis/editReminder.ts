@@ -1,6 +1,7 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { ReminderRepeatMode, ThreadType } from "../models/index.js";
-import { apiFactory, hexToNegativeColor } from "../utils.js";
+import { ReminderGroup, ReminderUser } from "../models/Reminder.js";
+import { apiFactory } from "../utils.js";
 
 export type EditReminderOptions = {
     title: string;
@@ -10,47 +11,15 @@ export type EditReminderOptions = {
     repeat?: ReminderRepeatMode;
 };
 
-export type ReminderResponseUser = {
-    creatorUid: string;
-    toUid: string;
-    emoji: string;
-    color: number;
-    reminderId: string;
-    createTime: number;
-    repeat: ReminderRepeatMode;
-    startTime: number;
-    editTime: number;
-    endTime: number;
-    params: {
-        title: string;
-        setTitle: boolean;
-    };
-    type: number;
-};
-
-export type ReminderResponseGroup = {
-    editorId: string;
-    emoji: string;
-    color: number;
+export type CreateReminderUser = ReminderUser;
+export type CreateReminderGroup = ReminderGroup & {
     groupId: string;
-    creatorId: string;
-    editTime: number;
     eventType: number;
-    params: {
-        title: string;
-        setTitle: boolean;
-    };
-    type: number;
-    duration: number;
     repeatInfo: null;
     repeatData: any[];
-    createTime: number;
-    repeat: number;
-    startTime: number;
-    id: string;
 };
 
-export type EditReminderResponse = ReminderResponseUser | ReminderResponseGroup;
+export type EditReminderResponse = CreateReminderUser | CreateReminderGroup;
 
 export const editReminderFactory = apiFactory<EditReminderResponse>()((api, ctx, utils) => {
     const serviceURL = {
