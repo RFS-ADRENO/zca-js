@@ -1,26 +1,22 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type DataBiz = {
-    desc: string;
-    cate: number;
-    addr: string;
-    website: string;
-    email: string;
-};
-
-export type SettingStartPage = {
-    enable_biz_label: number;
-    enable_cate: number;
-    enable_add: number;
-    cta_profile: number;
-    cta_catalog: null;
-};
-
 export type GetBizAccountResponse = {
-    biz: DataBiz;
+    biz?: {
+        desc: string;
+        cate: number;
+        addr: string;
+        website: string;
+        email: string;
+    };
+    setting_start_page?: {
+        enable_biz_label: number;
+        enable_cate: number;
+        enable_add: number;
+        cta_profile: number;
+        cta_catalog: any; // @TODO
+    };
     pkgId: number;
-    setting_start_page: SettingStartPage;
 };
 
 export const getBizAccountFactory = apiFactory<GetBizAccountResponse>()((api, _ctx, utils) => {
