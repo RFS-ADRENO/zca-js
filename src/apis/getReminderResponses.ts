@@ -1,24 +1,24 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type GetReminderEventResponse = {
+export type GetReminderResponsesResponse = {
     rejectMember: string[];
     acceptMember: string[];
 };
 
-export const getReminderEventFactory = apiFactory<GetReminderEventResponse>()((api, _ctx, utils) => {
+export const getReminderResponsesFactory = apiFactory<GetReminderResponsesResponse>()((api, _ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group_board[0]}/api/board/topic/listResponseEvent`);
 
     /**
-     * Get reminder event
+     * Get reminder responses
      *
-     * @param eventId event id
+     * @param reminderId reminder id
      *
      * @throws ZaloApiError
      */
-    return async function getReminderEvent(eventId: string) {
+    return async function getReminderResponses(reminderId: string) {
         const params = {
-            eventId: eventId
+            eventId: reminderId
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
