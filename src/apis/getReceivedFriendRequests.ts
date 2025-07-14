@@ -7,16 +7,7 @@ export type CollapseMsgListConfig = {
     collapseYItem: number;
 };
 
-export type RecommInfo = {
-    source: number;
-    message: string;
-};
-
-export type BizPkg = {
-    pkgId: number;
-};
-
-export type DataInfo = {
+export type ReceivedFriendRequestsDataInfo = {
     userId: string;
     zaloName: string;
     displayName: string;
@@ -29,32 +20,34 @@ export type DataInfo = {
     recommType: number;
     recommSrc: number;
     recommTime: number;
-    recommInfo: RecommInfo;
-    bizPkg: BizPkg;
+    recommInfo: {
+        source: number;
+        message: string;
+    };
+    bizPkg: {
+        pkgId: number;
+    };
     isSeenFriendReq: boolean;
 };
 
-export type RecommItem = {
-    recommItemType: number;
-    dataInfo: DataInfo;
-};
-
-export type GetRecvFriendRequestResponse = {
+export type GetReceivedFriendRequestsResponse = {
     expiredDuration: number;
     collapseMsgListConfig: CollapseMsgListConfig;
-    recommItems: RecommItem[];
+    recommItems: {
+        recommItemType: number;
+        dataInfo: ReceivedFriendRequestsDataInfo;
+    }[];
 };
 
-export const getRecvFriendRequestFactory = apiFactory<GetRecvFriendRequestResponse>()((api, ctx, utils) => {
+export const getReceivedFriendRequestsFactory = apiFactory<GetReceivedFriendRequestsResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/recommendsv2/list`);
 
     /**
      * Get received friend requests
      *
-     * recv = received
      * @throws ZaloApiError
      */
-    return async function getRecvFriendRequest() {
+    return async function getReceivedFriendRequests() {
         const params = {
             imei: ctx.imei,
         };
