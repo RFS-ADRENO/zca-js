@@ -14,3 +14,9 @@ export enum ReminderRepeatMode {
     Weekly = 2,
     Monthly = 3,
 }
+
+export enum BoardType {
+    Note = 1,
+    PinnedMessage = 2,
+    Poll = 3,
+}

@@ -1,27 +1,13 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, hexToNegativeColor } from "../utils.js";
+import { NoteDetail } from "../models/Board.js";
+import { apiFactory } from "../utils.js";
 
 export type CreateNoteGroupOptions = {
     title: string;
     pinAct?: boolean;
 };
 
-export type CreateNoteGroupResponse = {
-    id: string;
-    type: number;
-    color: number;
-    emoji: string;
-    startTime: number;
-    duration: number;
-    params: {
-        title: string;
-    };
-    creatorId: string;
-    editorId: string;
-    createTime: number;
-    editTime: number;
-    repeat: number;
-};
+export type CreateNoteGroupResponse = NoteDetail;
 
 export const createNoteGroupFactory = apiFactory<CreateNoteGroupResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group_board[0]}/api/board/topic/createv2`);
