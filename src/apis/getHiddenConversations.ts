@@ -1,26 +1,27 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type ThreadInfo = {
-    is_group: number;
-    thread_id: string;
-};
-
-export type GetHiddenConversPinResponse = {
+export type GetHiddenConversationsResponse = {
     pin: string;
-    threads: ThreadInfo[];
+    threads: {
+        /**
+         * 1: true, 0: false
+         */
+        is_group: number;
+        thread_id: string;
+    }[];
 };
 
-export const getHiddenConversPinFactory = apiFactory<GetHiddenConversPinResponse>()((api, ctx, utils) => {
+export const getHiddenConversationsFactory = apiFactory<GetHiddenConversationsResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.conversation[0]}/api/hiddenconvers/get-all`);
 
     /**
-     * Get hidden convers pin
+     * Get hidden conversations
      *
      * @throws ZaloApiError
      *
      */
-    return async function getHiddenConversPin() {
+    return async function getHiddenConversations() {
         const params = {
             imei: ctx.imei,
         };
