@@ -1,13 +1,7 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type ParseLinkOptions = {
-    link: string;
-};
-
-export type ParseLinkErrorMaps = {
-    [key: string]: number; // or Record<string, number>;
-};
+export type ParseLinkErrorMaps = Record<string, number>;
 
 export type ParseLinkResponse = {
     data: {
@@ -35,14 +29,14 @@ export const parseLinkFactory = apiFactory<ParseLinkResponse>()((api, ctx, utils
     /**
      * Parse link
      *
-     * @param options link to parse
+     * @param link link to parse
      *
      * @throws ZaloApiError
      *
      */
-    return async function parseLink(options: ParseLinkOptions) {
+    return async function parseLink(link: string) {
         const params = {
-            link: options.link,
+            link,
             version: 1, // version 0 is not available errorMaps || version 1 is errorMaps (for response)
             imei: ctx.imei,
         };
