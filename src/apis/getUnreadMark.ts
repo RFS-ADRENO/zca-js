@@ -1,12 +1,22 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
+export type UnreadMark = {
+    id: number;
+    cliMsgId: number;
+    fromUid: number;
+    ts: number;
+};
+
 export type GetUnreadMarkResponse = {
-    data: string;
+    data: {
+        convsGroup: UnreadMark[];
+        convsUser: UnreadMark[];
+    };
     status: number;
 };
 
-export const getUnreadMarkFactory = apiFactory<GetUnreadMarkResponse>()((api, _ctx, utils) => {
+export const getUnreadMarkFactory = apiFactory<GetUnreadMarkResponse>()((api, _, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.conversation[0]}/api/conv/getUnreadMark`);
 
     /**
@@ -25,6 +35,16 @@ export const getUnreadMarkFactory = apiFactory<GetUnreadMarkResponse>()((api, _c
             method: "GET",
         });
 
-        return utils.resolve(response);
+        return utils.resolve(response, (result) => {
+            const data = result.data as { data: unknown; status: number };
+            if (typeof data.data === "string") {
+                return {
+                    data: JSON.parse(data.data) as GetUnreadMarkResponse["data"],
+                    status: data.status,
+                };
+            }
+
+            return data as GetUnreadMarkResponse;
+        })
     };
 });
