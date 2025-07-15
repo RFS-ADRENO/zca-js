@@ -2,7 +2,7 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import type { GroupSetting } from "../models/GroupEvent.js";
 import { apiFactory } from "../utils.js";
 
-export type LinkGroupInfoResponse = {
+export type GetGroupLinkInfoResponse = {
     groupId: string;
     name: string;
     desc: string;
@@ -28,17 +28,17 @@ export type LinkGroupInfoResponse = {
     globalId: string;
 };
 
-export const linkGroupInfoFactory = apiFactory<LinkGroupInfoResponse>()((api, _ctx, utils) => {
+export const getGroupLinkInfoFactory = apiFactory<GetGroupLinkInfoResponse>()((api, _ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/link/ginfo`);
 
     /**
-     * Get link group info
+     * Get group link info
      *
      * @param link - The link group
      *
      * @throws ZaloApiError
      */
-    return async function linkGroupInfo(link: string) {
+    return async function getGroupLinkInfo(link: string) {
         const params = {
             link: link,
             avatar_size: 120,
