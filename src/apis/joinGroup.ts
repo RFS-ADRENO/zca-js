@@ -7,7 +7,9 @@ export const joinGroupFactory = apiFactory<JoinGroupResponse>()((api, ctx, utils
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/link/join`);
 
     /**
-     * Join group
+     * Join group via invite link
+     * 
+     * @note Zalo might throw an error with code 240 if the group enabled membership approval, 178 if you are already a member.
      *
      * @param link - The link join group
      *

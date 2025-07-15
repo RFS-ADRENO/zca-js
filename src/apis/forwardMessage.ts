@@ -43,7 +43,6 @@ export const forwardMessageFactory = apiFactory<ForwardMessageResponse>()((api, 
 
     /**
      * Forward message to multiple threads
-     * @notes chưa hoàn thiện phần chuyển tiếp ảnh chỉ có thể sử dụng chuyển tiếp tin nhắn không có hình ảnh
      * 
      * @param params Forward message parameters
      * @param type Thread type (User/Group)

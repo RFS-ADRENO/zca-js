@@ -30,8 +30,6 @@ export const addQuickMessageFactory = apiFactory<AddQuickMessageResponse>()((api
      * @param keyword - The keyword of the quick message
      * @param title - The title of the quick message
      *
-     * @notes còn bản có thể up ảnh mà nhiều case quá huhu (dùng tạm bản không có nhé)
-     *
      * @throws ZaloApiError
      */
     return async function addQuickMessage(keyword: string, title: string) {
