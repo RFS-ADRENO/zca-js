@@ -1,15 +1,13 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type GridMessage = {
-    error_code: number;
-    error_message: string;
-    data: string;
-};
-
 export type InviteUserToGroupsResponse = {
     grid_message_map: {
-        [gridId: string]: GridMessage;
+        [groupId: string]: {
+            error_code: number;
+            error_message: string;
+            data: string | null;
+        };
     };
 };
 
