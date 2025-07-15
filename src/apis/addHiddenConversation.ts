@@ -2,28 +2,28 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type RemoveHiddenConversPinResponse = "";
+export type AddHiddenConversationResponse = "";
 
-export const removeHiddenConversPinFactory = apiFactory<RemoveHiddenConversPinResponse>()((api, ctx, utils) => {
+export const addHiddenConversationFactory = apiFactory<AddHiddenConversationResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.conversation[0]}/api/hiddenconvers/add-remove`);
 
     /**
-     * Remove hidden conversation pin
+     * Add hidden conversation
      *
      * @param threadId Thread ID
      * @param type Thread type (User/Group)
      *
      * @throws ZaloApiError
      */
-    return async function removeHiddenConversPin(threadId: string, type: ThreadType = ThreadType.User) {
+    return async function addHiddenConversation(threadId: string, type: ThreadType = ThreadType.User) {
         const params = {
-            del_threads: JSON.stringify([
+            del_threads: "[]",
+            add_threads: JSON.stringify([
                 {
                     thread_id: threadId,
                     is_group: type === ThreadType.Group ? 1 : 0,
                 },
             ]),
-            add_threads: "[]",
             imei: ctx.imei,
         };
 
