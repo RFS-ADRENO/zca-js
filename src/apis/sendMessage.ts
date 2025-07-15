@@ -303,7 +303,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                             indentSize: undefined,
                             st:
                                 e.st == TextStyle.Indent
-                                    ? TextStyle.Indent.replace("$", `${e.indentSize ?? 1}0`)
+                                    ? TextStyle.Indent.replace(/\$/g, `${e.indentSize ?? 1}0`)
                                     : e.st,
                         };
 
