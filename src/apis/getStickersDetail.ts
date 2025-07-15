@@ -1,17 +1,33 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory, resolveResponse } from "../utils.js";
 
-export interface StickerDetailResponse {
+export type StickerDetail = {
     id: number;
     cateId: number;
     type: number;
+    text: string;
+    uri: string;
+    fkey: number;
+    status: number;
     stickerUrl: string;
     stickerSpriteUrl: string;
-    stickerWebpUrl: string | null;
-}
+    stickerWebpUrl: any;
+    totalFrames: number;
+    duration: number;
+    effectId: number;
+    checksum: string;
+    ext: number;
+    source: number;
+    fss: any;
+    fssInfo: any;
+    version: number;
+    extInfo: any;
+};
 
-export const getStickersDetailFactory = apiFactory()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.sticker}/api/message/sticker`);
+export type StickerDetailResponse = StickerDetail[];
+
+export const getStickersDetailFactory = apiFactory<StickerDetailResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.sticker}/api/message/sticker/sticker_detail`);
 
     /**
      * Get stickers detail by sticker IDs
@@ -25,7 +41,7 @@ export const getStickersDetailFactory = apiFactory()((api, ctx, utils) => {
         if (!Array.isArray(stickerIds)) stickerIds = [stickerIds];
         if (stickerIds.length == 0) throw new ZaloApiError("Missing sticker id");
 
-        const stickers: StickerDetailResponse[] = [];
+        const stickers: StickerDetailResponse = [];
         const tasks = stickerIds.map((stickerId) => getStickerDetail(stickerId));
         const tasksResult = await Promise.allSettled(tasks);
         tasksResult.forEach((result) => {
@@ -35,7 +51,7 @@ export const getStickersDetailFactory = apiFactory()((api, ctx, utils) => {
         return stickers;
     };
 
-    async function getStickerDetail(stickerId: number): Promise<StickerDetailResponse> {
+    async function getStickerDetail(stickerId: number) {
         const params = {
             sid: stickerId,
         };
@@ -43,15 +59,12 @@ export const getStickersDetailFactory = apiFactory()((api, ctx, utils) => {
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
-        const finalServiceUrl = new URL(serviceURL);
-        finalServiceUrl.pathname = finalServiceUrl.pathname + "/sticker_detail";
-
         const response = await utils.request(
-            utils.makeURL(finalServiceUrl.toString(), {
+            utils.makeURL(serviceURL, {
                 params: encryptedParams,
             }),
         );
 
-        return resolveResponse<StickerDetailResponse>(ctx, response);
+        return resolveResponse<StickerDetail>(ctx, response);
     }
 });
