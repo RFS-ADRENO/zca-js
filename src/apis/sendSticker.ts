@@ -1,6 +1,6 @@
 import { ThreadType } from "../models/index.js";
 import { apiFactory, removeUndefinedKeys } from "../utils.js";
-import type { StickerDetailResponse } from "./getStickersDetail.js";
+import type { StickerDetail } from "./getStickersDetail.js";
 
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 
@@ -28,7 +28,7 @@ export const sendStickerFactory = apiFactory<SendStickerResponse>()((api, ctx, u
      * @throws ZaloApiError
      */
     return async function sendSticker(
-        sticker: StickerDetailResponse,
+        sticker: StickerDetail,
         threadId: string,
         type: ThreadType = ThreadType.User,
     ) {
