@@ -1,10 +1,6 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type UndoFriendRequestOptions = {
-    fid: string;
-};
-
 export type UndoFriendRequestResponse = "";
 
 export const undoFriendRequestFactory = apiFactory<UndoFriendRequestResponse>()((api, _ctx, utils) => {
@@ -17,9 +13,9 @@ export const undoFriendRequestFactory = apiFactory<UndoFriendRequestResponse>()(
      *  
      * @throws ZaloApiError
      */
-    return async function undoFriendRequest(options: UndoFriendRequestOptions) {
+    return async function undoFriendRequest(friendId: string) {
         const params = {
-            fid: options.fid,
+            fid: friendId,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
