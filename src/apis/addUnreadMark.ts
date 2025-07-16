@@ -22,32 +22,20 @@ export const addUnreadMarkFactory = apiFactory<AddUnreadMarkResponse>()((api, ct
      */
     return async function addUnreadMark(threadId: string, type: ThreadType = ThreadType.User) {
         const timestamp = Date.now();
-        const timestampString = Date.now().toString();
+        const timestampString = timestamp.toString();
+        const isGroup = type === ThreadType.Group;
 
         const requestParams = {
             param: JSON.stringify({
-                convsGroup:
-                    type === ThreadType.Group
-                        ? [
-                              {
-                                  id: threadId,
-                                  cliMsgId: timestampString,
-                                  fromUid: "0",
-                                  ts: timestamp,
-                              },
-                          ]
-                        : [],
-                convsUser:
-                    type === ThreadType.User
-                        ? [
-                              {
-                                  id: threadId,
-                                  cliMsgId: timestampString,
-                                  fromUid: "0",
-                                  ts: timestamp,
-                              },
-                          ]
-                        : [],
+                [isGroup ? "convsGroup" : "convsUser"]: [
+                    {
+                        id: threadId,
+                        cliMsgId: timestampString,
+                        fromUid: "0",
+                        ts: timestamp,
+                    },
+                ],
+                [isGroup ? "convsUser" : "convsGroup"]: [],
                 imei: ctx.imei,
             }),
         };
@@ -63,10 +51,11 @@ export const addUnreadMarkFactory = apiFactory<AddUnreadMarkResponse>()((api, ct
         });
 
         return utils.resolve(response, (result) => {
-            if (typeof (result.data as { data: unknown; }).data === "string") {
+            const data = result.data as { data: unknown; status: number };
+            if (typeof data.data === "string") {
                 return {
-                    data: JSON.parse((result.data as { data: string }).data),
-                    status: (result.data as { status: number }).status,
+                    data: JSON.parse(data.data),
+                    status: data.status,
                 };
             }
 
