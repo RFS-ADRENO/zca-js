@@ -1,10 +1,6 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type RemoveFriendOptions = {
-    fid: string;
-};
-
 export type RemoveFriendResponse = "";
 
 export const removeFriendFactory = apiFactory<RemoveFriendResponse>()((api, ctx, utils) => {
@@ -13,13 +9,13 @@ export const removeFriendFactory = apiFactory<RemoveFriendResponse>()((api, ctx,
     /**
      * Remove friend
      *
-     * @param options Friend ID
+     * @param friendId - ID of the friend to remove
      *
      * @throws ZaloApiError
      */
-    return async function removeFriend(options: RemoveFriendOptions) {
+    return async function removeFriend(friendId: string) {
         const params = {
-            fid: options.fid,
+            fid: friendId,
             imei: ctx.imei,
         };
 
