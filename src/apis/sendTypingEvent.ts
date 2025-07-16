@@ -6,11 +6,6 @@ export type SendTypingEventResponse = {
     status: number;
 };
 
-export type SendTypingEventOptions<T extends ThreadType> = {
-    type: T;
-    destType?: undefined;
-} & (T extends ThreadType.User ? { destType: DestType } : {});
-
 export const sendTypingEventFactory = apiFactory<SendTypingEventResponse>()((api, ctx, utils) => {
     const serviceURL = {
         [ThreadType.User]: utils.makeURL(`${api.zpwServiceMap.chat[0]}/api/message/typing`),
@@ -20,24 +15,21 @@ export const sendTypingEventFactory = apiFactory<SendTypingEventResponse>()((api
     /**
      * Send typing event
      *
-     * @param id The ID of the User or Group to send the typing event to
-     * @param options The options to send the typing event
+     * @param threadId The ID of the User or Group to send the typing event to
+     * @param type The type of thread (User or Group)
+     * @param destType The destination type (User or Page), for User threads only, defaults to User
      *
      * @throws ZaloApiError
      */
-    return async function sendTypingEvent<T extends ThreadType>(id: string, options: SendTypingEventOptions<T>) {
-        if (!id) throw new ZaloApiError("Missing id");
-        if (!options) throw new ZaloApiError("Missing options");
-        if (options.type == null || options.type == undefined) throw new ZaloApiError("Missing options type");
-
-        const { type } = options;
-        if (type == ThreadType.User && !("destType" in options))
-            throw new ZaloApiError("Missing destType for User thread");
-
-        let destType = "destType" in options ? options.destType : undefined;
+    return async function sendTypingEvent(
+        threadId: string,
+        type: ThreadType = ThreadType.User,
+        destType: DestType = DestType.User,
+    ) {
+        if (!threadId) throw new ZaloApiError("Missing threadId");
 
         const params = {
-            [type === ThreadType.User ? "toid" : "grid"]: id,
+            [type === ThreadType.User ? "toid" : "grid"]: threadId,
             ...(type === ThreadType.User ? { destType } : {}),
             imei: ctx.imei,
         };
