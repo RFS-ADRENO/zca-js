@@ -25,14 +25,14 @@ export const sendLinkFactory = apiFactory<SendLinkResponse>()((api, ctx, utils) 
     /**
      * Send link
      *
-     * @param options Link and ttl parameters
+     * @param options Link and ttl
      * @param threadId Thread ID
      * @param type Thread type
      *
      * @throws ZaloApiError
      */
     return async function sendLink(options: SendLinkOptions, threadId: string, type: ThreadType = ThreadType.User) {
-        const res = await api.parseLink({ link: options.link });
+        const res = await api.parseLink(options.link);
 
         const params: any = {
             msg:
@@ -40,7 +40,7 @@ export const sendLinkFactory = apiFactory<SendLinkResponse>()((api, ctx, utils) 
                     ? options.msg.includes(options.link)
                         ? options.msg
                         : options.msg + " " + options.link
-                    : options.link, // If leave msg blank, options.link will be automatically assigned
+                    : options.link,
             href: res.data.href,
             src: res.data.src,
             title: res.data.title,
@@ -55,7 +55,7 @@ export const sendLinkFactory = apiFactory<SendLinkResponse>()((api, ctx, utils) 
         if (type == ThreadType.Group) {
             params.grid = threadId;
             params.imei = ctx.imei;
-            // params.mentionInfo = "[]";
+            // params.mentionInfo = "[]"; @TODO: implement this
         } else {
             params.toId = threadId;
             params.mentionInfo = "";
