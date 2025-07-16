@@ -5,7 +5,7 @@ import { apiFactory } from "../utils.js";
 
 export type SendDeliveredEventResponse = "" | { status: number };
 
-export type DeliveredEventMessageParams = {
+export type SendDeliveredEventMessageParams = {
     msgId: string;
     cliMsgId: string;
     uidFrom: string;
@@ -44,22 +44,22 @@ export const sendDeliveredEventFactory = apiFactory<SendDeliveredEventResponse>(
     /**
      * Send message delivered event
      *
-     * @param type Messages type (User or Group)
+     * @param isSeen Whether the message is seen or not
      * @param messages List of messages to send delivered event
-     * @param isSeen Whether the message is seen or not (default: false)
+     * @param type Messages type (User or Group), defaults to User
      *
      * @throws ZaloApiError
      */
     return async function sendDeliveredEvent(
-        type: ThreadType,
-        messages: DeliveredEventMessageParams[],
-        isSeen: boolean = false,
+        isSeen: boolean,
+        messages: SendDeliveredEventMessageParams | SendDeliveredEventMessageParams[],
+        type: ThreadType = ThreadType.User,
     ) {
-        if (!type && type !== 0) throw new ZaloApiError("Missing type");
-        if (!messages || !Array.isArray(messages))
-            throw new ZaloApiError("Messages are missing or not in a valid array format.");
+        if (!messages)
+            throw new ZaloApiError("messages are missing or not in a valid array format.");
+        if (!Array.isArray(messages)) messages = [messages];
         if (messages.length === 0 || messages.length > MAX_MESSAGES_PER_SEND)
-            throw new ZaloApiError("Message array must contain between 1 and 50 messages.");
+            throw new ZaloApiError("messages must contain between 1 and 50 messages.");
 
         // 27/02/2025
         // This can send messages from multiple groups, but to prevent potential issues,
