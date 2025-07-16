@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, encryptPin } from "../utils.js";
+import { apiFactory } from "../utils.js";
 
 export type ResetHiddenConversPinResponse = "";
 
