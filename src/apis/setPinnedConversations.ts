@@ -2,30 +2,30 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type PinConversationsResponse = "";
+export type SetPinnedConversationsResponse = "";
 
-export const pinConversationsFactory = apiFactory<PinConversationsResponse>()((api, _, utils) => {
+export const setPinnedConversationsFactory = apiFactory<SetPinnedConversationsResponse>()((api, _, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.conversation[0]}/api/pinconvers/updatev2`);
 
     /**
-     * Pin and unpin conversations of the thread (USER or GROUP)
+     * Pin and unpin conversations of threads)
      *
-     * @param pin Should pin conversations
-     * @param threadId The ID(s) of the thread (USER or GROUP)
-     * @param type Type of thread, default user
+     * @param pinned Should pin conversations
+     * @param threadId The ID(s) of the thread
+     * @param type Type of thread, default User
      *
      * @throws ZaloApiError
      *
      */
-    return async function pinConversations(
-        pin: boolean,
+    return async function setPinnedConversations(
+        pinned: boolean,
         threadId: string | string[],
         type: ThreadType = ThreadType.User,
     ) {
         if (typeof threadId == "string") threadId = [threadId];
 
         const params = {
-            actionType: pin ? 1 : 2,
+            actionType: pinned ? 1 : 2,
             conversations: type == ThreadType.Group ? threadId.map((id) => `g${id}`) : threadId.map((id) => `u${id}`),
         };
 
