@@ -13,22 +13,22 @@ export const removeReminderFactory = apiFactory<RemoveReminderResponse>()((api, 
     /**
      * Remove a reminder in a (user/group)
      *
-     * @param topicId (Reminder/Topic) ID to remove reminder from
+     * @param reminderId Reminder ID to remove reminder from
      * @param threadId (User/Group) ID to remove reminder from
      * @param type Thread type (User or Group)
      *
      * @throws ZaloApiError
      */
-    return async function removeReminder(topicId: string, threadId: string, type: ThreadType = ThreadType.User) {
+    return async function removeReminder(reminderId: string, threadId: string, type: ThreadType = ThreadType.User) {
         const params =
             type === ThreadType.User
                 ? {
                       uid: threadId,
-                      reminderId: topicId,
+                      reminderId: reminderId,
                   }
                 : {
                       grid: threadId,
-                      topicId: topicId,
+                      topicId: reminderId,
                       imei: ctx.imei,
                   };
 
