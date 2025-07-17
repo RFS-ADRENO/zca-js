@@ -680,9 +680,8 @@ export function generateZaloUUID(userAgent: string) {
  * @param pin 4-digit PIN number
  * @returns 32-character hex string
  */
-export function encryptPin(pin: number): string {
-    const pinStr = pin.toString().padStart(4, "0");
-    return crypto.createHash("md5").update(pinStr).digest("hex");
+export function encryptPin(pin: string): string {
+    return crypto.createHash("md5").update(pin).digest("hex");
 }
 
 /**
