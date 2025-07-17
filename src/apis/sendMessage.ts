@@ -177,7 +177,7 @@ export type MessageContent = {
     /**
      * Attachments in the message (optional)
      */
-    attachments?: AttachmentSource[];
+    attachments?: AttachmentSource | AttachmentSource[];
     /**
      * Time to live in milisecond
      */
@@ -401,7 +401,9 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
         threadId: string,
         type: ThreadType,
     ) {
-        if (!attachments || attachments.length == 0) throw new ZaloApiError("Missing attachments");
+        if (!attachments) throw new ZaloApiError("Missing attachments");
+        if (!Array.isArray(attachments)) attachments = [attachments];
+        if (attachments.length == 0) throw new ZaloApiError("Missing attachments");
         const firstSource = attachments[0];
         const isFilePath = typeof firstSource == "string";
 
@@ -618,6 +620,9 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
         if (typeof message == "string") message = { msg: message };
 
         let { msg, quote, attachments, mentions, ttl, styles, urgency } = message;
+        if (attachments && !Array.isArray(attachments)) {
+            attachments = [attachments];
+        }
 
         if (!msg && (!attachments || (attachments && attachments.length == 0)))
             throw new ZaloApiError("Missing message content");
