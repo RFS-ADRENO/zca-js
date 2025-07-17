@@ -34,16 +34,16 @@ export type GroupInfo = {
     visibility: number;
     globalId: string;
     e2ee: number;
-    pendingApprove: PendingApprove;
-    extraInfo: ExtraInfo;
+    pendingApprove: GroupInfoPendingApprove;
+    extraInfo: GroupInfoExtra;
 };
 
-export type PendingApprove = {
+export type GroupInfoPendingApprove = {
     time: number;
     uids: null | string[];
 };
 
-export type ExtraInfo = {
+export type GroupInfoExtra = {
     enable_media_store: number;
 };
 
