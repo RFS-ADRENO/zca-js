@@ -1,4 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import { Gender } from "../models/Enum.js";
 import { apiFactory } from "../utils.js";
 
 export type CollapseMsgListConfig = {
@@ -14,7 +15,7 @@ export type ReceivedFriendRequestsDataInfo = {
     avatar: string;
     phoneNumber: string;
     status: string;
-    gender: number;
+    gender: Gender;
     dob: number;
     type: number;
     recommType: number;

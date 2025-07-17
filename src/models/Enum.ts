@@ -15,6 +15,11 @@ export enum ReminderRepeatMode {
     Monthly = 3,
 }
 
+export enum Gender {
+    Male = 0,
+    Female = 1,
+}
+
 export enum BoardType {
     Note = 1,
     PinnedMessage = 2,

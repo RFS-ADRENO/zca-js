@@ -1,4 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import { Gender } from "../models/Enum.js";
 import { apiFactory } from "../utils.js";
 
 export type GetAllFriendsResponse = {
@@ -9,7 +10,7 @@ export type GetAllFriendsResponse = {
     avatar: string;
     bgavatar: string;
     cover: string;
-    gender: number;
+    gender: Gender;
     dob: number;
     sdob: string;
     status: string;

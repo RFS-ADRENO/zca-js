@@ -1,3 +1,4 @@
+import { Gender } from "../models/Enum.js";
 import { apiFactory } from "../utils.js";
 
 export type FetchAccountInfoResponse = {
@@ -8,7 +9,7 @@ export type FetchAccountInfoResponse = {
     avatar: string;
     bgavatar: string;
     cover: string;
-    gender: number;
+    gender: Gender;
     dob: number;
     sdob: string;
     status: string;

@@ -1,4 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import { Gender } from "../models/Enum.js";
 import { apiFactory } from "../utils.js";
 
 export type ChangeAccountSettingResponse = "";
@@ -15,7 +16,7 @@ export const updateProfileFactory = apiFactory<ChangeAccountSettingResponse>()((
      *
      * @throws ZaloApiError
      */
-    return async function updateProfile(name: string, dob: `${string}-${string}-${string}`, gender: number) {
+    return async function updateProfile(name: string, dob: `${string}-${string}-${string}`, gender: Gender) {
         const params = {
             profile: JSON.stringify({
                 name: name,
