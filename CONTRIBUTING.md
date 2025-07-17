@@ -256,9 +256,9 @@ try {
   return result;
 } catch (error) {
   if (error instanceof ZaloApiError) {
-    throw new ZaloApiError(`Failed to send message: ${error.message}`);
+      throw error;
   }
-  throw error;
+  throw new ZaloApiError(`Failed to send message: ${error.message}`);
 }
 
 // Bad
@@ -377,10 +377,10 @@ If you discover a security vulnerability:
 // Good - Validate inputs
 function sendMessage(content: string, threadId: string) {
   if (!content || typeof content !== 'string') {
-    throw new Error('Content must be a non-empty string');
+    throw new ZaloApiError('Content must be a non-empty string');
   }
   if (!threadId || typeof threadId !== 'string') {
-    throw new Error('ThreadId must be a non-empty string');
+    throw new ZaloApiError('ThreadId must be a non-empty string');
   }
   // Implementation
 }
