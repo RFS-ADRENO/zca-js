@@ -1,20 +1,6 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { QuickMessage } from "../models/QuickMessage.js";
 import { apiFactory } from "../utils.js";
-
-export type Message = {
-    title: string;
-    params: string | null;
-};
-
-export type QuickMessage = {
-    id: number;
-    keyword: string;
-    type: number;
-    createdTime: number;
-    lastModified: number;
-    message: Message;
-    media: null;
-};
 
 export type AddQuickMessageResponse = {
     items: QuickMessage[];

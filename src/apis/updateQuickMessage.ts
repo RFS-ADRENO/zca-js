@@ -1,20 +1,12 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { QuickMessage } from "../models/QuickMessage.js";
 import { apiFactory } from "../utils.js";
 
-export type Message = {
-    title: string;
-    params: string | null;
-};
-
-export type QuickMessage = {
-    id: number;
+export type UpdateQuickMessagePayload = {
     keyword: string;
-    type: number;
-    createdTime: number;
-    lastModified: number;
-    message: Message;
-    media: null;
-};
+    title: string;
+    // media?: null; @TODO: implement media handling
+}
 
 export type UpdateQuickMessageResponse = {
     items: QuickMessage[];
@@ -26,20 +18,20 @@ export const updateQuickMessageFactory = apiFactory<UpdateQuickMessageResponse>(
 
     /**
      * Update quick message
-     * @notes còn bản có thể up ảnh mà nhiều case quá huhu (dùng tạm bản không có nhé)
      * 
-     * @param keyword - The keyword of the quick message
-     * @param title - The title of the quick message
+     * @param updatePayload - The payload containing data to update the quick message
      * @param itemId - The id of the quick message to update
+     * 
+     * @note Zalo might throw an error with code 212 if the itemId does not exist.
      *
      * @throws ZaloApiError
      */
-    return async function updateQuickMessage(keyword: string, title: string, itemId: number) {
+    return async function updateQuickMessage(updatePayload: UpdateQuickMessagePayload, itemId: number) {
         const params = {
             itemId: itemId,
-            keyword: keyword,
+            keyword: updatePayload.keyword,
             message: {
-                title: title,
+                title: updatePayload.title,
                 params: "",
             },
             media: null,
