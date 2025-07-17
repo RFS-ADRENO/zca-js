@@ -169,7 +169,7 @@ export class Zalo {
 
     private validateParams(credentials: Credentials) {
         if (!credentials.imei || !credentials.cookie || !credentials.userAgent) {
-            throw new Error("Missing required params");
+            throw new ZaloApiError("Missing required params");
         }
     }
 
@@ -193,7 +193,7 @@ export class Zalo {
         const loginData = await login(ctx, this.enableEncryptParam);
         const serverInfo = await getServerInfo(ctx, this.enableEncryptParam);
 
-        if (!loginData || !serverInfo) throw new Error("Đăng nhập thất bại");
+        if (!loginData || !serverInfo) throw new ZaloApiError("Đăng nhập thất bại");
         ctx.secretKey = loginData.data.zpw_enk;
         ctx.uid = loginData.data.uid;
 
@@ -203,7 +203,7 @@ export class Zalo {
 
         ctx.extraVer = serverInfo.extra_ver;
 
-        if (!isContextSession(ctx)) throw new Error("Khởi tạo ngữ cảnh thất bại.");
+        if (!isContextSession(ctx)) throw new ZaloApiError("Khởi tạo ngữ cảnh thất bại.");
 
         logger(ctx).info("Logged in as", loginData.data.uid);
 

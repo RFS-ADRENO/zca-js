@@ -612,7 +612,7 @@ export async function handleZaloResponse<T = any>(ctx: ContextSession, response:
 
         result.data = decodedData.data;
     } catch (error) {
-        console.error(error);
+        logger(ctx).error("Failed to parse response data:", error);
         result.error = {
             message: "Failed to parse response data",
         };

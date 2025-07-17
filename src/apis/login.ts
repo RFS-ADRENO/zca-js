@@ -1,5 +1,6 @@
 import type { ContextBase } from "../context.js";
-import { decryptResp, getSignKey, makeURL, ParamsEncryptor, request } from "../utils.js";
+import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import { decryptResp, getSignKey, logger, makeURL, ParamsEncryptor, request } from "../utils.js";
 
 export async function login(ctx: ContextBase, encryptParams: boolean) {
     const encryptedParams = await getEncryptParam(ctx, encryptParams, "getlogininfo");
@@ -12,7 +13,7 @@ export async function login(ctx: ContextBase, encryptParams: boolean) {
                 nretry: 0,
             }),
         );
-        if (!response.ok) throw new Error("Failed to fetch login info: " + response.statusText);
+        if (!response.ok) throw new ZaloApiError("Failed to fetch login info: " + response.statusText);
         const data = await response.json();
 
         if (encryptedParams.enk) {
@@ -22,39 +23,34 @@ export async function login(ctx: ContextBase, encryptParams: boolean) {
 
         return null;
     } catch (error) {
-        console.error(error);
-        throw new Error("Failed to fetch login info: " + error);
+        logger(ctx).error("Login failed:", error);
+        throw error;
     }
 }
 
 export async function getServerInfo(ctx: ContextBase, encryptParams: boolean) {
     const encryptedParams = await getEncryptParam(ctx, encryptParams, "getserverinfo");
 
-    try {
-        const response = await request(
+    const response = await request(
+        ctx,
+        makeURL(
             ctx,
-            makeURL(
-                ctx,
-                "https://wpa.chat.zalo.me/api/login/getServerInfo",
-                {
-                    imei: ctx.imei,
-                    type: ctx.API_TYPE,
-                    client_version: ctx.API_VERSION,
-                    computer_name: "Web",
-                    signkey: encryptedParams.params.signkey,
-                },
-                false,
-            ),
-        );
-        if (!response.ok) throw new Error("Failed to fetch server info: " + response.statusText);
-        const data = await response.json();
+            "https://wpa.chat.zalo.me/api/login/getServerInfo",
+            {
+                imei: ctx.imei,
+                type: ctx.API_TYPE,
+                client_version: ctx.API_VERSION,
+                computer_name: "Web",
+                signkey: encryptedParams.params.signkey,
+            },
+            false,
+        ),
+    );
+    if (!response.ok) throw new ZaloApiError("Failed to fetch server info: " + response.statusText);
+    const data = await response.json();
 
-        if (data.data == null) throw new Error("Failed to fetch server info: " + data.error_message);
-        return data.data;
-    } catch (error) {
-        console.error(error);
-        throw new Error("Failed to fetch server info: " + error);
-    }
+    if (data.data == null) throw new ZaloApiError("Failed to fetch server info: " + data.error_message);
+    return data.data;
 }
 
 async function getEncryptParam(ctx: ContextBase, encryptParams: boolean, type: string) {
@@ -113,7 +109,7 @@ async function _encryptParam(ctx: ContextBase, data: Record<string, any>, encryp
                   }
                 : null;
         } catch (error) {
-            throw new Error("Failed to encrypt params: " + error);
+            throw new ZaloApiError("Failed to encrypt params: " + error);
         }
     }
     return null;

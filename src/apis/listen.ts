@@ -465,9 +465,9 @@ export class Listener extends EventEmitter<ListenerEvents> {
                 }
 
                 if (version == 1 && cmd == 3000 && subCmd == 0) {
-                    console.log();
+                    logger(this.ctx).error()
                     logger(this.ctx).error("Another connection is opened, closing this one");
-                    console.log();
+                    logger(this.ctx).error()
                     if (ws.readyState !== WebSocket.CLOSED) ws.close(CloseReason.DuplicateConnection);
                 }
             } catch (error) {
