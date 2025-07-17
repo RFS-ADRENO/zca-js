@@ -2,7 +2,7 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type UndoOptions = {
+export type UndoPayload = {
     msgId: string | number;
     cliMsgId: string | number;
 };
@@ -19,17 +19,17 @@ export const undoFactory = apiFactory<UndoResponse>()((api, ctx, utils) => {
     /**
      * Undo a message
      *
-     * @param options Undo options
+     * @param payload Undo payload containing message ID and client message ID
      * @param threadId group or user id
-     * @param type Message type (User or GroupMessage)
+     * @param type Message type (User or Group), default is User
      *
      * @throws ZaloApiError
      */
-    return async function undo(options: UndoOptions, threadId: string, type: ThreadType) {
+    return async function undo(payload: UndoPayload, threadId: string, type: ThreadType = ThreadType.User) {
         const params: any = {
-            msgId: options.msgId,
+            msgId: payload.msgId,
             clientId: Date.now(),
-            cliMsgIdUndo: options.cliMsgId,
+            cliMsgIdUndo: payload.cliMsgId,
         };
 
         if (type == ThreadType.Group) {
