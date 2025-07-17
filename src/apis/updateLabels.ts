@@ -1,31 +1,24 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type UpdateLabelParams = {
-    labelData: {
-        id: number;
-        text: string;
-        textKey: string;
-        conversations: string[];
-        color: string;
-        offset: number;
-        emoji: string;
-        createTime: number;
-    }[];
+export type LabelData = {
+    id: number;
+    text: string;
+    textKey: string;
+    conversations: string[];
+    color: string;
+    offset: number;
+    emoji: string;
+    createTime: number;
+};
+
+export type UpdateLabelsPayload = {
+    labelData: LabelData[];
     version: number;
 };
 
 export type UpdateLabelsResponse = {
-    labelData: {
-        id: number;
-        text: string;
-        textKey: string;
-        conversations: string[];
-        color: string;
-        offset: number;
-        emoji: string;
-        createTime: number;
-    }[];
+    labelData: LabelData[];
     version: number;
     lastUpdateTime: number;
 };
@@ -40,7 +33,7 @@ export const updateLabelsFactory = apiFactory<UpdateLabelsResponse>()((api, ctx,
      *
      * @throws ZaloApiError
      */
-    return async function updateLabels(label: UpdateLabelParams) {
+    return async function updateLabels(label: UpdateLabelsPayload) {
         const params = {
             labelData: JSON.stringify(label.labelData),
             version: label.version,
