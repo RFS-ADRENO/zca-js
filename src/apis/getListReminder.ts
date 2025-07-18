@@ -1,6 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { ThreadType } from "../models/index.js";
-import { ReminderGroup, ReminderUser } from "../models/Reminder.js";
+import { ReminderGroup, ReminderUser, ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type ListReminderOptions = {

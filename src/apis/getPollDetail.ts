@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { PollDetail } from "../models/Board.js";
+import { PollDetail } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type PollDetailResponse = PollDetail;

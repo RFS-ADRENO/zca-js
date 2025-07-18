@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { NoteDetail } from "../models/Board.js";
+import { NoteDetail } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type CreateNoteGroupOptions = {
