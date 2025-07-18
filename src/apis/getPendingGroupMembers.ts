@@ -7,7 +7,7 @@ export type GetPendingGroupMembersResponse = {
         uid: string;
         dpn: string;
         avatar: string;
-        user_submit: string | null;
+        user_submit: null;
     }[];
 };
 
