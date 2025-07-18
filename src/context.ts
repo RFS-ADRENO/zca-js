@@ -91,6 +91,7 @@ type LoginInfo = {
         group: string[];
         fallback_LP: string[];
         friend_board: string[];
+        up_file: string[];
         zavi: string[];
         reaction: string[];
         voice_call: string[];
