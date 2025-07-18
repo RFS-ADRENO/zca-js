@@ -13,18 +13,21 @@ export const reviewPendingMemberRequestFactory = apiFactory<ReviewPendingMemberR
 
     /**
      * Review pending member(s) request
+     * 
+     * @param payload - The payload containing data to review the pending member(s) request
+     * @param groupId - The id of the group to review the pending member(s) request
      *
      * @note Only the group leader and deputy group leader can review
      *
      * @throws ZaloApiError
      */
-    return async function reviewPendingMemberRequest(addPayload: ReviewPendingMemberRequestPayload, groupId: string) {
-        if (!Array.isArray(addPayload.members)) addPayload.members = [addPayload.members];
+    return async function reviewPendingMemberRequest(payload: ReviewPendingMemberRequestPayload, groupId: string) {
+        if (!Array.isArray(payload.members)) payload.members = [payload.members];
 
         const params = {
             grid: groupId,
-            members: addPayload.members,
-            isApprove: addPayload.isApprove ? 1 : 0, // 1: approve, 0: reject
+            members: payload.members,
+            isApprove: payload.isApprove ? 1 : 0, // 1: approve, 0: reject
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
