@@ -2,7 +2,7 @@ import FormData from "form-data";
 import fs from "node:fs";
 import type { UploadCallback } from "../context.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { ThreadType } from "../models/index.js";
+import { ThreadType, type AttachmentSource } from "../models/index.js";
 import {
     apiFactory,
     getFileExtension,
@@ -12,7 +12,6 @@ import {
     getMd5LargeFileObject,
     resolveResponse,
 } from "../utils.js";
-import type { AttachmentSource } from "../models/Attachment.js";
 
 type ImageResponse = {
     normalUrl: string;
