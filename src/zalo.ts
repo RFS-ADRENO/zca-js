@@ -205,6 +205,7 @@ export class Zalo {
         ctx.settings = serverInfo.setttings || serverInfo.settings;
 
         ctx.extraVer = serverInfo.extra_ver;
+        ctx.loginInfo = loginData.data;
 
         if (!isContextSession(ctx)) throw new ZaloApiError("Khởi tạo ngữ cảnh thất bại.");
 
@@ -364,7 +365,7 @@ export class API {
     public updateSettings: ReturnType<typeof updateSettingsFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
     public uploadProductPhoto: ReturnType<typeof uploadProductPhotoFactory>;
-    
+
     public custom: ReturnType<typeof customFactory>;
 
     constructor(ctx: ContextSession, zpwServiceMap: ZPWServiceMap, wsUrls: string[]) {

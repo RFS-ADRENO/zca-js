@@ -54,7 +54,7 @@ export const uploadProductPhotoFactory = apiFactory<UploadProductPhotoResponse>(
             totalSize: fileSize,
             imei: ctx.imei,
             chunkId: 1,
-            toid: ctx.send2me_id,
+            toid: ctx.loginInfo.send2me_id,
             featureId: 1,
         };
 
