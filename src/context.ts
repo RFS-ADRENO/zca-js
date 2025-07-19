@@ -128,7 +128,6 @@ export type AppContextBase = {
     userAgent: string;
     language: string;
     secretKey: string | null;
-    send2me_id: string;
     zpwServiceMap: ZPWServiceMap;
     settings: {
         [key: string]: any;

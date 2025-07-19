@@ -199,7 +199,6 @@ export class Zalo {
         if (!loginData || !serverInfo) throw new ZaloApiError("Đăng nhập thất bại");
         ctx.secretKey = loginData.data.zpw_enk;
         ctx.uid = loginData.data.uid;
-        ctx.send2me_id = loginData.data.send2me_id;
 
         // Zalo currently responds with setttings instead of settings
         // they might fix this in the future, so we should have a fallback just in case
