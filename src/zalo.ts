@@ -115,6 +115,7 @@ import { updateProfileFactory } from "./apis/updateProfile.js";
 import { updateQuickMessageFactory } from "./apis/updateQuickMessage.js";
 import { updateSettingsFactory } from "./apis/updateSettings.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
+import { uploadProductPhotoFactory } from "./apis/uploadProductPhoto.js";
 
 import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { checkUpdate } from "./update.js";
@@ -198,6 +199,7 @@ export class Zalo {
         if (!loginData || !serverInfo) throw new ZaloApiError("Đăng nhập thất bại");
         ctx.secretKey = loginData.data.zpw_enk;
         ctx.uid = loginData.data.uid;
+        ctx.send2me_id = loginData.data.send2me_id;
 
         // Zalo currently responds with setttings instead of settings
         // they might fix this in the future, so we should have a fallback just in case
@@ -362,7 +364,8 @@ export class API {
     public updateQuickMessage: ReturnType<typeof updateQuickMessageFactory>;
     public updateSettings: ReturnType<typeof updateSettingsFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
-
+    public uploadProductPhoto: ReturnType<typeof uploadProductPhotoFactory>;
+    
     public custom: ReturnType<typeof customFactory>;
 
     constructor(ctx: ContextSession, zpwServiceMap: ZPWServiceMap, wsUrls: string[]) {
@@ -472,6 +475,7 @@ export class API {
         this.updateQuickMessage = updateQuickMessageFactory(ctx, this);
         this.updateSettings = updateSettingsFactory(ctx, this);
         this.uploadAttachment = uploadAttachmentFactory(ctx, this);
+        this.uploadProductPhoto = uploadProductPhotoFactory(ctx, this);
 
         this.custom = customFactory(ctx, this);
     }
