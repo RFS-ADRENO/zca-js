@@ -8,7 +8,7 @@ export type ReviewPendingMemberRequestPayload = {
 
 export type ReviewPendingMemberRequestResponse = Record<string, number>;
 
-export const reviewPendingMemberRequestFactory = apiFactory<ReviewPendingMemberRequestResponse>()((api, ctx, utils) => {
+export const reviewPendingMemberRequestFactory = apiFactory<ReviewPendingMemberRequestResponse>()((api, _, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/pending-mems/review`);
 
     /**
