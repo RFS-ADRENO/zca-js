@@ -1,5 +1,5 @@
-import FormData from "form-data";
 import fs from "node:fs";
+import FormData from "form-data";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import type { AttachmentSource } from "../models/index.js";
 import { apiFactory, getImageMetaData } from "../utils.js";
