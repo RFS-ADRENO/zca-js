@@ -1,8 +1,8 @@
 import FormData from "form-data";
 import fs from "node:fs";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { AttachmentSource } from "../models/index.js";
 import { apiFactory, getFullTimeFromMillisecond, getImageMetaData } from "../utils.js";
-import type { AttachmentSource } from "../models/Attachment.js";
 
 export type ChangeGroupAvatarResponse = "";
 

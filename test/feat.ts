@@ -95,7 +95,7 @@ function decodeHTTP() {
 async function decodeWebsocket() {
     if (!cipher_key) {
         console.log(
-            "Mở devtools trên trình duyệt tại https://chat.zalo.me/, vào tab Network -> WS\nMở tin nhắn đầu tiên, đổi sang định dạng UTF-8",
+            "Mở devtools trên trình duyệt tại https://chat.zalo.me/, vào tab Network -> (WS/Socket)\nMở tin nhắn đầu tiên, đổi sang định dạng UTF-8",
         );
         cipher_key = await promptForCipherKey();
     }

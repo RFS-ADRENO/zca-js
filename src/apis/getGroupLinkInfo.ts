@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import type { GroupSetting } from "../models/GroupEvent.js";
+import type { GroupSetting } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type GetGroupLinkInfoResponse = {

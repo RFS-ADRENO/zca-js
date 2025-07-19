@@ -58,6 +58,7 @@ import { getListBoardFactory } from "./apis/getListBoard.js";
 import { getListReminderFactory } from "./apis/getListReminder.js";
 import { getMuteFactory } from "./apis/getMute.js";
 import { getOwnIdFactory } from "./apis/getOwnId.js";
+import { getPendingGroupMembersFactory } from "./apis/getPendingGroupMembers.js";
 import { getPinConversationsFactory } from "./apis/getPinConversations.js";
 import { getPollDetailFactory } from "./apis/getPollDetail.js";
 import { getQRFactory } from "./apis/getQR.js";
@@ -87,6 +88,7 @@ import { removeUnreadMarkFactory } from "./apis/removeUnreadMark.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
 import { resetHiddenConversPinFactory } from "./apis/resetHiddenConversPin.js";
 import { reuseAvatarFactory } from "./apis/reuseAvatar.js";
+import { reviewPendingMemberRequestFactory } from "./apis/reviewPendingMemberRequest.js";
 import { sendCardFactory } from "./apis/sendCard.js";
 import { sendDeliveredEventFactory } from "./apis/sendDeliveredEvent.js";
 import { sendFriendRequestFactory } from "./apis/sendFriendRequest.js";
@@ -113,6 +115,7 @@ import { updateProfileFactory } from "./apis/updateProfile.js";
 import { updateQuickMessageFactory } from "./apis/updateQuickMessage.js";
 import { updateSettingsFactory } from "./apis/updateSettings.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
+import { uploadProductPhotoFactory } from "./apis/uploadProductPhoto.js";
 
 import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { checkUpdate } from "./update.js";
@@ -202,6 +205,7 @@ export class Zalo {
         ctx.settings = serverInfo.setttings || serverInfo.settings;
 
         ctx.extraVer = serverInfo.extra_ver;
+        ctx.loginInfo = loginData.data;
 
         if (!isContextSession(ctx)) throw new ZaloApiError("Khởi tạo ngữ cảnh thất bại.");
 
@@ -304,6 +308,7 @@ export class API {
     public getListReminder: ReturnType<typeof getListReminderFactory>;
     public getMute: ReturnType<typeof getMuteFactory>;
     public getOwnId: ReturnType<typeof getOwnIdFactory>;
+    public getPendingGroupMembers: ReturnType<typeof getPendingGroupMembersFactory>;
     public getPinConversations: ReturnType<typeof getPinConversationsFactory>;
     public getPollDetail: ReturnType<typeof getPollDetailFactory>;
     public getQR: ReturnType<typeof getQRFactory>;
@@ -332,6 +337,7 @@ export class API {
     public removeUserFromGroup: ReturnType<typeof removeUserFromGroupFactory>;
     public resetHiddenConversPin: ReturnType<typeof resetHiddenConversPinFactory>;
     public reuseAvatar: ReturnType<typeof reuseAvatarFactory>;
+    public reviewPendingMemberRequest: ReturnType<typeof reviewPendingMemberRequestFactory>;
     public sendCard: ReturnType<typeof sendCardFactory>;
     public sendDeliveredEvent: ReturnType<typeof sendDeliveredEventFactory>;
     public sendFriendRequest: ReturnType<typeof sendFriendRequestFactory>;
@@ -358,6 +364,7 @@ export class API {
     public updateQuickMessage: ReturnType<typeof updateQuickMessageFactory>;
     public updateSettings: ReturnType<typeof updateSettingsFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
+    public uploadProductPhoto: ReturnType<typeof uploadProductPhotoFactory>;
 
     public custom: ReturnType<typeof customFactory>;
 
@@ -412,6 +419,7 @@ export class API {
         this.getListReminder = getListReminderFactory(ctx, this);
         this.getMute = getMuteFactory(ctx, this);
         this.getOwnId = getOwnIdFactory(ctx, this);
+        this.getPendingGroupMembers = getPendingGroupMembersFactory(ctx, this);
         this.getPinConversations = getPinConversationsFactory(ctx, this);
         this.getPollDetail = getPollDetailFactory(ctx, this);
         this.getQR = getQRFactory(ctx, this);
@@ -440,6 +448,7 @@ export class API {
         this.removeUserFromGroup = removeUserFromGroupFactory(ctx, this);
         this.resetHiddenConversPin = resetHiddenConversPinFactory(ctx, this);
         this.reuseAvatar = reuseAvatarFactory(ctx, this);
+        this.reviewPendingMemberRequest = reviewPendingMemberRequestFactory(ctx, this);
         this.sendCard = sendCardFactory(ctx, this);
         this.sendDeliveredEvent = sendDeliveredEventFactory(ctx, this);
         this.sendFriendRequest = sendFriendRequestFactory(ctx, this);
@@ -466,6 +475,7 @@ export class API {
         this.updateQuickMessage = updateQuickMessageFactory(ctx, this);
         this.updateSettings = updateSettingsFactory(ctx, this);
         this.uploadAttachment = uploadAttachmentFactory(ctx, this);
+        this.uploadProductPhoto = uploadProductPhotoFactory(ctx, this);
 
         this.custom = customFactory(ctx, this);
     }

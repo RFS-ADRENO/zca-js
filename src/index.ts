@@ -47,6 +47,7 @@ export type { GetLabelsResponse } from "./apis/getLabels.js";
 export type { BoardItem, GetListBoardResponse, ListBoardOptions } from "./apis/getListBoard.js";
 export type { GetListReminderResponse, ListReminderOptions, ReminderListGroup, ReminderListUser } from "./apis/getListReminder.js";
 export type { GetMuteResponse, MuteEntriesInfo } from "./apis/getMute.js";
+export type { GetPendingGroupMembersResponse } from "./apis/getPendingGroupMembers.js";
 export type { GetPinConversationsResponse } from "./apis/getPinConversations.js";
 export type { PollDetailResponse } from "./apis/getPollDetail.js";
 export type { GetQRResponse } from "./apis/getQR.js";
@@ -75,6 +76,7 @@ export type { RemoveUnreadMarkResponse } from "./apis/removeUnreadMark.js";
 export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js";
 export type { ResetHiddenConversPinResponse } from "./apis/resetHiddenConversPin.js";
 export type { ReuseAvatarResponse } from "./apis/reuseAvatar.js";
+export type { ReviewPendingMemberRequestPayload, ReviewPendingMemberRequestResponse } from "./apis/reviewPendingMemberRequest.js";
 export type { SendCardOptions, SendCardResponse } from "./apis/sendCard.js";
 export type { SendDeliveredEventMessageParams, SendDeliveredEventResponse } from "./apis/sendDeliveredEvent.js";
 export type { SendFriendRequestResponse } from "./apis/sendFriendRequest.js";
@@ -101,6 +103,7 @@ export type { ChangeAccountSettingResponse } from "./apis/updateProfile.js";
 export type { UpdateQuickMessagePayload, UpdateQuickMessageResponse } from "./apis/updateQuickMessage.js";
 export type { UpdateSettingsResponse, UpdateSettingsType } from "./apis/updateSettings.js";
 export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType } from "./apis/uploadAttachment.js";
+export type { UploadProductPhotoPayload, UploadProductPhotoResponse } from "./apis/uploadProductPhoto.js";
 
 export type { CustomAPICallback, CustomAPIProps } from "./apis/custom.js";
 

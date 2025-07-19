@@ -1,8 +1,7 @@
+import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { ThreadType } from "../models/index.js";
 import { apiFactory, removeUndefinedKeys } from "../utils.js";
 import type { StickerDetail } from "./getStickersDetail.js";
-
-import { ZaloApiError } from "../Errors/ZaloApiError.js";
 
 export type SendStickerResponse = {
     msgId: number;

@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import type { QuickMessage } from "../models/QuickMessage.js";
+import type { QuickMessage } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type AddQuickMessagePayload = {
