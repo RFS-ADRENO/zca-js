@@ -79,7 +79,7 @@ export enum BinBankCard {
     TPBank = 970423,
     Techcombank = 970407,
     Timo = 963388,
-    UBank_by_VPBank = 546035,
+    UBank = 546035,
     United_Overseas_Bank_Vietnam = 970458,
     VIB = 970441,
     VPBank = 970432,
