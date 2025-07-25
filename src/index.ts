@@ -77,6 +77,7 @@ export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js"
 export type { ResetHiddenConversPinResponse } from "./apis/resetHiddenConversPin.js";
 export type { ReuseAvatarResponse } from "./apis/reuseAvatar.js";
 export type { ReviewPendingMemberRequestPayload, ReviewPendingMemberRequestResponse } from "./apis/reviewPendingMemberRequest.js";
+export type { SendBankCardPayload, SendBankCardResponse } from "./apis/sendBankCard.js";
 export type { SendCardOptions, SendCardResponse } from "./apis/sendCard.js";
 export type { SendDeliveredEventMessageParams, SendDeliveredEventResponse } from "./apis/sendDeliveredEvent.js";
 export type { SendFriendRequestResponse } from "./apis/sendFriendRequest.js";

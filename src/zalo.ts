@@ -89,6 +89,7 @@ import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
 import { resetHiddenConversPinFactory } from "./apis/resetHiddenConversPin.js";
 import { reuseAvatarFactory } from "./apis/reuseAvatar.js";
 import { reviewPendingMemberRequestFactory } from "./apis/reviewPendingMemberRequest.js";
+import { sendBankCardFactory } from "./apis/sendBankCard.js";
 import { sendCardFactory } from "./apis/sendCard.js";
 import { sendDeliveredEventFactory } from "./apis/sendDeliveredEvent.js";
 import { sendFriendRequestFactory } from "./apis/sendFriendRequest.js";
@@ -338,6 +339,7 @@ export class API {
     public resetHiddenConversPin: ReturnType<typeof resetHiddenConversPinFactory>;
     public reuseAvatar: ReturnType<typeof reuseAvatarFactory>;
     public reviewPendingMemberRequest: ReturnType<typeof reviewPendingMemberRequestFactory>;
+    public sendBankCard: ReturnType<typeof sendBankCardFactory>;
     public sendCard: ReturnType<typeof sendCardFactory>;
     public sendDeliveredEvent: ReturnType<typeof sendDeliveredEventFactory>;
     public sendFriendRequest: ReturnType<typeof sendFriendRequestFactory>;
@@ -449,6 +451,7 @@ export class API {
         this.resetHiddenConversPin = resetHiddenConversPinFactory(ctx, this);
         this.reuseAvatar = reuseAvatarFactory(ctx, this);
         this.reviewPendingMemberRequest = reviewPendingMemberRequestFactory(ctx, this);
+        this.sendBankCard = sendBankCardFactory(ctx, this);
         this.sendCard = sendCardFactory(ctx, this);
         this.sendDeliveredEvent = sendDeliveredEventFactory(ctx, this);
         this.sendFriendRequest = sendFriendRequestFactory(ctx, this);
