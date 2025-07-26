@@ -2,7 +2,7 @@
 name: CI/CD
 about: Report issues with CI/CD pipeline or suggest improvements
 title: "[CI]"
-labels: ci-cd
+labels: ["enhancement", "ci-cd"]
 assignees: ""
 ---
 

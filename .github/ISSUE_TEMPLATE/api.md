@@ -2,7 +2,7 @@
 name: API
 about: Report API issues or suggest improvements
 title: "[API]"
-labels: api
+labels: ["enhancement", "api"]
 assignees: ""
 ---
 

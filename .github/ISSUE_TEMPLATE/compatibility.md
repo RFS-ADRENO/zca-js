@@ -2,7 +2,7 @@
 name: Compatibility
 about: Report compatibility issues with different platforms or versions
 title: "[COMPAT]"
-labels: compatibility
+labels: ["enhancement", "compatibility"]
 assignees: ""
 ---
 
