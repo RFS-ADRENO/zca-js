@@ -72,7 +72,7 @@ import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
 import { getUnreadMarkFactory } from "./apis/getUnreadMark.js";
 import { getUserInfoFactory } from "./apis/getUserInfo.js";
 import { inviteUserToGroupsFactory } from "./apis/inviteUserToGroups.js";
-import { joinGroupFactory } from "./apis/joinGroup.js";
+import { joinGroupLinkFactory } from "./apis/joinGroupLink.js";
 import { keepAliveFactory } from "./apis/keepAlive.js";
 import { lastOnlineFactory } from "./apis/lastOnline.js";
 import { leaveGroupFactory } from "./apis/leaveGroup.js";
@@ -323,7 +323,7 @@ export class API {
     public getUnreadMark: ReturnType<typeof getUnreadMarkFactory>;
     public getUserInfo: ReturnType<typeof getUserInfoFactory>;
     public inviteUserToGroups: ReturnType<typeof inviteUserToGroupsFactory>;
-    public joinGroup: ReturnType<typeof joinGroupFactory>;
+    public joinGroupLink: ReturnType<typeof joinGroupLinkFactory>;
     public keepAlive: ReturnType<typeof keepAliveFactory>;
     public lastOnline: ReturnType<typeof lastOnlineFactory>;
     public leaveGroup: ReturnType<typeof leaveGroupFactory>;
@@ -435,7 +435,7 @@ export class API {
         this.getUnreadMark = getUnreadMarkFactory(ctx, this);
         this.getUserInfo = getUserInfoFactory(ctx, this);
         this.inviteUserToGroups = inviteUserToGroupsFactory(ctx, this);
-        this.joinGroup = joinGroupFactory(ctx, this);
+        this.joinGroupLink = joinGroupLinkFactory(ctx, this);
         this.keepAlive = keepAliveFactory(ctx, this);
         this.lastOnline = lastOnlineFactory(ctx, this);
         this.leaveGroup = leaveGroupFactory(ctx, this);

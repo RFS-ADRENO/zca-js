@@ -60,7 +60,7 @@ export type { StickerDetail, StickerDetailResponse } from "./apis/getStickersDet
 export type { GetUnreadMarkResponse, UnreadMark } from "./apis/getUnreadMark.js";
 export type { ProfileInfo, UserInfoResponse } from "./apis/getUserInfo.js";
 export type { InviteUserToGroupsResponse } from "./apis/inviteUserToGroups.js";
-export type { JoinGroupResponse } from "./apis/joinGroup.js";
+export type { JoinGroupLinkResponse } from "./apis/joinGroupLink.js";
 export type { KeepAliveResponse } from "./apis/keepAlive.js";
 export type { LastOnlineResponse } from "./apis/lastOnline.js";
 export type { LeaveGroupResponse } from "./apis/leaveGroup.js";

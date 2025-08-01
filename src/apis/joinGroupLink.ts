@@ -1,9 +1,9 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type JoinGroupResponse = "";
+export type JoinGroupLinkResponse = "";
 
-export const joinGroupFactory = apiFactory<JoinGroupResponse>()((api, ctx, utils) => {
+export const joinGroupLinkFactory = apiFactory<JoinGroupLinkResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/link/join`);
 
     /**
@@ -15,7 +15,7 @@ export const joinGroupFactory = apiFactory<JoinGroupResponse>()((api, ctx, utils
      *
      * @throws ZaloApiError
      */
-    return async function joinGroup(link: string) {
+    return async function joinGroupLink(link: string) {
         const params = {
             link: link,
             clientLang: ctx.language,
