@@ -38,11 +38,7 @@ export const sendReportFactory = apiFactory<SendReportResponse>()((api, ctx, uti
      * @throws ZaloApiError
      *
      */
-    return async function sendReport(
-        options: SendReportOptions,
-        threadId: string,
-        type: ThreadType = ThreadType.User,
-    ) {
+    return async function sendReport(options: SendReportOptions, threadId: string, type: ThreadType = ThreadType.User) {
         const params =
             type == ThreadType.User
                 ? {

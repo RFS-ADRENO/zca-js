@@ -55,8 +55,7 @@ export const sendDeliveredEventFactory = apiFactory<SendDeliveredEventResponse>(
         messages: SendDeliveredEventMessageParams | SendDeliveredEventMessageParams[],
         type: ThreadType = ThreadType.User,
     ) {
-        if (!messages)
-            throw new ZaloApiError("messages are missing or not in a valid array format.");
+        if (!messages) throw new ZaloApiError("messages are missing or not in a valid array format.");
         if (!Array.isArray(messages)) messages = [messages];
         if (messages.length === 0 || messages.length > MAX_MESSAGES_PER_SEND)
             throw new ZaloApiError("messages must contain between 1 and 50 messages.");

@@ -24,7 +24,7 @@ export const uploadProductPhotoFactory = apiFactory<UploadProductPhotoResponse>(
     /**
      * Upload product photo for api quick message or custom local storage
      *
-     * @param payload
+     * @param payload file path or attachment source
      *
      * @throws ZaloApiError
      */

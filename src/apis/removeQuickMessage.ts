@@ -13,14 +13,14 @@ export const removeQuickMessageFactory = apiFactory<RemoveQuickMessageResponse>(
      * Remove quick message
      *
      * @param itemIds - The id(s) of the quick message(s) to remove (number or number[])
-     * 
+     *
      * @note Zalo might throw an error with code 212 if the item does not exist
      *
      * @throws ZaloApiError
      */
     return async function removeQuickMessage(itemIds: number | number[]) {
         const idsArray = Array.isArray(itemIds) ? itemIds : [itemIds];
-        
+
         const params = {
             itemIds: idsArray,
         };

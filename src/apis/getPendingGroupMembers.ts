@@ -16,10 +16,10 @@ export const getPendingGroupMembersFactory = apiFactory<GetPendingGroupMembersRe
 
     /**
      * Get pending group members
-     * 
+     *
      * @param groupId - The id of the group to get the pending members
-     * 
-     * @note Only the group leader and deputy group leader can view 
+     *
+     * @note Only the group leader and deputy group leader can view
      *
      * @throws ZaloApiError
      */

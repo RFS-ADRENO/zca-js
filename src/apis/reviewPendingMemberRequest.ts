@@ -13,7 +13,7 @@ export const reviewPendingMemberRequestFactory = apiFactory<ReviewPendingMemberR
 
     /**
      * Review pending member(s) request
-     * 
+     *
      * @param payload - The payload containing data to review the pending member(s) request
      * @param groupId - The id of the group to review the pending member(s) request
      *

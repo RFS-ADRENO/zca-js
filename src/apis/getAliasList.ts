@@ -14,7 +14,7 @@ export const getAliasListFactory = apiFactory<GetAliasListResponse>()((api, ctx,
 
     /**
      * Get alias list
-     * 
+     *
      * @param count Page size (default: 100)
      * @param page Page number (default: 1)
      *

@@ -4,7 +4,7 @@ import { apiFactory } from "../utils.js";
 export type RemoveFriendResponse = "";
 
 export const removeFriendFactory = apiFactory<RemoveFriendResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/remove`);;
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/remove`);
 
     /**
      * Remove friend

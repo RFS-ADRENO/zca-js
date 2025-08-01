@@ -50,8 +50,10 @@ export const createNoteGroupFactory = apiFactory<CreateNoteGroupResponse>()((api
         });
 
         return utils.resolve(response, (result) => {
-            if (typeof (result.data as { params: unknown; }).params === "string") {
-                (result.data as CreateNoteGroupResponse).params = JSON.parse((result.data as { params: string }).params);
+            if (typeof (result.data as { params: unknown }).params === "string") {
+                (result.data as CreateNoteGroupResponse).params = JSON.parse(
+                    (result.data as { params: string }).params,
+                );
             }
 
             return result.data as CreateNoteGroupResponse;

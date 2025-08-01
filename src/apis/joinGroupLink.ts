@@ -8,7 +8,7 @@ export const joinGroupLinkFactory = apiFactory<JoinGroupLinkResponse>()((api, ct
 
     /**
      * Join group via invite link
-     * 
+     *
      * @note Zalo might throw an error with code 240 if the group enabled membership approval, 178 if you are already a member.
      *
      * @param link - The link join group

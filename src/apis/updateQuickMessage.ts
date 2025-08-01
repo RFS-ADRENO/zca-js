@@ -6,7 +6,7 @@ export type UpdateQuickMessagePayload = {
     keyword: string;
     title: string;
     // media?: null; @TODO: implement media handling
-}
+};
 
 export type UpdateQuickMessageResponse = {
     items: QuickMessage[];
@@ -18,10 +18,10 @@ export const updateQuickMessageFactory = apiFactory<UpdateQuickMessageResponse>(
 
     /**
      * Update quick message
-     * 
+     *
      * @param updatePayload - The payload containing data to update the quick message
      * @param itemId - The id of the quick message to update
-     * 
+     *
      * @note Zalo might throw an error with code 212 if the itemId does not exist.
      *
      * @throws ZaloApiError
