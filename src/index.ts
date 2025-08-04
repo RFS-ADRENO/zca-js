@@ -4,6 +4,7 @@ export * from "./zalo.js";
 
 // API TYPES
 export type { AcceptFriendRequestResponse } from "./apis/acceptFriendRequest.js";
+export type { AddGroupBlockedMemberResponse } from "./apis/addGroupBlockedMember.js";
 export type { AddGroupDeputyResponse } from "./apis/addGroupDeputy.js";
 export type { AddQuickMessagePayload, AddQuickMessageResponse } from "./apis/addQuickMessage.js";
 export type { AddReactionDestination, AddReactionResponse, CustomReaction } from "./apis/addReaction.js";
@@ -39,7 +40,9 @@ export type { GetAutoDeleteChatResponse } from "./apis/getAutoDeleteChat.js";
 export type { GetAvatarListResponse } from "./apis/getAvatarList.js";
 export type { GetBizAccountResponse } from "./apis/getBizAccount.js";
 export type { GetFriendBoardListResponse } from "./apis/getFriendBoardList.js";
+export type { GetGroupBlockedMemberPayload, GetGroupBlockedMemberResponse } from "./apis/getGroupBlockedMember.js";
 export type { GroupInfo, GroupInfoExtra, GroupInfoPendingApprove, GroupInfoResponse } from "./apis/getGroupInfo.js";
+export type { GetGroupLinkDetailResponse } from "./apis/getGroupLinkDetail.js";
 export type { GetGroupLinkInfoResponse } from "./apis/getGroupLinkInfo.js";
 export type { GetGroupMembersInfoResponse, GroupMemberProfile } from "./apis/getGroupMembersInfo.js";
 export type { GetHiddenConversationsResponse } from "./apis/getHiddenConversations.js";
@@ -70,6 +73,7 @@ export type { LoginQRCallback, LoginQRCallbackEvent } from "./apis/loginQR.js";
 export type { ParseLinkErrorMaps, ParseLinkResponse } from "./apis/parseLink.js";
 export type { RemoveFriendResponse } from "./apis/removeFriend.js";
 export type { RemoveFriendAliasResponse } from "./apis/removeFriendAlias.js";
+export type { RemoveGroupBlockedMemberResponse } from "./apis/removeGroupBlockedMember.js";
 export type { RemoveGroupDeputyResponse } from "./apis/removeGroupDeputy.js";
 export type { RemoveQuickMessageResponse } from "./apis/removeQuickMessage.js";
 export type { RemoveReminderResponse } from "./apis/removeReminder.js";
