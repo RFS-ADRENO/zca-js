@@ -3,7 +3,7 @@ import { apiFactory } from "../utils.js";
 
 export type AddGroupBlockedMemberResponse = "";
 
-export const addGroupBlockedMemberFactory = apiFactory<AddGroupBlockedMemberResponse>()((api, ctx, utils) => {
+export const addGroupBlockedMemberFactory = apiFactory<AddGroupBlockedMemberResponse>()((api, _, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/blockedmems/add`);
 
     /**
