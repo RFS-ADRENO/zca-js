@@ -38,8 +38,11 @@ export const sendBankCardFactory = apiFactory<SendBankCardResponse>()((api, ctx,
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await utils.request(utils.makeURL(serviceURL, { params: encryptedParams }), {
-            method: "GET",
+        const response = await utils.request(serviceURL, {
+            method: "POST",
+            body: new URLSearchParams({
+                params: encryptedParams,
+            }),
         });
 
         return utils.resolve(response);
