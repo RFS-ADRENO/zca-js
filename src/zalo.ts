@@ -66,6 +66,7 @@ import { getQuickMessageFactory } from "./apis/getQuickMessage.js";
 import { getReceivedFriendRequestsFactory } from "./apis/getReceivedFriendRequests.js";
 import { getReminderFactory } from "./apis/getReminder.js";
 import { getReminderResponsesFactory } from "./apis/getReminderResponses.js";
+import { getRequestStatusFactory } from "./apis/getRequestStatus.js";
 import { getSentFriendRequestFactory } from "./apis/getSentFriendRequest.js";
 import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
@@ -317,6 +318,7 @@ export class API {
     public getReceivedFriendRequests: ReturnType<typeof getReceivedFriendRequestsFactory>;
     public getReminder: ReturnType<typeof getReminderFactory>;
     public getReminderResponses: ReturnType<typeof getReminderResponsesFactory>;
+    public getRequestStatus: ReturnType<typeof getRequestStatusFactory>;
     public getSentFriendRequest: ReturnType<typeof getSentFriendRequestFactory>;
     public getStickers: ReturnType<typeof getStickersFactory>;
     public getStickersDetail: ReturnType<typeof getStickersDetailFactory>;
@@ -429,6 +431,7 @@ export class API {
         this.getReceivedFriendRequests = getReceivedFriendRequestsFactory(ctx, this);
         this.getReminder = getReminderFactory(ctx, this);
         this.getReminderResponses = getReminderResponsesFactory(ctx, this);
+        this.getRequestStatus = getRequestStatusFactory(ctx, this);
         this.getSentFriendRequest = getSentFriendRequestFactory(ctx, this);
         this.getStickers = getStickersFactory(ctx, this);
         this.getStickersDetail = getStickersDetailFactory(ctx, this);

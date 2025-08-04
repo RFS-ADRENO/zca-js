@@ -1,7 +1,7 @@
 import EventEmitter from "events";
 import WebSocket from "ws";
-import { type GroupEvent, initializeGroupEvent, type TGroupEvent } from "../models/GroupEvent.js";
 import { type FriendEvent, initializeFriendEvent, type TFriendEvent } from "../models/FriendEvent.js";
+import { type GroupEvent, initializeGroupEvent, type TGroupEvent } from "../models/GroupEvent.js";
 import {
     GroupMessage,
     UserMessage,
