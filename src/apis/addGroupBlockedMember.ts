@@ -9,7 +9,7 @@ export const addGroupBlockedMemberFactory = apiFactory<AddGroupBlockedMemberResp
     /**
      * Add group blocked member
      *
-     * @param memberId member id(ss)
+     * @param memberId member id(s)
      * @param groupId group id
      *
      * @throws ZaloApiError
