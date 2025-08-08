@@ -52,7 +52,7 @@ function prompt() {
                 decodeHTTP();
             } else if (answer == "2") {
                 console.clear();
-                console.log("\x1b[38;5;165m[ WEBSOCKET ] Bắt đầu khởi động\x1b[0m");
+                console.log("\x1b[38;5;165m[ WEBSOCKET ] Bắt đầu khởi động!\x1b[0m");
                 decodeWebsocket();
             } else if (answer == "3") exit();
             else {
