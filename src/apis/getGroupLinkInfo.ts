@@ -35,15 +35,16 @@ export const getGroupLinkInfoFactory = apiFactory<GetGroupLinkInfoResponse>()((a
      * Get group link info
      *
      * @param link - The link group
+     * @param memberPage - The page of members
      *
      * @throws ZaloApiError
      */
-    return async function getGroupLinkInfo(link: string) {
+    return async function getGroupLinkInfo(link: string, memberPage?: number) {
         const params = {
             link: link,
             avatar_size: 120,
             member_avatar_size: 120,
-            mpage: 1,
+            mpage: memberPage ?? 1,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
