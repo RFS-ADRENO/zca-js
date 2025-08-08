@@ -43,7 +43,7 @@ export type { GetFriendBoardListResponse } from "./apis/getFriendBoardList.js";
 export type { GetGroupBlockedMemberPayload, GetGroupBlockedMemberResponse } from "./apis/getGroupBlockedMember.js";
 export type { GroupInfo, GroupInfoExtra, GroupInfoPendingApprove, GroupInfoResponse } from "./apis/getGroupInfo.js";
 export type { GetGroupLinkDetailResponse } from "./apis/getGroupLinkDetail.js";
-export type { GetGroupLinkInfoResponse } from "./apis/getGroupLinkInfo.js";
+export type { GetGroupLinkInfoPayload, GetGroupLinkInfoResponse } from "./apis/getGroupLinkInfo.js";
 export type { GetGroupMembersInfoResponse, GroupMemberProfile } from "./apis/getGroupMembersInfo.js";
 export type { GetHiddenConversationsResponse } from "./apis/getHiddenConversations.js";
 export type { GetLabelsResponse } from "./apis/getLabels.js";
