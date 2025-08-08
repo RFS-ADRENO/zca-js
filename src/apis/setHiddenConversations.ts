@@ -16,7 +16,11 @@ export const setHiddenConversationsFactory = apiFactory<SetHiddenConversationsRe
      *
      * @throws ZaloApiError
      */
-    return async function setHiddenConversations(hidden: boolean, threadId: string, type: ThreadType = ThreadType.User) {
+    return async function setHiddenConversations(
+        hidden: boolean,
+        threadId: string,
+        type: ThreadType = ThreadType.User,
+    ) {
         const params = {
             [hidden ? "add_threads" : "del_threads"]: JSON.stringify([
                 {

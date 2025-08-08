@@ -116,5 +116,4 @@ export class GroupMessage {
     }
 }
 
-
 export type Message = UserMessage | GroupMessage;

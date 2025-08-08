@@ -46,6 +46,6 @@ export const getLabelsFactory = apiFactory<GetLabelsResponse>()((api, ctx, utils
                 lastUpdateTime: data.lastUpdateTime,
             };
             return formattedData;
-        })
+        });
     };
 });

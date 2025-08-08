@@ -91,6 +91,7 @@ type LoginInfo = {
         group: string[];
         fallback_LP: string[];
         friend_board: string[];
+        up_file: string[];
         zavi: string[];
         reaction: string[];
         voice_call: string[];
@@ -189,7 +190,7 @@ export type AppContextExtended = {
 
 export type ContextBase = Partial<AppContextBase> & AppContextExtended;
 
-export const createContext = (apiType = 30, apiVersion = 663) =>
+export const createContext = (apiType = 30, apiVersion = 664) =>
     ({
         API_TYPE: apiType,
         API_VERSION: apiVersion,

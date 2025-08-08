@@ -1,4 +1,4 @@
-import { Gender } from "../models/Enum.js";
+import { Gender } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type FetchAccountInfoResponse = {

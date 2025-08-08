@@ -1,24 +1,26 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type JoinGroupResponse = "";
+export type GetGroupLinkDetailResponse = {
+    link: string;
+    expiration_date: number;
+    enabled: number;
+};
 
-export const joinGroupFactory = apiFactory<JoinGroupResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/link/join`);
+export const getGroupLinkDetailFactory = apiFactory<GetGroupLinkDetailResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/link/detail`);
 
     /**
-     * Join group via invite link
-     * 
-     * @note Zalo might throw an error with code 240 if the group enabled membership approval, 178 if you are already a member.
+     * Get group link detail
      *
-     * @param link - The link join group
+     * @param groupId The group id
      *
      * @throws ZaloApiError
      */
-    return async function joinGroup(link: string) {
+    return async function getGroupLinkDetail(groupId: string) {
         const params = {
-            link: link,
-            clientLang: ctx.language,
+            grid: groupId,
+            imei: ctx.imei,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

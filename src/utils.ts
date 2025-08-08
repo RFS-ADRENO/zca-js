@@ -9,8 +9,8 @@ import toughCookie from "tough-cookie";
 
 import { isContextSession, type ContextSession, type ContextBase } from "./context.js";
 import { ZaloApiError } from "./Errors/ZaloApiError.js";
-import { GroupEventType } from "./models/GroupEvent.js";
 import { FriendEventType } from "./models/FriendEvent.js";
+import { GroupEventType } from "./models/GroupEvent.js";
 import type { API } from "./zalo.js";
 import type { AttachmentSource } from "./models/Attachment.js";
 

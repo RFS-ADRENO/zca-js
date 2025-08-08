@@ -2,7 +2,7 @@
 name: Security Vulnerability Report
 about: Report a security vulnerability
 title: "[SECURITY]"
-labels: ["SECURITY", "security", "high-priority"]
+labels: security
 assignees: ""
 ---
 

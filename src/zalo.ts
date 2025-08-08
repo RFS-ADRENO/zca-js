@@ -12,6 +12,7 @@ import { generateZaloUUID, logger } from "./utils.js";
 
 import toughCookie from "tough-cookie";
 import { acceptFriendRequestFactory } from "./apis/acceptFriendRequest.js";
+import { addGroupBlockedMemberFactory } from "./apis/addGroupBlockedMember.js";
 import { addGroupDeputyFactory } from "./apis/addGroupDeputy.js";
 import { addQuickMessageFactory } from "./apis/addQuickMessage.js";
 import { addReactionFactory } from "./apis/addReaction.js";
@@ -49,7 +50,9 @@ import { getBizAccountFactory } from "./apis/getBizAccount.js";
 import { getContextFactory } from "./apis/getContext.js";
 import { getCookieFactory } from "./apis/getCookie.js";
 import { getFriendBoardListFactory } from "./apis/getFriendBoardList.js";
+import { getGroupBlockedMemberFactory } from "./apis/getGroupBlockedMember.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
+import { getGroupLinkDetailFactory } from "./apis/getGroupLinkDetail.js";
 import { getGroupLinkInfoFactory } from "./apis/getGroupLinkInfo.js";
 import { getGroupMembersInfoFactory } from "./apis/getGroupMembersInfo.js";
 import { getHiddenConversationsFactory } from "./apis/getHiddenConversations.js";
@@ -58,6 +61,7 @@ import { getListBoardFactory } from "./apis/getListBoard.js";
 import { getListReminderFactory } from "./apis/getListReminder.js";
 import { getMuteFactory } from "./apis/getMute.js";
 import { getOwnIdFactory } from "./apis/getOwnId.js";
+import { getPendingGroupMembersFactory } from "./apis/getPendingGroupMembers.js";
 import { getPinConversationsFactory } from "./apis/getPinConversations.js";
 import { getPollDetailFactory } from "./apis/getPollDetail.js";
 import { getQRFactory } from "./apis/getQR.js";
@@ -65,13 +69,14 @@ import { getQuickMessageFactory } from "./apis/getQuickMessage.js";
 import { getReceivedFriendRequestsFactory } from "./apis/getReceivedFriendRequests.js";
 import { getReminderFactory } from "./apis/getReminder.js";
 import { getReminderResponsesFactory } from "./apis/getReminderResponses.js";
+import { getRequestStatusFactory } from "./apis/getRequestStatus.js";
 import { getSentFriendRequestFactory } from "./apis/getSentFriendRequest.js";
 import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
 import { getUnreadMarkFactory } from "./apis/getUnreadMark.js";
 import { getUserInfoFactory } from "./apis/getUserInfo.js";
 import { inviteUserToGroupsFactory } from "./apis/inviteUserToGroups.js";
-import { joinGroupFactory } from "./apis/joinGroup.js";
+import { joinGroupLinkFactory } from "./apis/joinGroupLink.js";
 import { keepAliveFactory } from "./apis/keepAlive.js";
 import { lastOnlineFactory } from "./apis/lastOnline.js";
 import { leaveGroupFactory } from "./apis/leaveGroup.js";
@@ -80,6 +85,7 @@ import { loginQR, LoginQRCallbackEventType, type LoginQRCallback } from "./apis/
 import { parseLinkFactory } from "./apis/parseLink.js";
 import { removeFriendFactory } from "./apis/removeFriend.js";
 import { removeFriendAliasFactory } from "./apis/removeFriendAlias.js";
+import { removeGroupBlockedMemberFactory } from "./apis/removeGroupBlockedMember.js";
 import { removeGroupDeputyFactory } from "./apis/removeGroupDeputy.js";
 import { removeQuickMessageFactory } from "./apis/removeQuickMessage.js";
 import { removeReminderFactory } from "./apis/removeReminder.js";
@@ -87,6 +93,8 @@ import { removeUnreadMarkFactory } from "./apis/removeUnreadMark.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
 import { resetHiddenConversPinFactory } from "./apis/resetHiddenConversPin.js";
 import { reuseAvatarFactory } from "./apis/reuseAvatar.js";
+import { reviewPendingMemberRequestFactory } from "./apis/reviewPendingMemberRequest.js";
+import { sendBankCardFactory } from "./apis/sendBankCard.js";
 import { sendCardFactory } from "./apis/sendCard.js";
 import { sendDeliveredEventFactory } from "./apis/sendDeliveredEvent.js";
 import { sendFriendRequestFactory } from "./apis/sendFriendRequest.js";
@@ -113,6 +121,7 @@ import { updateProfileFactory } from "./apis/updateProfile.js";
 import { updateQuickMessageFactory } from "./apis/updateQuickMessage.js";
 import { updateSettingsFactory } from "./apis/updateSettings.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
+import { uploadProductPhotoFactory } from "./apis/uploadProductPhoto.js";
 
 import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { checkUpdate } from "./update.js";
@@ -202,6 +211,7 @@ export class Zalo {
         ctx.settings = serverInfo.setttings || serverInfo.settings;
 
         ctx.extraVer = serverInfo.extra_ver;
+        ctx.loginInfo = loginData.data;
 
         if (!isContextSession(ctx)) throw new ZaloApiError("Khởi tạo ngữ cảnh thất bại.");
 
@@ -258,6 +268,7 @@ export class API {
     public listener: Listener;
 
     public acceptFriendRequest: ReturnType<typeof acceptFriendRequestFactory>;
+    public addGroupBlockedMember: ReturnType<typeof addGroupBlockedMemberFactory>;
     public addGroupDeputy: ReturnType<typeof addGroupDeputyFactory>;
     public addQuickMessage: ReturnType<typeof addQuickMessageFactory>;
     public addReaction: ReturnType<typeof addReactionFactory>;
@@ -295,7 +306,9 @@ export class API {
     public getContext: ReturnType<typeof getContextFactory>;
     public getCookie: ReturnType<typeof getCookieFactory>;
     public getFriendBoardList: ReturnType<typeof getFriendBoardListFactory>;
+    public getGroupBlockedMember: ReturnType<typeof getGroupBlockedMemberFactory>;
     public getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
+    public getGroupLinkDetail: ReturnType<typeof getGroupLinkDetailFactory>;
     public getGroupLinkInfo: ReturnType<typeof getGroupLinkInfoFactory>;
     public getGroupMembersInfo: ReturnType<typeof getGroupMembersInfoFactory>;
     public getHiddenConversations: ReturnType<typeof getHiddenConversationsFactory>;
@@ -304,6 +317,7 @@ export class API {
     public getListReminder: ReturnType<typeof getListReminderFactory>;
     public getMute: ReturnType<typeof getMuteFactory>;
     public getOwnId: ReturnType<typeof getOwnIdFactory>;
+    public getPendingGroupMembers: ReturnType<typeof getPendingGroupMembersFactory>;
     public getPinConversations: ReturnType<typeof getPinConversationsFactory>;
     public getPollDetail: ReturnType<typeof getPollDetailFactory>;
     public getQR: ReturnType<typeof getQRFactory>;
@@ -311,13 +325,14 @@ export class API {
     public getReceivedFriendRequests: ReturnType<typeof getReceivedFriendRequestsFactory>;
     public getReminder: ReturnType<typeof getReminderFactory>;
     public getReminderResponses: ReturnType<typeof getReminderResponsesFactory>;
+    public getRequestStatus: ReturnType<typeof getRequestStatusFactory>;
     public getSentFriendRequest: ReturnType<typeof getSentFriendRequestFactory>;
     public getStickers: ReturnType<typeof getStickersFactory>;
     public getStickersDetail: ReturnType<typeof getStickersDetailFactory>;
     public getUnreadMark: ReturnType<typeof getUnreadMarkFactory>;
     public getUserInfo: ReturnType<typeof getUserInfoFactory>;
     public inviteUserToGroups: ReturnType<typeof inviteUserToGroupsFactory>;
-    public joinGroup: ReturnType<typeof joinGroupFactory>;
+    public joinGroupLink: ReturnType<typeof joinGroupLinkFactory>;
     public keepAlive: ReturnType<typeof keepAliveFactory>;
     public lastOnline: ReturnType<typeof lastOnlineFactory>;
     public leaveGroup: ReturnType<typeof leaveGroupFactory>;
@@ -325,6 +340,7 @@ export class API {
     public parseLink: ReturnType<typeof parseLinkFactory>;
     public removeFriend: ReturnType<typeof removeFriendFactory>;
     public removeFriendAlias: ReturnType<typeof removeFriendAliasFactory>;
+    public removeGroupBlockedMember: ReturnType<typeof removeGroupBlockedMemberFactory>;
     public removeGroupDeputy: ReturnType<typeof removeGroupDeputyFactory>;
     public removeQuickMessage: ReturnType<typeof removeQuickMessageFactory>;
     public removeReminder: ReturnType<typeof removeReminderFactory>;
@@ -332,6 +348,8 @@ export class API {
     public removeUserFromGroup: ReturnType<typeof removeUserFromGroupFactory>;
     public resetHiddenConversPin: ReturnType<typeof resetHiddenConversPinFactory>;
     public reuseAvatar: ReturnType<typeof reuseAvatarFactory>;
+    public reviewPendingMemberRequest: ReturnType<typeof reviewPendingMemberRequestFactory>;
+    public sendBankCard: ReturnType<typeof sendBankCardFactory>;
     public sendCard: ReturnType<typeof sendCardFactory>;
     public sendDeliveredEvent: ReturnType<typeof sendDeliveredEventFactory>;
     public sendFriendRequest: ReturnType<typeof sendFriendRequestFactory>;
@@ -358,6 +376,7 @@ export class API {
     public updateQuickMessage: ReturnType<typeof updateQuickMessageFactory>;
     public updateSettings: ReturnType<typeof updateSettingsFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
+    public uploadProductPhoto: ReturnType<typeof uploadProductPhotoFactory>;
 
     public custom: ReturnType<typeof customFactory>;
 
@@ -366,6 +385,7 @@ export class API {
         this.listener = new Listener(ctx, wsUrls);
 
         this.acceptFriendRequest = acceptFriendRequestFactory(ctx, this);
+        this.addGroupBlockedMember = addGroupBlockedMemberFactory(ctx, this);
         this.addGroupDeputy = addGroupDeputyFactory(ctx, this);
         this.addQuickMessage = addQuickMessageFactory(ctx, this);
         this.addReaction = addReactionFactory(ctx, this);
@@ -403,7 +423,9 @@ export class API {
         this.getContext = getContextFactory(ctx, this);
         this.getCookie = getCookieFactory(ctx, this);
         this.getFriendBoardList = getFriendBoardListFactory(ctx, this);
+        this.getGroupBlockedMember = getGroupBlockedMemberFactory(ctx, this);
         this.getGroupInfo = getGroupInfoFactory(ctx, this);
+        this.getGroupLinkDetail = getGroupLinkDetailFactory(ctx, this);
         this.getGroupLinkInfo = getGroupLinkInfoFactory(ctx, this);
         this.getGroupMembersInfo = getGroupMembersInfoFactory(ctx, this);
         this.getHiddenConversations = getHiddenConversationsFactory(ctx, this);
@@ -412,6 +434,7 @@ export class API {
         this.getListReminder = getListReminderFactory(ctx, this);
         this.getMute = getMuteFactory(ctx, this);
         this.getOwnId = getOwnIdFactory(ctx, this);
+        this.getPendingGroupMembers = getPendingGroupMembersFactory(ctx, this);
         this.getPinConversations = getPinConversationsFactory(ctx, this);
         this.getPollDetail = getPollDetailFactory(ctx, this);
         this.getQR = getQRFactory(ctx, this);
@@ -419,13 +442,14 @@ export class API {
         this.getReceivedFriendRequests = getReceivedFriendRequestsFactory(ctx, this);
         this.getReminder = getReminderFactory(ctx, this);
         this.getReminderResponses = getReminderResponsesFactory(ctx, this);
+        this.getRequestStatus = getRequestStatusFactory(ctx, this);
         this.getSentFriendRequest = getSentFriendRequestFactory(ctx, this);
         this.getStickers = getStickersFactory(ctx, this);
         this.getStickersDetail = getStickersDetailFactory(ctx, this);
         this.getUnreadMark = getUnreadMarkFactory(ctx, this);
         this.getUserInfo = getUserInfoFactory(ctx, this);
         this.inviteUserToGroups = inviteUserToGroupsFactory(ctx, this);
-        this.joinGroup = joinGroupFactory(ctx, this);
+        this.joinGroupLink = joinGroupLinkFactory(ctx, this);
         this.keepAlive = keepAliveFactory(ctx, this);
         this.lastOnline = lastOnlineFactory(ctx, this);
         this.leaveGroup = leaveGroupFactory(ctx, this);
@@ -433,6 +457,7 @@ export class API {
         this.parseLink = parseLinkFactory(ctx, this);
         this.removeFriend = removeFriendFactory(ctx, this);
         this.removeFriendAlias = removeFriendAliasFactory(ctx, this);
+        this.removeGroupBlockedMember = removeGroupBlockedMemberFactory(ctx, this);
         this.removeGroupDeputy = removeGroupDeputyFactory(ctx, this);
         this.removeQuickMessage = removeQuickMessageFactory(ctx, this);
         this.removeReminder = removeReminderFactory(ctx, this);
@@ -440,6 +465,8 @@ export class API {
         this.removeUserFromGroup = removeUserFromGroupFactory(ctx, this);
         this.resetHiddenConversPin = resetHiddenConversPinFactory(ctx, this);
         this.reuseAvatar = reuseAvatarFactory(ctx, this);
+        this.reviewPendingMemberRequest = reviewPendingMemberRequestFactory(ctx, this);
+        this.sendBankCard = sendBankCardFactory(ctx, this);
         this.sendCard = sendCardFactory(ctx, this);
         this.sendDeliveredEvent = sendDeliveredEventFactory(ctx, this);
         this.sendFriendRequest = sendFriendRequestFactory(ctx, this);
@@ -466,6 +493,7 @@ export class API {
         this.updateQuickMessage = updateQuickMessageFactory(ctx, this);
         this.updateSettings = updateSettingsFactory(ctx, this);
         this.uploadAttachment = uploadAttachmentFactory(ctx, this);
+        this.uploadProductPhoto = uploadProductPhotoFactory(ctx, this);
 
         this.custom = customFactory(ctx, this);
     }

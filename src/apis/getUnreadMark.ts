@@ -45,6 +45,6 @@ export const getUnreadMarkFactory = apiFactory<GetUnreadMarkResponse>()((api, _,
             }
 
             return data as GetUnreadMarkResponse;
-        })
+        });
     };
 });

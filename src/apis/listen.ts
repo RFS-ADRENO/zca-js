@@ -1,7 +1,7 @@
 import EventEmitter from "events";
 import WebSocket from "ws";
-import { type GroupEvent, initializeGroupEvent, type TGroupEvent } from "../models/GroupEvent.js";
 import { type FriendEvent, initializeFriendEvent, type TFriendEvent } from "../models/FriendEvent.js";
+import { type GroupEvent, initializeGroupEvent, type TGroupEvent } from "../models/GroupEvent.js";
 import {
     GroupMessage,
     UserMessage,
@@ -465,9 +465,9 @@ export class Listener extends EventEmitter<ListenerEvents> {
                 }
 
                 if (version == 1 && cmd == 3000 && subCmd == 0) {
-                    logger(this.ctx).error()
+                    logger(this.ctx).error();
                     logger(this.ctx).error("Another connection is opened, closing this one");
-                    logger(this.ctx).error()
+                    logger(this.ctx).error();
                     if (ws.readyState !== WebSocket.CLOSED) ws.close(CloseReason.DuplicateConnection);
                 }
             } catch (error) {

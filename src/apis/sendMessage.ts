@@ -1,7 +1,7 @@
 import FormData from "form-data";
 import fs from "node:fs/promises";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { ThreadType, type TMessage } from "../models/index.js";
+import { ThreadType, type TMessage, type AttachmentSource } from "../models/index.js";
 import {
     apiFactory,
     getClientMessageType,
@@ -12,7 +12,6 @@ import {
     removeUndefinedKeys,
     resolveResponse,
 } from "../utils.js";
-import type { AttachmentSource } from "../models/Attachment.js";
 
 export type SendMessageResult = {
     msgId: number;

@@ -43,10 +43,10 @@ export const forwardMessageFactory = apiFactory<ForwardMessageResponse>()((api, 
 
     /**
      * Forward message to multiple threads
-     * 
+     *
      * @param params Forward message parameters
      * @param type Thread type (User/Group)
-     * 
+     *
      * @throws ZaloApiError
      */
     return async function forwardMessage(params: ForwardMessageParams, type: ThreadType = ThreadType.User) {

@@ -18,7 +18,7 @@ export const getReminderResponsesFactory = apiFactory<GetReminderResponsesRespon
      */
     return async function getReminderResponses(reminderId: string) {
         const params = {
-            eventId: reminderId
+            eventId: reminderId,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

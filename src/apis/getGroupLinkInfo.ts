@@ -1,6 +1,11 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import type { GroupSetting } from "../models/GroupEvent.js";
+import type { GroupSetting } from "../models/index.js";
 import { apiFactory } from "../utils.js";
+
+export type GetGroupLinkInfoPayload = {
+    link: string;
+    memberPage?: number;
+};
 
 export type GetGroupLinkInfoResponse = {
     groupId: string;
@@ -34,16 +39,16 @@ export const getGroupLinkInfoFactory = apiFactory<GetGroupLinkInfoResponse>()((a
     /**
      * Get group link info
      *
-     * @param link - The link group
+     * @param payload - The payload of the request
      *
      * @throws ZaloApiError
      */
-    return async function getGroupLinkInfo(link: string) {
+    return async function getGroupLinkInfo(payload: GetGroupLinkInfoPayload) {
         const params = {
-            link: link,
+            link: payload.link,
             avatar_size: 120,
             member_avatar_size: 120,
-            mpage: 1,
+            mpage: payload.memberPage ?? 1,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

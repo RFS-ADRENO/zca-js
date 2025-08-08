@@ -52,7 +52,7 @@ function prompt() {
                 decodeHTTP();
             } else if (answer == "2") {
                 console.clear();
-                console.log("\x1b[38;5;165m[ WEBSOCKET ] Bắt đầu khởi động\x1b[0m");
+                console.log("\x1b[38;5;165m[ WEBSOCKET ] Bắt đầu khởi động!\x1b[0m");
                 decodeWebsocket();
             } else if (answer == "3") exit();
             else {
@@ -95,7 +95,7 @@ function decodeHTTP() {
 async function decodeWebsocket() {
     if (!cipher_key) {
         console.log(
-            "Mở devtools trên trình duyệt tại https://chat.zalo.me/, vào tab Network -> WS\nMở tin nhắn đầu tiên, đổi sang định dạng UTF-8",
+            "Mở devtools trên trình duyệt tại https://chat.zalo.me/, vào tab Network -> (WS/Socket)\nMở tin nhắn đầu tiên, đổi sang định dạng UTF-8",
         );
         cipher_key = await promptForCipherKey();
     }

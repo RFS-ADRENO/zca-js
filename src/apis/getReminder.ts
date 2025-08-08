@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { ReminderGroup } from "../models/Reminder.js";
+import { ReminderGroup } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type GetReminderResponse = ReminderGroup & {
