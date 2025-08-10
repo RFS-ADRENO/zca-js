@@ -2,6 +2,18 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
+export type ForwardMessagePayload = {
+    message: string;
+    threadIds: string[];
+    ttl?: number;
+    reference?: {
+        id: string;
+        ts: number;
+        logSrcType: number;
+        fwLvl: number;
+    };
+};
+
 export type Success = {
     clientId: string;
     msgId: string;
@@ -18,23 +30,6 @@ export type ForwardMessageResponse = {
     failed: Failed[];
 };
 
-export type ForwardMessageParams = {
-    message: string;
-    threadIds: string[];
-    ttl?: number;
-    reference?: {
-        id: string;
-        ts: number;
-        logSrcType: number;
-        fwLvl: number;
-        // rootMsgRef?: {
-        //     id: string;
-        //     ts: number;
-        //     logSrcType: number;
-        // };
-    };
-};
-
 export const forwardMessageFactory = apiFactory<ForwardMessageResponse>()((api, ctx, utils) => {
     const serviceURL = {
         [ThreadType.User]: utils.makeURL(`${api.zpwServiceMap.file[0]}/api/message/mforward`),
@@ -44,79 +39,78 @@ export const forwardMessageFactory = apiFactory<ForwardMessageResponse>()((api, 
     /**
      * Forward message to multiple threads
      *
-     * @param params Forward message parameters
+     * @param payload
+     * @param threadId Thread ID(s)
      * @param type Thread type (User/Group)
      *
      * @throws ZaloApiError
      */
-    return async function forwardMessage(params: ForwardMessageParams, type: ThreadType = ThreadType.User) {
-        if (!params.message) throw new ZaloApiError("Missing message content");
-        if (!params.threadIds || params.threadIds.length === 0) throw new ZaloApiError("Missing thread IDs");
+    return async function forwardMessage(payload: ForwardMessagePayload, type: ThreadType = ThreadType.User) {
+        if (!payload.message) throw new ZaloApiError("Missing message content");
+        if (!payload.threadIds || payload.threadIds.length === 0) throw new ZaloApiError("Missing thread IDs");
 
         const timestamp = Date.now();
         const clientId = timestamp.toString();
 
         const msgInfo = {
-            message: params.message,
-            reference: params.reference
+            message: payload.message,
+            reference: payload.reference
                 ? JSON.stringify({
                       type: 3,
-                      data: JSON.stringify(params.reference),
+                      data: JSON.stringify(payload.reference),
                   })
                 : undefined,
         };
 
-        const decorLog = params.reference
+        const decorLog = payload.reference
             ? {
                   fw: {
                       pmsg: {
                           st: 1,
-                          ts: params.reference.ts,
-                          id: params.reference.id,
+                          ts: payload.reference.ts,
+                          id: payload.reference.id,
                       },
                       rmsg: {
                           st: 1,
-                          ts: params.reference.ts,
-                          id: params.reference.id,
+                          ts: payload.reference.ts,
+                          id: payload.reference.id,
                       },
-                      fwLvl: params.reference.fwLvl,
+                      fwLvl: payload.reference.fwLvl,
                   },
               }
             : null;
 
-        let requestParams;
+        let params;
         if (type === ThreadType.User) {
-            // Structure for User type
-            requestParams = {
-                toIds: params.threadIds.map((threadId) => ({
+            params = {
+                toIds: payload.threadIds.map((threadId) => ({
                     clientId,
                     toUid: threadId,
-                    ttl: params.ttl ?? 0,
+                    ttl: payload.ttl ?? 0,
                 })),
                 imei: ctx.imei,
-                ttl: params.ttl ?? 0,
+                ttl: payload.ttl ?? 0,
                 msgType: "1",
-                totalIds: params.threadIds.length,
+                totalIds: payload.threadIds.length,
                 msgInfo: JSON.stringify(msgInfo),
                 decorLog: JSON.stringify(decorLog),
             };
         } else {
-            // Structure for Group type
-            requestParams = {
-                grids: params.threadIds.map((threadId) => ({
+            params = {
+                grids: payload.threadIds.map((threadId) => ({
                     clientId,
                     grid: threadId,
-                    ttl: params.ttl ?? 0,
+                    ttl: payload.ttl ?? 0,
                 })),
-                ttl: params.ttl ?? 0,
+                ttl: payload.ttl ?? 0,
                 msgType: "1",
-                totalIds: params.threadIds.length,
+                totalIds: payload.threadIds.length,
                 msgInfo: JSON.stringify(msgInfo),
                 decorLog: JSON.stringify(decorLog),
             };
         }
 
-        const encryptedParams = utils.encodeAES(JSON.stringify(requestParams));
+        const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
         const response = await utils.request(serviceURL[type], {
