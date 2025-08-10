@@ -39,7 +39,7 @@ export const forwardMessageFactory = apiFactory<ForwardMessageResponse>()((api, 
     /**
      * Forward message to multiple threads
      *
-     * @param payload
+     * @param payload Forward message payload
      * @param threadId Thread ID(s)
      * @param type Thread type (User/Group)
      *
