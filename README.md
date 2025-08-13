@@ -6,6 +6,8 @@
 > [!WARNING]
 > Using this API could get your account locked or banned. We are not responsible for any issues that may happen. Use it at your own risk.
 
+---
+
 ## Table of Contents
 
 -   [Installation](#installation)
@@ -19,6 +21,7 @@
 -   [Projects](#projects)
 -   [Contributing](#contributing)
 -   [License](#license)
+-   [Support Our Mission](#support-our-mission)
 
 ## Installation
 
@@ -26,9 +29,13 @@
 bun install zca-js # or npm install zca-js
 ```
 
+---
+
 ## Documentation
 
 See [API Documentation](https://tdung.gitbook.io/zca-js) for more details.
+
+---
 
 ## Basic Usages
 
@@ -130,15 +137,27 @@ api.getStickers("hello").then(async (stickerIds) => {
 });
 ```
 
+---
+
 ## Example
 
 See [examples](examples) folder for more details.
 
+---
+
 ## Projects
 
--   [ZaloDataExtractor](https://github.com/JustKemForFun/ZaloDataExtractor) - ZaloDataExtractor là công cụ trích xuất thông tin cần thiết như IMEI, Cookie và User-Agent từ Zalo Web.
--   [MultiZlogin](https://github.com/ChickenAI/multizlogin) - Hệ thống quản lý đa tài khoản Zalo, hỗ trợ đăng nhập và quản lý nhiều tài khoản Zalo cùng lúc, tích hợp proxy và webhook.
--   [n8n-nodes-zalo-tools](https://github.com/ChickenAI/zalo-node) - N8N node cho Zalo cá nhân.
+<div align="center">
+
+| Repository | Description |
+|    :---    |    :---     |
+| [**ZaloDataExtractor**](https://github.com/JustKemForFun/ZaloDataExtractor) | **ZaloDataExtractor** - Công cụ trích xuất thông tin cần thiết như IMEI, Cookie và User-Agent từ Zalo Web. |
+| [**MultiZlogin**](https://github.com/ChickenAI/multizlogin) | Hệ thống quản lý đa tài khoản Zalo, hỗ trợ đăng nhập và quản lý nhiều tài khoản Zalo cùng lúc, tích hợp proxy và webhook. |
+| [**n8n-nodes-zalo-tools**](https://github.com/ChickenAI/zalo-node) | N8N node cho Zalo cá nhân. |
+
+</div>
+
+---
 
 ## Contributing
 
@@ -151,8 +170,26 @@ We welcome contributions from the community! Please see our [Contributing Guidel
 - 🧪 Add or improve tests
 - 🔒 Report security vulnerabilities
 
-For more information, please read our [Code of Conduct](CODE_OF_CONDUCT.md) and [Security Policy](SECURITY.md).
+For more information, please read our [Code of Conduct](CODE_OF_CONDUCT.md) and [Security Policy](SECURITY.md) before participating.
+
+---
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## **Support Our Mission**
+
+⭐ **Star our repositories** if you find them useful!  
+🔄 **Share** with your network to help us grow  
+💡 **Contribute** your ideas and code  
+
+---
+
+<div align="center">
+
+<em>Made with ❤️ by the ZCA-JS Team<br>From ZCA-JS Team, with love for the community ❤️</em>
+
+</div>
