@@ -182,9 +182,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## **Support Our Mission**
 
-⭐ **Star our repositories** if you find them useful!  
-🔄 **Share** with your network to help us grow  
-💡 **Contribute** your ideas and code  
+- ⭐ **Star our repositories** if you find them useful!  
+- 🔄 **Share** with your network to help us grow  
+- 💡 **Contribute** your ideas and code  
 
 ---
 
