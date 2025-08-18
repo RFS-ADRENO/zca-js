@@ -11,3 +11,4 @@ export * from "./Reminder.js";
 export * from "./SeenMessage.js";
 export * from "./Typing.js";
 export * from "./Undo.js";
+export * from "./ZBusiness.js";

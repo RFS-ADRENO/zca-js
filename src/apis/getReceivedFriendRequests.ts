@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { Gender } from "../models/index.js";
+import type { Gender, ZBusinessPackage } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type CollapseMsgListConfig = {
@@ -25,9 +25,7 @@ export type ReceivedFriendRequestsDataInfo = {
         source: number;
         message: string;
     };
-    bizPkg: {
-        pkgId: number;
-    };
+    bizPkg: ZBusinessPackage;
     isSeenFriendReq: boolean;
 };
 

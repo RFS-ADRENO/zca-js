@@ -1,4 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { ZBusinessPackage } from "../models/ZBusiness.js";
 import { apiFactory } from "../utils.js";
 
 export type GetSentFriendRequestResponse = {
@@ -8,9 +9,7 @@ export type GetSentFriendRequestResponse = {
         displayName: string;
         avatar: string;
         globalId: string;
-        bizPkg: {
-            pkgId: number;
-        };
+        bizPkg: ZBusinessPackage;
         fReqInfo: {
             message: string;
             src: number;

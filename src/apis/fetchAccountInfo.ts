@@ -1,4 +1,4 @@
-import { Gender } from "../models/index.js";
+import type { Gender, ZBusinessPackage } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type FetchAccountInfoResponse = {
@@ -29,10 +29,7 @@ export type FetchAccountInfoResponse = {
     oaInfo: any;
     user_mode: number;
     globalId: string;
-    bizPkg: {
-        label: any;
-        pkgId: number;
-    };
+    bizPkg: ZBusinessPackage;
     createdTs: number;
     oa_status: any;
 };
