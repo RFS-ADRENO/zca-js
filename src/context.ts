@@ -190,7 +190,7 @@ export type AppContextExtended = {
 
 export type ContextBase = Partial<AppContextBase> & AppContextExtended;
 
-export const createContext = (apiType = 30, apiVersion = 664) =>
+export const createContext = (apiType = 30, apiVersion = 665) =>
     ({
         API_TYPE: apiType,
         API_VERSION: apiVersion,

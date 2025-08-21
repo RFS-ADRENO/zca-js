@@ -39,6 +39,7 @@ export type { GetArchivedChatListResponse } from "./apis/getArchivedChatList.js"
 export type { GetAutoDeleteChatResponse } from "./apis/getAutoDeleteChat.js";
 export type { GetAvatarListResponse } from "./apis/getAvatarList.js";
 export type { GetBizAccountResponse } from "./apis/getBizAccount.js";
+export type { GetCatalogListPayload, GetCatalogListResponse } from "./apis/getCatalogList.js";
 export type { GetFriendBoardListResponse } from "./apis/getFriendBoardList.js";
 export type { GetGroupBlockedMemberPayload, GetGroupBlockedMemberResponse } from "./apis/getGroupBlockedMember.js";
 export type { GroupInfo, GroupInfoExtra, GroupInfoPendingApprove, GroupInfoResponse } from "./apis/getGroupInfo.js";
@@ -53,6 +54,7 @@ export type { GetMuteResponse, MuteEntriesInfo } from "./apis/getMute.js";
 export type { GetPendingGroupMembersResponse } from "./apis/getPendingGroupMembers.js";
 export type { GetPinConversationsResponse } from "./apis/getPinConversations.js";
 export type { PollDetailResponse } from "./apis/getPollDetail.js";
+export type { GetProductCatalogListPayload, GetProductCatalogListResponse } from "./apis/getProductCatalogList.js";
 export type { GetQRResponse } from "./apis/getQR.js";
 export type { GetQuickMessageResponse, QuickMessageMediaItem } from "./apis/getQuickMessage.js";
 export type { CollapseMsgListConfig, GetReceivedFriendRequestsResponse, ReceivedFriendRequestsDataInfo } from "./apis/getReceivedFriendRequests.js";

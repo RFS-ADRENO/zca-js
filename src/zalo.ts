@@ -47,6 +47,7 @@ import { getArchivedChatListFactory } from "./apis/getArchivedChatList.js";
 import { getAutoDeleteChatFactory } from "./apis/getAutoDeleteChat.js";
 import { getAvatarListFactory } from "./apis/getAvatarList.js";
 import { getBizAccountFactory } from "./apis/getBizAccount.js";
+import { getCatalogListFactory } from "./apis/getCatalogList.js";
 import { getContextFactory } from "./apis/getContext.js";
 import { getCookieFactory } from "./apis/getCookie.js";
 import { getFriendBoardListFactory } from "./apis/getFriendBoardList.js";
@@ -64,6 +65,7 @@ import { getOwnIdFactory } from "./apis/getOwnId.js";
 import { getPendingGroupMembersFactory } from "./apis/getPendingGroupMembers.js";
 import { getPinConversationsFactory } from "./apis/getPinConversations.js";
 import { getPollDetailFactory } from "./apis/getPollDetail.js";
+import { getProductCatalogListFactory } from "./apis/getProductCatalogList.js";
 import { getQRFactory } from "./apis/getQR.js";
 import { getQuickMessageFactory } from "./apis/getQuickMessage.js";
 import { getReceivedFriendRequestsFactory } from "./apis/getReceivedFriendRequests.js";
@@ -303,6 +305,7 @@ export class API {
     public getAutoDeleteChat: ReturnType<typeof getAutoDeleteChatFactory>;
     public getAvatarList: ReturnType<typeof getAvatarListFactory>;
     public getBizAccount: ReturnType<typeof getBizAccountFactory>;
+    public getCatalogList: ReturnType<typeof getCatalogListFactory>;
     public getContext: ReturnType<typeof getContextFactory>;
     public getCookie: ReturnType<typeof getCookieFactory>;
     public getFriendBoardList: ReturnType<typeof getFriendBoardListFactory>;
@@ -320,6 +323,7 @@ export class API {
     public getPendingGroupMembers: ReturnType<typeof getPendingGroupMembersFactory>;
     public getPinConversations: ReturnType<typeof getPinConversationsFactory>;
     public getPollDetail: ReturnType<typeof getPollDetailFactory>;
+    public getProductCatalogList: ReturnType<typeof getProductCatalogListFactory>;
     public getQR: ReturnType<typeof getQRFactory>;
     public getQuickMessage: ReturnType<typeof getQuickMessageFactory>;
     public getReceivedFriendRequests: ReturnType<typeof getReceivedFriendRequestsFactory>;
@@ -420,6 +424,7 @@ export class API {
         this.getAutoDeleteChat = getAutoDeleteChatFactory(ctx, this);
         this.getAvatarList = getAvatarListFactory(ctx, this);
         this.getBizAccount = getBizAccountFactory(ctx, this);
+        this.getCatalogList = getCatalogListFactory(ctx, this);
         this.getContext = getContextFactory(ctx, this);
         this.getCookie = getCookieFactory(ctx, this);
         this.getFriendBoardList = getFriendBoardListFactory(ctx, this);
@@ -437,6 +442,7 @@ export class API {
         this.getPendingGroupMembers = getPendingGroupMembersFactory(ctx, this);
         this.getPinConversations = getPinConversationsFactory(ctx, this);
         this.getPollDetail = getPollDetailFactory(ctx, this);
+        this.getProductCatalogList = getProductCatalogListFactory(ctx, this);
         this.getQR = getQRFactory(ctx, this);
         this.getQuickMessage = getQuickMessageFactory(ctx, this);
         this.getReceivedFriendRequests = getReceivedFriendRequestsFactory(ctx, this);
