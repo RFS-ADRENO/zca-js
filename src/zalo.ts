@@ -49,6 +49,7 @@ import { getAllFriendsFactory } from "./apis/getAllFriends.js";
 import { getAllGroupsFactory } from "./apis/getAllGroups.js";
 import { getArchivedChatListFactory } from "./apis/getArchivedChatList.js";
 import { getAutoDeleteChatFactory } from "./apis/getAutoDeleteChat.js";
+import { getAutoReplyListFactory } from "./apis/getAutoReplyList.js";
 import { getAvatarListFactory } from "./apis/getAvatarList.js";
 import { getBizAccountFactory } from "./apis/getBizAccount.js";
 import { getCatalogListFactory } from "./apis/getCatalogList.js";
@@ -313,6 +314,7 @@ export class API {
     public getAllGroups: ReturnType<typeof getAllGroupsFactory>;
     public getArchivedChatList: ReturnType<typeof getArchivedChatListFactory>;
     public getAutoDeleteChat: ReturnType<typeof getAutoDeleteChatFactory>;
+    public getAutoReplyList: ReturnType<typeof getAutoReplyListFactory>;
     public getAvatarList: ReturnType<typeof getAvatarListFactory>;
     public getBizAccount: ReturnType<typeof getBizAccountFactory>;
     public getCatalogList: ReturnType<typeof getCatalogListFactory>;
@@ -438,6 +440,7 @@ export class API {
         this.getAllGroups = getAllGroupsFactory(ctx, this);
         this.getArchivedChatList = getArchivedChatListFactory(ctx, this);
         this.getAutoDeleteChat = getAutoDeleteChatFactory(ctx, this);
+        this.getAutoReplyList = getAutoReplyListFactory(ctx, this);
         this.getAvatarList = getAvatarListFactory(ctx, this);
         this.getBizAccount = getBizAccountFactory(ctx, this);
         this.getCatalogList = getCatalogListFactory(ctx, this);

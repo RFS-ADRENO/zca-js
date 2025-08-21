@@ -41,6 +41,7 @@ export type { GetAllFriendsResponse } from "./apis/getAllFriends.js";
 export type { GetAllGroupsResponse } from "./apis/getAllGroups.js";
 export type { GetArchivedChatListResponse } from "./apis/getArchivedChatList.js";
 export type { GetAutoDeleteChatResponse } from "./apis/getAutoDeleteChat.js";
+export type { GetAutoReplyListResponse } from "./apis/getAutoReplyList.js";
 export type { GetAvatarListResponse } from "./apis/getAvatarList.js";
 export type { GetBizAccountResponse } from "./apis/getBizAccount.js";
 export type { GetCatalogListPayload, GetCatalogListResponse } from "./apis/getCatalogList.js";
