@@ -35,6 +35,7 @@ import { deleteAvatarFactory } from "./apis/deleteAvatar.js";
 import { deleteCatalogFactory } from "./apis/deleteCatalog.js";
 import { deleteChatFactory } from "./apis/deleteChat.js";
 import { deleteMessageFactory } from "./apis/deleteMessage.js";
+import { deleteProductCatalogFactory } from "./apis/deleteProductCatalog.js";
 import { disableGroupLinkFactory } from "./apis/disableGroupLink.js";
 import { disperseGroupFactory } from "./apis/disperseGroup.js";
 import { editNoteGroupFactory } from "./apis/editNoteGroup.js";
@@ -298,6 +299,7 @@ export class API {
     public deleteCatalog: ReturnType<typeof deleteCatalogFactory>;
     public deleteChat: ReturnType<typeof deleteChatFactory>;
     public deleteMessage: ReturnType<typeof deleteMessageFactory>;
+    public deleteProductCatalog: ReturnType<typeof deleteProductCatalogFactory>;
     public disableGroupLink: ReturnType<typeof disableGroupLinkFactory>;
     public disperseGroup: ReturnType<typeof disperseGroupFactory>;
     public editNoteGroup: ReturnType<typeof editNoteGroupFactory>;
@@ -422,6 +424,7 @@ export class API {
         this.deleteCatalog = deleteCatalogFactory(ctx, this);
         this.deleteChat = deleteChatFactory(ctx, this);
         this.deleteMessage = deleteMessageFactory(ctx, this);
+        this.deleteProductCatalog = deleteProductCatalogFactory(ctx, this);
         this.disableGroupLink = disableGroupLinkFactory(ctx, this);
         this.disperseGroup = disperseGroupFactory(ctx, this);
         this.editNoteGroup = editNoteGroupFactory(ctx, this);

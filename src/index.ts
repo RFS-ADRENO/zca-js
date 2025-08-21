@@ -27,6 +27,7 @@ export type { DeleteAvatarResponse } from "./apis/deleteAvatar.js";
 export type { DeleteCatalogResponse } from "./apis/deleteCatalog.js";
 export type { DeleteChatLastMessage, DeleteChatResponse } from "./apis/deleteChat.js";
 export type { DeleteMessageDestination, DeleteMessageResponse } from "./apis/deleteMessage.js";
+export type { DeleteProductCatalogPayload, DeleteProductCatalogResponse } from "./apis/deleteProductCatalog.js";
 export type { DisableGroupLinkResponse } from "./apis/disableGroupLink.js";
 export type { DisperseGroupResponse } from "./apis/disperseGroup.js";
 export type { EditNoteGroupOptions, EditNoteGroupResponse } from "./apis/editNoteGroup.js";
