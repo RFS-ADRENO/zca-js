@@ -22,7 +22,7 @@ export const uploadProductPhotoFactory = apiFactory<UploadProductPhotoResponse>(
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.file[0]}/api/product/upload/photo`);
 
     /**
-     * Upload product photo for api quick message or custom local storage
+     * Upload product photo for api quick message, product catalog or custom local storage
      *
      * @param payload file path or attachment source
      *
