@@ -2,7 +2,7 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
 export type CreateProductCatalogPayload = {
-    catalogId: string;
+    catalogId: string; // use api getCatalogList to get catalogId
     productName: string;
     price: string;
     description: string;
@@ -45,7 +45,7 @@ export const createProductCatalogFactory = apiFactory<CreateProductCatalogRespon
             description: payload.description,
             product_photos: [], // @TODO: implement uploadProduct
             // product_photos: ["https://f1-zpprd.zdn.vn/4450177398404879829/003ed3d8d72f5f71063e.jpg"],
-            catalog_id: payload.catalogId, // use api getCatalogList to get Id
+            catalog_id: payload.catalogId,
             currency_unit: "₫", // $
         };
 

@@ -2,7 +2,7 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
 export type GetProductCatalogListPayload = {
-    catalogId: string;
+    catalogId: string; // use api getCatalogList to get catalogId
     limit?: number;
     versionCatalog?: number;
     lastProductId?: string;
@@ -40,7 +40,7 @@ export const getProductCatalogListFactory = apiFactory<GetProductCatalogListResp
     return async function getProductCatalogList(payload: GetProductCatalogListPayload) {
 
         const params = {
-            catalog_id: payload.catalogId, // use api getCatalogList to get Id
+            catalog_id: payload.catalogId,
             limit: payload.limit ?? 100,
             version_catalog: payload.versionCatalog ?? 0,
             last_product_id: payload.lastProductId ?? -1,

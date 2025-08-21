@@ -2,7 +2,7 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
 export type UpdateCatalogPayload = {
-    catalogId: string;
+    catalogId: string; // use api getCatalogList to get catalogId
     catalogName: string;
 };
 
@@ -35,7 +35,7 @@ export const updateCatalogFactory = apiFactory<UpdateCatalogResponse>()((api, _,
      */
     return async function updateCatalog(payload: UpdateCatalogPayload) {
         const params = {
-            catalog_id: payload.catalogId, // use api getCatalogList to get Id
+            catalog_id: payload.catalogId,
             catalog_name: payload.catalogName,
             catalog_photo: "", // "" is defaut don't upload photo
         };
