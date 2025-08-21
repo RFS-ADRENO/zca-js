@@ -168,7 +168,7 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
 
             if (isFilePath && !fs.existsSync(source)) throw new ZaloApiError("File not found");
 
-            const extFile = getFileExtension(isFilePath ? source : source.filename);
+            const extFile = getFileExtension(isFilePath ? source : source.filename).toLowerCase();
             const fileName = isFilePath ? getFileName(source) : source.filename;
 
             if (isExtensionValid(extFile) == false)
