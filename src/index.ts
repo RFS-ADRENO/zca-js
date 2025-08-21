@@ -20,6 +20,7 @@ export type { ChangeGroupOwnerResponse } from "./apis/changeGroupOwner.js";
 export type { CreateGroupOptions, CreateGroupResponse } from "./apis/createGroup.js";
 export type { CreateNoteGroupOptions, CreateNoteGroupResponse } from "./apis/createNoteGroup.js";
 export type { CreatePollOptions, CreatePollResponse } from "./apis/createPoll.js";
+export type { CreateProductCatalogPayload, CreateProductCatalogResponse } from "./apis/createProductCatalog.js";
 export type { CreateReminderOptions, CreateReminderResponse } from "./apis/createReminder.js";
 export type { DeleteAvatarResponse } from "./apis/deleteAvatar.js";
 export type { DeleteChatLastMessage, DeleteChatResponse } from "./apis/deleteChat.js";
