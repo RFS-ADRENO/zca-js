@@ -123,6 +123,7 @@ import { updateGroupSettingsFactory } from "./apis/updateGroupSettings.js";
 import { updateHiddenConversPinFactory } from "./apis/updateHiddenConversPin.js";
 import { updateLabelsFactory } from "./apis/updateLabels.js";
 import { updateLangFactory } from "./apis/updateLang.js";
+import { updateProductCatalogFactory } from "./apis/updateProductCatalog.js";
 import { updateProfileFactory } from "./apis/updateProfile.js";
 import { updateQuickMessageFactory } from "./apis/updateQuickMessage.js";
 import { updateSettingsFactory } from "./apis/updateSettings.js";
@@ -384,6 +385,7 @@ export class API {
     public updateHiddenConversPin: ReturnType<typeof updateHiddenConversPinFactory>;
     public updateLabels: ReturnType<typeof updateLabelsFactory>;
     public updateLang: ReturnType<typeof updateLangFactory>;
+    public updateProductCatalog: ReturnType<typeof updateProductCatalogFactory>;
     public updateProfile: ReturnType<typeof updateProfileFactory>;
     public updateQuickMessage: ReturnType<typeof updateQuickMessageFactory>;
     public updateSettings: ReturnType<typeof updateSettingsFactory>;
@@ -507,6 +509,7 @@ export class API {
         this.updateHiddenConversPin = updateHiddenConversPinFactory(ctx, this);
         this.updateLabels = updateLabelsFactory(ctx, this);
         this.updateLang = updateLangFactory(ctx, this);
+        this.updateProductCatalog = updateProductCatalogFactory(ctx, this);
         this.updateProfile = updateProfileFactory(ctx, this);
         this.updateQuickMessage = updateQuickMessageFactory(ctx, this);
         this.updateSettings = updateSettingsFactory(ctx, this);

@@ -111,6 +111,7 @@ export type { UpdateGroupSettingsOptions, UpdateGroupSettingsResponse } from "./
 export type { UpdateHiddenConversPinResponse } from "./apis/updateHiddenConversPin.js";
 export type { UpdateLabelsPayload, UpdateLabelsResponse } from "./apis/updateLabels.js";
 export type { UpdateLangResponse } from "./apis/updateLang.js";
+export type { UpdateProductCatalogPayload, UpdateProductCatalogResponse } from "./apis/updateProductCatalog.js";
 export type { ChangeAccountSettingResponse } from "./apis/updateProfile.js";
 export type { UpdateQuickMessagePayload, UpdateQuickMessageResponse } from "./apis/updateQuickMessage.js";
 export type { UpdateSettingsResponse, UpdateSettingsType } from "./apis/updateSettings.js";
