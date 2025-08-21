@@ -25,6 +25,7 @@ import { changeFriendAliasFactory } from "./apis/changeFriendAlias.js";
 import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
 import { changeGroupNameFactory } from "./apis/changeGroupName.js";
 import { changeGroupOwnerFactory } from "./apis/changeGroupOwner.js";
+import { createCatalogFactory } from "./apis/createCatalog.js";
 import { createGroupFactory } from "./apis/createGroup.js";
 import { createNoteGroupFactory } from "./apis/createNoteGroup.js";
 import { createPollFactory } from "./apis/createPoll.js";
@@ -116,6 +117,7 @@ import { unblockUserFactory } from "./apis/unblockUser.js";
 import { undoFactory } from "./apis/undo.js";
 import { undoFriendRequestFactory } from "./apis/undoFriendRequest.js";
 import { updateAutoDeleteChatFactory } from "./apis/updateAutoDeleteChat.js";
+import { updateCatalogFactory } from "./apis/updateCatalog.js";
 import { updateGroupSettingsFactory } from "./apis/updateGroupSettings.js";
 import { updateHiddenConversPinFactory } from "./apis/updateHiddenConversPin.js";
 import { updateLabelsFactory } from "./apis/updateLabels.js";
@@ -284,6 +286,7 @@ export class API {
     public changeGroupAvatar: ReturnType<typeof changeGroupAvatarFactory>;
     public changeGroupName: ReturnType<typeof changeGroupNameFactory>;
     public changeGroupOwner: ReturnType<typeof changeGroupOwnerFactory>;
+    public createCatalog: ReturnType<typeof createCatalogFactory>;
     public createGroup: ReturnType<typeof createGroupFactory>;
     public createNoteGroup: ReturnType<typeof createNoteGroupFactory>;
     public createPoll: ReturnType<typeof createPollFactory>;
@@ -374,6 +377,7 @@ export class API {
     public undo: ReturnType<typeof undoFactory>;
     public undoFriendRequest: ReturnType<typeof undoFriendRequestFactory>;
     public updateAutoDeleteChat: ReturnType<typeof updateAutoDeleteChatFactory>;
+    public updateCatalog: ReturnType<typeof updateCatalogFactory>;
     public updateGroupSettings: ReturnType<typeof updateGroupSettingsFactory>;
     public updateHiddenConversPin: ReturnType<typeof updateHiddenConversPinFactory>;
     public updateLabels: ReturnType<typeof updateLabelsFactory>;
@@ -404,6 +408,7 @@ export class API {
         this.changeGroupAvatar = changeGroupAvatarFactory(ctx, this);
         this.changeGroupName = changeGroupNameFactory(ctx, this);
         this.changeGroupOwner = changeGroupOwnerFactory(ctx, this);
+        this.createCatalog = createCatalogFactory(ctx, this);
         this.createGroup = createGroupFactory(ctx, this);
         this.createNoteGroup = createNoteGroupFactory(ctx, this);
         this.createPoll = createPollFactory(ctx, this);
@@ -494,6 +499,7 @@ export class API {
         this.undo = undoFactory(ctx, this);
         this.undoFriendRequest = undoFriendRequestFactory(ctx, this);
         this.updateAutoDeleteChat = updateAutoDeleteChatFactory(ctx, this);
+        this.updateCatalog = updateCatalogFactory(ctx, this);
         this.updateGroupSettings = updateGroupSettingsFactory(ctx, this);
         this.updateHiddenConversPin = updateHiddenConversPinFactory(ctx, this);
         this.updateLabels = updateLabelsFactory(ctx, this);
