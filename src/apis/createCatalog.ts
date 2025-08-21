@@ -13,8 +13,8 @@ export type CreateCatalogResponse = {
         totalProduct: number;
         created_time: number;
     };
-    version_ls_catalog: 8;
-    version_catalog: 0;
+    version_ls_catalog: number;
+    version_catalog: number;
 };
 
 export const createCatalogFactory = apiFactory<CreateCatalogResponse>()((api, _, utils) => {
