@@ -24,6 +24,7 @@ export const getAutoReplyListFactory = apiFactory<GetAutoReplyListResponse>()((a
     /**
      * Get auto reply list
      *
+     * @note this API used for zBusiness
      * @throws ZaloApiError
      */
     return async function getAutoReplyList() {
