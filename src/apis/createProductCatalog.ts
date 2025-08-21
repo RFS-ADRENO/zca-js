@@ -2,6 +2,7 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
 export type CreateProductCatalogPayload = {
+    catalogId: string;
     productName: string;
     price: string;
     description: string;
@@ -36,10 +37,6 @@ export const createProductCatalogFactory = apiFactory<CreateProductCatalogRespon
      * @throws ZaloApiError
      */
     return async function createProductCatalog(payload: CreateProductCatalogPayload) {
-        const catalogId = (await api.getCatalogList({
-            limit: 1,
-            page: 0,
-        })).items[0].id;
 
         const params = {
             create_time: Date.now(),
@@ -48,7 +45,7 @@ export const createProductCatalogFactory = apiFactory<CreateProductCatalogRespon
             description: payload.description,
             product_photos: [], // @TODO: implement uploadProduct
             // product_photos: ["https://f1-zpprd.zdn.vn/4450177398404879829/003ed3d8d72f5f71063e.jpg"],
-            catalog_id: catalogId,
+            catalog_id: payload.catalogId, // use api getCatalogList to get Id
             currency_unit: "₫", // $
         };
 
