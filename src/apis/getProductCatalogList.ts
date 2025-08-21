@@ -38,7 +38,6 @@ export const getProductCatalogListFactory = apiFactory<GetProductCatalogListResp
      * @throws ZaloApiError
      */
     return async function getProductCatalogList(payload: GetProductCatalogListPayload) {
-
         const params = {
             catalog_id: payload.catalogId,
             limit: payload.limit ?? 100,

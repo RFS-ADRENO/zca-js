@@ -37,7 +37,6 @@ export const createProductCatalogFactory = apiFactory<CreateProductCatalogRespon
      * @throws ZaloApiError
      */
     return async function createProductCatalog(payload: CreateProductCatalogPayload) {
-
         const params = {
             create_time: Date.now(),
             product_name: payload.productName,
