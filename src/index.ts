@@ -23,6 +23,7 @@ export type { CreateNoteGroupOptions, CreateNoteGroupResponse } from "./apis/cre
 export type { CreatePollOptions, CreatePollResponse } from "./apis/createPoll.js";
 export type { CreateProductCatalogPayload, CreateProductCatalogResponse } from "./apis/createProductCatalog.js";
 export type { CreateReminderOptions, CreateReminderResponse } from "./apis/createReminder.js";
+export type { DeleteAutoReplyResponse } from "./apis/deleteAutoReply.js";
 export type { DeleteAvatarResponse } from "./apis/deleteAvatar.js";
 export type { DeleteCatalogResponse } from "./apis/deleteCatalog.js";
 export type { DeleteChatLastMessage, DeleteChatResponse } from "./apis/deleteChat.js";

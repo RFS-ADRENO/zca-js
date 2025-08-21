@@ -31,6 +31,7 @@ import { createNoteGroupFactory } from "./apis/createNoteGroup.js";
 import { createPollFactory } from "./apis/createPoll.js";
 import { createProductCatalogFactory } from "./apis/createProductCatalog.js";
 import { createReminderFactory } from "./apis/createReminder.js";
+import { deleteAutoReplyFactory } from "./apis/deleteAutoReply.js";
 import { deleteAvatarFactory } from "./apis/deleteAvatar.js";
 import { deleteCatalogFactory } from "./apis/deleteCatalog.js";
 import { deleteChatFactory } from "./apis/deleteChat.js";
@@ -296,6 +297,7 @@ export class API {
     public createPoll: ReturnType<typeof createPollFactory>;
     public createProductCatalog: ReturnType<typeof createProductCatalogFactory>;
     public createReminder: ReturnType<typeof createReminderFactory>;
+    public deleteAutoReply: ReturnType<typeof deleteAutoReplyFactory>;
     public deleteAvatarList: ReturnType<typeof deleteAvatarFactory>;
     public deleteCatalog: ReturnType<typeof deleteCatalogFactory>;
     public deleteChat: ReturnType<typeof deleteChatFactory>;
@@ -422,6 +424,7 @@ export class API {
         this.createPoll = createPollFactory(ctx, this);
         this.createProductCatalog = createProductCatalogFactory(ctx, this);
         this.createReminder = createReminderFactory(ctx, this);
+        this.deleteAutoReply = deleteAutoReplyFactory(ctx, this);
         this.deleteAvatarList = deleteAvatarFactory(ctx, this);
         this.deleteCatalog = deleteCatalogFactory(ctx, this);
         this.deleteChat = deleteChatFactory(ctx, this);
