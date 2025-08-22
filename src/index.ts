@@ -17,6 +17,7 @@ export type { ChangeFriendAliasResponse } from "./apis/changeFriendAlias.js";
 export type { ChangeGroupAvatarResponse } from "./apis/changeGroupAvatar.js";
 export type { ChangeGroupNameResponse } from "./apis/changeGroupName.js";
 export type { ChangeGroupOwnerResponse } from "./apis/changeGroupOwner.js";
+export type { CreateAutoReplyPayload, CreateAutoReplyResponse } from "./apis/createAutoReply.js";
 export type { CreateCatalogResponse } from "./apis/createCatalog.js";
 export type { CreateGroupOptions, CreateGroupResponse } from "./apis/createGroup.js";
 export type { CreateNoteGroupOptions, CreateNoteGroupResponse } from "./apis/createNoteGroup.js";
