@@ -1,7 +1,7 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type CreateAutoReplyPayload = {
+export type UpdateAutoReplyPayload = {
     content: string;
     isEnable: boolean;
     startTime: number; // time start on auto reply msg
@@ -10,7 +10,7 @@ export type CreateAutoReplyPayload = {
     uids?: string | string[];
 };
 
-export type CreateAutoReplyResponse = {
+export type UpdateAutoReplyResponse = {
     item: {
         id: number;
         weight: number;
@@ -28,18 +28,18 @@ export type CreateAutoReplyResponse = {
     version: number;
 };
 
-export const createAutoReplyFactory = apiFactory<CreateAutoReplyResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.auto_reply[0]}/api/autoreply/create`);
+export const updateAutoReplyFactory = apiFactory<UpdateAutoReplyResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.auto_reply[0]}/api/autoreply/update`);
 
     /**
-     * Create auto reply
+     * Update auto reply
      *
      * @param payload payload
      *
      * @note this API used for zBusiness
      * @throws ZaloApiError
      */
-    return async function createAutoReply(payload: CreateAutoReplyPayload) {
+    return async function updateAutoReply(payload: UpdateAutoReplyPayload) {
         const uids = Array.isArray(payload.uids) ? payload.uids : [payload.uids];
         const resultUids = (payload.scope === 2 || payload.scope === 3) ? uids : [];
 

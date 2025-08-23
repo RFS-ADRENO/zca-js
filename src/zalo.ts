@@ -122,6 +122,7 @@ import { unblockUserFactory } from "./apis/unblockUser.js";
 import { undoFactory } from "./apis/undo.js";
 import { undoFriendRequestFactory } from "./apis/undoFriendRequest.js";
 import { updateAutoDeleteChatFactory } from "./apis/updateAutoDeleteChat.js";
+import { updateAutoReplyFactory } from "./apis/updateAutoReply.js";
 import { updateCatalogFactory } from "./apis/updateCatalog.js";
 import { updateGroupSettingsFactory } from "./apis/updateGroupSettings.js";
 import { updateHiddenConversPinFactory } from "./apis/updateHiddenConversPin.js";
@@ -388,6 +389,7 @@ export class API {
     public undo: ReturnType<typeof undoFactory>;
     public undoFriendRequest: ReturnType<typeof undoFriendRequestFactory>;
     public updateAutoDeleteChat: ReturnType<typeof updateAutoDeleteChatFactory>;
+    public updateAutoReply: ReturnType<typeof updateAutoReplyFactory>;
     public updateCatalog: ReturnType<typeof updateCatalogFactory>;
     public updateGroupSettings: ReturnType<typeof updateGroupSettingsFactory>;
     public updateHiddenConversPin: ReturnType<typeof updateHiddenConversPinFactory>;
@@ -516,6 +518,7 @@ export class API {
         this.undo = undoFactory(ctx, this);
         this.undoFriendRequest = undoFriendRequestFactory(ctx, this);
         this.updateAutoDeleteChat = updateAutoDeleteChatFactory(ctx, this);
+        this.updateAutoReply = updateAutoReplyFactory(ctx, this);
         this.updateCatalog = updateCatalogFactory(ctx, this);
         this.updateGroupSettings = updateGroupSettingsFactory(ctx, this);
         this.updateHiddenConversPin = updateHiddenConversPinFactory(ctx, this);
