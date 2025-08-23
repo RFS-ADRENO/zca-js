@@ -1,4 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { AttachmentSource } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type CreateProductCatalogPayload = {
@@ -6,6 +7,8 @@ export type CreateProductCatalogPayload = {
     productName: string;
     price: string;
     description: string;
+
+    file?: AttachmentSource;
 };
 
 export type CreateProductCatalogResponse = {
@@ -37,13 +40,23 @@ export const createProductCatalogFactory = apiFactory<CreateProductCatalogRespon
      * @throws ZaloApiError
      */
     return async function createProductCatalog(payload: CreateProductCatalogPayload) {
+        const productPhoto = [];
+
+        if (payload.file) {
+            const uploadMedia = await api.uploadProductPhoto({
+                file: payload.file,
+            });
+
+            const url = uploadMedia.normalUrl || uploadMedia.hdUrl;
+            productPhoto.push(url);
+        }
+        
         const params = {
             create_time: Date.now(),
             product_name: payload.productName,
             price: payload.price,
             description: payload.description,
-            product_photos: [], // @TODO: implement uploadProduct
-            // product_photos: ["https://f1-zpprd.zdn.vn/4450177398404879829/003ed3d8d72f5f71063e.jpg"],
+            product_photos: productPhoto,
             catalog_id: payload.catalogId,
             currency_unit: "₫", // $
         };

@@ -1,15 +1,16 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { AttachmentSource } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type UpdateProductCatalogPayload = {
     productName: string; // change name product
     price: string; // change price product
     description: string; // change description product
-    path: string; // use api getProductCatalogList to get path
     productId: string; // use api getProductCatalogList to get productId
     createTime: number; // use api getProductCatalogList to get createTime
     catalogId: string; // use api getCatalogList to get catalogId
-    ownerId: string; // use api getCatalogList to get ownerId
+
+    file?: AttachmentSource;
 };
 
 export type UpdateProductCatalogResponse = {
@@ -41,17 +42,26 @@ export const updateProductCatalogFactory = apiFactory<UpdateProductCatalogRespon
      * @throws ZaloApiError
      */
     return async function updateProductCatalog(payload: UpdateProductCatalogPayload) {
+        const productPhoto = [];
+
+        if (payload.file) {
+            const uploadMedia = await api.uploadProductPhoto({
+                file: payload.file,
+            });
+
+            const url = uploadMedia.normalUrl || uploadMedia.hdUrl;
+            productPhoto.push(url);
+        }
+
         const params = {
-            price: payload.price,
-            description: payload.description,
-            path: payload.path,
             product_id: payload.productId,
             product_name: payload.productName,
-            currency_unit: "₫", // $
-            product_photos: [], // @TODO: implement uploadPhoto
-            create_time: payload.createTime,
+            price: payload.price,
+            description: payload.description,
+            product_photos: productPhoto,
             catalog_id: payload.catalogId,
-            owner_id: payload.ownerId,
+            currency_unit: "₫",
+            create_time: payload.createTime,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
