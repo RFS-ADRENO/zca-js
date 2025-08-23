@@ -8,7 +8,7 @@ export type CreateProductCatalogPayload = {
     price: string;
     description: string;
 
-    file?: AttachmentSource;
+    file?: AttachmentSource[]; // Array of media files, max 5
 };
 
 export type CreateProductCatalogResponse = {
@@ -36,21 +36,27 @@ export const createProductCatalogFactory = apiFactory<CreateProductCatalogRespon
      *
      * @param payload payload
      *
-     * @note this API is used for zBussiness
+     * @note this API is used for zBussiness - Maximum 5 media files are supported
      * @throws ZaloApiError
      */
     return async function createProductCatalog(payload: CreateProductCatalogPayload) {
         const productPhoto = [];
 
         if (payload.file) {
-            const uploadMedia = await api.uploadProductPhoto({
-                file: payload.file,
-            });
+            if (payload.file.length > 5) {
+                throw new ZaloApiError("Maximum 5 media files are allowed");
+            }
 
-            const url = uploadMedia.normalUrl || uploadMedia.hdUrl;
-            productPhoto.push(url);
+            for (const mediaFile of payload.file) {
+                const uploadMedia = await api.uploadProductPhoto({
+                    file: mediaFile,
+                });
+
+                const url = uploadMedia.normalUrl || uploadMedia.hdUrl;
+                productPhoto.push(url);
+            }
         }
-        
+
         const params = {
             create_time: Date.now(),
             product_name: payload.productName,

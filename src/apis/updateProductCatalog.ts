@@ -10,7 +10,7 @@ export type UpdateProductCatalogPayload = {
     createTime: number; // use api getProductCatalogList to get createTime
     catalogId: string; // use api getCatalogList to get catalogId
 
-    file?: AttachmentSource;
+    file?: AttachmentSource[]; // Array of media files, max 5
 };
 
 export type UpdateProductCatalogResponse = {
@@ -38,19 +38,25 @@ export const updateProductCatalogFactory = apiFactory<UpdateProductCatalogRespon
      *
      * @param payload payload
      *
-     * @note this API is used for zBusiness
+     * @note this API is used for zBusiness - Maximum 5 media files are supported
      * @throws ZaloApiError
      */
     return async function updateProductCatalog(payload: UpdateProductCatalogPayload) {
         const productPhoto = [];
 
         if (payload.file) {
-            const uploadMedia = await api.uploadProductPhoto({
-                file: payload.file,
-            });
+            if (payload.file.length > 5) {
+                throw new ZaloApiError("Maximum 5 media files are allowed");
+            }
 
-            const url = uploadMedia.normalUrl || uploadMedia.hdUrl;
-            productPhoto.push(url);
+            for (const mediaFile of payload.file) {
+                const uploadMedia = await api.uploadProductPhoto({
+                    file: mediaFile,
+                });
+
+                const url = uploadMedia.normalUrl || uploadMedia.hdUrl;
+                productPhoto.push(url);
+            }
         }
 
         const params = {

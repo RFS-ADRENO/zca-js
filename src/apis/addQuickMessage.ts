@@ -27,7 +27,7 @@ export const addQuickMessageFactory = apiFactory<AddQuickMessageResponse>()((api
      */
     return async function addQuickMessage(addPayload: AddQuickMessagePayload) {
         const isType = !addPayload.media ? 0 : 1;
-        
+
         const params: any = {
             keyword: addPayload.keyword,
             message: {
