@@ -1,10 +1,11 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import { BusinessCategory } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type GetBizAccountResponse = {
     biz?: {
         desc: string;
-        cate: number;
+        cate: BusinessCategory;
         addr: string;
         website: string;
         email: string;

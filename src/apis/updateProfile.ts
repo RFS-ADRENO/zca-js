@@ -1,6 +1,18 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { Gender } from "../models/index.js";
+import { BusinessCategory, Gender } from "../models/index.js";
 import { apiFactory } from "../utils.js";
+
+export type UpdateProfilePayload = {
+    name: string;
+    dob: `${string}-${string}-${string}`;
+    gender: Gender;
+
+    description?: string;
+    cate?: BusinessCategory;
+    address?: string;
+    website?: string;
+    email?: string;
+};
 
 export type ChangeAccountSettingResponse = "";
 
@@ -10,20 +22,28 @@ export const updateProfileFactory = apiFactory<ChangeAccountSettingResponse>()((
     /**
      * Change account setting information
      *
-     * @param name Profile name wants to change
-     * @param dob Date of birth wants to change (format: year-month-day)
-     * @param gender Gender wants to change (0 = Male, 1 = Female)
+     * @param payload payload
+     * @param isBusiness add info for business
      *
      * @throws ZaloApiError
      */
-    return async function updateProfile(name: string, dob: `${string}-${string}-${string}`, gender: Gender) {
+    return async function updateProfile(payload: UpdateProfilePayload, isBusiness: boolean = false) {
+        let zBusiness = {
+            desc: payload.description,
+            cate: payload.cate,
+            addr: payload.address,
+            website: payload.website,
+            email: payload.email,
+        };
+        const infoBusiness = isBusiness ? JSON.stringify(zBusiness) : JSON.stringify({});
+
         const params = {
             profile: JSON.stringify({
-                name: name,
-                dob: dob,
-                gender: gender,
+                name: payload.name,
+                dob: payload.dob,
+                gender: payload.gender,
             }),
-            biz: JSON.stringify({}),
+            biz: infoBusiness,
             language: ctx.language,
         };
 

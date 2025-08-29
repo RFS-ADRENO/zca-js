@@ -8,5 +8,18 @@ export type QuickMessage = {
         title: string;
         params: string | null;
     };
-    media: null;
+    media?: {
+        items: {
+            type: number;
+            photoId: number;
+            title: string;
+            width: number;
+            height: number;
+            previewThumb: string;
+            rawUrl: string;
+            thumbUrl: string;
+            normalUrl: string;
+            hdUrl: string;
+        }[];
+    } | null;
 };
