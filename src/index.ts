@@ -63,7 +63,7 @@ export type { GetPinConversationsResponse } from "./apis/getPinConversations.js"
 export type { PollDetailResponse } from "./apis/getPollDetail.js";
 export type { GetProductCatalogListPayload, GetProductCatalogListResponse } from "./apis/getProductCatalogList.js";
 export type { GetQRResponse } from "./apis/getQR.js";
-export type { GetQuickMessageResponse, QuickMessageMediaItem } from "./apis/getQuickMessage.js";
+export type { GetQuickMessageResponse } from "./apis/getQuickMessage.js";
 export type { CollapseMsgListConfig, GetReceivedFriendRequestsResponse, ReceivedFriendRequestsDataInfo } from "./apis/getReceivedFriendRequests.js";
 export type { GetReminderResponse } from "./apis/getReminder.js";
 export type { GetReminderResponsesResponse } from "./apis/getReminderResponses.js";

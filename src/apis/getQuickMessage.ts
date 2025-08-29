@@ -1,36 +1,11 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { QuickMessage } from "../models/index.js";
 import { apiFactory } from "../utils.js";
-
-export type QuickMessageMediaItem = {
-    type: number;
-    photoId: number;
-    title: string;
-    width: number;
-    height: number;
-    previewThumb: string;
-    rawUrl: string;
-    thumbUrl: string;
-    normalUrl: string;
-    hdUrl: string;
-};
 
 export type GetQuickMessageResponse = {
     cursor: number;
     version: number;
-    items: {
-        id: number;
-        keyword: string;
-        type: number;
-        createdTime: number;
-        lastModified: number;
-        message: {
-            title: string;
-            params: string | null;
-        };
-        media: {
-            items: QuickMessageMediaItem[];
-        } | null;
-    }[];
+    items: QuickMessage[];
 };
 
 export const getQuickMessageFactory = apiFactory<GetQuickMessageResponse>()((api, ctx, utils) => {

@@ -22,5 +22,4 @@ export type QuickMessage = {
             hdUrl: string;
         }[];
     } | null;
-    version: number;
 };
