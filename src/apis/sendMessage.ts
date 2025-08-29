@@ -1,7 +1,7 @@
 import FormData from "form-data";
 import fs from "node:fs/promises";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { ThreadType, type TMessage, type AttachmentSource } from "../models/index.js";
+import { ThreadType, type TMessage, type AttachmentSource, GroupMessage, UserMessage } from "../models/index.js";
 import {
     apiFactory,
     getClientMessageType,
@@ -87,17 +87,17 @@ type UpthumbType = {
 
 type AttachmentData =
     | {
-          query?: Record<string, string>;
-          fileType: "image" | "video" | "others";
-          body: URLSearchParams;
-          params: Record<string, any>;
-      }
+        query?: Record<string, string>;
+        fileType: "image" | "video" | "others";
+        body: URLSearchParams;
+        params: Record<string, any>;
+    }
     | {
-          query?: Record<string, string>;
-          fileType: "gif";
-          body: Buffer;
-          headers: Record<string, string>;
-      };
+        query?: Record<string, string>;
+        fileType: "gif";
+        body: Buffer;
+        headers: Record<string, string>;
+    };
 
 export enum TextStyle {
     Bold = "b",
@@ -117,19 +117,19 @@ export enum TextStyle {
 
 export type Style =
     | {
-          start: number;
-          len: number;
-          st: Exclude<TextStyle, TextStyle.Indent>;
-      }
+        start: number;
+        len: number;
+        st: Exclude<TextStyle, TextStyle.Indent>;
+    }
     | {
-          start: number;
-          len: number;
-          st: TextStyle.Indent;
-          /**
-           * Number of spaces used for indentation.
-           */
-          indentSize?: number;
-      };
+        start: number;
+        len: number;
+        st: TextStyle.Indent;
+        /**
+         * Number of spaces used for indentation.
+         */
+        indentSize?: number;
+    };
 
 export enum Urgency {
     Default,
@@ -168,7 +168,7 @@ export type MessageContent = {
     /**
      * Quoted message (optional)
      */
-    quote?: SendMessageQuote;
+    quote?: UserMessage | GroupMessage;
     /**
      * Mentions in the message (optional)
      */
@@ -270,16 +270,16 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
         const mentionsFinal =
             Array.isArray(mentions) && type == ThreadType.Group
                 ? mentions
-                      .filter((m) => m.pos >= 0 && m.uid && m.len > 0)
-                      .map((m) => {
-                          totalMentionLen += m.len;
-                          return {
-                              pos: m.pos,
-                              uid: m.uid,
-                              len: m.len,
-                              type: m.uid == "-1" ? 1 : 0,
-                          };
-                      })
+                    .filter((m) => m.pos >= 0 && m.uid && m.len > 0)
+                    .map((m) => {
+                        totalMentionLen += m.len;
+                        return {
+                            pos: m.pos,
+                            uid: m.uid,
+                            len: m.len,
+                            type: m.uid == "-1" ? 1 : 0,
+                        };
+                    })
                 : [];
 
         if (totalMentionLen > msg.length) {
@@ -320,6 +320,21 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
         }
     }
 
+    function handleQuote(quote: UserMessage | GroupMessage | undefined): SendMessageQuote | null {
+        if (!quote) return null;
+
+        return {
+            content: quote.data.content,
+            msgType: quote.data.msgType,
+            propertyExt: quote.data.propertyExt,
+            uidFrom: quote.data.uidFrom,
+            msgId: quote.data.msgId,
+            cliMsgId: quote.data.cliMsgId,
+            ts: quote.data.ts,
+            ttl: quote.data.ttl,
+        };
+    }
+
     async function handleMessage(
         { msg, styles, urgency, mentions, quote, ttl }: MessageContent,
         threadId: string,
@@ -331,46 +346,48 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
         const { mentionsFinal, msgFinal } = handleMentions(type, msg, mentions);
         msg = msgFinal;
 
-        if (quote) {
-            if (typeof quote.content != "string" && quote.msgType == "webchat") {
+        const _quote = handleQuote(quote);
+
+        if (_quote) {
+            if (typeof _quote.content != "string" && _quote.msgType == "webchat") {
                 throw new ZaloApiError("This kind of `webchat` quote type is not available");
             }
 
-            if (quote.msgType == "group.poll") {
+            if (_quote.msgType == "group.poll") {
                 throw new ZaloApiError("The `group.poll` quote type is not available");
             }
         }
 
         const isMentionsValid = mentionsFinal.length > 0 && isGroupMessage;
-        const params = quote
+        const params = _quote
             ? {
-                  toid: isGroupMessage ? undefined : threadId,
-                  grid: isGroupMessage ? threadId : undefined,
-                  message: msg,
-                  clientId: Date.now(),
-                  mentionInfo: isMentionsValid ? JSON.stringify(mentionsFinal) : undefined,
-                  qmsgOwner: quote.uidFrom,
-                  qmsgId: quote.msgId,
-                  qmsgCliId: quote.cliMsgId,
-                  qmsgType: getClientMessageType(quote.msgType),
-                  qmsgTs: quote.ts,
-                  qmsg: typeof quote.content == "string" ? quote.content : prepareQMSG(quote),
-                  imei: isGroupMessage ? undefined : ctx.imei,
-                  visibility: isGroupMessage ? 0 : undefined,
-                  qmsgAttach: isGroupMessage ? JSON.stringify(prepareQMSGAttach(quote)) : undefined,
-                  qmsgTTL: quote.ttl,
-                  ttl: ttl ?? 0,
-              }
+                message: msg,
+                clientId: Date.now(),
+                mentionInfo: isMentionsValid ? JSON.stringify(mentionsFinal) : undefined,
+                imei: isGroupMessage ? undefined : ctx.imei,
+                ttl: ttl ?? 0,
+                visibility: isGroupMessage ? 0 : undefined,
+                toid: isGroupMessage ? undefined : threadId,
+                grid: isGroupMessage ? threadId : undefined,
+                qmsgOwner: _quote!.uidFrom,
+                qmsgId: _quote!.msgId,
+                qmsgCliId: _quote!.cliMsgId,
+                qmsgType: getClientMessageType(_quote!.msgType),
+                qmsgTs: _quote!.ts,
+                qmsg: typeof _quote!.content == "string" ? _quote!.content : prepareQMSG(_quote!),
+                qmsgAttach: isGroupMessage ? JSON.stringify(prepareQMSGAttach(_quote!)) : undefined,
+                qmsgTTL: _quote!.ttl,
+            }
             : {
-                  message: msg,
-                  clientId: Date.now(),
-                  mentionInfo: isMentionsValid ? JSON.stringify(mentionsFinal) : undefined,
-                  imei: isGroupMessage ? undefined : ctx.imei,
-                  ttl: ttl ?? 0,
-                  visibility: isGroupMessage ? 0 : undefined,
-                  toid: isGroupMessage ? undefined : threadId,
-                  grid: isGroupMessage ? threadId : undefined,
-              };
+                message: msg,
+                clientId: Date.now(),
+                mentionInfo: isMentionsValid ? JSON.stringify(mentionsFinal) : undefined,
+                imei: isGroupMessage ? undefined : ctx.imei,
+                ttl: ttl ?? 0,
+                visibility: isGroupMessage ? 0 : undefined,
+                toid: isGroupMessage ? undefined : threadId,
+                grid: isGroupMessage ? threadId : undefined,
+            };
 
         handleStyles(params, styles);
         handleUrgency(params, urgency);
@@ -380,7 +397,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
         const finalServiceUrl = new URL(serviceURLs.message[type]);
-        if (quote) {
+        if (_quote) {
             finalServiceUrl.pathname = finalServiceUrl.pathname + "/quote";
         } else {
             finalServiceUrl.pathname =
@@ -403,6 +420,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
         if (!attachments) throw new ZaloApiError("Missing attachments");
         if (!Array.isArray(attachments)) attachments = [attachments];
         if (attachments.length == 0) throw new ZaloApiError("Missing attachments");
+
         const firstSource = attachments[0];
         const isFilePath = typeof firstSource == "string";
 
