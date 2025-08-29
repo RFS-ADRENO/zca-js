@@ -9,7 +9,7 @@ export type UpdateQuickMessagePayload = {
 };
 
 export type UpdateQuickMessageResponse = {
-    item: QuickMessage[];
+    item: QuickMessage;
     version: number;
 };
 
