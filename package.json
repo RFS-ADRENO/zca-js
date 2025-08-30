@@ -17,7 +17,10 @@
         "build:cjs": "rollup -c rollup.config.js",
         "build": "bun run build:clean && bun run build:esm && bun run build:cjs",
         "test:feat": "bun run test/feat.ts",
-        "prettier": "prettier --write ."
+        "prettier": "prettier --write .",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
+        "prepare": "husky"
     },
     "repository": {
         "type": "git",
@@ -48,6 +51,7 @@
         "ws": "^8.18.0"
     },
     "devDependencies": {
+        "@eslint/js": "^9.34.0",
         "@rollup/plugin-typescript": "^12.1.0",
         "@types/bun": "^1.1.14",
         "@types/crypto-js": "^4.2.2",
@@ -56,9 +60,17 @@
         "@types/semver": "^7.5.8",
         "@types/spark-md5": "^3.0.4",
         "@types/ws": "^8.5.11",
+        "eslint": "^9.34.0",
+        "globals": "^16.3.0",
+        "husky": "^9.1.7",
+        "lint-staged": "^16.1.5",
         "prettier": "^3.3.3",
         "rimraf": "^5.0.10",
         "rollup": "^4.24.0",
-        "typescript": "^5.5.3"
+        "typescript": "^5.5.3",
+        "typescript-eslint": "^8.41.0"
+    },
+    "lint-staged": {
+        "*.{js,ts}": "bunx eslint"
     }
 }
