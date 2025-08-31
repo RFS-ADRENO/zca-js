@@ -31,15 +31,17 @@ export const sendVoiceFactory = apiFactory<SendVoiceResponse>()((api, ctx, utils
      */
     return async function sendVoice(options: SendVoiceOptions, threadId: string, type: ThreadType = ThreadType.User) {
         let fileSize = null;
-        let clientId = Date.now().toString();
+        const clientId = Date.now().toString();
 
         try {
             const headResponse = await utils.request(options.voiceUrl, { method: "HEAD" }, true);
             if (headResponse.ok) {
                 fileSize = parseInt(headResponse.headers.get("content-length") || "0");
             }
-        } catch (error: any) {
-            throw new ZaloApiError(`Unable to get voice content: ${error?.message || error}`);
+        } catch (error: unknown) {
+            throw new ZaloApiError(
+                `Unable to get voice content: ${error instanceof Error ? error.message : String(error)}`,
+            );
         }
 
         const params =

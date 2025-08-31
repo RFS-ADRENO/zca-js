@@ -29,7 +29,7 @@ export const updateQuickMessageFactory = apiFactory<UpdateQuickMessageResponse>(
     return async function updateQuickMessage(updatePayload: UpdateQuickMessagePayload, itemId: number) {
         const isType = !updatePayload.media ? 0 : 1;
 
-        const params: any = {
+        const params: Record<string, unknown> = {
             itemId: itemId,
             keyword: updatePayload.keyword,
             message: {

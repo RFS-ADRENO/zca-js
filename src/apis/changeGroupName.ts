@@ -19,7 +19,7 @@ export const changeGroupNameFactory = apiFactory<ChangeGroupNameResponse>()((api
     return async function changeGroupName(name: string, groupId: string) {
         if (name.length == 0) name = Date.now().toString();
 
-        const params: any = {
+        const params = {
             grid: groupId,
             gname: name,
             imei: ctx.imei,

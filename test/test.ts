@@ -23,7 +23,7 @@ listener.onClosed(() => {
     console.log("Closed");
 });
 
-listener.onError((error: any) => {
+listener.onError((error) => {
     console.error("Error:", error);
 });
 

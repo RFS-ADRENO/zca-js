@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { BusinessCategory } from "../models/index.js";
+import type { BusinessCategory } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type GetBizAccountResponse = {
@@ -15,7 +15,7 @@ export type GetBizAccountResponse = {
         enable_cate: number;
         enable_add: number;
         cta_profile: number;
-        cta_catalog: any; // @TODO
+        cta_catalog: unknown; // @TODO
     };
     pkgId: number;
 };

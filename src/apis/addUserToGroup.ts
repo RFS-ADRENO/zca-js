@@ -20,7 +20,7 @@ export const addUserToGroupFactory = apiFactory<AddUserToGroupResponse>()((api, 
     return async function addUserToGroup(memberId: string | string[], groupId: string) {
         if (!Array.isArray(memberId)) memberId = [memberId];
 
-        const params: any = {
+        const params = {
             grid: groupId,
             members: memberId,
             membersTypes: memberId.map(() => -1),

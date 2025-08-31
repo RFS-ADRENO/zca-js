@@ -16,6 +16,10 @@ import type { AttachmentSource } from "./models/Attachment.js";
 
 export const isBun = typeof Bun !== "undefined";
 
+export function hasOwn(obj: Record<string, unknown>, key: string): key is keyof typeof obj {
+    return Object.prototype.hasOwnProperty.call(obj, key);
+}
+
 /**
  * Get signed key for API requests.
  *
@@ -24,10 +28,10 @@ export const isBun = typeof Bun !== "undefined";
  * @returns MD5 hash
  *
  */
-export function getSignKey(type: string, params: Record<string, any>) {
-    let n = [];
-    for (let s in params) {
-        if (params.hasOwnProperty(s)) {
+export function getSignKey(type: string, params: Record<string, unknown>) {
+    const n = [];
+    for (const s in params) {
+        if (hasOwn(params, s)) {
             n.push(s);
         }
     }
@@ -35,7 +39,7 @@ export function getSignKey(type: string, params: Record<string, any>) {
     n.sort();
     let a = "zsecure" + type;
     for (let s = 0; s < n.length; s++) a += params[n[s]];
-    return cryptojs.MD5(a);
+    return cryptojs.MD5(a).toString();
 }
 
 /**
@@ -49,13 +53,13 @@ export function getSignKey(type: string, params: Record<string, any>) {
 export function makeURL(
     ctx: ContextBase,
     baseURL: string,
-    params: Record<string, any> = {},
+    params: Record<string, string | number> = {},
     apiVersion: boolean = true,
 ) {
-    let url = new URL(baseURL);
-    for (let key in params) {
-        if (params.hasOwnProperty(key)) {
-            url.searchParams.append(key, params[key]);
+    const url = new URL(baseURL);
+    for (const key in params) {
+        if (hasOwn(params, key)) {
+            url.searchParams.append(key, params[key].toString());
         }
     }
 
@@ -104,11 +108,11 @@ export class ParamsEncryptor {
         };
         if (!this.zcid || !this.zcid_ext) throw new ZaloApiError("createEncryptKey: zcid or zcid_ext is null");
         try {
-            let n = cryptojs.MD5(this.zcid_ext).toString().toUpperCase();
+            const n = cryptojs.MD5(this.zcid_ext).toString().toUpperCase();
             if (t(n, this.zcid) || !(e < 3)) return !1;
             this.createEncryptKey(e + 1);
-        } catch (n) {
-            e < 3 && this.createEncryptKey(e + 1);
+        } catch {
+            if (e < 3) this.createEncryptKey(e + 1);
         }
         return !0;
     }
@@ -142,11 +146,12 @@ export class ParamsEncryptor {
         let s = Math.floor(Math.random() * (a - n + 1)) + n;
         if (s > 12) {
             let e = "";
-            for (; s > 0; )
-                (e += Math.random()
+            for (; s > 0; ) {
+                e += Math.random()
                     .toString(16)
-                    .substr(2, s > 12 ? 12 : s)),
-                    (s -= 12);
+                    .substr(2, s > 12 ? 12 : s);
+                s -= 12;
+            }
             return e;
         }
         return Math.random().toString(16).substr(2, s);
@@ -171,19 +176,19 @@ export class ParamsEncryptor {
 
                 return uppercase ? encrypted.toUpperCase() : encrypted;
             }
-        } catch (o) {
+        } catch {
             return s < 3 ? ParamsEncryptor.encodeAES(e, message, type, uppercase, s + 1) : null;
         }
     }
 }
 
-export function decryptResp(key: string, data: string): Record<string, any> | null | string {
+export function decryptResp(key: string, data: string): Record<string, unknown> | null | string {
     let n = null;
     try {
         n = decodeRespAES(key, data);
         const parsed = JSON.parse(n);
         return parsed;
-    } catch (error) {
+    } catch {
         return n;
     }
 }
@@ -216,12 +221,12 @@ export function decodeBase64ToBuffer(data: string) {
 export function decodeUnit8Array(data: Uint8Array) {
     try {
         return new TextDecoder().decode(data);
-    } catch (error) {
+    } catch {
         return null;
     }
 }
 
-export function encodeAES(secretKey: string, data: any, t = 0): string | null {
+export function encodeAES(secretKey: string, data: cryptojs.lib.WordArray | string, t = 0): string | null {
     try {
         const key = cryptojs.enc.Base64.parse(secretKey);
         return cryptojs.AES.encrypt(data, key, {
@@ -229,7 +234,7 @@ export function encodeAES(secretKey: string, data: any, t = 0): string | null {
             mode: cryptojs.mode.CBC,
             padding: cryptojs.pad.Pkcs7,
         }).ciphertext.toString(cryptojs.enc.Base64);
-    } catch (n) {
+    } catch {
         return t < 3 ? encodeAES(secretKey, data, t + 1) : null;
     }
 }
@@ -237,7 +242,7 @@ export function encodeAES(secretKey: string, data: any, t = 0): string | null {
 export function decodeAES(secretKey: string, data: string, t = 0): string | null {
     try {
         data = decodeURIComponent(data);
-        let key = cryptojs.enc.Base64.parse(secretKey);
+        const key = cryptojs.enc.Base64.parse(secretKey);
         return cryptojs.AES.decrypt(
             {
                 ciphertext: cryptojs.enc.Base64.parse(data),
@@ -249,7 +254,7 @@ export function decodeAES(secretKey: string, data: string, t = 0): string | null
                 padding: cryptojs.pad.Pkcs7,
             },
         ).toString(cryptojs.enc.Utf8);
-    } catch (n) {
+    } catch {
         return t < 3 ? decodeAES(secretKey, data, t + 1) : null;
     }
 }
@@ -283,7 +288,6 @@ export async function request(ctx: ContextBase, url: string, options?: RequestIn
 
     const _options = {
         ...(options ?? {}),
-        // @ts-ignore
         ...(isBun ? { proxy: ctx.options.agent } : { agent: ctx.options.agent }),
     };
 
@@ -295,7 +299,9 @@ export async function request(ctx: ContextBase, url: string, options?: RequestIn
             const parsed = toughCookie.Cookie.parse(cookie);
             try {
                 if (parsed) await ctx.cookie.setCookie(parsed, origin);
-            } catch {}
+            } catch (error: unknown) {
+                logger(ctx).error(error);
+            }
         }
     }
 
@@ -303,8 +309,10 @@ export async function request(ctx: ContextBase, url: string, options?: RequestIn
     if (redirectURL) {
         const redirectOptions = { ...options };
         redirectOptions.method = "GET";
-        // @ts-ignore
-        if (!raw) redirectOptions.headers["Referer"] = "https://id.zalo.me/";
+        if (!raw) {
+            redirectOptions.headers = new Headers(redirectOptions.headers);
+            redirectOptions.headers.set("Referer", "https://id.zalo.me/");
+        }
         return await request(ctx, redirectURL, redirectOptions);
     }
 
@@ -341,9 +349,16 @@ export async function getGifMetaData(filePath: string) {
     };
 }
 
-export async function decodeEventData(parsed: any, cipherKey?: string) {
+export async function decodeEventData(parsed: Record<string, unknown>, cipherKey?: string) {
+    if (typeof parsed.data !== "string")
+        throw new ZaloApiError(`Invalid data, expected string but got ${typeof parsed.data}`);
+    if (typeof parsed.encrypt !== "number")
+        throw new ZaloApiError(`Invalid encrypt type, expected number but got ${typeof parsed.encrypt}`);
+    if (parsed.encrypt < 0 || parsed.encrypt > 3)
+        throw new ZaloApiError(`Invalid encrypt type, expected 0-3 but got ${parsed.encrypt}`);
+
     const rawData = parsed.data;
-    const encryptType: 0 | 1 | 2 | 3 = parsed.encrypt;
+    const encryptType = parsed.encrypt as 0 | 1 | 2 | 3;
 
     if (encryptType === 0) return JSON.parse(rawData);
 
@@ -377,23 +392,22 @@ export async function decodeEventData(parsed: any, cipherKey?: string) {
     return JSON.parse(decodedData);
 }
 
-export function getMd5LargeFileObject(source: AttachmentSource, fileSize: number) {
+export async function getMd5LargeFileObject(source: AttachmentSource, fileSize: number) {
+    const buffer = typeof source == "string" ? await fs.promises.readFile(source) : source.data;
     return new Promise<{
         currentChunk: number;
         data: string;
-    }>(async (resolve, reject) => {
-        let chunkSize = 2097152, // Read in chunks of 2MB
+    }>((resolve) => {
+        let currentChunk = 0;
+        const chunkSize = 2097152, // Read in chunks of 2MB
             chunks = Math.ceil(fileSize / chunkSize),
-            currentChunk = 0,
-            spark = new SparkMD5.ArrayBuffer(),
-            buffer = typeof source == "string" ? await fs.promises.readFile(source) : source.data;
+            spark = new SparkMD5.ArrayBuffer();
 
         function loadNext() {
-            let start = currentChunk * chunkSize,
+            const start = currentChunk * chunkSize,
                 end = start + chunkSize >= fileSize ? fileSize : start + chunkSize;
 
-            // @ts-ignore
-            spark.append(buffer.subarray(start, end));
+            spark.append(new Uint8Array(buffer.subarray(start, end)).buffer as ArrayBuffer);
             currentChunk++;
 
             if (currentChunk < chunks) {
@@ -410,23 +424,23 @@ export function getMd5LargeFileObject(source: AttachmentSource, fileSize: number
     });
 }
 
-export const logger = (ctx: ContextBase) => ({
-    verbose: (...args: any[]) => {
+export const logger = (ctx: { options: { logging?: boolean } }) => ({
+    verbose: (...args: unknown[]) => {
         if (ctx.options.logging) console.log("\x1b[35m🚀 VERBOSE\x1b[0m", ...args);
     },
-    info: (...args: any[]) => {
+    info: (...args: unknown[]) => {
         if (ctx.options.logging) console.log("\x1b[34mINFO\x1b[0m", ...args);
     },
-    warn: (...args: any[]) => {
+    warn: (...args: unknown[]) => {
         if (ctx.options.logging) console.log("\x1b[33mWARN\x1b[0m", ...args);
     },
-    error: (...args: any[]) => {
+    error: (...args: unknown[]) => {
         if (ctx.options.logging) console.log("\x1b[31mERROR\x1b[0m", ...args);
     },
-    success: (...args: any[]) => {
+    success: (...args: unknown[]) => {
         if (ctx.options.logging) console.log("\x1b[32mSUCCESS\x1b[0m", ...args);
     },
-    timestamp: (...args: any[]) => {
+    timestamp: (...args: unknown[]) => {
         const now = new Date().toISOString();
         if (ctx.options.logging) console.log(`\x1b[90m[${now}]\x1b[0m`, ...args);
     },
@@ -450,7 +464,7 @@ export function getClientMessageType(msgType: string) {
     return 1;
 }
 
-export function strPadLeft(e: any, t: string, n: number) {
+export function strPadLeft(e: number | string, t: string, n: number) {
     const a = (e = "" + e).length;
     return a === n ? e : a > n ? e.slice(-n) : t.repeat(n - a) + e;
 }
@@ -485,7 +499,7 @@ export function formatTime(format: string, timestamp: number = Date.now()): stri
 }
 
 export function getFullTimeFromMillisecond(e: number) {
-    let t = new Date(e);
+    const t = new Date(e);
     return (
         strPadLeft(t.getHours(), "0", 2) +
         ":" +
@@ -507,8 +521,8 @@ export function getFileName(e: string) {
     return path.basename(e);
 }
 
-export function removeUndefinedKeys(e: Record<string, any>) {
-    for (let t in e) e[t] === undefined && delete e[t];
+export function removeUndefinedKeys(e: Record<string, unknown>) {
+    for (const t in e) if (e[t] === undefined) delete e[t];
     return e;
 }
 
@@ -568,7 +582,7 @@ type ZaloResponse<T> = {
     } | null;
 };
 
-export async function handleZaloResponse<T = any>(ctx: ContextSession, response: Response, isEncrypted = true) {
+export async function handleZaloResponse<T = unknown>(ctx: ContextSession, response: Response, isEncrypted = true) {
     const result: ZaloResponse<T> = {
         data: null,
         error: null,
@@ -585,7 +599,7 @@ export async function handleZaloResponse<T = any>(ctx: ContextSession, response:
         const jsonData: {
             error_code: number;
             error_message: string;
-            data: any;
+            data: string;
         } = await response.json();
 
         if (jsonData.error_code != 0) {
@@ -621,7 +635,7 @@ export async function handleZaloResponse<T = any>(ctx: ContextSession, response:
     return result;
 }
 
-export async function resolveResponse<T = any>(
+export async function resolveResponse<T = unknown>(
     ctx: ContextSession,
     res: Response,
     cb?: (result: ZaloResponse<unknown>) => T,
@@ -635,8 +649,8 @@ export async function resolveResponse<T = any>(
 }
 
 export type FactoryUtils<T> = {
-    makeURL: (baseURL: string, params?: Record<string, any>, apiVersion?: boolean) => ReturnType<typeof makeURL>;
-    encodeAES: (data: any, t?: number) => ReturnType<typeof encodeAES>;
+    makeURL: (baseURL: string, params?: Record<string, string | number>, apiVersion?: boolean) => ReturnType<typeof makeURL>;
+    encodeAES: (data: cryptojs.lib.WordArray | string, t?: number) => ReturnType<typeof encodeAES>;
     request: (url: string, options?: RequestInit, raw?: boolean) => ReturnType<typeof request>;
     logger: ReturnType<typeof logger>;
     resolve: (
@@ -647,15 +661,15 @@ export type FactoryUtils<T> = {
 };
 
 export function apiFactory<T>() {
-    return <K extends (api: API, ctx: ContextSession, utils: FactoryUtils<T>) => any>(callback: K) => {
+    return <K extends (api: API, ctx: ContextSession, utils: FactoryUtils<T>) => unknown>(callback: K) => {
         return (ctx: ContextBase, api: API) => {
             if (!isContextSession(ctx)) throw new ZaloApiError("Invalid context " + JSON.stringify(ctx, null, 2));
 
             const utils = {
-                makeURL(baseURL: string, params?: Record<string, any>, apiVersion?: boolean) {
+                makeURL(baseURL: string, params?: Record<string, string | number>, apiVersion?: boolean) {
                     return makeURL(ctx, baseURL, params, apiVersion);
                 },
-                encodeAES(data: any, t?: number) {
+                encodeAES(data: cryptojs.lib.WordArray | string, t?: number) {
                     return encodeAES(ctx.secretKey, data, t);
                 },
                 request(url: string, options?: RequestInit, raw?: boolean) {

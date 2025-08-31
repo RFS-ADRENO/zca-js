@@ -271,7 +271,7 @@ export const addReactionFactory = apiFactory<AddReactionResponse>()((api, ctx, u
             throw new ZaloApiError("Invalid reaction");
         }
 
-        const params: Record<string, any> = {
+        const params: Record<string, unknown> = {
             react_list: [
                 {
                     message: JSON.stringify({

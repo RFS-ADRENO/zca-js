@@ -1,4 +1,4 @@
-import { ReminderRepeatMode } from "./Enum.js";
+import type { ReminderRepeatMode } from "./Enum.js";
 
 export type ReminderUser = {
     creatorUid: string;

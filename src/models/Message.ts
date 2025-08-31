@@ -12,7 +12,7 @@ export type TAttachmentContent = {
 };
 
 export type TOtherContent = {
-    [key: string]: any;
+    [key: string]: unknown;
 };
 
 export type TMessage = {

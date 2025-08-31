@@ -16,7 +16,7 @@ export type GetGroupMembersInfoResponse = {
     profiles: {
         [memberId: string]: GroupMemberProfile;
     };
-    unchangeds_profile: any[];
+    unchangeds_profile: unknown[];
 };
 
 export const getGroupMembersInfoFactory = apiFactory<GetGroupMembersInfoResponse>()((api, _, utils) => {

@@ -18,7 +18,7 @@ export const changeGroupAvatarFactory = apiFactory<ChangeGroupAvatarResponse>()(
      * @throws ZaloApiError
      */
     return async function changeGroupAvatar(avatarSource: AttachmentSource, groupId: string) {
-        const params: any = {
+        const params: Record<string, unknown> = {
             grid: groupId,
             avatarSize: 120,
             clientId: `g${groupId}${getFullTimeFromMillisecond(new Date().getTime())}`,

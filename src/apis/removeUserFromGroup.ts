@@ -21,7 +21,7 @@ export const removeUserFromGroupFactory = apiFactory<RemoveUserFromGroupResponse
     return async function removeUserFromGroup(memberId: string | string[], groupId: string) {
         if (!Array.isArray(memberId)) memberId = [memberId];
 
-        const params: any = {
+        const params = {
             grid: groupId,
             members: memberId,
             imei: ctx.imei,

@@ -14,7 +14,7 @@ export const disperseGroupFactory = apiFactory<DisperseGroupResponse>()((api, ct
      * @throws ZaloApiError
      */
     return async function disperseGroup(groupId: string) {
-        const params: any = {
+        const params = {
             grid: groupId,
             imei: ctx.imei,
         };

@@ -11,17 +11,17 @@ export type StickerDetail = {
     status: number;
     stickerUrl: string;
     stickerSpriteUrl: string;
-    stickerWebpUrl: any;
+    stickerWebpUrl: unknown;
     totalFrames: number;
     duration: number;
     effectId: number;
     checksum: string;
     ext: number;
     source: number;
-    fss: any;
-    fssInfo: any;
+    fss: unknown;
+    fssInfo: unknown;
     version: number;
-    extInfo: any;
+    extInfo: unknown;
 };
 
 export type StickerDetailResponse = StickerDetail[];

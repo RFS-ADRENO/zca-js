@@ -2,7 +2,7 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
 export type GetArchivedChatListResponse = {
-    items: any[]; // @TODO: check type
+    items: unknown[]; // @TODO: check type
     version: number;
 };
 

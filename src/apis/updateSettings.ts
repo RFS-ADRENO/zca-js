@@ -1,6 +1,7 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
+// eslint-disable-next-line
 export type UpdateSettingsResponse = {};
 
 export type UpdateSettingsType =

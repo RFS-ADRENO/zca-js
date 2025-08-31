@@ -39,7 +39,7 @@ export const deleteMessageFactory = apiFactory<DeleteMessageResponse>()((api, ct
 
         if (!isGroup && onlyMe === false) throw new ZaloApiError("Can't delete message for everyone in a private chat");
 
-        const params: any = {
+        const params = {
             [isGroup ? "grid" : "toid"]: threadId,
             cliMsgId: Date.now(),
             msgs: [

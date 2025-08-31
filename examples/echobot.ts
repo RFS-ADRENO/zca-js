@@ -1,5 +1,6 @@
 import fs from "node:fs";
-import { API, Credentials, ThreadType, Zalo } from "../src/index.js";
+import type { API, Credentials} from "../src/index.js";
+import { ThreadType, Zalo } from "../src/index.js";
 
 const zalo = new Zalo();
 
@@ -48,7 +49,7 @@ listener.onClosed(() => {
     console.log("Closed");
 });
 
-listener.onError((error: any) => {
+listener.onError((error) => {
     console.error("Error:", error);
 });
 

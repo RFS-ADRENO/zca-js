@@ -26,12 +26,12 @@ export type FetchAccountInfoResponse = {
     isValid: number;
     userKey: string;
     accountStatus: number;
-    oaInfo: any;
+    oaInfo: unknown;
     user_mode: number;
     globalId: string;
     bizPkg: ZBusinessPackage;
     createdTs: number;
-    oa_status: any;
+    oa_status: unknown;
 };
 
 export const fetchAccountInfoFactory = apiFactory<FetchAccountInfoResponse>()((api, _, utils) => {

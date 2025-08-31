@@ -25,7 +25,7 @@ export type GetGroupLinkInfoResponse = {
         accountStatus: number;
         type: number;
     }[];
-    admins: any[];
+    admins: unknown[];
     hasMoreMember: number;
     subType: number;
     totalMember: number;

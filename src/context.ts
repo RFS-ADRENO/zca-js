@@ -6,7 +6,7 @@ type UploadEventData = {
     fileId: string;
 };
 
-export type UploadCallback = (data: UploadEventData) => any;
+export type UploadCallback = (data: UploadEventData) => unknown;
 
 type ShareFileSettings = {
     big_file_domain_list: string[];
@@ -58,6 +58,7 @@ type SocketSettings = {
 };
 
 type LoginInfo = {
+    // eslint-disable-next-line
     [key: string]: any;
     haspcclient: number;
     public_ip: string;
@@ -130,8 +131,10 @@ export type AppContextBase = {
     secretKey: string | null;
     zpwServiceMap: ZPWServiceMap;
     settings: {
+        // eslint-disable-next-line
         [key: string]: any;
         features: {
+            // eslint-disable-next-line
             [key: string]: any;
             sharefile: ShareFileSettings;
             socket: SocketSettings;

@@ -1,5 +1,6 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { ReminderRepeatMode, ReminderGroup, ReminderUser, ThreadType } from "../models/index.js";
+import type { ReminderRepeatMode, ReminderGroup, ReminderUser} from "../models/index.js";
+import { ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type EditReminderOptions = {
@@ -15,7 +16,7 @@ export type CreateReminderGroup = ReminderGroup & {
     groupId: string;
     eventType: number;
     repeatInfo: null;
-    repeatData: any[];
+    repeatData: unknown[];
 };
 
 export type EditReminderResponse = CreateReminderUser | CreateReminderGroup;

@@ -65,15 +65,17 @@ export const sendVideoFactory = apiFactory<SendVideoResponse>()((api, ctx, utils
      */
     return async function sendVideo(options: SendVideoOptions, threadId: string, type: ThreadType = ThreadType.User) {
         let fileSize: number = 0;
-        let clientId = Date.now();
+        const clientId = Date.now();
 
         try {
             const headResponse = await utils.request(options.videoUrl, { method: "HEAD" }, true);
             if (headResponse.ok) {
                 fileSize = parseInt(headResponse.headers.get("content-length") || "0");
             }
-        } catch (error: any) {
-            throw new ZaloApiError(`Unable to get video content: ${error?.message || error}`);
+        } catch (error: unknown) {
+            throw new ZaloApiError(
+                `Unable to get video content: ${error instanceof Error ? error.message : String(error)}`,
+            );
         }
 
         const params =

@@ -25,17 +25,17 @@ export type LoginQRCallbackEvent =
               };
           };
           actions: {
-              saveToFile: (qrPath?: string) => Promise<any>;
-              retry: () => any;
-              abort: () => any;
+              saveToFile: (qrPath?: string) => Promise<unknown>;
+              retry: () => unknown;
+              abort: () => unknown;
           };
       }
     | {
           type: LoginQRCallbackEventType.QRCodeExpired;
           data: null;
           actions: {
-              retry: () => any;
-              abort: () => any;
+              retry: () => unknown;
+              abort: () => unknown;
           };
       }
     | {
@@ -45,8 +45,8 @@ export type LoginQRCallbackEvent =
               display_name: string;
           };
           actions: {
-              retry: () => any;
-              abort: () => any;
+              retry: () => unknown;
+              abort: () => unknown;
           };
       }
     | {
@@ -55,8 +55,8 @@ export type LoginQRCallbackEvent =
               code: string;
           };
           actions: {
-              retry: () => any;
-              abort: () => any;
+              retry: () => unknown;
+              abort: () => unknown;
           };
       }
     | {
@@ -69,7 +69,7 @@ export type LoginQRCallbackEvent =
           actions: null;
       };
 
-export type LoginQRCallback = (event: LoginQRCallbackEvent) => any;
+export type LoginQRCallback = (event: LoginQRCallbackEvent) => unknown;
 
 async function loadLoginPage(ctx: ContextBase) {
     const response = await request(ctx, "https://id.zalo.me/account?continue=https%3A%2F%2Fchat.zalo.me%2F", {
@@ -381,6 +381,8 @@ export async function loginQR(
             avatar: string;
         };
         cookies: SerializedCookieJar["cookies"];
+        // @TODO
+        // eslint-disable-next-line
     } | null>(async (resolve, reject) => {
         try {
             function retry() {

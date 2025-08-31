@@ -75,13 +75,13 @@ export type GroupTopic = {
 export type GroupInfo = {
     group_link?: string;
     link_expired_time?: number;
-    [key: string]: any;
+    [key: string]: unknown;
 };
 
 export type GroupExtraData = {
     featureId?: number;
     field?: string;
-    [key: string]: any;
+    [key: string]: unknown;
 };
 
 export type TGroupEventBase = {
@@ -103,7 +103,7 @@ export type TGroupEventBase = {
     version: string;
     groupType: number;
     clientId?: number;
-    errorMap?: Record<string, any>;
+    errorMap?: Record<string, unknown>;
     e2ee?: number;
 };
 

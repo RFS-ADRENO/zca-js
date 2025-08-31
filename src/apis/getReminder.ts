@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { ReminderGroup } from "../models/index.js";
+import type { ReminderGroup } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type GetReminderResponse = ReminderGroup & {
@@ -11,7 +11,7 @@ export type GetReminderResponse = ReminderGroup & {
         acceptMember: number;
     };
     repeatInfo: null;
-    repeatData: any[];
+    repeatData: unknown[];
 };
 
 export const getReminderFactory = apiFactory<GetReminderResponse>()((api, ctx, utils) => {

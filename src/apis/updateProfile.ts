@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { BusinessCategory, Gender } from "../models/index.js";
+import type { BusinessCategory, Gender } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type UpdateProfilePayload = {
@@ -28,7 +28,7 @@ export const updateProfileFactory = apiFactory<ChangeAccountSettingResponse>()((
      * @throws ZaloApiError
      */
     return async function updateProfile(payload: UpdateProfilePayload, isBusiness: boolean = false) {
-        let zBusiness = {
+        const zBusiness = {
             desc: payload.description,
             cate: payload.cate,
             addr: payload.address,

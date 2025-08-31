@@ -30,6 +30,8 @@ export async function login(ctx: ContextBase, encryptParams: boolean) {
 
 export async function getServerInfo(ctx: ContextBase, encryptParams: boolean) {
     const encryptedParams = await getEncryptParam(ctx, encryptParams, "getserverinfo");
+    if (!encryptedParams.params.signkey || typeof encryptedParams.params.signkey !== "string")
+        throw new ZaloApiError("Missing signkey");
 
     const response = await request(
         ctx,
@@ -37,7 +39,7 @@ export async function getServerInfo(ctx: ContextBase, encryptParams: boolean) {
             ctx,
             "https://wpa.chat.zalo.me/api/login/getServerInfo",
             {
-                imei: ctx.imei,
+                imei: ctx.imei as string,
                 type: ctx.API_TYPE,
                 client_version: ctx.API_VERSION,
                 computer_name: "Web",
@@ -54,7 +56,7 @@ export async function getServerInfo(ctx: ContextBase, encryptParams: boolean) {
 }
 
 async function getEncryptParam(ctx: ContextBase, encryptParams: boolean, type: string) {
-    const params = {} as Record<string, any>;
+    const params = {} as Record<string, unknown>;
     const data = {
         computer_name: "Web",
         imei: ctx.imei!,
@@ -88,11 +90,11 @@ async function getEncryptParam(ctx: ContextBase, encryptParams: boolean, type: s
     };
 }
 
-async function _encryptParam(ctx: ContextBase, data: Record<string, any>, encryptParams: boolean) {
+async function _encryptParam(ctx: ContextBase, data: Record<string, unknown>, encryptParams: boolean) {
     if (encryptParams) {
         const encryptor = new ParamsEncryptor({
             type: ctx.API_TYPE,
-            imei: data.imei,
+            imei: data.imei as string,
             firstLaunchTime: Date.now(),
         });
         try {

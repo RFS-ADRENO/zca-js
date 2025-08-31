@@ -183,7 +183,13 @@ export class Zalo {
                     }) ?? "",
                     "https://chat.zalo.me",
                 );
-            } catch {}
+            } catch (error: unknown) {
+                logger({
+                    options: {
+                        logging: this.options.logging,
+                    },
+                }).error("Failed to set cookie:", error);
+            }
         }
         return jar;
     }
@@ -214,22 +220,25 @@ export class Zalo {
         const loginData = await login(ctx, this.enableEncryptParam);
         const serverInfo = await getServerInfo(ctx, this.enableEncryptParam);
 
-        if (!loginData || !serverInfo) throw new ZaloApiError("Đăng nhập thất bại");
-        ctx.secretKey = loginData.data.zpw_enk;
-        ctx.uid = loginData.data.uid;
+        const loginInfo = loginData?.data as typeof ctx.loginInfo;
+
+        if (!loginData || !loginInfo || !serverInfo) throw new ZaloApiError("Đăng nhập thất bại");
+
+        ctx.secretKey = loginInfo.zpw_enk;
+        ctx.uid = loginInfo.uid;
 
         // Zalo currently responds with setttings instead of settings
         // they might fix this in the future, so we should have a fallback just in case
         ctx.settings = serverInfo.setttings || serverInfo.settings;
 
         ctx.extraVer = serverInfo.extra_ver;
-        ctx.loginInfo = loginData.data;
+        ctx.loginInfo = loginInfo;
 
         if (!isContextSession(ctx)) throw new ZaloApiError("Khởi tạo ngữ cảnh thất bại.");
 
-        logger(ctx).info("Logged in as", loginData.data.uid);
+        logger(ctx).info("Logged in as", loginInfo.uid);
 
-        return new API(ctx, loginData.data.zpw_service_map_v3, loginData.data.zpw_ws);
+        return new API(ctx, loginInfo.zpw_service_map_v3, loginInfo.zpw_ws);
     }
 
     public async loginQR(

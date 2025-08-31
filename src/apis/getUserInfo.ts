@@ -27,16 +27,16 @@ export type ProfileInfo = {
     isValid: number;
     userKey: string;
     accountStatus: number;
-    oaInfo: any;
+    oaInfo: unknown;
     user_mode: number;
     globalId: string;
     bizPkg: ZBusinessPackage;
     createdTs: number;
-    oa_status: any;
+    oa_status: unknown;
 };
 
 export type UserInfoResponse = {
-    unchanged_profiles: Record<string, any>;
+    unchanged_profiles: Record<string, unknown>;
     phonebook_version: number;
     changed_profiles: Record<string, ProfileInfo>;
 };

@@ -26,7 +26,7 @@ export const undoFactory = apiFactory<UndoResponse>()((api, ctx, utils) => {
      * @throws ZaloApiError
      */
     return async function undo(payload: UndoPayload, threadId: string, type: ThreadType = ThreadType.User) {
-        const params: any = {
+        const params: Record<string, unknown> = {
             msgId: payload.msgId,
             clientId: Date.now(),
             cliMsgIdUndo: payload.cliMsgId,

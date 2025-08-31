@@ -15,7 +15,7 @@ export const blockViewFeedFactory = apiFactory<BlockViewFeedResponse>()((api, ct
      * @throws ZaloApiError
      */
     return async function blockViewFeed(isBlockFeed: boolean, userId: string) {
-        const params: any = {
+        const params = {
             fid: userId,
             isBlockFeed: isBlockFeed ? 1 : 0,
             imei: ctx.imei,
