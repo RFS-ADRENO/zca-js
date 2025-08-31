@@ -1,21 +1,10 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
+import type { AutoReplyItem } from "../models/index.js";
+
 export type GetAutoReplyListResponse = {
-    item: {
-        id: number;
-        weight: number;
-        enable: boolean;
-        modifiedTime: number;
-        startTime: number;
-        endTime: number;
-        content: string;
-        scope: number;
-        uids: string[] | null; // isNull means don't choose users
-        ownerId: number;
-        recurrence: string[];
-        createdTime: number;
-    }[];
+    item: AutoReplyItem[];
     version: number;
 };
 export const getAutoReplyListFactory = apiFactory<GetAutoReplyListResponse>()((api, ctx, utils) => {

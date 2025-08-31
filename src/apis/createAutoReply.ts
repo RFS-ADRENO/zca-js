@@ -1,30 +1,19 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
+import type { AutoReplyItem, AutoReplyScope } from "../models/index.js";
+
 export type CreateAutoReplyPayload = {
     content: string;
     isEnable: boolean;
-    startTime: number; // time start on auto reply msg
-    endTime: number; // time end on auto reply msg
-    scope: number; // 0 is everyone | 1 is stranger | 2 is specific friends | 3 is friends except
+    startTime: number;
+    endTime: number;
+    scope: AutoReplyScope;
     uids?: string | string[];
 };
 
 export type CreateAutoReplyResponse = {
-    item: {
-        id: number;
-        weight: number;
-        enable: boolean;
-        modifiedTime: number;
-        startTime: number;
-        endTime: number;
-        content: string;
-        scope: number;
-        uids: string[] | null; // isNull means don't choose users
-        ownerId: number;
-        recurrence: string[];
-        createdTime: number;
-    };
+    item: AutoReplyItem;
     version: number;
 };
 
