@@ -1,7 +1,7 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type GetRequestStatusResponse = {
+export type GetFriendRequestStatusResponse = {
     addFriendPrivacy: number;
     isSeenFriendReq: boolean;
     is_friend: number;
@@ -9,17 +9,17 @@ export type GetRequestStatusResponse = {
     is_requesting: number;
 };
 
-export const getRequestStatusFactory = apiFactory<GetRequestStatusResponse>()((api, ctx, utils) => {
+export const getFriendRequestStatusFactory = apiFactory<GetFriendRequestStatusResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/reqstatus`);
 
     /**
-     * Get request status
+     * Get friend request status
      *
      * @param friendId friend id
      *
      * @throws ZaloApiError
      */
-    return async function getRequestStatus(friendId: string) {
+    return async function getFriendRequestStatus(friendId: string) {
         const params = {
             fid: friendId,
             imei: ctx.imei,

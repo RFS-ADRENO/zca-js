@@ -67,7 +67,7 @@ export type { GetQuickMessageResponse } from "./apis/getQuickMessage.js";
 export type { CollapseMsgListConfig, GetReceivedFriendRequestsResponse, ReceivedFriendRequestsDataInfo } from "./apis/getReceivedFriendRequests.js";
 export type { GetReminderResponse } from "./apis/getReminder.js";
 export type { GetReminderResponsesResponse } from "./apis/getReminderResponses.js";
-export type { GetRequestStatusResponse } from "./apis/getRequestStatus.js";
+export type { GetFriendRequestStatusResponse } from "./apis/getFriendRequestStatus.js";
 export type { GetSentFriendRequestResponse } from "./apis/getSentFriendRequest.js";
 export type { StickerDetail, StickerDetailResponse } from "./apis/getStickersDetail.js";
 export type { GetUnreadMarkResponse, UnreadMark } from "./apis/getUnreadMark.js";

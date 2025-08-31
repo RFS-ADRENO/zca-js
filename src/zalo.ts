@@ -58,6 +58,7 @@ import { getCatalogListFactory } from "./apis/getCatalogList.js";
 import { getContextFactory } from "./apis/getContext.js";
 import { getCookieFactory } from "./apis/getCookie.js";
 import { getFriendBoardListFactory } from "./apis/getFriendBoardList.js";
+import { getFriendRequestStatusFactory } from "./apis/getFriendRequestStatus.js";
 import { getGroupBlockedMemberFactory } from "./apis/getGroupBlockedMember.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
 import { getGroupLinkDetailFactory } from "./apis/getGroupLinkDetail.js";
@@ -78,7 +79,6 @@ import { getQuickMessageFactory } from "./apis/getQuickMessage.js";
 import { getReceivedFriendRequestsFactory } from "./apis/getReceivedFriendRequests.js";
 import { getReminderFactory } from "./apis/getReminder.js";
 import { getReminderResponsesFactory } from "./apis/getReminderResponses.js";
-import { getRequestStatusFactory } from "./apis/getRequestStatus.js";
 import { getSentFriendRequestFactory } from "./apis/getSentFriendRequest.js";
 import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
@@ -335,6 +335,7 @@ export class API {
     public getContext: ReturnType<typeof getContextFactory>;
     public getCookie: ReturnType<typeof getCookieFactory>;
     public getFriendBoardList: ReturnType<typeof getFriendBoardListFactory>;
+    public getFriendRequestStatus: ReturnType<typeof getFriendRequestStatusFactory>;
     public getGroupBlockedMember: ReturnType<typeof getGroupBlockedMemberFactory>;
     public getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
     public getGroupLinkDetail: ReturnType<typeof getGroupLinkDetailFactory>;
@@ -355,7 +356,6 @@ export class API {
     public getReceivedFriendRequests: ReturnType<typeof getReceivedFriendRequestsFactory>;
     public getReminder: ReturnType<typeof getReminderFactory>;
     public getReminderResponses: ReturnType<typeof getReminderResponsesFactory>;
-    public getRequestStatus: ReturnType<typeof getRequestStatusFactory>;
     public getSentFriendRequest: ReturnType<typeof getSentFriendRequestFactory>;
     public getStickers: ReturnType<typeof getStickersFactory>;
     public getStickersDetail: ReturnType<typeof getStickersDetailFactory>;
@@ -464,6 +464,7 @@ export class API {
         this.getContext = getContextFactory(ctx, this);
         this.getCookie = getCookieFactory(ctx, this);
         this.getFriendBoardList = getFriendBoardListFactory(ctx, this);
+        this.getFriendRequestStatus = getFriendRequestStatusFactory(ctx, this);
         this.getGroupBlockedMember = getGroupBlockedMemberFactory(ctx, this);
         this.getGroupInfo = getGroupInfoFactory(ctx, this);
         this.getGroupLinkDetail = getGroupLinkDetailFactory(ctx, this);
@@ -484,7 +485,6 @@ export class API {
         this.getReceivedFriendRequests = getReceivedFriendRequestsFactory(ctx, this);
         this.getReminder = getReminderFactory(ctx, this);
         this.getReminderResponses = getReminderResponsesFactory(ctx, this);
-        this.getRequestStatus = getRequestStatusFactory(ctx, this);
         this.getSentFriendRequest = getSentFriendRequestFactory(ctx, this);
         this.getStickers = getStickersFactory(ctx, this);
         this.getStickersDetail = getStickersDetailFactory(ctx, this);
