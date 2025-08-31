@@ -6,6 +6,7 @@ import pako from "pako";
 import sharp from "sharp";
 import SparkMD5 from "spark-md5";
 import toughCookie from "tough-cookie";
+import JSONBig from "json-bigint";
 
 import { isContextSession, type ContextSession, type ContextBase } from "./context.js";
 import { ZaloApiError } from "./Errors/ZaloApiError.js";
@@ -389,7 +390,7 @@ export async function decodeEventData(parsed: Record<string, unknown>, cipherKey
     const decodedData = decodeUnit8Array(decompressedBuffer);
 
     if (!decodedData) return;
-    return JSON.parse(decodedData);
+    return JSONBig.parse(decodedData);
 }
 
 export async function getMd5LargeFileObject(source: AttachmentSource, fileSize: number) {

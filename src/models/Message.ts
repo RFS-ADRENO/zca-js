@@ -59,7 +59,7 @@ export type TGroupMessage = TMessage & {
 };
 
 export type TQuote = {
-    ownerId: number;
+    ownerId: string;
     cliMsgId: number;
     globalMsgId: number;
     cliMsgType: number;
@@ -113,6 +113,9 @@ export class GroupMessage {
         this.isSelf = data.uidFrom == "0";
 
         if (data.uidFrom == "0") data.uidFrom = uid;
+        if (data.quote) {
+            data.quote.ownerId = String(data.quote.ownerId);
+        }
     }
 }
 
