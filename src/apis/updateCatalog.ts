@@ -1,28 +1,15 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
+import type { CatalogItem } from "../models/index.js";
+
 export type UpdateCatalogPayload = {
     catalogId: string;
     catalogName: string;
 };
 
 export type UpdateCatalogResponse = {
-    item: {
-        id: string;
-        name: string;
-        version: number;
-        ownerId: string;
-        isDefault: false;
-        /**
-         * Relative path used to build the catalog URL.
-         * 
-         * Example: `https://catalog.zalo.me/${path}`
-         */
-        path: string;
-        catalogPhoto: string | null;
-        totalProduct: number;
-        created_time: number;
-    };
+    item: CatalogItem;
     version_ls_catalog: number;
     version_catalog: number;
 };
