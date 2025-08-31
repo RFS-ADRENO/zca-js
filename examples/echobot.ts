@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import type { API, Credentials} from "../src/index.js";
+import type { API, Credentials } from "../src/index.js";
 import { ThreadType, Zalo } from "../src/index.js";
 
 const zalo = new Zalo();

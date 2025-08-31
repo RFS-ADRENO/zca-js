@@ -8,8 +8,8 @@ export type QuickMessage = {
         title: string;
         params: string | null;
     };
-    media?: {
-        items: {
+    media: {
+        items?: {
             type: number;
             photoId: number;
             title: string;

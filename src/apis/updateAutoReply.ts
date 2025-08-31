@@ -1,4 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { AutoReply } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type UpdateAutoReplyPayload = {
@@ -11,20 +12,7 @@ export type UpdateAutoReplyPayload = {
 };
 
 export type UpdateAutoReplyResponse = {
-    item: {
-        id: number;
-        weight: number;
-        enable: boolean;
-        modifiedTime: number;
-        startTime: number;
-        endTime: number;
-        content: string;
-        scope: number;
-        uids: string[] | null; // isNull means don't choose users
-        ownerId: number;
-        recurrence: string[];
-        createdTime: number;
-    };
+    item: AutoReply;
     version: number;
 };
 
