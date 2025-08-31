@@ -2,7 +2,9 @@ import { apiFactory } from "../utils.js";
 
 export type GetAllGroupsResponse = {
     version: string;
-    gridInfoMap: Record<string, string>;
+    gridVerMap: {
+        [groupId: string]: string;
+    };
 };
 
 export const getAllGroupsFactory = apiFactory<GetAllGroupsResponse>()((api, _, utils) => {
