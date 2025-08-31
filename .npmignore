@@ -7,3 +7,7 @@ bun.lockb
 bun.lock
 package-lock.json
 tsconfig.json
+
+.husky
+.github
+.vscode
