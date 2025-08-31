@@ -16,7 +16,7 @@ export const deleteCatalogFactory = apiFactory<DeleteCatalogResponse>()((api, _,
      */
     return async function deleteCatalog(catalogId: string) {
         const params = {
-            catalog_id: catalogId, // use api getCatalogList to get Id
+            catalog_id: catalogId,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

@@ -2,7 +2,7 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
 export type UpdateCatalogPayload = {
-    catalogId: string; // use api getCatalogList to get catalogId
+    catalogId: string;
     catalogName: string;
 };
 
@@ -13,7 +13,12 @@ export type UpdateCatalogResponse = {
         version: number;
         ownerId: string;
         isDefault: false;
-        path: string; // https://catalog.zalo.me/path | eg: https://catalog.zalo.me/?cid=CzdAIJoVcGeqlCv0GFtl5qxRnredcE9rIjh49IULad58rS1SE-gQS0 link main is show product list
+        /**
+         * Relative path used to build the catalog URL.
+         * 
+         * Example: `https://catalog.zalo.me/${path}`
+         */
+        path: string;
         catalogPhoto: string | null;
         totalProduct: number;
         created_time: number;

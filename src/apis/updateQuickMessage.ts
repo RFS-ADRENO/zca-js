@@ -20,7 +20,7 @@ export const updateQuickMessageFactory = apiFactory<UpdateQuickMessageResponse>(
      * Update quick message
      *
      * @param updatePayload - The payload containing data to update the quick message
-     * @param itemId - The id of the quick message to update - use api getQuickMessage
+     * @param itemId - The id of the quick message to update
      *
      * @note Zalo might throw an error with code 212 if the itemId does not exist.
      *

@@ -20,7 +20,7 @@ export const deleteAutoReplyFactory = apiFactory<DeleteAutoReplyResponse>()((api
     return async function deleteAutoReply(id: number) {
         const params = {
             cliLang: ctx.language,
-            id: id, // use api getAutoReplyList to get id
+            id: id,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

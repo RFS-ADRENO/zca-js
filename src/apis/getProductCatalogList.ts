@@ -2,7 +2,7 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
 export type GetProductCatalogListPayload = {
-    catalogId: string; // use api getCatalogList to get catalogId
+    catalogId: string;
     limit?: number;
     versionCatalog?: number;
     lastProductId?: string;

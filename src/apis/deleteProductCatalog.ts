@@ -2,8 +2,8 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
 export type DeleteProductCatalogPayload = {
-    productIds: string | string[]; // use api getProductCatalogList to get productId(s)
-    catalogId: string; // use api getCatalogList to get catalogId
+    productIds: string | string[];
+    catalogId: string;
 };
 
 export type DeleteProductCatalogResponse = {

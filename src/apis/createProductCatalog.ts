@@ -3,19 +3,27 @@ import type { AttachmentSource } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type CreateProductCatalogPayload = {
-    catalogId: string; // use api getCatalogList to get catalogId
+    catalogId: string;
     productName: string;
     price: string;
     description: string;
 
-    file?: AttachmentSource[]; // Array of media files, max 5
+    /**
+     * Upto 5 media files are allowed
+     */
+    file?: AttachmentSource[];
 };
 
 export type CreateProductCatalogResponse = {
     item: {
         price: string;
         description: string;
-        path: string; // https://catalog.zalo.me/path | eg: https://catalog.zalo.me/?pid=5340b4a0a2e54bbb12f4
+        /**
+         * Relative path used to build the product URL.
+         *
+         * Example: https://catalog.zalo.me/${path}
+         */
+        path: string;
         product_id: string;
         product_name: string;
         currency_unit: string;

@@ -15,7 +15,7 @@ export type GetCatalogListResponse = {
         ownerId: string;
         isDefault: boolean;
         path: string;
-        catalogPhoto: string | null; // isNull means no photo
+        catalogPhoto: string | null;
         totalProduct: number;
         created_time: number;
     }[];

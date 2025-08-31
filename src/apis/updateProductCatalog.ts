@@ -3,14 +3,17 @@ import type { AttachmentSource } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type UpdateProductCatalogPayload = {
-    productName: string; // change name product
-    price: string; // change price product
-    description: string; // change description product
-    productId: string; // use api getProductCatalogList to get productId
-    createTime: number; // use api getProductCatalogList to get createTime
-    catalogId: string; // use api getCatalogList to get catalogId
+    productName: string;
+    price: string;
+    description: string;
+    productId: string;
+    createTime: number;
+    catalogId: string;
 
-    file?: AttachmentSource[]; // Array of media files, max 5
+    /**
+     * Upto 5 media files are allowed
+     */
+    file?: AttachmentSource[];
 };
 
 export type UpdateProductCatalogResponse = {

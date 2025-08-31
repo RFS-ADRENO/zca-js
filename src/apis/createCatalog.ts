@@ -8,7 +8,12 @@ export type CreateCatalogResponse = {
         version: number;
         ownerId: string;
         isDefault: false;
-        path: string; // https://catalog.zalo.me/path | eg: https://catalog.zalo.me/?cid=CzdAIJoVcGeqlCv0GFtl5qxRnredcE9rIjh49IULad58rS1SE-gQS0 link main is show product list
+        /**
+         * Relative path used to build the catalog URL.
+         * 
+         * Example: `https://catalog.zalo.me/${path}`
+         */
+        path: string;
         catalogPhoto: string | null;
         totalProduct: number;
         created_time: number;
@@ -31,7 +36,7 @@ export const createCatalogFactory = apiFactory<CreateCatalogResponse>()((api, _,
     return async function createCatalog(catalogName: string) {
         const params = {
             catalog_name: catalogName,
-            catalog_photo: "", // "" is defaut don't upload photo
+            catalog_photo: "",
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
