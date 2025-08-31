@@ -120,7 +120,7 @@ export type { UpdateProductCatalogPayload, UpdateProductCatalogResponse } from "
 export type { UpdateProfilePayload, ChangeAccountSettingResponse } from "./apis/updateProfile.js";
 export type { UpdateQuickMessagePayload, UpdateQuickMessageResponse } from "./apis/updateQuickMessage.js";
 export type { UpdateSettingsResponse, UpdateSettingsType } from "./apis/updateSettings.js";
-export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType } from "./apis/uploadAttachment.js";
+export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType, UploadAttachmentImageResponse, UploadAttachmentVideoResponse, UploadAttachmentFileResponse } from "./apis/uploadAttachment.js";
 export type { UploadProductPhotoPayload, UploadProductPhotoResponse } from "./apis/uploadProductPhoto.js";
 
 export type { CustomAPICallback, CustomAPIProps } from "./apis/custom.js";

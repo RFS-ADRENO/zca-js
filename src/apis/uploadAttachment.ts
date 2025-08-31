@@ -13,10 +13,10 @@ import {
     resolveResponse,
 } from "../utils.js";
 
-type ImageResponse = {
+export type UploadAttachmentImageResponse = {
     normalUrl: string;
     photoId: string;
-    finished: number;
+    finished: number | boolean;
     hdUrl: string;
     thumbUrl: string;
     clientFileId: number;
@@ -29,8 +29,8 @@ type ImageResponse = {
     hdSize: number;
 };
 
-type VideoResponse = {
-    finished: number;
+export type UploadAttachmentVideoResponse = {
+    finished: number | boolean;
     clientFileId: number;
     chunkId: number;
 
@@ -42,8 +42,8 @@ type VideoResponse = {
     fileName: string;
 };
 
-type FileResponse = {
-    finished: number;
+export type UploadAttachmentFileResponse = {
+    finished: number | boolean;
     clientFileId: number;
     chunkId: number;
 
@@ -67,11 +67,11 @@ export type FileData = {
     totalSize: number;
 };
 
-export type UploadAttachmentType = ImageResponse | VideoResponse | FileResponse;
+export type UploadAttachmentType = UploadAttachmentImageResponse | UploadAttachmentVideoResponse | UploadAttachmentFileResponse;
 export type UploadAttachmentResponse = UploadAttachmentType[];
 
 type RawResponse = {
-    finished: number;
+    finished: number | boolean;
     clientFileId: number;
     chunkId: number;
 
