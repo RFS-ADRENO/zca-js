@@ -1,18 +1,9 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { Catalog } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type CreateCatalogResponse = {
-    item: {
-        id: string;
-        name: string;
-        version: number;
-        ownerId: string;
-        isDefault: false;
-        path: string; // https://catalog.zalo.me/path | eg: https://catalog.zalo.me/?cid=CzdAIJoVcGeqlCv0GFtl5qxRnredcE9rIjh49IULad58rS1SE-gQS0 link main is show product list
-        catalogPhoto: string | null;
-        totalProduct: number;
-        created_time: number;
-    };
+    item: Catalog;
     version_ls_catalog: number;
     version_catalog: number;
 };

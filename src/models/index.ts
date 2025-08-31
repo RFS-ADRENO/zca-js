@@ -1,6 +1,7 @@
 export * from "./Attachment.js";
 export * from "./AutoReply.js";
 export * from "./Board.js";
+export * from "./Catalog.js";
 export * from "./DeliveredMessage.js";
 export * from "./Enum.js";
 export * from "./FriendEvent.js";

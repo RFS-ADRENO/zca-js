@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import type { AttachmentSource } from "../models/index.js";
+import type { AttachmentSource, ProductCatalog } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type UpdateProductCatalogPayload = {
@@ -14,18 +14,7 @@ export type UpdateProductCatalogPayload = {
 };
 
 export type UpdateProductCatalogResponse = {
-    item: {
-        price: string;
-        description: string;
-        path: string;
-        product_id: string;
-        product_name: string;
-        currency_unit: string;
-        product_photos: string[];
-        create_time: number;
-        catalog_id: string;
-        owner_id: string;
-    };
+    item: ProductCatalog;
     version_ls_catalog: number;
     version_catalog: number;
 };
