@@ -1,37 +1,29 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import type { AttachmentSource } from "../models/index.js";
 import { apiFactory } from "../utils.js";
+
+import type { AttachmentSource, ProductCatalogItem } from "../models/index.js";
 
 export type CreateProductCatalogPayload = {
     catalogId: string;
+
     productName: string;
     price: string;
     description: string;
 
     /**
-     * Upto 5 media files are allowed
+     * Upto 5 media files are allowed, will be ignored if product_photos is provided
      */
-    file?: AttachmentSource[];
+    files?: AttachmentSource[];
+    /**
+     * List of product photo URLs, upto 5
+     *
+     * You can manually get the URL using `uploadProductPhoto` api
+     */
+    product_photos?: string[];
 };
 
 export type CreateProductCatalogResponse = {
-    item: {
-        price: string;
-        description: string;
-        /**
-         * Relative path used to build the product URL.
-         *
-         * Example: https://catalog.zalo.me/${path}
-         */
-        path: string;
-        product_id: string;
-        product_name: string;
-        currency_unit: string;
-        product_photos: string[];
-        create_time: number;
-        catalog_id: string;
-        owner_id: string;
-    };
+    item: ProductCatalogItem;
     version_ls_catalog: number;
     version_catalog: number;
 };
@@ -48,14 +40,14 @@ export const createProductCatalogFactory = apiFactory<CreateProductCatalogRespon
      * @throws ZaloApiError
      */
     return async function createProductCatalog(payload: CreateProductCatalogPayload) {
-        const productPhoto = [];
+        const productPhoto = payload.product_photos || [];
 
-        if (payload.file) {
-            if (payload.file.length > 5) {
+        if (payload.files && payload.files.length == 0) {
+            if (payload.files.length > 5) {
                 throw new ZaloApiError("Maximum 5 media files are allowed");
             }
 
-            for (const mediaFile of payload.file) {
+            for (const mediaFile of payload.files) {
                 const uploadMedia = await api.uploadProductPhoto({
                     file: mediaFile,
                 });
@@ -65,14 +57,18 @@ export const createProductCatalogFactory = apiFactory<CreateProductCatalogRespon
             }
         }
 
+        if (productPhoto.length > 5) {
+            throw new ZaloApiError("Maximum 5 media files are allowed");
+        }
+
         const params = {
-            create_time: Date.now(),
             product_name: payload.productName,
             price: payload.price,
             description: payload.description,
             product_photos: productPhoto,
             catalog_id: payload.catalogId,
             currency_unit: "₫", // $
+            create_time: Date.now(),
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

@@ -14,3 +14,4 @@ export * from "./Undo.js";
 export * from "./ZBusiness.js";
 export * from "./AutoReply.js";
 export * from "./Catalog.js";
+export * from "./ProductCatalog.js";

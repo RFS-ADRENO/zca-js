@@ -1,6 +1,8 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
+import type { ProductCatalogItem } from "../models/index.js";
+
 export type GetProductCatalogListPayload = {
     catalogId: string;
     limit?: number;
@@ -10,18 +12,7 @@ export type GetProductCatalogListPayload = {
 };
 
 export type GetProductCatalogListResponse = {
-    items: {
-        price: string;
-        description: string;
-        path: string;
-        product_id: string;
-        product_name: string;
-        currency_unit: string;
-        product_photos: string[];
-        create_time: number;
-        catalog_id: string;
-        owner_id: string;
-    }[];
+    items: ProductCatalogItem[];
     version: number;
     has_more: number;
 };
