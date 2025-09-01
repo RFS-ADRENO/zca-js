@@ -1,4 +1,6 @@
 import path from "node:path";
+import fs from "node:fs";
+
 import { Reactions, Zalo } from "../src/index.js";
 import { ThreadType } from "../src/models/index.js";
 const zalo = new Zalo({
@@ -6,28 +8,23 @@ const zalo = new Zalo({
     logging: true,
 });
 
-const api = await zalo.login({
-    cookie: [],
-    imei: "",
-    userAgent: "",
-    language: "vi", // maybe add this line or not <(")
-});
+const api = await zalo.login(JSON.parse(fs.readFileSync(path.resolve("./test/credentials.json"), "utf-8")));
 
 const { listener } = api;
 
-listener.onConnected(() => {
+listener.on("connected", () => {
     console.log("Connected");
 });
 
-listener.onClosed(() => {
-    console.log("Closed");
+listener.on("closed", (code, reason) => {
+    console.log("Closed:", code, reason);
 });
 
-listener.onError((error) => {
+listener.on("error", (error) => {
     console.error("Error:", error);
 });
 
-listener.onMessage((message) => {
+listener.on("message", (message) => {
     console.log("Message:", message.threadId, message.data.content);
     switch (message.type) {
         case ThreadType.User:
@@ -39,17 +36,7 @@ listener.onMessage((message) => {
                         api.sendMessage(
                             {
                                 msg: "reply",
-                                // quote: message,
-                                quote: {
-                                    content: message.data.content,
-                                    msgType: message.data.msgType,
-                                    propertyExt: message.data.propertyExt,
-                                    uidFrom: message.data.uidFrom,
-                                    msgId: message.data.msgId,
-                                    cliMsgId: message.data.cliMsgId,
-                                    ts: message.data.ts,
-                                    ttl: message.data.ttl,
-                                },
+                                quote: message.data,
                             },
                             message.threadId,
                             message.type,
