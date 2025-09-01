@@ -26,7 +26,7 @@
 ## Installation
 
 ```bash
-bun install zca-js # or npm install zca-js
+bun add zca-js # or npm install zca-js
 ```
 
 ---
@@ -99,7 +99,7 @@ api.listener.on("message", (message) => {
             api.sendMessage(
                 {
                     msg: "echo: " + message.data.content,
-                    quote: message, // the message object to reply to (optional)
+                    quote: message.data, // the message to reply to (optional)
                 },
                 message.threadId,
                 message.type, // ThreadType.User
@@ -110,7 +110,7 @@ api.listener.on("message", (message) => {
             api.sendMessage(
                 {
                     msg: "echo: " + message.data.content,
-                    quote: message, // the message object to reply to (optional)
+                    quote: message.data, // the message to reply to (optional)
                 },
                 message.threadId,
                 message.type, // ThreadType.Group
