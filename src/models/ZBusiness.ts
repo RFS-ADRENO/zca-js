@@ -21,13 +21,6 @@ export enum BusinessCategory {
     Telecommunications = 14,
 }
 
-/**
- * eg.
-   import { BusinessCategory, BusinessCategoryName } from "../models";
-
-   const cate = BusinessCategory.FoodAndBeverage; // 10
-   const label = BusinessCategoryName[cate]; // "Thực phẩm & Đồ uống"
- */
 export const BusinessCategoryName: Record<BusinessCategory, string> = {
     [BusinessCategory.Other]: "Dịch vụ khác (Không hiển thị)",
     [BusinessCategory.RealEstate]: "Bất động sản",
