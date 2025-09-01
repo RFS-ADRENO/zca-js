@@ -151,9 +151,9 @@ See [examples](examples) folder for more details.
 
 | Repository | Description |
 |    :---    |    :---     |
-| [**ZaloDataExtractor**](https://github.com/JustKemForFun/ZaloDataExtractor) | **ZaloDataExtractor** - Công cụ trích xuất thông tin cần thiết như IMEI, Cookie và User-Agent từ Zalo Web. |
-| [**MultiZlogin**](https://github.com/ChickenAI/multizlogin) | Hệ thống quản lý đa tài khoản Zalo, hỗ trợ đăng nhập và quản lý nhiều tài khoản Zalo cùng lúc, tích hợp proxy và webhook. |
-| [**n8n-nodes-zalo-tools**](https://github.com/ChickenAI/zalo-node) | N8N node cho Zalo cá nhân. |
+| [**ZaloDataExtractor**](https://github.com/JustKemForFun/ZaloDataExtractor) | A browser `Extension` to extract IMEI, cookies, and user agent from Zalo Web. |
+| [**MultiZlogin**](https://github.com/ChickenAI/multizlogin) | A multi-account Zalo management system that lets you log in to and manage multiple accounts simultaneously, with proxy and webhook integration. |
+| [**n8n-nodes-zalo-tools**](https://github.com/ChickenAI/zalo-node) | N8N node for personal Zalo account. |
 
 </div>
 
