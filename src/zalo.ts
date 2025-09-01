@@ -310,7 +310,7 @@ export class API {
     public createProductCatalog: ReturnType<typeof createProductCatalogFactory>;
     public createReminder: ReturnType<typeof createReminderFactory>;
     public deleteAutoReply: ReturnType<typeof deleteAutoReplyFactory>;
-    public deleteAvatarList: ReturnType<typeof deleteAvatarFactory>;
+    public deleteAvatar: ReturnType<typeof deleteAvatarFactory>;
     public deleteCatalog: ReturnType<typeof deleteCatalogFactory>;
     public deleteChat: ReturnType<typeof deleteChatFactory>;
     public deleteMessage: ReturnType<typeof deleteMessageFactory>;
@@ -439,7 +439,7 @@ export class API {
         this.createProductCatalog = createProductCatalogFactory(ctx, this);
         this.createReminder = createReminderFactory(ctx, this);
         this.deleteAutoReply = deleteAutoReplyFactory(ctx, this);
-        this.deleteAvatarList = deleteAvatarFactory(ctx, this);
+        this.deleteAvatar = deleteAvatarFactory(ctx, this);
         this.deleteCatalog = deleteCatalogFactory(ctx, this);
         this.deleteChat = deleteChatFactory(ctx, this);
         this.deleteMessage = deleteMessageFactory(ctx, this);
