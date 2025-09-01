@@ -14,11 +14,11 @@ export type CustomReaction = {
 
 export type AddReactionDestination = {
     data: {
-        msgId: string; // Global message ID
-        cliMsgId: string; // Client message ID
+        msgId: string;
+        cliMsgId: string;
     };
-    threadId: string; // Thread ID
-    type: ThreadType; // Thread type (User or Group)
+    threadId: string;
+    type: ThreadType;
 };
 
 export const addReactionFactory = apiFactory<AddReactionResponse>()((api, ctx, utils) => {
