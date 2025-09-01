@@ -23,6 +23,8 @@ export type WsPayload<T = Record<string, unknown>> = {
 };
 
 export type OnMessageCallback = (message: Message) => unknown;
+export type OnClosedCallback = (code: CloseReason, reason: string) => unknown;
+export type OnErrorCallback = (error: unknown) => unknown;
 
 export enum CloseReason {
     ManualClosure = 1000,
@@ -33,8 +35,8 @@ export enum CloseReason {
 
 interface ListenerEvents {
     connected: [];
-    disconnected: [reason: CloseReason];
-    closed: [reason: CloseReason];
+    disconnected: [code: CloseReason, reason: string];
+    closed: [code: CloseReason, reason: string];
     error: [error: unknown];
     typing: [typing: Typing];
     message: [message: Message];
@@ -67,8 +69,8 @@ export class Listener extends EventEmitter<ListenerEvents> {
     private rotateCount: number;
 
     private onConnectedCallback: () => unknown;
-    private onClosedCallback: (reason: CloseReason) => unknown;
-    private onErrorCallback: (error: unknown) => unknown;
+    private onClosedCallback: OnClosedCallback;
+    private onErrorCallback: OnErrorCallback;
     private onMessageCallback: OnMessageCallback;
     private cipherKey?: string;
 
@@ -123,14 +125,14 @@ export class Listener extends EventEmitter<ListenerEvents> {
     /**
      * @deprecated Use `on` method instead
      */
-    public onClosed(cb: (reason: CloseReason) => unknown) {
+    public onClosed(cb: OnClosedCallback) {
         this.onClosedCallback = cb;
     }
 
     /**
      * @deprecated Use `on` method instead
      */
-    public onError(cb: (error: unknown) => unknown) {
+    public onError(cb: OnErrorCallback) {
         this.onErrorCallback = cb;
     }
 
@@ -196,7 +198,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
         ws.onclose = (event) => {
             this.reset();
-            this.emit("disconnected", event.code as CloseReason);
+            this.emit("disconnected", event.code as CloseReason, event.reason);
             const retry = retryOnClose && this.canRetry(event.code as CloseReason);
             if (retry && retryOnClose) {
                 const shouldRotate = this.shouldRotate(event.code as CloseReason);
@@ -207,8 +209,8 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     this.start({ retryOnClose: true });
                 }, retry);
             } else {
-                this.onClosedCallback(event.code);
-                this.emit("closed", event.code as CloseReason);
+                this.onClosedCallback(event.code, event.reason);
+                this.emit("closed", event.code as CloseReason, event.reason);
             }
         };
 
