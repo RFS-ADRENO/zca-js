@@ -1,7 +1,7 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type EditNoteGroupOptions = {
+export type EditNoteOptions = {
     /**
      * New note title
      */
@@ -16,7 +16,7 @@ export type EditNoteGroupOptions = {
     pinAct?: boolean;
 };
 
-export type EditNoteGroupResponse = {
+export type EditNoteResponse = {
     id: string;
     type: number;
     color: number;
@@ -34,7 +34,7 @@ export type EditNoteGroupResponse = {
     repeat: number;
 };
 
-export const editNoteGroupFactory = apiFactory<EditNoteGroupResponse>()((api, ctx, utils) => {
+export const editNoteFactory = apiFactory<EditNoteResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group_board[0]}/api/board/topic/updatev2`);
 
     /**
@@ -45,7 +45,7 @@ export const editNoteGroupFactory = apiFactory<EditNoteGroupResponse>()((api, ct
      *
      * @throws ZaloApiError
      */
-    return async function editNoteGroup(options: EditNoteGroupOptions, groupId: string) {
+    return async function editNote(options: EditNoteOptions, groupId: string) {
         const params = {
             grid: groupId,
             type: 0,

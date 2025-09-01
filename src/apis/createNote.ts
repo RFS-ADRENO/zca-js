@@ -2,14 +2,14 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import type { NoteDetail } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type CreateNoteGroupOptions = {
+export type CreateNoteOptions = {
     title: string;
     pinAct?: boolean;
 };
 
-export type CreateNoteGroupResponse = NoteDetail;
+export type CreateNoteResponse = NoteDetail;
 
-export const createNoteGroupFactory = apiFactory<CreateNoteGroupResponse>()((api, ctx, utils) => {
+export const createNoteFactory = apiFactory<CreateNoteResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group_board[0]}/api/board/topic/createv2`);
 
     /**
@@ -22,7 +22,7 @@ export const createNoteGroupFactory = apiFactory<CreateNoteGroupResponse>()((api
      *
      * @throws ZaloApiError
      */
-    return async function createNoteGroup(options: CreateNoteGroupOptions, groupId: string) {
+    return async function createNote(options: CreateNoteOptions, groupId: string) {
         const params = {
             grid: groupId,
             type: 0,
@@ -51,12 +51,12 @@ export const createNoteGroupFactory = apiFactory<CreateNoteGroupResponse>()((api
 
         return utils.resolve(response, (result) => {
             if (typeof (result.data as { params: unknown }).params === "string") {
-                (result.data as CreateNoteGroupResponse).params = JSON.parse(
+                (result.data as CreateNoteResponse).params = JSON.parse(
                     (result.data as { params: string }).params,
                 );
             }
 
-            return result.data as CreateNoteGroupResponse;
+            return result.data as CreateNoteResponse;
         });
     };
 });

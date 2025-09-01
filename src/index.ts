@@ -20,7 +20,7 @@ export type { ChangeGroupOwnerResponse } from "./apis/changeGroupOwner.js";
 export type { CreateAutoReplyPayload, CreateAutoReplyResponse } from "./apis/createAutoReply.js";
 export type { CreateCatalogResponse } from "./apis/createCatalog.js";
 export type { CreateGroupOptions, CreateGroupResponse } from "./apis/createGroup.js";
-export type { CreateNoteGroupOptions, CreateNoteGroupResponse } from "./apis/createNoteGroup.js";
+export type { CreateNoteOptions, CreateNoteResponse } from "./apis/createNote.js";
 export type { CreatePollOptions, CreatePollResponse } from "./apis/createPoll.js";
 export type { CreateProductCatalogPayload, CreateProductCatalogResponse } from "./apis/createProductCatalog.js";
 export type { CreateReminderOptions, CreateReminderResponse } from "./apis/createReminder.js";
@@ -32,7 +32,7 @@ export type { DeleteMessageDestination, DeleteMessageResponse } from "./apis/del
 export type { DeleteProductCatalogPayload, DeleteProductCatalogResponse } from "./apis/deleteProductCatalog.js";
 export type { DisableGroupLinkResponse } from "./apis/disableGroupLink.js";
 export type { DisperseGroupResponse } from "./apis/disperseGroup.js";
-export type { EditNoteGroupOptions, EditNoteGroupResponse } from "./apis/editNoteGroup.js";
+export type { EditNoteOptions, EditNoteResponse } from "./apis/editNote.js";
 export type { CreateReminderGroup, CreateReminderUser, EditReminderOptions, EditReminderResponse } from "./apis/editReminder.js";
 export type { EnableGroupLinkResponse } from "./apis/enableGroupLink.js";
 export type { FetchAccountInfoResponse } from "./apis/fetchAccountInfo.js";
