@@ -4,7 +4,6 @@ import { apiFactory } from "../utils.js";
 
 export type ForwardMessagePayload = {
     message: string;
-    threadIds: string[];
     ttl?: number;
     reference?: {
         id: string;
@@ -14,20 +13,19 @@ export type ForwardMessagePayload = {
     };
 };
 
-export type Success = {
+export type ForwardMessageSuccess = {
     clientId: string;
     msgId: string;
 };
 
-export type Failed = {
+export type ForwardMessageFail = {
     clientId: string;
-    errorCode: number;
-    errorMessage: string;
+    error_code: string;
 };
 
 export type ForwardMessageResponse = {
-    success: Success[];
-    failed: Failed[];
+    success: ForwardMessageSuccess[];
+    fail: ForwardMessageFail[];
 };
 
 export const forwardMessageFactory = apiFactory<ForwardMessageResponse>()((api, ctx, utils) => {
@@ -45,9 +43,13 @@ export const forwardMessageFactory = apiFactory<ForwardMessageResponse>()((api, 
      *
      * @throws ZaloApiError
      */
-    return async function forwardMessage(payload: ForwardMessagePayload, type: ThreadType = ThreadType.User) {
+    return async function forwardMessage(
+        payload: ForwardMessagePayload,
+        threadIds: string[],
+        type: ThreadType = ThreadType.User,
+    ) {
         if (!payload.message) throw new ZaloApiError("Missing message content");
-        if (!payload.threadIds || payload.threadIds.length === 0) throw new ZaloApiError("Missing thread IDs");
+        if (!threadIds || threadIds.length === 0) throw new ZaloApiError("Missing thread IDs");
 
         const timestamp = Date.now();
         const clientId = timestamp.toString();
@@ -83,7 +85,7 @@ export const forwardMessageFactory = apiFactory<ForwardMessageResponse>()((api, 
         let params;
         if (type === ThreadType.User) {
             params = {
-                toIds: payload.threadIds.map((threadId) => ({
+                toIds: threadIds.map((threadId) => ({
                     clientId,
                     toUid: threadId,
                     ttl: payload.ttl ?? 0,
@@ -91,20 +93,20 @@ export const forwardMessageFactory = apiFactory<ForwardMessageResponse>()((api, 
                 imei: ctx.imei,
                 ttl: payload.ttl ?? 0,
                 msgType: "1",
-                totalIds: payload.threadIds.length,
+                totalIds: threadIds.length,
                 msgInfo: JSON.stringify(msgInfo),
                 decorLog: JSON.stringify(decorLog),
             };
         } else {
             params = {
-                grids: payload.threadIds.map((threadId) => ({
+                grids: threadIds.map((threadId) => ({
                     clientId,
                     grid: threadId,
                     ttl: payload.ttl ?? 0,
                 })),
                 ttl: payload.ttl ?? 0,
                 msgType: "1",
-                totalIds: payload.threadIds.length,
+                totalIds: threadIds.length,
                 msgInfo: JSON.stringify(msgInfo),
                 decorLog: JSON.stringify(decorLog),
             };
