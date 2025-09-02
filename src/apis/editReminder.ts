@@ -11,15 +11,10 @@ export type EditReminderOptions = {
     repeat?: ReminderRepeatMode;
 };
 
-export type CreateReminderUser = ReminderUser;
-export type CreateReminderGroup = ReminderGroup & {
-    groupId: string;
-    eventType: number;
-    repeatInfo: null;
-    repeatData: unknown[];
-};
+export type EditReminderUser = ReminderUser;
+export type EditReminderGroup = Omit<ReminderGroup, "responseMem">;
 
-export type EditReminderResponse = CreateReminderUser | CreateReminderGroup;
+export type EditReminderResponse = EditReminderUser | EditReminderGroup;
 
 export const editReminderFactory = apiFactory<EditReminderResponse>()((api, ctx, utils) => {
     const serviceURL = {

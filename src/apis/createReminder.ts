@@ -10,7 +10,10 @@ export type CreateReminderOptions = {
     repeat?: ReminderRepeatMode;
 };
 
-export type CreateReminderResponse = ReminderUser | ReminderGroup;
+export type CreateReminderUser = ReminderUser;
+export type CreateReminderGroup = Omit<ReminderGroup, "responseMem">;
+
+export type CreateReminderResponse = CreateReminderUser | CreateReminderGroup;
 
 export const createReminderFactory = apiFactory<CreateReminderResponse>()((api, ctx, utils) => {
     const serviceURL = {

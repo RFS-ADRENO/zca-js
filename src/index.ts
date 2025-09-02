@@ -23,7 +23,7 @@ export type { CreateGroupOptions, CreateGroupResponse } from "./apis/createGroup
 export type { CreateNoteOptions, CreateNoteResponse } from "./apis/createNote.js";
 export type { CreatePollOptions, CreatePollResponse } from "./apis/createPoll.js";
 export type { CreateProductCatalogPayload, CreateProductCatalogResponse } from "./apis/createProductCatalog.js";
-export type { CreateReminderOptions, CreateReminderResponse } from "./apis/createReminder.js";
+export type { CreateReminderOptions, CreateReminderResponse, CreateReminderUser, CreateReminderGroup } from "./apis/createReminder.js";
 export type { DeleteAutoReplyResponse } from "./apis/deleteAutoReply.js";
 export type { DeleteAvatarResponse } from "./apis/deleteAvatar.js";
 export type { DeleteCatalogResponse } from "./apis/deleteCatalog.js";
@@ -33,7 +33,7 @@ export type { DeleteProductCatalogPayload, DeleteProductCatalogResponse } from "
 export type { DisableGroupLinkResponse } from "./apis/disableGroupLink.js";
 export type { DisperseGroupResponse } from "./apis/disperseGroup.js";
 export type { EditNoteOptions, EditNoteResponse } from "./apis/editNote.js";
-export type { CreateReminderGroup, CreateReminderUser, EditReminderOptions, EditReminderResponse } from "./apis/editReminder.js";
+export type { EditReminderGroup, EditReminderUser, EditReminderOptions, EditReminderResponse } from "./apis/editReminder.js";
 export type { EnableGroupLinkResponse } from "./apis/enableGroupLink.js";
 export type { FetchAccountInfoResponse } from "./apis/fetchAccountInfo.js";
 export type { FindUserResponse } from "./apis/findUser.js";
