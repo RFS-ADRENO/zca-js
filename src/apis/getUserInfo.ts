@@ -1,39 +1,9 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import type { Gender, ZBusinessPackage } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type ProfileInfo = {
-    userId: string;
-    username: string;
-    displayName: string;
-    zaloName: string;
-    avatar: string;
-    bgavatar: string;
-    cover: string;
-    gender: Gender;
-    dob: number;
-    sdob: string;
-    status: string;
-    phoneNumber: string;
-    isFr: number;
-    isBlocked: number;
-    lastActionTime: number;
-    lastUpdateTime: number;
-    isActive: number;
-    key: number;
-    type: number;
-    isActivePC: number;
-    isActiveWeb: number;
-    isValid: number;
-    userKey: string;
-    accountStatus: number;
-    oaInfo: unknown;
-    user_mode: number;
-    globalId: string;
-    bizPkg: ZBusinessPackage;
-    createdTs: number;
-    oa_status: unknown;
-};
+import type { User } from "../models/index.js";
+
+export type ProfileInfo = User;
 
 export type UserInfoResponse = {
     unchanged_profiles: Record<string, unknown>;
