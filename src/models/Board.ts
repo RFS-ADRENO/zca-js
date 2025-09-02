@@ -39,6 +39,7 @@ export type NoteDetail = {
     duration: number;
     params: {
         title: string;
+        extra?: string;
     };
     creatorId: string;
     editorId: string;
