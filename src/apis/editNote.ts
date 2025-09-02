@@ -1,6 +1,8 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
+import type { NoteDetail } from "../models/index.js";
+
 export type EditNoteOptions = {
     /**
      * New note title
@@ -16,23 +18,7 @@ export type EditNoteOptions = {
     pinAct?: boolean;
 };
 
-export type EditNoteResponse = {
-    id: string;
-    type: number;
-    color: number;
-    emoji: string;
-    startTime: number;
-    duration: number;
-    params: {
-        title: string;
-        extra: string;
-    };
-    creatorId: string;
-    editorId: string;
-    createTime: number;
-    editTime: number;
-    repeat: number;
-};
+export type EditNoteResponse = NoteDetail;
 
 export const editNoteFactory = apiFactory<EditNoteResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group_board[0]}/api/board/topic/updatev2`);
@@ -72,6 +58,13 @@ export const editNoteFactory = apiFactory<EditNoteResponse>()((api, ctx, utils) 
             }),
         });
 
-        return utils.resolve(response);
+        return utils.resolve(response, (result) => {
+            const data = result.data as Omit<NoteDetail, "params"> & { params: unknown };
+            if (typeof data.params == "string") {
+                data.params = JSON.parse(data.params);
+            }
+
+            return data as NoteDetail;
+        });
     };
 });
