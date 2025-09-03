@@ -4,7 +4,7 @@ import { apiFactory } from "../utils.js";
 
 export type GetBizAccountResponse = {
     biz?: {
-        desc: string;
+        desc: string | null;
         cate: BusinessCategory;
         addr: string;
         website: string;
@@ -15,8 +15,13 @@ export type GetBizAccountResponse = {
         enable_cate: number;
         enable_add: number;
         cta_profile: number;
-        cta_catalog: unknown; // @TODO
-    };
+        /**
+         * Relative path used to build the product URL.
+         *
+         * Example: https://catalog.zalo.me/${cta_catalog}
+         */
+        cta_catalog: string | null;
+    } | null;
     pkgId: number;
 };
 
