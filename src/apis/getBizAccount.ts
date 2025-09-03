@@ -16,7 +16,7 @@ export type GetBizAccountResponse = {
         enable_add: number;
         cta_profile: number;
         /**
-         * Relative path used to build the product URL.
+         * Relative path used to build the catalog URL.
          *
          * Example: https://catalog.zalo.me/${cta_catalog}
          */
