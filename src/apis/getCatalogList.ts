@@ -26,12 +26,12 @@ export const getCatalogListFactory = apiFactory<GetCatalogListResponse>()((api, 
      * @note this API is used for zBusiness
      * @throws ZaloApiError
      */
-    return async function getCatalogList(payload: GetCatalogListPayload) {
+    return async function getCatalogList(payload?: GetCatalogListPayload) {
         const params = {
             version_list_catalog: 0,
-            limit: payload.limit ?? 20,
-            last_product_id: payload.lastProductId ?? -1,
-            page: payload.page ?? 0,
+            limit: payload?.limit ?? 20,
+            last_product_id: payload?.lastProductId ?? -1,
+            page: payload?.page ?? 0,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
