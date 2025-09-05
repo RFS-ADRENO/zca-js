@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import type { GroupSetting, DetailUser } from "../models/index.js";
+import type { GroupSetting } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type GetGroupLinkInfoPayload = {
@@ -16,7 +16,15 @@ export type GetGroupLinkInfoResponse = {
     avt: string;
     fullAvt: string;
     adminIds: string[];
-    currentMems: DetailUser[];
+    currentMems: {
+        id: string;
+        dName: string;
+        zaloName: string;
+        avatar: string;
+        avatar_25: string;
+        accountStatus: number;
+        type: number;
+    }[];
     admins: unknown[];
     hasMoreMember: number;
     subType: number;
