@@ -2,7 +2,7 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
 export type LeaveGroupResponse = {
-    memberError: string[];
+    memberError: unknown[];
 };
 
 export const leaveGroupFactory = apiFactory<LeaveGroupResponse>()((api, ctx, utils) => {
@@ -11,16 +11,16 @@ export const leaveGroupFactory = apiFactory<LeaveGroupResponse>()((api, ctx, uti
     /**
      * Leave group
      *
-     * @param groupId - The ID of the group(s) to leave
+     * @param groupId - groupId to leave
      * @param silent - Turn on/off silent leave group
      *
      * @note Zalo might throw an error with code 166 if you are not a member of the group
      *
      * @throws ZaloApiError
      */
-    return async function leaveGroup(groupId: string | string[], silent: boolean = false) {
+    return async function leaveGroup(groupId: string, silent: boolean = false) {
         const requestParams = {
-            grids: Array.isArray(groupId) ? groupId : [groupId],
+            grids: [groupId], // API only supports leaving one group at a time
             imei: ctx.imei,
             silent: silent ? 1 : 0,
             language: ctx.language,
