@@ -80,6 +80,7 @@ import { getProductCatalogListFactory } from "./apis/getProductCatalogList.js";
 import { getQRFactory } from "./apis/getQR.js";
 import { getQuickMessageFactory } from "./apis/getQuickMessage.js";
 import { getReceivedFriendRequestsFactory } from "./apis/getReceivedFriendRequests.js";
+import { getRelatedFriendGroupFactory } from "./apis/getRelatedFriendGroup.js";
 import { getReminderFactory } from "./apis/getReminder.js";
 import { getReminderResponsesFactory } from "./apis/getReminderResponses.js";
 import { getSentFriendRequestFactory } from "./apis/getSentFriendRequest.js";
@@ -361,6 +362,7 @@ export class API {
     public getQR: ReturnType<typeof getQRFactory>;
     public getQuickMessage: ReturnType<typeof getQuickMessageFactory>;
     public getReceivedFriendRequests: ReturnType<typeof getReceivedFriendRequestsFactory>;
+    public getRelatedFriendGroup: ReturnType<typeof getRelatedFriendGroupFactory>;
     public getReminder: ReturnType<typeof getReminderFactory>;
     public getReminderResponses: ReturnType<typeof getReminderResponsesFactory>;
     public getSentFriendRequest: ReturnType<typeof getSentFriendRequestFactory>;
@@ -494,6 +496,7 @@ export class API {
         this.getQR = getQRFactory(ctx, this);
         this.getQuickMessage = getQuickMessageFactory(ctx, this);
         this.getReceivedFriendRequests = getReceivedFriendRequestsFactory(ctx, this);
+        this.getRelatedFriendGroup = getRelatedFriendGroupFactory(ctx, this);
         this.getReminder = getReminderFactory(ctx, this);
         this.getReminderResponses = getReminderResponsesFactory(ctx, this);
         this.getSentFriendRequest = getSentFriendRequestFactory(ctx, this);
