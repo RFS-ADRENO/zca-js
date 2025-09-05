@@ -36,6 +36,7 @@ import { deleteAutoReplyFactory } from "./apis/deleteAutoReply.js";
 import { deleteAvatarFactory } from "./apis/deleteAvatar.js";
 import { deleteCatalogFactory } from "./apis/deleteCatalog.js";
 import { deleteChatFactory } from "./apis/deleteChat.js";
+import { deleteGroupInviteBoxFactory } from "./apis/deleteGroupInviteBox.js";
 import { deleteMessageFactory } from "./apis/deleteMessage.js";
 import { deleteProductCatalogFactory } from "./apis/deleteProductCatalog.js";
 import { disableGroupLinkFactory } from "./apis/disableGroupLink.js";
@@ -61,6 +62,7 @@ import { getFriendBoardListFactory } from "./apis/getFriendBoardList.js";
 import { getFriendRequestStatusFactory } from "./apis/getFriendRequestStatus.js";
 import { getGroupBlockedMemberFactory } from "./apis/getGroupBlockedMember.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
+import { getGroupInviteBoxInfoFactory } from "./apis/getGroupInviteBoxInfo.js";
 import { getGroupInviteBoxListFactory } from "./apis/getGroupInviteBoxList.js";
 import { getGroupLinkDetailFactory } from "./apis/getGroupLinkDetail.js";
 import { getGroupLinkInfoFactory } from "./apis/getGroupLinkInfo.js";
@@ -315,6 +317,7 @@ export class API {
     public deleteAvatar: ReturnType<typeof deleteAvatarFactory>;
     public deleteCatalog: ReturnType<typeof deleteCatalogFactory>;
     public deleteChat: ReturnType<typeof deleteChatFactory>;
+    public deleteGroupInviteBox: ReturnType<typeof deleteGroupInviteBoxFactory>;
     public deleteMessage: ReturnType<typeof deleteMessageFactory>;
     public deleteProductCatalog: ReturnType<typeof deleteProductCatalogFactory>;
     public disableGroupLink: ReturnType<typeof disableGroupLinkFactory>;
@@ -340,6 +343,7 @@ export class API {
     public getFriendRequestStatus: ReturnType<typeof getFriendRequestStatusFactory>;
     public getGroupBlockedMember: ReturnType<typeof getGroupBlockedMemberFactory>;
     public getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
+    public getGroupInviteBoxInfo: ReturnType<typeof getGroupInviteBoxInfoFactory>;
     public getGroupInviteBoxList: ReturnType<typeof getGroupInviteBoxListFactory>;
     public getGroupLinkDetail: ReturnType<typeof getGroupLinkDetailFactory>;
     public getGroupLinkInfo: ReturnType<typeof getGroupLinkInfoFactory>;
@@ -446,6 +450,7 @@ export class API {
         this.deleteAvatar = deleteAvatarFactory(ctx, this);
         this.deleteCatalog = deleteCatalogFactory(ctx, this);
         this.deleteChat = deleteChatFactory(ctx, this);
+        this.deleteGroupInviteBox = deleteGroupInviteBoxFactory(ctx, this);
         this.deleteMessage = deleteMessageFactory(ctx, this);
         this.deleteProductCatalog = deleteProductCatalogFactory(ctx, this);
         this.disableGroupLink = disableGroupLinkFactory(ctx, this);
@@ -471,6 +476,7 @@ export class API {
         this.getFriendRequestStatus = getFriendRequestStatusFactory(ctx, this);
         this.getGroupBlockedMember = getGroupBlockedMemberFactory(ctx, this);
         this.getGroupInfo = getGroupInfoFactory(ctx, this);
+        this.getGroupInviteBoxInfo = getGroupInviteBoxInfoFactory(ctx, this);
         this.getGroupInviteBoxList = getGroupInviteBoxListFactory(ctx, this);
         this.getGroupLinkDetail = getGroupLinkDetailFactory(ctx, this);
         this.getGroupLinkInfo = getGroupLinkInfoFactory(ctx, this);

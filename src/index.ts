@@ -28,6 +28,7 @@ export type { DeleteAutoReplyResponse } from "./apis/deleteAutoReply.js";
 export type { DeleteAvatarResponse } from "./apis/deleteAvatar.js";
 export type { DeleteCatalogResponse } from "./apis/deleteCatalog.js";
 export type { DeleteChatLastMessage, DeleteChatResponse } from "./apis/deleteChat.js";
+export type { DeleteGroupInviteBoxResponse } from "./apis/deleteGroupInviteBox.js";
 export type { DeleteMessageDestination, DeleteMessageResponse } from "./apis/deleteMessage.js";
 export type { DeleteProductCatalogPayload, DeleteProductCatalogResponse } from "./apis/deleteProductCatalog.js";
 export type { DisableGroupLinkResponse } from "./apis/disableGroupLink.js";
@@ -50,6 +51,7 @@ export type { GetCatalogListPayload, GetCatalogListResponse } from "./apis/getCa
 export type { GetFriendBoardListResponse } from "./apis/getFriendBoardList.js";
 export type { GetGroupBlockedMemberPayload, GetGroupBlockedMemberResponse } from "./apis/getGroupBlockedMember.js";
 export type { GroupInfoResponse } from "./apis/getGroupInfo.js";
+export type { GetGroupInviteBoxInfoPayload, GetGroupInviteBoxInfoResponse } from "./apis/getGroupInviteBoxInfo.js";
 export type { GetGroupInviteBoxListPayload, GetGroupInviteBoxListResponse } from "./apis/getGroupInviteBoxList.js";
 export type { GetGroupLinkDetailResponse } from "./apis/getGroupLinkDetail.js";
 export type { GetGroupLinkInfoPayload, GetGroupLinkInfoResponse } from "./apis/getGroupLinkInfo.js";

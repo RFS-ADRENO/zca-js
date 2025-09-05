@@ -1,6 +1,6 @@
 import type { GroupSetting } from "./GroupEvent.js";
 
-export type GroupInfo = {
+export type DetailGroupInfo = {
     groupId: string;
     name: string;
     desc: string;
@@ -28,6 +28,28 @@ export type GroupInfo = {
     totalMember: number;
     maxMember: number;
     setting: GroupSetting;
+    topic?: {
+        type: number;
+        color: number;
+        emoji: string;
+        startTime: number;
+        duration: number;
+        params: {
+            senderUid: string;
+            senderName: string;
+            client_msg_id: string;
+            thumb: string;
+            global_msg_id: string;
+            msg_type: number;
+            title: string;
+        };
+        id: string;
+        creatorId: string;
+        editorId: string;
+        createTime: number;
+        editTime: number;
+        repeat: number;
+    };
     createdTime: number;
     visibility: number;
     globalId: string;
