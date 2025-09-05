@@ -19,9 +19,17 @@ export type GroupInfo = {
     version: string;
     avt: string;
     fullAvt: string;
-    memberIds: unknown[];
+    memberIds: string[];
     adminIds: string[];
-    currentMems: unknown[];
+    currentMems: {
+        id: string;
+        dName: string;
+        zaloName: string;
+        avatar: string;
+        avatar_25: string;
+        accountStatus: number;
+        type: number;
+    }[];
     updateMems: unknown[];
     memVerList: string[];
     admins: unknown[];
@@ -40,7 +48,7 @@ export type GroupInfo = {
 
 export type GroupInfoPendingApprove = {
     time: number;
-    uids: null | string[];
+    uids: string[] | null;
 };
 
 export type GroupInfoExtra = {

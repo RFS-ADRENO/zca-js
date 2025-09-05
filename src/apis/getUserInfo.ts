@@ -1,7 +1,6 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory } from "../utils.js";
-
 import type { User } from "../models/index.js";
+import { apiFactory } from "../utils.js";
 
 export type ProfileInfo = User;
 
