@@ -61,6 +61,7 @@ import { getFriendBoardListFactory } from "./apis/getFriendBoardList.js";
 import { getFriendRequestStatusFactory } from "./apis/getFriendRequestStatus.js";
 import { getGroupBlockedMemberFactory } from "./apis/getGroupBlockedMember.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
+import { getGroupInviteBoxListFactory } from "./apis/getGroupInviteBoxList.js";
 import { getGroupLinkDetailFactory } from "./apis/getGroupLinkDetail.js";
 import { getGroupLinkInfoFactory } from "./apis/getGroupLinkInfo.js";
 import { getGroupMembersInfoFactory } from "./apis/getGroupMembersInfo.js";
@@ -85,6 +86,7 @@ import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
 import { getUnreadMarkFactory } from "./apis/getUnreadMark.js";
 import { getUserInfoFactory } from "./apis/getUserInfo.js";
 import { inviteUserToGroupsFactory } from "./apis/inviteUserToGroups.js";
+import { joinGroupInviteBoxFactory } from "./apis/joinGroupInviteBox.js";
 import { joinGroupLinkFactory } from "./apis/joinGroupLink.js";
 import { keepAliveFactory } from "./apis/keepAlive.js";
 import { lastOnlineFactory } from "./apis/lastOnline.js";
@@ -338,6 +340,7 @@ export class API {
     public getFriendRequestStatus: ReturnType<typeof getFriendRequestStatusFactory>;
     public getGroupBlockedMember: ReturnType<typeof getGroupBlockedMemberFactory>;
     public getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
+    public getGroupInviteBoxList: ReturnType<typeof getGroupInviteBoxListFactory>;
     public getGroupLinkDetail: ReturnType<typeof getGroupLinkDetailFactory>;
     public getGroupLinkInfo: ReturnType<typeof getGroupLinkInfoFactory>;
     public getGroupMembersInfo: ReturnType<typeof getGroupMembersInfoFactory>;
@@ -362,6 +365,7 @@ export class API {
     public getUnreadMark: ReturnType<typeof getUnreadMarkFactory>;
     public getUserInfo: ReturnType<typeof getUserInfoFactory>;
     public inviteUserToGroups: ReturnType<typeof inviteUserToGroupsFactory>;
+    public joinGroupInviteBox: ReturnType<typeof joinGroupInviteBoxFactory>;
     public joinGroupLink: ReturnType<typeof joinGroupLinkFactory>;
     public keepAlive: ReturnType<typeof keepAliveFactory>;
     public lastOnline: ReturnType<typeof lastOnlineFactory>;
@@ -467,6 +471,7 @@ export class API {
         this.getFriendRequestStatus = getFriendRequestStatusFactory(ctx, this);
         this.getGroupBlockedMember = getGroupBlockedMemberFactory(ctx, this);
         this.getGroupInfo = getGroupInfoFactory(ctx, this);
+        this.getGroupInviteBoxList = getGroupInviteBoxListFactory(ctx, this);
         this.getGroupLinkDetail = getGroupLinkDetailFactory(ctx, this);
         this.getGroupLinkInfo = getGroupLinkInfoFactory(ctx, this);
         this.getGroupMembersInfo = getGroupMembersInfoFactory(ctx, this);
@@ -491,6 +496,7 @@ export class API {
         this.getUnreadMark = getUnreadMarkFactory(ctx, this);
         this.getUserInfo = getUserInfoFactory(ctx, this);
         this.inviteUserToGroups = inviteUserToGroupsFactory(ctx, this);
+        this.joinGroupInviteBox = joinGroupInviteBoxFactory(ctx, this);
         this.joinGroupLink = joinGroupLinkFactory(ctx, this);
         this.keepAlive = keepAliveFactory(ctx, this);
         this.lastOnline = lastOnlineFactory(ctx, this);
