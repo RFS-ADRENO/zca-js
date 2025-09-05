@@ -58,7 +58,7 @@ export type { GetLabelsResponse } from "./apis/getLabels.js";
 export type { BoardItem, GetListBoardResponse, ListBoardOptions } from "./apis/getListBoard.js";
 export type { GetListReminderResponse, ListReminderOptions, ReminderListGroup, ReminderListUser } from "./apis/getListReminder.js";
 export type { GetMuteResponse, MuteEntriesInfo } from "./apis/getMute.js";
-export type { GetPendingGroupMembersResponse } from "./apis/getPendingGroupMembers.js";
+export type { GetPendingGroupMembersResponse, GetPendingGroupMembersUserInfo } from "./apis/getPendingGroupMembers.js";
 export type { GetPinConversationsResponse } from "./apis/getPinConversations.js";
 export type { PollDetailResponse } from "./apis/getPollDetail.js";
 export type { GetProductCatalogListPayload, GetProductCatalogListResponse } from "./apis/getProductCatalogList.js";

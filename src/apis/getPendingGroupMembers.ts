@@ -1,14 +1,16 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
+export type GetPendingGroupMembersUserInfo = {
+    uid: string;
+    dpn: string;
+    avatar: string;
+    user_submit: null;
+};
+
 export type GetPendingGroupMembersResponse = {
     time: number;
-    users: {
-        uid: string;
-        dpn: string;
-        avatar: string;
-        user_submit: null;
-    }[];
+    users: GetPendingGroupMembersUserInfo[];
 };
 
 export const getPendingGroupMembersFactory = apiFactory<GetPendingGroupMembersResponse>()((api, ctx, utils) => {
