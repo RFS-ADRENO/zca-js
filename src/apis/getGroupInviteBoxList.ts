@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import type { DetailUser, Group } from "../models/index.js";
+import type { GroupInfo } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type GetGroupInviteBoxListPayload = {
@@ -11,9 +11,25 @@ export type GetGroupInviteBoxListPayload = {
 
 export type GetGroupInviteBoxListResponse = {
     invitations: {
-        groupInfo: Group;
-        inviterInfo: DetailUser;
-        grCreatorInfo: DetailUser;
+        groupInfo: GroupInfo;
+        inviterInfo: {
+            id: string;
+            dName: string;
+            zaloName: string;
+            avatar: string;
+            avatar_25: string;
+            accountStatus: number;
+            type: number;
+        };
+        grCreatorInfo: {
+            id: string;
+            dName: string;
+            zaloName: string;
+            avatar: string;
+            avatar_25: string;
+            accountStatus: number;
+            type: number;
+        };
         /**
          * Expired timestamp max 7 days
          */

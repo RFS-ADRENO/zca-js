@@ -33,24 +33,3 @@ export type User = {
     createdTs: number;
     oa_status: unknown;
 };
-
-export type DetailUser = {
-    id: string;
-    dName: string;
-    zaloName: string;
-    avatar: string;
-    avatar_25: string;
-    accountStatus: number;
-    type: number;
-};
-
-export type DetailMemberProfile = {
-    displayName: string;
-    zaloName: string;
-    avatar: string;
-    accountStatus: number;
-    type: number;
-    lastUpdateTime: number;
-    globalId: string;
-    id: string;
-};

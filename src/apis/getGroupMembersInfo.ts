@@ -1,11 +1,20 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import type { DetailMemberProfile } from "../models/index.js"
 import { apiFactory } from "../utils.js";
 
+export type GroupMemberProfile = {
+    displayName: string;
+    zaloName: string;
+    avatar: string;
+    accountStatus: number;
+    type: number;
+    lastUpdateTime: number;
+    globalId: string;
+    id: string;
+};
 
 export type GetGroupMembersInfoResponse = {
     profiles: {
-        [memberId: string]: DetailMemberProfile;
+        [memberId: string]: GroupMemberProfile;
     };
     unchangeds_profile: unknown[];
 };

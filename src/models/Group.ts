@@ -1,7 +1,6 @@
 import type { GroupSetting } from "./GroupEvent.js";
-import type { DetailUser } from "./User.js";
 
-export type Group = {
+export type GroupInfo = {
     groupId: string;
     name: string;
     desc: string;
@@ -12,7 +11,15 @@ export type Group = {
     fullAvt: string;
     memberIds: string[];
     adminIds: string[];
-    currentMems: DetailUser[];
+    currentMems: {
+        id: string;
+        dName: string;
+        zaloName: string;
+        avatar: string;
+        avatar_25: string;
+        accountStatus: number;
+        type: number;
+    }[];
     updateMems: unknown[];
     memVerList?: string[];
     admins: unknown[];

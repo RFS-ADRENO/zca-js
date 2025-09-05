@@ -1,13 +1,58 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import type { Group } from "../models/index.js";
+import type { GroupSetting } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type GroupInfoResponse = {
     removedsGroup: string[];
     unchangedsGroup: string[];
     gridInfoMap: {
-        [groupId: string]: Group;
+        [groupId: string]: GroupInfo;
     };
+};
+
+export type GroupInfo = {
+    groupId: string;
+    name: string;
+    desc: string;
+    type: number;
+    creatorId: string;
+    version: string;
+    avt: string;
+    fullAvt: string;
+    memberIds: string[];
+    adminIds: string[];
+    currentMems: {
+        id: string;
+        dName: string;
+        zaloName: string;
+        avatar: string;
+        avatar_25: string;
+        accountStatus: number;
+        type: number;
+    }[];
+    updateMems: unknown[];
+    memVerList: string[];
+    admins: unknown[];
+    hasMoreMember: number;
+    subType: number;
+    totalMember: number;
+    maxMember: number;
+    setting: GroupSetting;
+    createdTime: number;
+    visibility: number;
+    globalId: string;
+    e2ee: number;
+    pendingApprove: GroupInfoPendingApprove;
+    extraInfo: GroupInfoExtra;
+};
+
+export type GroupInfoPendingApprove = {
+    time: number;
+    uids: string[] | null;
+};
+
+export type GroupInfoExtra = {
+    enable_media_store: number;
 };
 
 export const getGroupInfoFactory = apiFactory<GroupInfoResponse>()((api, _, utils) => {
