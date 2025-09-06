@@ -33,7 +33,7 @@ export const setMuteFactory = apiFactory<SetMuteResponse>()((api, ctx, utils) =>
      *
      * @throws ZaloApiError
      */
-    return async function setMute(params: SetMuteParams, threadID: string, type: ThreadType = ThreadType.User) {
+    return async function setMute(params: SetMuteParams = {}, threadID: string, type: ThreadType = ThreadType.User) {
         const { duration = MuteDuration.FOREVER, action = MuteAction.MUTE } = params;
         let muteDuration: number;
 
