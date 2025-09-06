@@ -9,14 +9,14 @@ export type SetMuteParams = {
 
 export type SetMuteResponse = "";
 
-export const enum MuteDuration {
+export enum MuteDuration {
     ONE_HOUR = 3600,
     FOUR_HOURS = 14400,
     FOREVER = -1,
     UNTIL_8AM = "until8AM",
 }
 
-export const enum MuteAction {
+export enum MuteAction {
     MUTE = 1,
     UNMUTE = 3, // khi tat thi duration = -1
 }
@@ -33,7 +33,7 @@ export const setMuteFactory = apiFactory<SetMuteResponse>()((api, ctx, utils) =>
      *
      * @throws ZaloApiError
      */
-    return async function setMute(params: SetMuteParams = {}, threadID: string, type: ThreadType = ThreadType.User) {
+    return async function setMute(params: SetMuteParams, threadID: string, type: ThreadType = ThreadType.User) {
         const { duration = MuteDuration.FOREVER, action = MuteAction.MUTE } = params;
         let muteDuration: number;
 
