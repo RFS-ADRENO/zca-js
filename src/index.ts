@@ -133,3 +133,4 @@ export { ReportReason } from "./apis/sendReport.js";
 export { MuteAction, MuteDuration } from "./apis/setMute.js";
 export { ChatTTL } from "./apis/updateAutoDeleteChat.js";
 export { UpdateLangAvailableLanguages } from "./apis/updateLang.js";
+export { ReviewPendingMemberRequestStatus } from "./apis/reviewPendingMemberRequest.js";
