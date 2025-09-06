@@ -28,7 +28,7 @@ export type SendVideoOptions = {
      */
     height?: number;
     /**
-     * Time to live in miliseconds (default: 0)
+     * Time to live in milliseconds (default: 0)
      */
     ttl?: number;
 };
