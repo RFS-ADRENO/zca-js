@@ -1,7 +1,12 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { ThreadType } from "../models/index.js";
 import { apiFactory, removeUndefinedKeys } from "../utils.js";
-import type { StickerDetail } from "./getStickersDetail.js";
+
+export type SendStickerPayload = {
+    id: number;
+    cateId: number;
+    type: number;
+}
 
 export type SendStickerResponse = {
     msgId: number;
@@ -26,7 +31,7 @@ export const sendStickerFactory = apiFactory<SendStickerResponse>()((api, ctx, u
      *
      * @throws ZaloApiError
      */
-    return async function sendSticker(sticker: StickerDetail, threadId: string, type: ThreadType = ThreadType.User) {
+    return async function sendSticker(sticker: SendStickerPayload, threadId: string, type: ThreadType = ThreadType.User) {
         if (!sticker) throw new ZaloApiError("Missing sticker");
         if (!threadId) throw new ZaloApiError("Missing threadId");
 
