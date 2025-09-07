@@ -3,15 +3,18 @@ import type { BusinessCategory, Gender } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type UpdateProfilePayload = {
-    name: string;
-    dob: `${string}-${string}-${string}`;
-    gender: Gender;
-
-    description?: string;
-    cate?: BusinessCategory;
-    address?: string;
-    website?: string;
-    email?: string;
+    profile: {
+        name: string;
+        dob: `${string}-${string}-${string}`;
+        gender: Gender;
+    };
+    biz?: Partial<{
+        cate: BusinessCategory;
+        description: string;
+        address: string;
+        website: string;
+        email: string;
+    }>;
 };
 
 export type ChangeAccountSettingResponse = "";
@@ -23,27 +26,26 @@ export const updateProfileFactory = apiFactory<ChangeAccountSettingResponse>()((
      * Change account setting information
      *
      * @param payload payload
-     * @param isBusiness add info for business
+     *
+     * @note If your account is a Business Account, include the biz.cate field; otherwise the category will be removed.
+     * You may leave the other biz fields empty if you don’t want to change them.
      *
      * @throws ZaloApiError
      */
-    return async function updateProfile(payload: UpdateProfilePayload, isBusiness: boolean = false) {
-        const zBusiness = {
-            desc: payload.description,
-            cate: payload.cate,
-            addr: payload.address,
-            website: payload.website,
-            email: payload.email,
-        };
-        const infoBusiness = isBusiness ? JSON.stringify(zBusiness) : JSON.stringify({});
-
+    return async function updateProfile(payload: UpdateProfilePayload) {
         const params = {
             profile: JSON.stringify({
-                name: payload.name,
-                dob: payload.dob,
-                gender: payload.gender,
+                name: payload.profile.name,
+                dob: payload.profile.dob,
+                gender: payload.profile.gender,
             }),
-            biz: infoBusiness,
+            biz: JSON.stringify({
+                desc: payload.biz?.description,
+                cate: payload.biz?.cate,
+                addr: payload.biz?.address,
+                website: payload.biz?.website,
+                email: payload.biz?.email,
+            }),
             language: ctx.language,
         };
 
