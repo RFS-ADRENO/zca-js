@@ -4,6 +4,9 @@ import { apiFactory } from "../utils.js";
 
 export type GetGroupLinkInfoPayload = {
     link: string;
+    /**
+     * Default: 1
+     */
     memberPage?: number;
 };
 

@@ -5,9 +5,15 @@ import type { ProductCatalogItem } from "../models/index.js";
 
 export type GetProductCatalogListPayload = {
     catalogId: string;
+    /**
+     * Number of items to retrieve (default: 100)
+     */
     limit?: number;
     versionCatalog?: number;
     lastProductId?: string;
+    /**
+     * Page number (default: 0)
+     */
     page?: number;
 };
 

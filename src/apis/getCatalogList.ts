@@ -4,8 +4,14 @@ import { apiFactory } from "../utils.js";
 import type { CatalogItem } from "../models/index.js";
 
 export type GetCatalogListPayload = {
+    /**
+     * Number of items to retrieve (default: 20)
+     */
     limit?: number;
     lastProductId?: number;
+    /**
+     * Page number (default: 0)
+     */
     page?: number;
 };
 
