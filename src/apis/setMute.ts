@@ -3,6 +3,9 @@ import { ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type SetMuteParams = {
+    /**
+     * Mute duration in seconds or predefined durations
+     */
     duration?: MuteDuration | number;
     action?: MuteAction;
 };
