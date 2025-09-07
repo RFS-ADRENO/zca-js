@@ -117,7 +117,7 @@ export type { UpdateHiddenConversPinResponse } from "./apis/updateHiddenConversP
 export type { UpdateLabelsPayload, UpdateLabelsResponse } from "./apis/updateLabels.js";
 export type { UpdateLangResponse } from "./apis/updateLang.js";
 export type { UpdateProductCatalogPayload, UpdateProductCatalogResponse } from "./apis/updateProductCatalog.js";
-export type { UpdateProfilePayload, ChangeAccountSettingResponse } from "./apis/updateProfile.js";
+export type { UpdateProfilePayload, UpdateProfileResponse } from "./apis/updateProfile.js";
 export type { UpdateQuickMessagePayload, UpdateQuickMessageResponse } from "./apis/updateQuickMessage.js";
 export type { UpdateSettingsResponse, UpdateSettingsType } from "./apis/updateSettings.js";
 export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType, UploadAttachmentImageResponse, UploadAttachmentVideoResponse, UploadAttachmentFileResponse } from "./apis/uploadAttachment.js";

@@ -17,9 +17,9 @@ export type UpdateProfilePayload = {
     }>;
 };
 
-export type ChangeAccountSettingResponse = "";
+export type UpdateProfileResponse = "";
 
-export const updateProfileFactory = apiFactory<ChangeAccountSettingResponse>()((api, ctx, utils) => {
+export const updateProfileFactory = apiFactory<UpdateProfileResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/update`);
 
     /**
