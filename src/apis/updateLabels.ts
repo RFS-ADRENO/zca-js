@@ -33,10 +33,10 @@ export const updateLabelsFactory = apiFactory<UpdateLabelsResponse>()((api, ctx,
      *
      * @throws ZaloApiError
      */
-    return async function updateLabels(label: UpdateLabelsPayload) {
+    return async function updateLabels(payload: UpdateLabelsPayload) {
         const params = {
-            labelData: JSON.stringify(label.labelData),
-            version: label.version,
+            labelData: JSON.stringify(payload.labelData),
+            version: payload.version,
             imei: ctx.imei,
         };
 
