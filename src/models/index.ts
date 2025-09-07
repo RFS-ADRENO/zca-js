@@ -16,3 +16,4 @@ export * from "./AutoReply.js";
 export * from "./Catalog.js";
 export * from "./ProductCatalog.js";
 export * from "./User.js";
+export * from "./Label.js";

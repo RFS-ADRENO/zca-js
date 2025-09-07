@@ -1,16 +1,7 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type LabelData = {
-    id: number;
-    text: string;
-    textKey: string;
-    conversations: string[];
-    color: string;
-    offset: number;
-    emoji: string;
-    createTime: number;
-};
+import type { LabelData } from "../models/index.js";
 
 export type UpdateLabelsPayload = {
     labelData: LabelData[];
