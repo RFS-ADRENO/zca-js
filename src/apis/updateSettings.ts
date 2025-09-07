@@ -1,48 +1,87 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-// eslint-disable-next-line
-export type UpdateSettingsResponse = {};
+export type UpdateSettingsResponse = "";
 
-export type UpdateSettingsType =
-    | "view_birthday"
-    | "online_status"
-    | "seen_status"
-    | "receive_message"
-    | "accept_call"
-    | "phone_search"
-    | "find_me_via_qr"
-    | "common_group"
-    | "find_me_via_contact"
-    | "recommend_friend"
-    | "archive_chat"
-    | "quick_msg";
+export enum UpdateSettingsType {
+    ViewBirthday = "view_birthday",
+    ShowOnlineStatus = "show_online_status",
+    DisplaySeenStatus = "display_seen_status",
+    ReceiveMessage = "receive_message",
+    AcceptCall = "accept_stranger_call",
+    AddFriendViaPhone = "add_friend_via_phone",
+    AddFriendViaQR = "add_friend_via_qr",
+    AddFriendViaGroup = "add_friend_via_group",
+    AddFriendViaContact = "add_friend_via_contact",
+    DisplayOnRecommendFriend = "display_on_recommend_friend",
+    ArchivedChat = "archivedChatStatus",
+    QuickMessage = "quickMessageStatus",
+}
 
 export const updateSettingsFactory = apiFactory<UpdateSettingsResponse>()((_api, _ctx, utils) => {
     const serviceURL = utils.makeURL(`https://wpa.chat.zalo.me/api/setting/update`);
 
     /**
-     * Set account settings - implement managing various account settings
+     * Set account settings
      *
      * @param type The type of setting to update
-     * @param status
+     * @param value
+     *
+     * ViewBirthday
+     * * 0: hide
+     * * 1: show full day/month/year
+     * * 2: show day/month
+     *
+     * ShowOnlineStatus
+     * * 0: hide
+     * * 1: show
+     *
+     * DisplaySeenStatus
+     * * 0: hide
+     * * 1: show
+     *
+     * ReceiveMessage
+     * * 1: everyone
+     * * 2: only friends
+     *
+     * AcceptCall
+     * * 2: only friends
+     * * 3: everyone
+     * * 4: friends and person who contacted
+     *
+     * AddFriendViaPhone
+     * * 0: disable
+     * * 1: enable
+     *
+     * AddFriendViaQR
+     * * 0: disable
+     * * 1: enable
+     *
+     * AddFriendViaGroup
+     * * 0: disable
+     * * 1: enable
+     *
+     * AddFriendViaContact
+     * * 0: disable
+     * * 1: enable
+     *
+     * DisplayOnRecommendFriend
+     * * 0: disable
+     * * 1: enable
+     *
+     * ArchivedChat
+     * * 0: disable
+     * * 1: enable
+     *
+     * QuickMessage
+     * * 0: disable
+     * * 1: enable
      *
      * @throws ZaloApiError
      */
-    return async function updateSettings(type: UpdateSettingsType, status: number) {
+    return async function updateSettings(type: UpdateSettingsType, value: number) {
         const params = {
-            ...(type === "view_birthday" && { view_birthday: status }), // 1 is show full day/month/year | 2 is show day/month | 0 is hide
-            ...(type === "online_status" && { show_online_status: status }), // 1 is online | 0 is offline
-            ...(type === "seen_status" && { display_seen_status: status }), // 1 is show | 0 is hide
-            ...(type === "receive_message" && { receive_message: status }), // 1 is allow everyone to message | 2 is only friend
-            ...(type === "accept_call" && { accept_stranger_call: status }), // 2 is only friends | 3 is allow everyone to message | 4 is friends and person who contacted
-            ...(type === "phone_search" && { add_friend_via_phone: status }), // 1 is enable | 0 is disable
-            ...(type === "find_me_via_qr" && { add_friend_via_qr: status }), // 1 is enable | 0 is disable
-            ...(type === "common_group" && { add_friend_via_group: status }), // 1 is show common group | 0 is unshow common group
-            ...(type === "find_me_via_contact" && { add_friend_via_contact: status }), // 1 is enable | 0 is disable
-            ...(type === "recommend_friend" && { display_on_recommend_friend: status }), // 1 is recommend | 0 is not recommend
-            ...(type === "archive_chat" && { archivedChatStatus: status }), // 1 is enable | 0 is disable
-            ...(type === "quick_msg" && { quickMessageStatus: status }), // 1 is enable | 0 is disable
+            [type]: value,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

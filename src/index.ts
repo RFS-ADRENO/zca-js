@@ -119,7 +119,7 @@ export type { UpdateLangResponse } from "./apis/updateLang.js";
 export type { UpdateProductCatalogPayload, UpdateProductCatalogResponse } from "./apis/updateProductCatalog.js";
 export type { UpdateProfilePayload, UpdateProfileResponse } from "./apis/updateProfile.js";
 export type { UpdateQuickMessagePayload, UpdateQuickMessageResponse } from "./apis/updateQuickMessage.js";
-export type { UpdateSettingsResponse, UpdateSettingsType } from "./apis/updateSettings.js";
+export type { UpdateSettingsResponse } from "./apis/updateSettings.js";
 export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType, UploadAttachmentImageResponse, UploadAttachmentVideoResponse, UploadAttachmentFileResponse } from "./apis/uploadAttachment.js";
 export type { UploadProductPhotoPayload, UploadProductPhotoResponse } from "./apis/uploadProductPhoto.js";
 
@@ -134,3 +134,4 @@ export { MuteAction, MuteDuration } from "./apis/setMute.js";
 export { ChatTTL } from "./apis/updateAutoDeleteChat.js";
 export { UpdateLangAvailableLanguages } from "./apis/updateLang.js";
 export { ReviewPendingMemberRequestStatus } from "./apis/reviewPendingMemberRequest.js";
+export { UpdateSettingsType } from "./apis/updateSettings.js";
