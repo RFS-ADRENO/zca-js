@@ -4,6 +4,7 @@ import { apiFactory } from "../utils.js";
 import type { AutoReplyItem, AutoReplyScope } from "../models/index.js";
 
 export type UpdateAutoReplyPayload = {
+    id: number;
     content: string;
     isEnable: boolean;
     startTime: number;
@@ -34,6 +35,7 @@ export const updateAutoReplyFactory = apiFactory<UpdateAutoReplyResponse>()((api
 
         const params = {
             cliLang: ctx.language,
+            id: payload.id,
             enable: payload.isEnable,
             content: payload.content,
             startTime: payload.startTime,
