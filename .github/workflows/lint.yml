@@ -18,5 +18,5 @@ jobs:
               with:
                   node-version: "18.x"
             - run: npm install
-            - run: npm run build --if-present
-            - run: npm lint
+            - run: npm run build:clean && npm run build:esm && npm run build:cjs
+            - run: npm run lint
