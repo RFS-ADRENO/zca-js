@@ -5,6 +5,9 @@ import { apiFactory } from "../utils.js";
 export type UpdateProfilePayload = {
     profile: {
         name: string;
+        /**
+         * Date of birth in the format YYYY-MM-DD
+         */
         dob: `${string}-${string}-${string}`;
         gender: Gender;
     };
