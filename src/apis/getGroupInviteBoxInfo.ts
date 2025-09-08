@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import type { DetailGroupInfo } from "../models/index.js";
+import type { GroupInfo } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type GetGroupInviteBoxInfoPayload = {
@@ -9,7 +9,7 @@ export type GetGroupInviteBoxInfoPayload = {
 };
 
 export type GetGroupInviteBoxInfoResponse = {
-    groupInfo: DetailGroupInfo;
+    groupInfo: GroupInfo;
     inviterInfo: {
         id: string;
         dName: string;
