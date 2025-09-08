@@ -9,7 +9,30 @@ export type GetGroupInviteBoxInfoPayload = {
 };
 
 export type GetGroupInviteBoxInfoResponse = {
-    groupInfo: GroupInfo;
+    groupInfo: GroupInfo & {
+        topic: {
+            type: number;
+            color: number;
+            emoji: string;
+            startTime: number;
+            duration: number;
+            params: {
+                senderUid: string;
+                senderName: string;
+                client_msg_id: string;
+                thumb: string;
+                global_msg_id: string;
+                msg_type: number;
+                title: string;
+            };
+            id: string;
+            creatorId: string;
+            editorId: string;
+            createTime: number;
+            editTime: number;
+            repeat: number;
+        };
+    };
     inviterInfo: {
         id: string;
         dName: string;
