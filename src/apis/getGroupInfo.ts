@@ -1,18 +1,16 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import type { DetailGroupInfo } from "../models/index.js";
+import type { GroupInfo } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type GroupInfoResponse = {
     removedsGroup: string[];
     unchangedsGroup: string[];
     gridInfoMap: {
-        [groupId: string]: GroupInfo;
+        [groupId: string]: GroupInfo & {
+            memVerList: string[];
+            pendingApprove: GroupInfoPendingApprove;
+        };
     };
-};
-
-export type GroupInfo = DetailGroupInfo & {
-    memVerList: string[];
-    pendingApprove: GroupInfoPendingApprove;
 };
 
 export type GroupInfoPendingApprove = {

@@ -1,6 +1,6 @@
 import type { GroupSetting } from "./GroupEvent.js";
 
-export type DetailGroupInfo = {
+export type GroupInfo = {
     groupId: string;
     name: string;
     desc: string;
