@@ -3,6 +3,7 @@ import type { DetailGroupInfo } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type GetGroupInviteBoxInfoPayload = {
+    groupId: string;
     mpage?: number;
     mcount?: number;
 };
@@ -38,13 +39,12 @@ export const getGroupInviteBoxInfoFactory = apiFactory<GetGroupInviteBoxInfoResp
      * Get group invite box info
      *
      * @param payload - The payload of the request
-     * @param groupId - The group id
      *
      * @throws ZaloApiError
      */
-    return async function getGroupInviteBoxInfo(payload: GetGroupInviteBoxInfoPayload, groupId: string) {
+    return async function getGroupInviteBoxInfo(payload: GetGroupInviteBoxInfoPayload) {
         const params = {
-            grId: groupId,
+            grId: payload.groupId,
             mcount: payload.mcount ?? 10,
             mpage: payload.mpage ?? 1,
         };
