@@ -21,7 +21,6 @@ export type DetailGroupInfo = {
         type: number;
     }[];
     updateMems: unknown[];
-    memVerList?: string[];
     admins: unknown[];
     hasMoreMember: number;
     subType: number;
@@ -57,10 +56,6 @@ export type DetailGroupInfo = {
      * 1: True, 0: False
      */
     e2ee: number;
-    pendingApprove?: {
-        time: number;
-        uids: string[] | null;
-    };
     extraInfo: {
         enable_media_store: number;
     };
