@@ -10,7 +10,7 @@ export type GetGroupInviteBoxInfoPayload = {
 
 export type GetGroupInviteBoxInfoResponse = {
     groupInfo: GroupInfo & {
-        topic: {
+        topic?: {
             type: number;
             color: number;
             emoji: string;
