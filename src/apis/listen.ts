@@ -319,6 +319,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                                 this.ctx.uid,
                                 groupEventData,
                                 getGroupEventType(control.content.act),
+                                control.content.act
                             );
                             if (groupEvent.isSelf && !this.selfListen) continue;
                             this.emit("group_event", groupEvent);
