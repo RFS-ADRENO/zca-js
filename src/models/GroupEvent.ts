@@ -1,38 +1,41 @@
+import type { GroupSetting, GroupTopic } from "./Group.js";
+import type { ReminderGroup } from "./Reminder.js";
+
 export enum GroupEventType {
-    JOIN_REQUEST,
-    JOIN,
-    LEAVE,
-    REMOVE_MEMBER,
-    BLOCK_MEMBER,
+    JOIN_REQUEST = "join_request",
+    JOIN = "join",
+    LEAVE = "leave",
+    REMOVE_MEMBER = "remove_member",
+    BLOCK_MEMBER = "block_member",
 
-    UPDATE_SETTING,
-    UPDATE,
-    NEW_LINK,
+    UPDATE_SETTING = "update_setting",
+    UPDATE = "update",
+    NEW_LINK = "new_link",
 
-    ADD_ADMIN,
-    REMOVE_ADMIN,
+    ADD_ADMIN = "add_admin",
+    REMOVE_ADMIN = "remove_admin",
 
-    NEW_PIN_TOPIC,
-    UPDATE_PIN_TOPIC,
-    REORDER_PIN_TOPIC,
+    NEW_PIN_TOPIC = "new_pin_topic",
+    UPDATE_PIN_TOPIC = "update_pin_topic",
+    REORDER_PIN_TOPIC = "reorder_pin_topic",
 
-    UPDATE_BOARD,
-    REMOVE_BOARD,
+    UPDATE_BOARD = "update_board",
+    REMOVE_BOARD = "remove_board",
 
-    UPDATE_TOPIC,
-    UNPIN_TOPIC,
-    REMOVE_TOPIC,
+    UPDATE_TOPIC = "update_topic",
+    UNPIN_TOPIC = "unpin_topic",
+    REMOVE_TOPIC = "remove_topic",
 
-    ACCEPT_REMIND,
-    REJECT_REMIND,
-    REMIND_TOPIC,
+    ACCEPT_REMIND = "accept_remind",
+    REJECT_REMIND = "reject_remind",
+    REMIND_TOPIC = "remind_topic",
 
-    UPDATE_AVATAR,
+    UPDATE_AVATAR = "update_avatar",
 
-    UNKNOWN,
+    UNKNOWN = "unknown",
 }
 
-export type Member = {
+export type GroupEventUpdateMember = {
     id: string;
     dName: string;
     avatar: string;
@@ -40,45 +43,13 @@ export type Member = {
     avatar_25: string;
 };
 
-export type GroupSetting = {
-    blockName: number;
-    signAdminMsg: number;
-    addMemberOnly: number;
-    setTopicOnly: number;
-    enableMsgHistory: number;
-    joinAppr: number;
-    lockCreatePost: number;
-    lockCreatePoll: number;
-    lockSendMsg: number;
-    lockViewMember: number;
-    bannFeature: number;
-    dirtyMedia: number;
-    banDuration: number;
-};
-
-export type GroupTopic = {
-    type: number;
-    color: number;
-    emoji: string;
-    startTime: number;
-    duration: number;
-    params: string;
-    id: string;
-    creatorId: string;
-    createTime: number;
-    editorId: string;
-    editTime: number;
-    repeat: number;
-    action: number;
-};
-
-export type GroupInfo = {
+export type GroupEventGroupInfo = {
     group_link?: string;
     link_expired_time?: number;
     [key: string]: unknown;
 };
 
-export type GroupExtraData = {
+export type GroupEventExtraData = {
     featureId?: number;
     field?: string;
     [key: string]: unknown;
@@ -90,11 +61,11 @@ export type TGroupEventBase = {
     creatorId: string;
     groupName: string;
     sourceId: string;
-    updateMembers: Member[];
+    updateMembers: GroupEventUpdateMember[];
     groupSetting: GroupSetting | null;
     groupTopic: GroupTopic | null;
-    info: GroupInfo | null;
-    extraData: GroupExtraData | null;
+    info: GroupEventGroupInfo | null;
+    extraData: GroupEventExtraData | null;
     time: string;
     avt: string | null;
     fullAvt: string | null;
@@ -137,15 +108,15 @@ export type TGroupEventReorderPinTopic = {
 export type TGroupEventBoard = {
     sourceId: string;
     groupName: string;
-    groupTopic: GroupTopic;
+    groupTopic: (GroupTopic | ReminderGroup) & { params: string };
     groupId: string;
     creatorId: string;
 
     subType?: number;
-    updateMembers?: Member[];
+    updateMembers?: GroupEventUpdateMember[];
     groupSetting?: GroupSetting;
-    info?: GroupInfo;
-    extraData?: GroupExtraData;
+    info?: GroupEventGroupInfo;
+    extraData?: GroupEventExtraData;
     time?: string;
     avt?: null;
     fullAvt?: null;
@@ -192,36 +163,42 @@ export type GroupEvent =
     | {
           type: GroupEventType.JOIN_REQUEST;
           data: TGroupEventJoinRequest;
+          act: string;
           threadId: string;
           isSelf: boolean;
       }
     | {
           type: GroupEventType.NEW_PIN_TOPIC | GroupEventType.UNPIN_TOPIC | GroupEventType.UPDATE_PIN_TOPIC;
           data: TGroupEventPinTopic;
+          act: string;
           threadId: string;
           isSelf: boolean;
       }
     | {
           type: GroupEventType.REORDER_PIN_TOPIC;
           data: TGroupEventReorderPinTopic;
+          act: string;
           threadId: string;
           isSelf: boolean;
       }
     | {
           type: GroupEventType.UPDATE_BOARD | GroupEventType.REMOVE_BOARD;
           data: TGroupEventBoard;
+          act: string;
           threadId: string;
           isSelf: boolean;
       }
     | {
           type: GroupEventType.ACCEPT_REMIND | GroupEventType.REJECT_REMIND;
           data: TGroupEventRemindRespond;
+          act: string;
           threadId: string;
           isSelf: boolean;
       }
     | {
           type: GroupEventType.REMIND_TOPIC;
           data: TGroupEventRemindTopic;
+          act: string;
           threadId: string;
           isSelf: boolean;
       }
@@ -240,15 +217,16 @@ export type GroupEvent =
               | GroupEventType.REMIND_TOPIC
           >;
           data: TGroupEventBase;
+          act: string;
           threadId: string;
           isSelf: boolean;
       };
 
-export function initializeGroupEvent(uid: string, data: TGroupEvent, type: GroupEventType): GroupEvent {
+export function initializeGroupEvent(uid: string, data: TGroupEvent, type: GroupEventType, act: string): GroupEvent {
     const threadId = "group_id" in data ? data.group_id : data.groupId;
 
     if (type == GroupEventType.JOIN_REQUEST) {
-        return { type, data: data as TGroupEventJoinRequest, threadId, isSelf: false };
+        return { type, act, data: data as TGroupEventJoinRequest, threadId, isSelf: false };
     } else if (
         type == GroupEventType.NEW_PIN_TOPIC ||
         type == GroupEventType.UNPIN_TOPIC ||
@@ -256,6 +234,7 @@ export function initializeGroupEvent(uid: string, data: TGroupEvent, type: Group
     ) {
         return {
             type,
+            act,
             data: data as TGroupEventPinTopic,
             threadId,
             isSelf: (data as TGroupEventPinTopic).actorId == uid,
@@ -263,6 +242,7 @@ export function initializeGroupEvent(uid: string, data: TGroupEvent, type: Group
     } else if (type == GroupEventType.REORDER_PIN_TOPIC) {
         return {
             type,
+            act,
             data: data as TGroupEventReorderPinTopic,
             threadId,
             isSelf: (data as TGroupEventPinTopic).actorId == uid,
@@ -270,6 +250,7 @@ export function initializeGroupEvent(uid: string, data: TGroupEvent, type: Group
     } else if (type == GroupEventType.UPDATE_BOARD || type == GroupEventType.REMOVE_BOARD) {
         return {
             type,
+            act,
             data: data as TGroupEventBoard,
             threadId,
             isSelf: (data as TGroupEventBoard).sourceId == uid,
@@ -277,6 +258,7 @@ export function initializeGroupEvent(uid: string, data: TGroupEvent, type: Group
     } else if (type == GroupEventType.ACCEPT_REMIND || type == GroupEventType.REJECT_REMIND) {
         return {
             type,
+            act,
             data: data as TGroupEventRemindRespond,
             threadId,
             isSelf: (data as TGroupEventRemindRespond).updateMembers.some((memberId) => memberId == uid),
@@ -284,6 +266,7 @@ export function initializeGroupEvent(uid: string, data: TGroupEvent, type: Group
     } else if (type == GroupEventType.REMIND_TOPIC) {
         return {
             type,
+            act,
             data: data as TGroupEventRemindTopic,
             threadId,
             isSelf: (data as TGroupEventRemindTopic).creatorId == uid,
@@ -293,6 +276,7 @@ export function initializeGroupEvent(uid: string, data: TGroupEvent, type: Group
 
         return {
             type,
+            act,
             data: baseData,
             threadId,
             isSelf: baseData.updateMembers?.some((member) => member.id == uid) || baseData.sourceId == uid,
