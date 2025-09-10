@@ -2,8 +2,11 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
 export type GetGroupLinkDetailResponse = {
-    link: string;
-    expiration_date: number;
+    link?: string;
+    expiration_date?: number;
+    /**
+     * 1: enabled, 0: disabled
+     */
     enabled: number;
 };
 

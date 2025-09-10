@@ -5,7 +5,7 @@ import { apiFactory } from "../utils.js";
 export type SendVoiceOptions = {
     voiceUrl: string;
     /**
-     * Time to live in miliseconds (default: 0)
+     * Time to live in milliseconds (default: 0)
      */
     ttl?: number;
 };

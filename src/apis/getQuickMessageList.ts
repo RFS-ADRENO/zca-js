@@ -2,21 +2,21 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import type { QuickMessage } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type GetQuickMessageResponse = {
+export type GetQuickMessageListResponse = {
     cursor: number;
     version: number;
     items: QuickMessage[];
 };
 
-export const getQuickMessageFactory = apiFactory<GetQuickMessageResponse>()((api, ctx, utils) => {
+export const getQuickMessageListFactory = apiFactory<GetQuickMessageListResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.quick_message[0]}/api/quickmessage/list`);
 
     /**
-     * Get quick message
+     * Get quick message list
      *
      * @throws ZaloApiError
      */
-    return async function getQuickMessage() {
+    return async function getQuickMessageList() {
         const params = {
             version: 0,
             lang: 0,

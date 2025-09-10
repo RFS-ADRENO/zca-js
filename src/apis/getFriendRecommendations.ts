@@ -2,13 +2,13 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import type { Gender, ZBusinessPackage } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type CollapseMsgListConfig = {
+export type FriendRecommendationsCollapseMsgListConfig = {
     collapseId: number;
     collapseXItem: number;
     collapseYItem: number;
 };
 
-export type ReceivedFriendRequestsDataInfo = {
+export type FriendRecommendationsDataInfo = {
     userId: string;
     zaloName: string;
     displayName: string;
@@ -22,31 +22,35 @@ export type ReceivedFriendRequestsDataInfo = {
     recommSrc: number;
     recommTime: number;
     recommInfo: {
+        suggestWay: number;
         source: number;
         message: string;
+        customText: string | null;
     };
     bizPkg: ZBusinessPackage;
     isSeenFriendReq: boolean;
 };
 
-export type GetReceivedFriendRequestsResponse = {
-    expiredDuration: number;
-    collapseMsgListConfig: CollapseMsgListConfig;
-    recommItems: {
-        recommItemType: number;
-        dataInfo: ReceivedFriendRequestsDataInfo;
-    }[];
+export type FriendRecommendationsRecommItem = {
+    recommItemType: number;
+    dataInfo: FriendRecommendationsDataInfo;
 };
 
-export const getReceivedFriendRequestsFactory = apiFactory<GetReceivedFriendRequestsResponse>()((api, ctx, utils) => {
+export type GetFriendRecommendationsResponse = {
+    expiredDuration: number;
+    collapseMsgListConfig: FriendRecommendationsCollapseMsgListConfig;
+    recommItems: FriendRecommendationsRecommItem[];
+};
+
+export const getFriendRecommendationsFactory = apiFactory<GetFriendRecommendationsResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/recommendsv2/list`);
 
     /**
-     * Get received friend requests
+     * Get friend recommendations
      *
      * @throws ZaloApiError
      */
-    return async function getReceivedFriendRequests() {
+    return async function getFriendRecommendations() {
         const params = {
             imei: ctx.imei,
         };

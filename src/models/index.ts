@@ -17,3 +17,4 @@ export * from "./Typing.js";
 export * from "./Undo.js";
 export * from "./User.js";
 export * from "./ZBusiness.js";
+export * from "./Label.js";

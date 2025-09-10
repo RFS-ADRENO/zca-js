@@ -8,26 +8,30 @@ export const setHiddenConversationsFactory = apiFactory<SetHiddenConversationsRe
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.conversation[0]}/api/hiddenconvers/add-remove`);
 
     /**
-     * Set hidden conversation
+     * Set hidden conversations
      *
-     * @param hidden - Whether to hide or unhide the conversation
-     * @param threadId Thread ID
+     * @param hidden - Hide or unhide conversations
+     * @param threadId Thread ID(s)
      * @param type Thread type (User/Group)
      *
      * @throws ZaloApiError
      */
     return async function setHiddenConversations(
         hidden: boolean,
-        threadId: string,
+        threadId: string | string[],
         type: ThreadType = ThreadType.User,
     ) {
+        threadId = Array.isArray(threadId) ? threadId : [threadId];
+        if (threadId.length === 0) throw new ZaloApiError("threadId is required");
+        
+        const is_group = type === ThreadType.Group ? 1 : 0;
         const params = {
-            [hidden ? "add_threads" : "del_threads"]: JSON.stringify([
-                {
-                    thread_id: threadId,
-                    is_group: type === ThreadType.Group ? 1 : 0,
-                },
-            ]),
+            [hidden ? "add_threads" : "del_threads"]: JSON.stringify(
+                threadId.map((id) => ({
+                    thread_id: id,
+                    is_group: is_group,
+                })),
+            ),
             [hidden ? "del_threads" : "add_threads"]: "[]",
             imei: ctx.imei,
         };

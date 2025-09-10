@@ -178,7 +178,7 @@ export type MessageContent = {
      */
     attachments?: AttachmentSource | AttachmentSource[];
     /**
-     * Time to live in milisecond
+     * Time to live in milliseconds
      */
     ttl?: number;
 };

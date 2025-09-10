@@ -4,7 +4,13 @@ import { BoardType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type ListBoardOptions = {
+    /**
+     * Page number (default: 1)
+     */
     page?: number;
+    /**
+     * Number of items to retrieve (default: 20)
+     */
     count?: number;
 };
 
