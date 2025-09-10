@@ -23,7 +23,7 @@ export const addUserToGroupFactory = apiFactory<AddUserToGroupResponse>()((api, 
         const params = {
             grid: groupId,
             members: memberId,
-            membersTypes: memberId.map(() => -1),
+            memberTypes: memberId.map(() => -1),
             imei: ctx.imei,
             clientLang: ctx.language,
         };
