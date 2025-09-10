@@ -1,6 +1,7 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import type { GroupInfo } from "../models/index.js";
 import { apiFactory } from "../utils.js";
+
+import type { GroupInfo, GroupTopic } from "../models/index.js";
 
 export type GetGroupInviteBoxInfoPayload = {
     groupId: string;
@@ -10,28 +11,7 @@ export type GetGroupInviteBoxInfoPayload = {
 
 export type GetGroupInviteBoxInfoResponse = {
     groupInfo: GroupInfo & {
-        topic?: {
-            type: number;
-            color: number;
-            emoji: string;
-            startTime: number;
-            duration: number;
-            params: {
-                senderUid: string;
-                senderName: string;
-                client_msg_id: string;
-                thumb: string;
-                global_msg_id: string;
-                msg_type: number;
-                title: string;
-            };
-            id: string;
-            creatorId: string;
-            editorId: string;
-            createTime: number;
-            editTime: number;
-            repeat: number;
-        };
+        topic?: Omit<GroupTopic, "action">;
     };
     inviterInfo: {
         id: string;
@@ -80,9 +60,17 @@ export const getGroupInviteBoxInfoFactory = apiFactory<GetGroupInviteBoxInfoResp
         });
 
         return utils.resolve(response, (result) => {
-            const data = result.data as Omit<GetGroupInviteBoxInfoResponse, "params"> & { params: unknown };
-            if (typeof data.params == "string") {
-                data.params = JSON.parse(data.params);
+            const data = result.data as GetGroupInviteBoxInfoResponse;
+            const topic = data.groupInfo.topic as GetGroupInviteBoxInfoResponse["groupInfo"]["topic"] & {
+                params: unknown;
+            };
+            if (typeof topic.params == "string") {
+                const params = JSON.parse(topic.params);
+                if (typeof params.extra == "string") {
+                    params.extra = JSON.parse(params.extra);
+                }
+
+                topic.params = params;
             }
 
             return data as GetGroupInviteBoxInfoResponse;
