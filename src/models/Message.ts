@@ -94,6 +94,9 @@ export class UserMessage {
 
         if (data.idTo == "0") data.idTo = uid;
         if (data.uidFrom == "0") data.uidFrom = uid;
+        if (data.quote) {
+            data.quote.ownerId = String(data.quote.ownerId);
+        }
     }
 }
 
