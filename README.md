@@ -22,7 +22,7 @@
 -   [Projects](#projects)
 -   [Contributing](#contributing)
 -   [License](#license)
--   [Support Our Mission](#support-our-mission)
+-   [Support Us](#support-us)
 
 ## Installation
 
@@ -211,8 +211,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## **Support Our Mission**
+## **Support Us**
 
 - ⭐ **Star our repositories** if you find them useful!  
 - 🔄 **Share** with your network to help us grow  
-- 💡 **Contribute** your ideas and code  
+- 💡 **Contribute** your ideas and code    
+- ☕ **A coffee**:
+    - [Buy Me a Coffee](https://ko-fi.com/grosse)
+    - [Paypal](https://www.paypal.com/paypalme/dungto213)
+    - [VietQR](https://github.com/user-attachments/assets/e1f319d6-9d11-4082-8248-55b55e645caa)
+    - [Momo](https://me.momo.vn/gMIMulsaUqsbf6iAiXt3)
