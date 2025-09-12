@@ -3,7 +3,6 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import pako from "pako";
-import sharp from "sharp";
 import SparkMD5 from "spark-md5";
 import toughCookie from "tough-cookie";
 import JSONBig from "json-bigint";
@@ -320,9 +319,16 @@ export async function request(ctx: ContextBase, url: string, options?: RequestIn
     return response;
 }
 
-export async function getImageMetaData(filePath: string) {
-    const fileData = await fs.promises.readFile(filePath);
-    const imageData = await sharp(fileData).metadata();
+export async function getImageMetaData(ctx: ContextBase, filePath: string) {
+    if (!ctx.options.imageMetadataGetter) {
+        throw new ZaloApiError("Image metadata getter function is not provided in options");
+    }
+
+    const imageData = await ctx.options.imageMetadataGetter(filePath);
+    if (!imageData) {
+        throw new ZaloApiError("Failed to get image metadata");
+    }
+
     const fileName = filePath.split("/").pop()!;
 
     return {
@@ -337,9 +343,16 @@ export async function getFileSize(filePath: string) {
     return fs.promises.stat(filePath).then((s) => s.size);
 }
 
-export async function getGifMetaData(filePath: string) {
-    const fileData = await fs.promises.readFile(filePath);
-    const gifData = await sharp(fileData).metadata();
+export async function getGifMetaData(ctx: ContextBase, filePath: string) {
+    if (!ctx.options.imageMetadataGetter) {
+        throw new ZaloApiError("Image metadata getter function is not provided in options");
+    }
+
+    const gifData = await ctx.options.imageMetadataGetter(filePath);
+    if (!gifData) {
+        throw new ZaloApiError("Failed to get gif metadata");
+    }
+
     const fileName = path.basename(filePath);
 
     return {

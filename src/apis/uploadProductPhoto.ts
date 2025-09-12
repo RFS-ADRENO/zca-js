@@ -31,7 +31,7 @@ export const uploadProductPhotoFactory = apiFactory<UploadProductPhotoResponse>(
     return async function uploadProductPhoto(payload: UploadProductPhotoPayload) {
         const isSourceFilePath = typeof payload.file == "string";
         const fileMetaData = isSourceFilePath
-            ? await getImageMetaData(payload.file as string)
+            ? await getImageMetaData(ctx, payload.file as string)
             : (payload.file as { metadata: { totalSize: number; width?: number; height?: number } }).metadata;
 
         const fileSize = fileMetaData.totalSize || 0;

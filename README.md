@@ -11,6 +11,7 @@
 ## Table of Contents
 
 -   [Installation](#installation)
+    - [Migrate to V2](#migrate-to-v2)
 -   [Documentation](#documentation)
 -   [Basic Usages](#basic-usages)
     -   [Login](#login)
@@ -27,6 +28,36 @@
 
 ```bash
 bun add zca-js # or npm install zca-js
+```
+
+### Migrate to V2
+
+Since official version 2.0.0, `zca-js` has removed sharp dependency for image metadata extraction. It now requires users to provide their own `imageMetadataGetter` function when initializing the `Zalo` class if they want to send images/gifs by file path.
+
+Example of custom `imageMetadataGetter` using `sharp`:
+
+```bash
+bun add sharp # or npm install sharp
+```
+
+```javascript
+import { Zalo } from "zca-js";
+import sharp from "sharp";
+import fs from "fs";
+
+async function imageMetadataGetter(filePath) {
+    const data = await fs.promises.readFile(filePath);
+    const metadata = await sharp(data).metadata();
+    return {
+        height: metadata.height,
+        width: metadata.width,
+        size: metadata.size || data.length,
+    };
+}
+
+const zalo = new Zalo({
+    imageMetadataGetter,
+});
 ```
 
 ---

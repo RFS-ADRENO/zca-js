@@ -529,7 +529,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
 
         for (const gif of gifFiles) {
             const isFilePath = typeof gif == "string";
-            const gifData = isFilePath ? await getGifMetaData(gif) : { ...gif.metadata, fileName: gif.filename };
+            const gifData = isFilePath ? await getGifMetaData(ctx, gif) : { ...gif.metadata, fileName: gif.filename };
             if (isExceedMaxFileSize(gifData.totalSize!))
                 throw new ZaloApiError(
                     `File ${isFilePath ? getFileName(gif) : gif.filename} size exceed maximum size of ${sharefile.max_size_share_file_v3}MB`,

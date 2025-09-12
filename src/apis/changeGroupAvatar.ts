@@ -26,7 +26,7 @@ export const changeGroupAvatarFactory = apiFactory<ChangeGroupAvatarResponse>()(
         };
 
         const isSourceFilePath = typeof avatarSource == "string";
-        const imageMetaData = isSourceFilePath ? await getImageMetaData(avatarSource) : avatarSource.metadata;
+        const imageMetaData = isSourceFilePath ? await getImageMetaData(ctx, avatarSource) : avatarSource.metadata;
 
         params.originWidth = imageMetaData.width || 1080;
         params.originHeight = imageMetaData.height || 1080;

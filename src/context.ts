@@ -149,6 +149,9 @@ export type AppContextBase = {
     extraVer: ExtraVer;
 };
 
+export type ImageMetadataGetterResponse = { width: number; height: number; size: number } | null;
+export type ImageMetadataGetter = (filePath: string) => Promise<ImageMetadataGetterResponse>;
+
 export type Options = {
     selfListen: boolean;
     checkUpdate: boolean;
@@ -169,6 +172,8 @@ export type Options = {
      * If using proxy, `node-fetch` is highly recommended.
      */
     polyfill: typeof fetch;
+
+    imageMetadataGetter?: ImageMetadataGetter;
 };
 
 const _5_MINUTES = 5 * 60 * 1000;
