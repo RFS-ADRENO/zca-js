@@ -16,7 +16,7 @@ export const removeUserFromGroupFactory = apiFactory<RemoveUserFromGroupResponse
      *
      * @note Zalo might throw an error with code 165 if the user is not in the group, 166 if you don't have enough permissions or is not in the group
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function removeUserFromGroup(memberId: string | string[], groupId: string) {
         if (!Array.isArray(memberId)) memberId = [memberId];

@@ -48,7 +48,7 @@ export const sendDeliveredEventFactory = apiFactory<SendDeliveredEventResponse>(
      * @param messages List of messages to send delivered event
      * @param type Messages type (User or Group), defaults to User
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function sendDeliveredEvent(
         isSeen: boolean,

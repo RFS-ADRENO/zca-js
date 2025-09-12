@@ -16,7 +16,7 @@ export const leaveGroupFactory = apiFactory<LeaveGroupResponse>()((api, ctx, uti
      *
      * @note Zalo might throw an error with code 166 if you are not a member of the group
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function leaveGroup(groupId: string, silent: boolean = false) {
         const requestParams = {

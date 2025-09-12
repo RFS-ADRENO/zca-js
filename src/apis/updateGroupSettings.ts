@@ -58,7 +58,7 @@ export const updateGroupSettingsFactory = apiFactory<UpdateGroupSettingsResponse
      *
      * @note Zalo might throw an error with code 166 if you don't have enough permissions to change the settings.
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function updateGroupSettings(options: UpdateGroupSettingsOptions, groupId: string) {
         const params = {

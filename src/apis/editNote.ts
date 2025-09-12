@@ -29,7 +29,7 @@ export const editNoteFactory = apiFactory<EditNoteResponse>()((api, ctx, utils) 
      * @param options Options for editing the note
      * @param groupId Group ID to create note from
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function editNote(options: EditNoteOptions, groupId: string) {
         const params = {

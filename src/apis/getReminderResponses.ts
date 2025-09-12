@@ -14,7 +14,7 @@ export const getReminderResponsesFactory = apiFactory<GetReminderResponsesRespon
      *
      * @param reminderId reminder id
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getReminderResponses(reminderId: string) {
         const params = {

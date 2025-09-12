@@ -27,7 +27,7 @@ export const sendVoiceFactory = apiFactory<SendVoiceResponse>()((api, ctx, utils
      * @param threadId ID of the user or group to send the voice to
      * @param type Type of thread, default user
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function sendVoice(options: SendVoiceOptions, threadId: string, type: ThreadType = ThreadType.User) {
         let fileSize = null;

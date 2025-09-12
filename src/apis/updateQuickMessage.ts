@@ -24,7 +24,7 @@ export const updateQuickMessageFactory = apiFactory<UpdateQuickMessageResponse>(
      *
      * @note Zalo might throw an error with code 212 if the itemId does not exist.
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function updateQuickMessage(updatePayload: UpdateQuickMessagePayload, itemId: number) {
         const isType = !updatePayload.media ? 0 : 1;

@@ -38,7 +38,7 @@ export const deleteChatFactory = apiFactory<DeleteChatResponse>()((api, ctx, uti
      * @param threadId Thread ID
      * @param type Thread type
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function deleteChat(
         lastMessage: DeleteChatLastMessage,

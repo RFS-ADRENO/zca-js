@@ -24,7 +24,7 @@ export const findUserFactory = apiFactory<FindUserResponse>()((api, ctx, utils) 
      *
      * @param phoneNumber Phone number
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function findUser(phoneNumber: string) {
         if (!phoneNumber) throw new ZaloApiError("Missing phoneNumber");

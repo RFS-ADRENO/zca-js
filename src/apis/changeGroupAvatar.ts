@@ -15,7 +15,7 @@ export const changeGroupAvatarFactory = apiFactory<ChangeGroupAvatarResponse>()(
      * @param avatarSource Attachment source, can be a file path or an Attachment object
      * @param groupId Group ID
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError | ZaloApiMissingImageMetadataGetter}
      */
     return async function changeGroupAvatar(avatarSource: AttachmentSource, groupId: string) {
         const params: Record<string, unknown> = {

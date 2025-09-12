@@ -9,7 +9,7 @@ export const keepAliveFactory = apiFactory<KeepAliveResponse>()((api, ctx, utils
     /**
      * Keep account active?
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function keepAlive() {
         const params = {

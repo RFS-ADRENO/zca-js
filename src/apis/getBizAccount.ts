@@ -33,7 +33,7 @@ export const getBizAccountFactory = apiFactory<GetBizAccountResponse>()((api, _c
      *
      * @param friendId The friend ID to get biz account
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getBizAccount(friendId: string) {
         const params = {

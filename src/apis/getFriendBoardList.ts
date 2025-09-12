@@ -14,7 +14,7 @@ export const getFriendBoardListFactory = apiFactory<GetFriendBoardListResponse>(
      *
      * @param conversationId conversation id
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getFriendBoardList(conversationId: string) {
         const params = {

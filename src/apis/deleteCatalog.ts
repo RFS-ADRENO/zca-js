@@ -12,7 +12,7 @@ export const deleteCatalogFactory = apiFactory<DeleteCatalogResponse>()((api, _,
      * @param catalogId catalog id
      *
      * @note this API is used for zBusiness
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function deleteCatalog(catalogId: string) {
         const params = {

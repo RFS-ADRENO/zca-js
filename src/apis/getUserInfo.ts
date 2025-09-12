@@ -19,7 +19,7 @@ export const getUserInfoFactory = apiFactory<UserInfoResponse>()((api, ctx, util
      *
      * @param userId user id
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getUserInfo(userId: string | string[]) {
         if (!userId) throw new ZaloApiError("Missing user id");

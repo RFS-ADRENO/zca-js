@@ -12,7 +12,7 @@ export const addGroupDeputyFactory = apiFactory<AddGroupDeputyResponse>()((api, 
      * @param memberId user Id or list of user Ids
      * @param groupId group Id
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      *
      */
     return async function addGroupDeputy(memberId: string | string[], groupId: string) {

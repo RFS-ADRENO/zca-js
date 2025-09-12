@@ -16,7 +16,7 @@ export const getRelatedFriendGroupFactory = apiFactory<GetRelatedFriendGroupResp
      * @param friendId friend ids
      *
      * @note this API is used for zBusiness
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getRelatedFriendGroup(friendId: string | string[]) {
         const friendIds = Array.isArray(friendId) ? friendId : [friendId];

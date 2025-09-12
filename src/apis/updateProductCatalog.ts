@@ -39,7 +39,7 @@ export const updateProductCatalogFactory = apiFactory<UpdateProductCatalogRespon
      * @param payload payload
      *
      * @note this API is used for zBusiness - Maximum 5 media files are supported
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function updateProductCatalog(payload: UpdateProductCatalogPayload) {
         const productPhoto = payload.product_photos || [];

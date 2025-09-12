@@ -152,7 +152,7 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
      * @param threadId Group or User ID
      * @param type Message type (User or Group)
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError | ZaloApiMissingImageMetadataGetter}
      */
     return async function uploadAttachment(
         sources: AttachmentSource | AttachmentSource[],

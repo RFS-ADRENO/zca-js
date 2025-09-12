@@ -14,7 +14,7 @@ export const setHiddenConversationsFactory = apiFactory<SetHiddenConversationsRe
      * @param threadId Thread ID(s)
      * @param type Thread type (User/Group)
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function setHiddenConversations(
         hidden: boolean,

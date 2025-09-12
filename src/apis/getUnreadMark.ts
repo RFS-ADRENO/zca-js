@@ -22,7 +22,7 @@ export const getUnreadMarkFactory = apiFactory<GetUnreadMarkResponse>()((api, _,
     /**
      * Get unread mark
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      *
      */
     return async function getUnreadMark() {

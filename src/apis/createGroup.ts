@@ -38,7 +38,7 @@ export const createGroupFactory = apiFactory<CreateGroupResponse>()((api, ctx, u
      *
      * @param options Group options
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function createGroup(options: CreateGroupOptions) {
         if (options.members.length == 0) throw new ZaloApiError("Group must have at least one member");

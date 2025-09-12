@@ -18,7 +18,7 @@ export const deleteAvatarFactory = apiFactory<DeleteAvatarResponse>()((api, ctx,
      *
      * @param photoId avatar photo ID(s) to delete - can be a single string or array of strings
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function deleteAvatar(photoId: string | string[]) {
         const photoIds = Array.isArray(photoId) ? photoId : [photoId];

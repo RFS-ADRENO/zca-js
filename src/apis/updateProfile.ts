@@ -33,7 +33,7 @@ export const updateProfileFactory = apiFactory<UpdateProfileResponse>()((api, ct
      * @note If your account is a Business Account, include the biz.cate field; otherwise the category will be removed.
      * You may leave the other biz fields empty if you don’t want to change them.
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function updateProfile(payload: UpdateProfilePayload) {
         const params = {

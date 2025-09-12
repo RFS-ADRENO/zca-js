@@ -50,7 +50,7 @@ export const sendVideoFactory = apiFactory<SendVideoResponse>()((api, ctx, utils
      * @param threadId ID of the user or group to send the video to
      * @param type Type of thread (USER or GROUP)
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      *
      * @examples Example Video Resolutions:
      *   - **Standard Videos**:

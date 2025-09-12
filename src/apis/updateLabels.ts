@@ -22,7 +22,7 @@ export const updateLabelsFactory = apiFactory<UpdateLabelsResponse>()((api, ctx,
      *
      * @param label label data
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function updateLabels(payload: UpdateLabelsPayload) {
         const params = {

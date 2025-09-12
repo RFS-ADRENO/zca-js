@@ -20,7 +20,7 @@ export const createNoteFactory = apiFactory<CreateNoteResponse>()((api, ctx, uti
      * @param options.pinAct pin action (pin note)
      * @param groupId group id
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function createNote(options: CreateNoteOptions, groupId: string) {
         const params = {

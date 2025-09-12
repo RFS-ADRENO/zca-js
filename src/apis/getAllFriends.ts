@@ -14,7 +14,7 @@ export const getAllFriendsFactory = apiFactory<GetAllFriendsResponse>()((api, ct
      * @param count Page size (default: 20000)
      * @param page Page number (default: 1)
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getAllFriends(count: number = 20000, page: number = 1) {
         const params = {

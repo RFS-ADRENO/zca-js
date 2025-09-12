@@ -15,7 +15,7 @@ export const deleteAutoReplyFactory = apiFactory<DeleteAutoReplyResponse>()((api
      * @param id id of auto reply
      *
      * @note this API used for zBusiness
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function deleteAutoReply(id: number) {
         const params = {

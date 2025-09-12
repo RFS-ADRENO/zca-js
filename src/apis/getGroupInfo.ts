@@ -26,7 +26,7 @@ export const getGroupInfoFactory = apiFactory<GroupInfoResponse>()((api, _, util
      *
      * @param groupId Group ID or list of group IDs
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getGroupInfo(groupId: string | string[]) {
         if (!Array.isArray(groupId)) groupId = [groupId];

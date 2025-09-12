@@ -12,7 +12,7 @@ export const changeFriendAliasFactory = apiFactory<ChangeFriendAliasResponse>()(
      * @param alias new alias (nickname - bietdanh)
      * @param friendId friend id
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function changeFriendAlias(alias: string, friendId: string) {
         const params = {

@@ -18,7 +18,7 @@ export const getHiddenConversationsFactory = apiFactory<GetHiddenConversationsRe
     /**
      * Get hidden conversations
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      *
      */
     return async function getHiddenConversations() {

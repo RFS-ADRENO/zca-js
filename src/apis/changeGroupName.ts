@@ -14,7 +14,7 @@ export const changeGroupNameFactory = apiFactory<ChangeGroupNameResponse>()((api
      * @param name New group name
      * @param groupId Group ID
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function changeGroupName(name: string, groupId: string) {
         if (name.length == 0) name = Date.now().toString();

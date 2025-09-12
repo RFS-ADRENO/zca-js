@@ -28,7 +28,7 @@ export const reviewPendingMemberRequestFactory = apiFactory<ReviewPendingMemberR
      *
      * @note Only the group leader and deputy group leader can review
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function reviewPendingMemberRequest(payload: ReviewPendingMemberRequestPayload, groupId: string) {
         if (!Array.isArray(payload.members)) payload.members = [payload.members];

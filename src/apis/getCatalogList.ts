@@ -30,7 +30,7 @@ export const getCatalogListFactory = apiFactory<GetCatalogListResponse>()((api, 
      * @param payload payload
      *
      * @note this API is used for zBusiness
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getCatalogList(payload?: GetCatalogListPayload) {
         const params = {

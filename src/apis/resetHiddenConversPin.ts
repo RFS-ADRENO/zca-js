@@ -9,7 +9,7 @@ export const resetHiddenConversPinFactory = apiFactory<ResetHiddenConversPinResp
     /**
      * Reset hidden conversation pin
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function resetHiddenConversPin() {
         const params = {};

@@ -14,7 +14,7 @@ export const getQuickMessageListFactory = apiFactory<GetQuickMessageListResponse
     /**
      * Get quick message list
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getQuickMessageList() {
         const params = {

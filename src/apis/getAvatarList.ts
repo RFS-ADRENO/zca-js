@@ -22,7 +22,7 @@ export const getAvatarListFactory = apiFactory<GetAvatarListResponse>()((api, ct
      * @param count The number of avatars to fetch (default: 50)
      * @param page The page number to fetch (default: 1)
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getAvatarList(count: number = 50, page: number = 1) {
         const params = {

@@ -21,7 +21,7 @@ export const deleteProductCatalogFactory = apiFactory<DeleteProductCatalogRespon
      * @param payload payload
      *
      * @note this API is used for zBusiness
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function deleteProductCatalog(payload: DeleteProductCatalogPayload) {
         if (!Array.isArray(payload.productIds)) payload.productIds = [payload.productIds];

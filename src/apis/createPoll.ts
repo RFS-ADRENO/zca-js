@@ -54,7 +54,7 @@ export const createPollFactory = apiFactory<CreatePollResponse>()((api, ctx, uti
      * @param options Poll options
      * @param groupId Group ID to create poll from
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function createPoll(options: CreatePollOptions, groupId: string) {
         const params = {

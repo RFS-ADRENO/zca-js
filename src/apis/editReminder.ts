@@ -29,7 +29,7 @@ export const editReminderFactory = apiFactory<EditReminderResponse>()((api, ctx,
      * @param threadId Thread ID
      * @param type Thread type (User/Group)
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function editReminder(
         options: EditReminderOptions,

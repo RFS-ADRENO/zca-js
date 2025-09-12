@@ -12,7 +12,7 @@ export const getPollDetailFactory = apiFactory<PollDetailResponse>()((api, ctx, 
      *
      * @param pollId Poll ID
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getPollDetail(pollId: string) {
         if (!pollId) throw new ZaloApiError("Missing poll id");

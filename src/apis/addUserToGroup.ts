@@ -15,7 +15,7 @@ export const addUserToGroupFactory = apiFactory<AddUserToGroupResponse>()((api, 
      * @param memberId User ID or list of user IDs to add
      * @param groupId Group ID
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function addUserToGroup(memberId: string | string[], groupId: string) {
         if (!Array.isArray(memberId)) memberId = [memberId];

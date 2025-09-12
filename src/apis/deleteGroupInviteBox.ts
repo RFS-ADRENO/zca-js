@@ -19,7 +19,7 @@ export const deleteGroupInviteBoxFactory = apiFactory<DeleteGroupInviteBoxRespon
      * @param groupId - The group id
      * @param blockFutureInvite - Whether to block future invites from this group
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function deleteGroupInviteBox(groupId: string | string[], blockFutureInvite: boolean = false) {
         const grids = Array.isArray(groupId) ? groupId : [groupId];

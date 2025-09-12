@@ -19,7 +19,7 @@ export const updateLangFactory = apiFactory<UpdateLangResponse>()((api, _, utils
      *
      * @note Calling this API alone will not update the user's language.
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function updateLang(language: UpdateLangAvailableLanguages = UpdateLangAvailableLanguages.VI) {
         const params = {

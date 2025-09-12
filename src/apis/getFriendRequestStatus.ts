@@ -17,7 +17,7 @@ export const getFriendRequestStatusFactory = apiFactory<GetFriendRequestStatusRe
      *
      * @param friendId friend id
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getFriendRequestStatus(friendId: string) {
         const params = {

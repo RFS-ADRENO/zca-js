@@ -26,7 +26,7 @@ export const uploadProductPhotoFactory = apiFactory<UploadProductPhotoResponse>(
      *
      * @param payload file path or attachment source
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError | ZaloApiMissingImageMetadataGetter}
      */
     return async function uploadProductPhoto(payload: UploadProductPhotoPayload) {
         const isSourceFilePath = typeof payload.file == "string";

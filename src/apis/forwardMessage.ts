@@ -41,7 +41,7 @@ export const forwardMessageFactory = apiFactory<ForwardMessageResponse>()((api, 
      * @param threadId Thread ID(s)
      * @param type Thread type (User/Group)
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function forwardMessage(
         payload: ForwardMessagePayload,

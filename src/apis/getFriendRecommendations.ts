@@ -48,7 +48,7 @@ export const getFriendRecommendationsFactory = apiFactory<GetFriendRecommendatio
     /**
      * Get friend recommendations
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getFriendRecommendations() {
         const params = {

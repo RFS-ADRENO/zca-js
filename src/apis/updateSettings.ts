@@ -77,7 +77,7 @@ export const updateSettingsFactory = apiFactory<UpdateSettingsResponse>()((_api,
      * * 0: disable
      * * 1: enable
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function updateSettings(type: UpdateSettingsType, value: number) {
         const params = {

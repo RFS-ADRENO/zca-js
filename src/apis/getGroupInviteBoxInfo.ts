@@ -43,7 +43,7 @@ export const getGroupInviteBoxInfoFactory = apiFactory<GetGroupInviteBoxInfoResp
      *
      * @param payload - The payload of the request
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getGroupInviteBoxInfo(payload: GetGroupInviteBoxInfoPayload) {
         const params = {

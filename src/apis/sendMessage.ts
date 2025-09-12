@@ -607,7 +607,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
      * @param type Message type (User or Group)
      * @param quote Message or GroupMessage instance (optional), used for quoting
      *
-     * @throws {ZaloApiError}
+     * @throws {ZaloApiError | ZaloApiMissingImageMetadataGetter}
      */
     return async function sendMessage(
         message: MessageContent | string,

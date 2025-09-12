@@ -21,7 +21,7 @@ export const updateAutoDeleteChatFactory = apiFactory<UpdateAutoDeleteChatRespon
      * @param threadId The thread ID to auto delete chat
      * @param type Type of thread (User or Group)
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function updateAutoDeleteChat(ttl: ChatTTL, threadId: string, type: ThreadType = ThreadType.User) {
         const params = {

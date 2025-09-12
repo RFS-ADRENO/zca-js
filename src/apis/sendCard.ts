@@ -27,7 +27,7 @@ export const sendCardFactory = apiFactory<SendCardResponse>()((api, ctx, utils) 
      * @param threadId ID of the conversation
      * @param type Message type (User or GroupMessage)
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      *
      */
     return async function sendCard(options: SendCardOptions, threadId: string, type: ThreadType = ThreadType.User) {

@@ -11,7 +11,7 @@ export const removeFriendAliasFactory = apiFactory<RemoveFriendAliasResponse>()(
      *
      * @param friendId friend id
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function removeFriendAlias(friendId: string) {
         const params = {

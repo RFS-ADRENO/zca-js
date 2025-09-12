@@ -11,7 +11,7 @@ export const joinGroupInviteBoxFactory = apiFactory<JoinGroupInviteBoxResponse>(
      *
      * @param groupId - The group id
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function joinGroupInviteBox(groupId: string) {
         const params = {

@@ -16,7 +16,7 @@ export const lastOnlineFactory = apiFactory<LastOnlineResponse>()((api, ctx, uti
      *
      * @param uid User ID
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function lastOnline(uid: string) {
         const params = {

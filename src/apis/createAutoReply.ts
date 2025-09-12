@@ -26,7 +26,7 @@ export const createAutoReplyFactory = apiFactory<CreateAutoReplyResponse>()((api
      * @param payload payload
      *
      * @note this API used for zBusiness
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function createAutoReply(payload: CreateAutoReplyPayload) {
         const uids = Array.isArray(payload.uids) ? payload.uids : [payload.uids];

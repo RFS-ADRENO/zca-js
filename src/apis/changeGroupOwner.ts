@@ -15,7 +15,7 @@ export const changeGroupOwnerFactory = apiFactory<ChangeGroupOwnerResponse>()((a
      * @param groupId Group Id
      * @note Be careful when changing the key, as it will result in losing group admin rights
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      *
      */
     return async function changeGroupOwner(memberId: string, groupId: string) {

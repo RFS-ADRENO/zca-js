@@ -23,7 +23,7 @@ export const addQuickMessageFactory = apiFactory<AddQuickMessageResponse>()((api
      *
      * @note Zalo might throw an error with code 821 if you have reached the limit of quick messages.
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function addQuickMessage(addPayload: AddQuickMessagePayload) {
         const isType = !addPayload.media ? 0 : 1;

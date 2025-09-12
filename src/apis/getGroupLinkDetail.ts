@@ -18,7 +18,7 @@ export const getGroupLinkDetailFactory = apiFactory<GetGroupLinkDetailResponse>(
      *
      * @param groupId The group id
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getGroupLinkDetail(groupId: string) {
         const params = {

@@ -44,7 +44,7 @@ export const getListReminderFactory = apiFactory<GetListReminderResponse>()((api
      * @param threadId - The ID of the thread
      * @param type - The type of the thread (User or Group)
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getListReminder(
         options: ListReminderOptions,

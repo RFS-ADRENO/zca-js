@@ -12,7 +12,7 @@ export const removeGroupBlockedMemberFactory = apiFactory<RemoveGroupBlockedMemb
      * @param memberId member id(s)
      * @param groupId group id
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function removeGroupBlockedMember(memberId: string | string[], groupId: string) {
         if (!Array.isArray(memberId)) memberId = [memberId];

@@ -29,7 +29,7 @@ export const sendStickerFactory = apiFactory<SendStickerResponse>()((api, ctx, u
      * @param threadId group or user id
      * @param type Message type (User or GroupMessage)
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function sendSticker(sticker: SendStickerPayload, threadId: string, type: ThreadType = ThreadType.User) {
         if (!sticker) throw new ZaloApiError("Missing sticker");

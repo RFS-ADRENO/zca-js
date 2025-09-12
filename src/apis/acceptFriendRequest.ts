@@ -11,7 +11,7 @@ export const acceptFriendRequestFactory = apiFactory<AcceptFriendRequestResponse
      *
      * @param userId The User ID to friend request is accept
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function acceptFriendRequest(userId: string) {
         const params = {

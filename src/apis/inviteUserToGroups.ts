@@ -20,7 +20,7 @@ export const inviteUserToGroupsFactory = apiFactory<InviteUserToGroupsResponse>(
      * @param groupId group ID(s)
      * @param memberId member ID
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      *
      */
     return async function inviteUserToGroups(userId: string, groupId: string | string[]) {

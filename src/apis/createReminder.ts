@@ -28,7 +28,7 @@ export const createReminderFactory = apiFactory<CreateReminderResponse>()((api, 
      * @param threadId Group ID to create note from
      * @param type Thread type (User or Group)
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function createReminder(
         options: CreateReminderOptions,

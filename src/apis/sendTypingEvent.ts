@@ -19,7 +19,7 @@ export const sendTypingEventFactory = apiFactory<SendTypingEventResponse>()((api
      * @param type The type of thread (User or Group)
      * @param destType The destination type (User or Page), for User threads only, defaults to User
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function sendTypingEvent(
         threadId: string,

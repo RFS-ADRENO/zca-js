@@ -53,7 +53,7 @@ export const sendSeenEventFactory = apiFactory<SendSeenEventResponse>()((api, ct
      * @param messages List of messages to send seen event
      * @param type Messages type (User or Group), defaults to User
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function sendSeenEvent(
         messages: SendSeenEventMessageParams | SendSeenEventMessageParams[],

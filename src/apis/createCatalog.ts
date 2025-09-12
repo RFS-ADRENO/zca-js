@@ -18,7 +18,7 @@ export const createCatalogFactory = apiFactory<CreateCatalogResponse>()((api, _,
      * @param catalogName catalog name
      *
      * @note this API is used for zBusiness
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function createCatalog(catalogName: string) {
         const params = {

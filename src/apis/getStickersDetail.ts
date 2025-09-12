@@ -34,7 +34,7 @@ export const getStickersDetailFactory = apiFactory<StickerDetailResponse>()((api
      *
      * @param stickerIds Sticker IDs to search for
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getStickersDetail(stickerIds: number | number[]) {
         if (!stickerIds) throw new ZaloApiError("Missing sticker id");

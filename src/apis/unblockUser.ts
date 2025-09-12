@@ -11,7 +11,7 @@ export const unblockUserFactory = apiFactory<UnBlockUserResponse>()((api, ctx, u
      *
      * @param userId The ID of the User to unblock
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function unblockUser(userId: string) {
         const params = {
