@@ -8,7 +8,7 @@ import toughCookie from "tough-cookie";
 import JSONBig from "json-bigint";
 
 import { isContextSession, type ContextSession, type ContextBase } from "./context.js";
-import { ZaloApiError } from "./Errors/ZaloApiError.js";
+import { ZaloApiError, ZaloApiMissingImageMetadataGetter } from "./Errors/index.js";
 import { FriendEventType } from "./models/FriendEvent.js";
 import { GroupEventType } from "./models/GroupEvent.js";
 import type { API } from "./zalo.js";
@@ -321,7 +321,7 @@ export async function request(ctx: ContextBase, url: string, options?: RequestIn
 
 export async function getImageMetaData(ctx: ContextBase, filePath: string) {
     if (!ctx.options.imageMetadataGetter) {
-        throw new ZaloApiError("Image metadata getter function is not provided in options");
+        throw new ZaloApiMissingImageMetadataGetter();
     }
 
     const imageData = await ctx.options.imageMetadataGetter(filePath);
@@ -345,7 +345,7 @@ export async function getFileSize(filePath: string) {
 
 export async function getGifMetaData(ctx: ContextBase, filePath: string) {
     if (!ctx.options.imageMetadataGetter) {
-        throw new ZaloApiError("Image metadata getter function is not provided in options");
+        throw new ZaloApiMissingImageMetadataGetter();
     }
 
     const gifData = await ctx.options.imageMetadataGetter(filePath);
@@ -663,7 +663,11 @@ export async function resolveResponse<T = unknown>(
 }
 
 export type FactoryUtils<T> = {
-    makeURL: (baseURL: string, params?: Record<string, string | number>, apiVersion?: boolean) => ReturnType<typeof makeURL>;
+    makeURL: (
+        baseURL: string,
+        params?: Record<string, string | number>,
+        apiVersion?: boolean,
+    ) => ReturnType<typeof makeURL>;
     encodeAES: (data: cryptojs.lib.WordArray | string, t?: number) => ReturnType<typeof encodeAES>;
     request: (url: string, options?: RequestInit, raw?: boolean) => ReturnType<typeof request>;
     logger: ReturnType<typeof logger>;
