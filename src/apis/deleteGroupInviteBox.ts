@@ -4,7 +4,7 @@ import { apiFactory } from "../utils.js";
 export type DeleteGroupInviteBoxResponse = {
     delInvitaionIds: string[];
     errMap: {
-        [key: string]: {
+        [groupId: string]: {
             err: number;
         };
     };
