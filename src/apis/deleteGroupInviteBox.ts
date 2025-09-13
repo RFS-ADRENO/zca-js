@@ -10,7 +10,7 @@ export type DeleteGroupInviteBoxResponse = {
     };
 };
 
-export const deleteGroupInviteBoxFactory = apiFactory<DeleteGroupInviteBoxResponse>()((api, ctx, utils) => {
+export const deleteGroupInviteBoxFactory = apiFactory<DeleteGroupInviteBoxResponse>()((api, _, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/inv-box/mdel-inv`);
 
     /**
