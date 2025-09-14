@@ -298,7 +298,7 @@ export async function request(ctx: ContextBase, url: string, options?: RequestIn
         for (const cookie of splitCookies) {
             const parsed = toughCookie.Cookie.parse(cookie);
             try {
-                if (parsed) await ctx.cookie.setCookie(parsed, origin);
+                if (parsed) await ctx.cookie.setCookie(parsed, parsed.domain != "zalo.me" ? `https://${parsed.domain}` : origin);
             } catch (error: unknown) {
                 logger(ctx).error(error);
             }
