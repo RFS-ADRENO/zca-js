@@ -116,9 +116,11 @@ export type { SetPinnedConversationsResponse } from "./apis/setPinnedConversatio
 export type { UnBlockUserResponse } from "./apis/unblockUser.js";
 export type { UndoPayload, UndoResponse } from "./apis/undo.js";
 export type { UndoFriendRequestResponse } from "./apis/undoFriendRequest.js";
+export type { UpdateActiveStatusResponse } from "./apis/updateActiveStatus.js";
 export type { UpdateAutoDeleteChatResponse } from "./apis/updateAutoDeleteChat.js";
 export type { UpdateAutoReplyPayload, UpdateAutoReplyResponse } from "./apis/updateAutoReply.js";
 export type { UpdateCatalogPayload, UpdateCatalogResponse } from "./apis/updateCatalog.js";
+export type { UpdateDeactiveStatusResponse } from "./apis/updateDeactiveStatus.js";
 export type { UpdateGroupSettingsOptions, UpdateGroupSettingsResponse } from "./apis/updateGroupSettings.js";
 export type { UpdateHiddenConversPinResponse } from "./apis/updateHiddenConversPin.js";
 export type { UpdateLabelsPayload, UpdateLabelsResponse } from "./apis/updateLabels.js";

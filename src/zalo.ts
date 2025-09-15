@@ -126,9 +126,11 @@ import { setPinnedConversationsFactory } from "./apis/setPinnedConversations.js"
 import { unblockUserFactory } from "./apis/unblockUser.js";
 import { undoFactory } from "./apis/undo.js";
 import { undoFriendRequestFactory } from "./apis/undoFriendRequest.js";
+import { updateActiveStatusFactory } from "./apis/updateActiveStatus.js";
 import { updateAutoDeleteChatFactory } from "./apis/updateAutoDeleteChat.js";
 import { updateAutoReplyFactory } from "./apis/updateAutoReply.js";
 import { updateCatalogFactory } from "./apis/updateCatalog.js";
+import { updateDeactiveStatusFactory } from "./apis/updateDeactiveStatus.js";
 import { updateGroupSettingsFactory } from "./apis/updateGroupSettings.js";
 import { updateHiddenConversPinFactory } from "./apis/updateHiddenConversPin.js";
 import { updateLabelsFactory } from "./apis/updateLabels.js";
@@ -407,9 +409,11 @@ export class API {
     public unblockUser: ReturnType<typeof unblockUserFactory>;
     public undo: ReturnType<typeof undoFactory>;
     public undoFriendRequest: ReturnType<typeof undoFriendRequestFactory>;
+    public updateActiveStatus: ReturnType<typeof updateActiveStatusFactory>;
     public updateAutoDeleteChat: ReturnType<typeof updateAutoDeleteChatFactory>;
     public updateAutoReply: ReturnType<typeof updateAutoReplyFactory>;
     public updateCatalog: ReturnType<typeof updateCatalogFactory>;
+    public updateDeactiveStatus: ReturnType<typeof updateDeactiveStatusFactory>;
     public updateGroupSettings: ReturnType<typeof updateGroupSettingsFactory>;
     public updateHiddenConversPin: ReturnType<typeof updateHiddenConversPinFactory>;
     public updateLabels: ReturnType<typeof updateLabelsFactory>;
@@ -541,9 +545,11 @@ export class API {
         this.unblockUser = unblockUserFactory(ctx, this);
         this.undo = undoFactory(ctx, this);
         this.undoFriendRequest = undoFriendRequestFactory(ctx, this);
+        this.updateActiveStatus = updateActiveStatusFactory(ctx, this);
         this.updateAutoDeleteChat = updateAutoDeleteChatFactory(ctx, this);
         this.updateAutoReply = updateAutoReplyFactory(ctx, this);
         this.updateCatalog = updateCatalogFactory(ctx, this);
+        this.updateDeactiveStatus = updateDeactiveStatusFactory(ctx, this);
         this.updateGroupSettings = updateGroupSettingsFactory(ctx, this);
         this.updateHiddenConversPin = updateHiddenConversPinFactory(ctx, this);
         this.updateLabels = updateLabelsFactory(ctx, this);

@@ -4,7 +4,6 @@ import { apiFactory } from "../utils.js";
 export enum UpdateLangAvailableLanguages {
     VI = "VI",
     EN = "EN",
-    MY = "MY",
 }
 
 export type UpdateLangResponse = "";
@@ -15,10 +14,9 @@ export const updateLangFactory = apiFactory<UpdateLangResponse>()((api, _, utils
     /**
      * Update language?
      *
-     * @param language language to update (VI, EN, MY)
+     * @param language language to update (VI, EN)
      *
      * @note Calling this API alone will not update the user's language.
-     *
      * @throws {ZaloApiError}
      */
     return async function updateLang(language: UpdateLangAvailableLanguages = UpdateLangAvailableLanguages.VI) {
