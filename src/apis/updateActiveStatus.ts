@@ -6,23 +6,25 @@ export type UpdateActiveStatusResponse = {
 };
 
 export const updateActiveStatusFactory = apiFactory<UpdateActiveStatusResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/ping`);
+    const pingURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/ping`);
+    const deactiveURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/deactive`);
 
     /**
      * Update active status?
      *
      * @throws {ZaloApiError}
      */
-    return async function updateActiveStatus() {
+    return async function updateActiveStatus(active: boolean) {
         const params = {
-            status: 1,
+            status: active ? 1 : 0,
             imei: ctx.imei,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-        const response = await utils.request(utils.makeURL(serviceURL, { params: encryptedParams }), {
+        const targetURL = active ? pingURL : deactiveURL;
+        const response = await utils.request(utils.makeURL(targetURL, { params: encryptedParams }), {
             method: "GET",
         });
 
