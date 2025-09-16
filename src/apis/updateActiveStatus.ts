@@ -12,6 +12,8 @@ export const updateActiveStatusFactory = apiFactory<UpdateActiveStatusResponse>(
     /**
      * Update active status?
      *
+     * @param active 
+     *
      * @throws {ZaloApiError}
      */
     return async function updateActiveStatus(active: boolean) {

@@ -19,7 +19,7 @@ export const addNewOptionPollFactory = apiFactory<AddNewOptionPollResponse>()((a
     /**
      * Add new option to poll
      *
-     * @param payload 
+     * @param payload Add new option a poll
      *
      * @throws {ZaloApiError}
      */
