@@ -19,7 +19,7 @@
     -   [Send a message](#send-a-message)
     -   [Get/Send a sticker](#getsend-a-sticker)
 -   [Example](#example)
--   [Projects](#projects)
+-   [Projects & Useful Resources](#projects--useful-resources)
 -   [Contributing](#contributing)
 -   [License](#license)
 -   [Support Us](#support-us)
@@ -176,7 +176,7 @@ See [examples](examples) folder for more details.
 
 ---
 
-## Projects
+## Projects & Useful Resources
 
 <div align="center">
 
@@ -185,6 +185,7 @@ See [examples](examples) folder for more details.
 | [**ZaloDataExtractor**](https://github.com/JustKemForFun/ZaloDataExtractor) | A browser `Extension` to extract IMEI, cookies, and user agent from Zalo Web. |
 | [**MultiZlogin**](https://github.com/ChickenAI/multizlogin) | A multi-account Zalo management system that lets you log in to and manage multiple accounts simultaneously, with proxy and webhook integration. |
 | [**n8n-nodes-zalo-tools**](https://github.com/ChickenAI/zalo-node) | N8N node for personal Zalo account. |
+| [**Zalo-F12**](https://github.com/ElectroHeavenVN/Zalo-F12) | A collection of JavaScript code snippets to paste into DevTools to change how Zalo Web/PC works. |
 
 </div>
 
