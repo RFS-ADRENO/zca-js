@@ -49,8 +49,3 @@ export type UserSetting = {
     view_birthday: number;
     setting_2FA_status: number;
 };
-
-export type GetFriendOnlinesUserStatus = {
-    userId: string;
-    status: string;
-};

@@ -52,7 +52,7 @@ export type { GetAvatarListResponse } from "./apis/getAvatarList.js";
 export type { GetBizAccountResponse } from "./apis/getBizAccount.js";
 export type { GetCatalogListPayload, GetCatalogListResponse } from "./apis/getCatalogList.js";
 export type { GetFriendBoardListResponse } from "./apis/getFriendBoardList.js";
-export type { GetFriendOnlinesResponse } from "./apis/getFriendOnlines.js";
+export type { GetFriendOnlinesResponse, GetFriendOnlinesStatus } from "./apis/getFriendOnlines.js";
 export type { GetGroupBlockedMemberPayload, GetGroupBlockedMemberResponse } from "./apis/getGroupBlockedMember.js";
 export type { GroupInfoPendingApprove, GroupInfoResponse } from "./apis/getGroupInfo.js";
 export type { GetGroupInviteBoxInfoPayload, GetGroupInviteBoxInfoResponse } from "./apis/getGroupInviteBoxInfo.js";
