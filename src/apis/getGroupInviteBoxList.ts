@@ -50,12 +50,12 @@ export const getGroupInviteBoxListFactory = apiFactory<GetGroupInviteBoxListResp
      *
      * @throws {ZaloApiError}
      */
-    return async function getGroupInviteBoxList(payload: GetGroupInviteBoxListPayload) {
+    return async function getGroupInviteBoxList(payload?: GetGroupInviteBoxListPayload) {
         const params = {
-            mpage: payload.mpage ?? 1,
-            page: payload.page ?? 0,
-            invPerPage: payload.invPerPage ?? 12,
-            mcount: payload.mcount ?? 10,
+            mpage: payload?.mpage ?? 1,
+            page: payload?.page ?? 0,
+            invPerPage: payload?.invPerPage ?? 12,
+            mcount: payload?.mcount ?? 10,
             lastGroupId: null, // @TODO: check type
             avatar_size: 120,
             member_avatar_size: 120,
