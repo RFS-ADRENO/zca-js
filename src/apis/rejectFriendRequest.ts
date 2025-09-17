@@ -1,22 +1,21 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type AcceptFriendRequestResponse = "";
+export type RejectFriendRequestResponse = "";
 
-export const acceptFriendRequestFactory = apiFactory<AcceptFriendRequestResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/accept`);
+export const rejectFriendRequestFactory = apiFactory<RejectFriendRequestResponse>()((api, _ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/reject`);
 
     /**
-     * Accept a friend request from a User
+     * Reject a friend request from a User
      *
-     * @param friendId The friend ID to user request is accept
+     * @param friendId 
      *
      * @throws {ZaloApiError}
      */
-    return async function acceptFriendRequest(friendId: string) {
+    return async function rejectFriendRequest(friendId: string) {
         const params = {
             fid: friendId,
-            language: ctx.language,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

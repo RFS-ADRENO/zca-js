@@ -1,22 +1,22 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type AcceptFriendRequestResponse = "";
+export type SharePollResponse = "";
 
-export const acceptFriendRequestFactory = apiFactory<AcceptFriendRequestResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/accept`);
+export const sharePollFactory = apiFactory<SharePollResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/poll/share`);
 
     /**
-     * Accept a friend request from a User
+     * Share a poll
      *
-     * @param friendId The friend ID to user request is accept
+     * @param pollId poll id to share
      *
      * @throws {ZaloApiError}
      */
-    return async function acceptFriendRequest(friendId: string) {
+    return async function sharePoll(pollId: number) {
         const params = {
-            fid: friendId,
-            language: ctx.language,
+            poll_id: pollId,
+            imei: ctx.imei,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

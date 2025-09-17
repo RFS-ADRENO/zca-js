@@ -1,20 +1,19 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { UserSetting } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type KeepAliveResponse = { config_vesion: number };
+export type GetSettingsResponse = UserSetting;
 
-export const keepAliveFactory = apiFactory<KeepAliveResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.chat[0]}/keepalive`);
+export const getSettingsFactory = apiFactory<GetSettingsResponse>()((_api, _ctx, utils) => {
+    const serviceURL = utils.makeURL(`https://wpa.chat.zalo.me/api/setting/me`);
 
     /**
-     * Keep Alive?
+     * Get my account settings
      *
      * @throws {ZaloApiError}
      */
-    return async function keepAlive() {
-        const params = {
-            imei: ctx.imei,
-        };
+    return async function getSettings() {
+        const params = {};
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
@@ -23,6 +22,6 @@ export const keepAliveFactory = apiFactory<KeepAliveResponse>()((api, ctx, utils
             method: "GET",
         });
 
-        return utils.resolve(response, undefined, false);
+        return utils.resolve(response);
     };
 });

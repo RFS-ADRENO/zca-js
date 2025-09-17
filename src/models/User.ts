@@ -33,3 +33,19 @@ export type User = {
     createdTs: number;
     oa_status: unknown;
 };
+
+export type UserSetting = {
+    add_friend_via_contact: number;
+    display_on_recommend_friend: number;
+    add_friend_via_group: number;
+    add_friend_via_qr: number;
+    quick_message_status: number;
+    show_online_status: boolean;
+    accept_stranger_call: number;
+    archived_chat_status: number;
+    receive_message: number;
+    add_friend_via_phone: number;
+    display_seen_status: number;
+    view_birthday: number;
+    setting_2FA_status: number;
+};
