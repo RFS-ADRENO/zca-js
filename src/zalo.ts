@@ -14,7 +14,7 @@ import toughCookie from "tough-cookie";
 import { acceptFriendRequestFactory } from "./apis/acceptFriendRequest.js";
 import { addGroupBlockedMemberFactory } from "./apis/addGroupBlockedMember.js";
 import { addGroupDeputyFactory } from "./apis/addGroupDeputy.js";
-import { addNewOptionPollFactory } from "./apis/addNewOptionPoll.js";
+import { addPollOptionsFactory } from "./apis/addPollOptions.js";
 import { addQuickMessageFactory } from "./apis/addQuickMessage.js";
 import { addReactionFactory } from "./apis/addReaction.js";
 import { addUnreadMarkFactory } from "./apis/addUnreadMark.js";
@@ -303,7 +303,7 @@ export class API {
     public acceptFriendRequest: ReturnType<typeof acceptFriendRequestFactory>;
     public addGroupBlockedMember: ReturnType<typeof addGroupBlockedMemberFactory>;
     public addGroupDeputy: ReturnType<typeof addGroupDeputyFactory>;
-    public addNewOptionPoll: ReturnType<typeof addNewOptionPollFactory>;
+    public addPollOptions: ReturnType<typeof addPollOptionsFactory>;
     public addQuickMessage: ReturnType<typeof addQuickMessageFactory>;
     public addReaction: ReturnType<typeof addReactionFactory>;
     public addUnreadMark: ReturnType<typeof addUnreadMarkFactory>;
@@ -444,7 +444,7 @@ export class API {
         this.acceptFriendRequest = acceptFriendRequestFactory(ctx, this);
         this.addGroupBlockedMember = addGroupBlockedMemberFactory(ctx, this);
         this.addGroupDeputy = addGroupDeputyFactory(ctx, this);
-        this.addNewOptionPoll = addNewOptionPollFactory(ctx, this);
+        this.addPollOptions = addPollOptionsFactory(ctx, this);
         this.addQuickMessage = addQuickMessageFactory(ctx, this);
         this.addReaction = addReactionFactory(ctx, this);
         this.addUnreadMark = addUnreadMarkFactory(ctx, this);

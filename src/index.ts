@@ -8,7 +8,7 @@ export type { ContextSession, ContextBase, AppContextExtended, AppContextBase, O
 export type { AcceptFriendRequestResponse } from "./apis/acceptFriendRequest.js";
 export type { AddGroupBlockedMemberResponse } from "./apis/addGroupBlockedMember.js";
 export type { AddGroupDeputyResponse } from "./apis/addGroupDeputy.js";
-export type { AddNewOptionPollPayload, AddNewOptionPollResponse } from "./apis/addNewOptionPoll.js";
+export type { AddPollOptionsPayload, AddPollOptionsResponse, AddPollOptionsOption } from "./apis/addPollOptions.js";
 export type { AddQuickMessagePayload, AddQuickMessageResponse } from "./apis/addQuickMessage.js";
 export type { AddReactionDestination, AddReactionResponse, CustomReaction } from "./apis/addReaction.js";
 export type { AddUnreadMarkResponse } from "./apis/addUnreadMark.js";
