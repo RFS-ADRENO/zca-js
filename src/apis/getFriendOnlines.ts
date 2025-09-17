@@ -1,13 +1,11 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { GetFriendOnlinesUserStatus } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type GetFriendOnlinesResponse = {
     predefine: string[];
     ownerStatus: string;
-    onlines: {
-        userId: string;
-        status: string;
-    }[];
+    onlines: GetFriendOnlinesUserStatus[];
 };
 
 export const getFriendOnlinesFactory = apiFactory<GetFriendOnlinesResponse>()((api, ctx, utils) => {

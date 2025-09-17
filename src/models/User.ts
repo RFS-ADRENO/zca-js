@@ -33,3 +33,8 @@ export type User = {
     createdTs: number;
     oa_status: unknown;
 };
+
+export type GetFriendOnlinesUserStatus = {
+    userId: string;
+    status: string;
+};
