@@ -1,8 +1,9 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { PollOptions } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type VotePollResponse = {
-    options: { content: string; votes: number; voted: boolean; voters: string[]; option_id: number }[];
+    options: PollOptions[];
 };
 
 export const votePollFactory = apiFactory<VotePollResponse>()((api, ctx, utils) => {

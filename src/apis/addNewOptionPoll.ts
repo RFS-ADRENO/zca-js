@@ -1,4 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { PollOptions } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type AddNewOptionPollPayload = {
@@ -10,10 +11,10 @@ export type AddNewOptionPollPayload = {
 };
 
 export type AddNewOptionPollResponse = {
-    options: { content: string; votes: number; voted: boolean; voters: string[]; option_id: number }[];
+    options: PollOptions[];
 };
 
-export const addNewOptionPollFactory = apiFactory<AddNewOptionPollResponse>()((api, ctx, utils) => {
+export const addNewOptionPollFactory = apiFactory<AddNewOptionPollResponse>()((api, _ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/poll/option/add`);
 
     /**
