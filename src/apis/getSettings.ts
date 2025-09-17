@@ -1,21 +1,8 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { UserSetting } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type GetSettingsResponse = {
-    add_friend_via_contact: number;
-    display_on_recommend_friend: number;
-    add_friend_via_group: number;
-    add_friend_via_qr: number;
-    quick_message_status: number;
-    show_online_status: boolean;
-    accept_stranger_call: number;
-    archived_chat_status: number;
-    receive_message: number;
-    add_friend_via_phone: number;
-    display_seen_status: number;
-    view_birthday: number;
-    setting_2FA_status: number;
-};
+export type GetSettingsResponse = UserSetting;
 
 export const getSettingsFactory = apiFactory<GetSettingsResponse>()((_api, _ctx, utils) => {
     const serviceURL = utils.makeURL(`https://wpa.chat.zalo.me/api/setting/me`);
