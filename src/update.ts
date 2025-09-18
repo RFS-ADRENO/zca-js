@@ -2,14 +2,20 @@ import { compare } from "semver";
 import { isBun, logger } from "./utils.js";
 import type { ContextBase } from "./context.js";
 
-const VERSION = "2.0.0";
+const VERSION = "2.0.1";
 const NPM_REGISTRY = "https://registry.npmjs.org/zca-js";
 
 export async function checkUpdate(ctx: ContextBase) {
     if (!ctx.options.checkUpdate) return;
 
     const _options = {
-        ...(isBun ? { proxy: ctx.options.agent } : { agent: ctx.options.agent }),
+        ...(isBun
+            ? {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
+                  proxy: ctx.options.agent?.proxy?.href,
+              }
+            : { agent: ctx.options.agent }),
     };
     const response = await ctx.options.polyfill(NPM_REGISTRY, _options as RequestInit).catch(() => null);
     if (!response || !response.ok) return;
