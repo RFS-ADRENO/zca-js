@@ -160,12 +160,7 @@ export type Options = {
     apiType: number;
     apiVersion: number;
 
-    /**
-     * Optional agent configuration.
-     * - When using `Bun`, this should be a string.
-     * - In other environments, this should be an `Agent` instance.
-     */
-    agent?: Agent | string;
+    agent?: Agent;
 
     /**
      * Optional fetch implementation for polyfills in non-standard environments.

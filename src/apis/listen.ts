@@ -188,6 +188,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                 "user-agent": this.userAgent,
                 cookie: this.cookie,
             },
+            agent: this.ctx.options.agent
         });
         this.ws = ws;
 

@@ -288,7 +288,11 @@ export async function request(ctx: ContextBase, url: string, options?: RequestIn
 
     const _options = {
         ...(options ?? {}),
-        ...(isBun ? { proxy: ctx.options.agent } : { agent: ctx.options.agent }),
+        ...(isBun ? { 
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            proxy: ctx.options.agent?.proxy?.href
+        } : { agent: ctx.options.agent }),
     };
 
     const response = await ctx.options.polyfill(url, _options);
