@@ -12,6 +12,7 @@
         }
     },
     "scripts": {
+        "prebuild": "bun run scripts/buildAPI.js",
         "build:clean": "rimraf dist",
         "build:esm": "tsc",
         "build:cjs": "rollup -c rollup.config.js",
