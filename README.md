@@ -186,6 +186,7 @@ See [examples](examples) folder for more details.
 | [**MultiZlogin**](https://github.com/ChickenAI/multizlogin) | A multi-account Zalo management system that lets you log in to and manage multiple accounts simultaneously, with proxy and webhook integration. |
 | [**n8n-nodes-zalo-tools**](https://github.com/ChickenAI/zalo-node) | N8N node for personal Zalo account. |
 | [**Zalo-F12**](https://github.com/ElectroHeavenVN/Zalo-F12) | A collection of JavaScript code snippets to paste into DevTools to change how Zalo Web/PC works. |
+| [**Zalo-F12-Tools**](https://github.com/JustKemForFun/Zalo-F12-Tools) | Toggle hidden modes for Zalo Web. |
 
 </div>
 
