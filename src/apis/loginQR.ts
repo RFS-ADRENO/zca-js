@@ -405,7 +405,7 @@ export async function loginQR(
 
             function abort() {
                 cleanUp();
-                throw new ZaloApiLoginQRAborted();
+                return reject(new ZaloApiLoginQRAborted());
             }
 
             if (ctx.options.logging) console.log();
