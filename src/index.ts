@@ -71,7 +71,7 @@ export type { PollDetailResponse } from "./apis/getPollDetail.js";
 export type { GetProductCatalogListPayload, GetProductCatalogListResponse } from "./apis/getProductCatalogList.js";
 export type { GetQRResponse } from "./apis/getQR.js";
 export type { GetQuickMessageListResponse } from "./apis/getQuickMessageList.js";
-export type { GetFriendRecommendationsResponse, FriendRecommendationsCollapseMsgListConfig, FriendRecommendationsDataInfo, FriendRecommendationsRecommItem } from "./apis/getFriendRecommendations.js";
+export type { GetFriendRecommendationsResponse, FriendRecommendationsCollapseMsgListConfig, FriendRecommendationsDataInfo, FriendRecommendationsRecommItem, FriendRecommendationsType } from "./apis/getFriendRecommendations.js";
 export type { GetRelatedFriendGroupResponse } from "./apis/getRelatedFriendGroup.js";
 export type { GetReminderResponse } from "./apis/getReminder.js";
 export type { GetReminderResponsesResponse } from "./apis/getReminderResponses.js";

@@ -2,6 +2,11 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import type { Gender, ZBusinessPackage } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
+export enum FriendRecommendationsType {
+    RecommendedFriend = 1,
+    ReceivedFriendRequest = 2,
+}
+
 export type FriendRecommendationsCollapseMsgListConfig = {
     collapseId: number;
     collapseXItem: number;
@@ -18,7 +23,7 @@ export type FriendRecommendationsDataInfo = {
     gender: Gender;
     dob: number;
     type: number;
-    recommType: number;
+    recommType: FriendRecommendationsType;
     recommSrc: number;
     recommTime: number;
     recommInfo: {
@@ -46,7 +51,7 @@ export const getFriendRecommendationsFactory = apiFactory<GetFriendRecommendatio
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/recommendsv2/list`);
 
     /**
-     * Get friend recommendations
+     * Get friend recommendations/received friend requests
      *
      * @throws {ZaloApiError}
      */
