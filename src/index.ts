@@ -114,6 +114,7 @@ export type { SendStickerResponse, SendStickerPayload } from "./apis/sendSticker
 export type { SendTypingEventResponse } from "./apis/sendTypingEvent.js";
 export type { SendVideoOptions, SendVideoResponse } from "./apis/sendVideo.js";
 export type { SendVoiceOptions, SendVoiceResponse } from "./apis/sendVoice.js";
+export type { SetArchivedConversationsTarget, SetArchivedConversationsResponse } from "./apis/setArchivedConversations.js";
 export type { SetHiddenConversationsResponse } from "./apis/setHiddenConversations.js";
 export type { SetMuteParams, SetMuteResponse } from "./apis/setMute.js";
 export type { SetPinnedConversationsResponse } from "./apis/setPinnedConversations.js";

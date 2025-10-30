@@ -112,6 +112,7 @@ import { sendStickerFactory } from "./apis/sendSticker.js";
 import { sendTypingEventFactory } from "./apis/sendTypingEvent.js";
 import { sendVideoFactory } from "./apis/sendVideo.js";
 import { sendVoiceFactory } from "./apis/sendVoice.js";
+import { setArchivedConversationsFactory } from "./apis/setArchivedConversations.js";
 import { setHiddenConversationsFactory } from "./apis/setHiddenConversations.js";
 import { setMuteFactory } from "./apis/setMute.js";
 import { setPinnedConversationsFactory } from "./apis/setPinnedConversations.js";
@@ -253,6 +254,7 @@ export class API {
     public sendTypingEvent: ReturnType<typeof sendTypingEventFactory>;
     public sendVideo: ReturnType<typeof sendVideoFactory>;
     public sendVoice: ReturnType<typeof sendVoiceFactory>;
+    public setArchivedConversations: ReturnType<typeof setArchivedConversationsFactory>;
     public setHiddenConversations: ReturnType<typeof setHiddenConversationsFactory>;
     public setMute: ReturnType<typeof setMuteFactory>;
     public setPinnedConversations: ReturnType<typeof setPinnedConversationsFactory>;
@@ -394,6 +396,7 @@ export class API {
         this.sendTypingEvent = sendTypingEventFactory(ctx, this);
         this.sendVideo = sendVideoFactory(ctx, this);
         this.sendVoice = sendVoiceFactory(ctx, this);
+        this.setArchivedConversations = setArchivedConversationsFactory(ctx, this);
         this.setHiddenConversations = setHiddenConversationsFactory(ctx, this);
         this.setMute = setMuteFactory(ctx, this);
         this.setPinnedConversations = setPinnedConversationsFactory(ctx, this);
