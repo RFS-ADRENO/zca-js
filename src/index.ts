@@ -41,6 +41,7 @@ export type { EditReminderGroup, EditReminderUser, EditReminderOptions, EditRemi
 export type { EnableGroupLinkResponse } from "./apis/enableGroupLink.js";
 export type { FetchAccountInfoResponse } from "./apis/fetchAccountInfo.js";
 export type { FindUserResponse } from "./apis/findUser.js";
+export type { FindUserByUsernameResponse } from "./apis/findUserByUsername.js";
 export type { ForwardMessageSuccess, ForwardMessageFail, ForwardMessagePayload, ForwardMessageResponse } from "./apis/forwardMessage.js";
 export type { GetAliasListResponse } from "./apis/getAliasList.js";
 export type { GetAllFriendsResponse } from "./apis/getAllFriends.js";
