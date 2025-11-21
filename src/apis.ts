@@ -63,6 +63,7 @@ import { getHiddenConversationsFactory } from "./apis/getHiddenConversations.js"
 import { getLabelsFactory } from "./apis/getLabels.js";
 import { getListBoardFactory } from "./apis/getListBoard.js";
 import { getListReminderFactory } from "./apis/getListReminder.js";
+import { getMultiUsersByPhoneFactory } from "./apis/getMultiUsersByPhone.js";
 import { getMuteFactory } from "./apis/getMute.js";
 import { getOwnIdFactory } from "./apis/getOwnId.js";
 import { getPendingGroupMembersFactory } from "./apis/getPendingGroupMembers.js";
@@ -205,6 +206,7 @@ export class API {
     public getLabels: ReturnType<typeof getLabelsFactory>;
     public getListBoard: ReturnType<typeof getListBoardFactory>;
     public getListReminder: ReturnType<typeof getListReminderFactory>;
+    public getMultiUsersByPhone: ReturnType<typeof getMultiUsersByPhoneFactory>;
     public getMute: ReturnType<typeof getMuteFactory>;
     public getOwnId: ReturnType<typeof getOwnIdFactory>;
     public getPendingGroupMembers: ReturnType<typeof getPendingGroupMembersFactory>;
@@ -347,6 +349,7 @@ export class API {
         this.getLabels = getLabelsFactory(ctx, this);
         this.getListBoard = getListBoardFactory(ctx, this);
         this.getListReminder = getListReminderFactory(ctx, this);
+        this.getMultiUsersByPhone = getMultiUsersByPhoneFactory(ctx, this);
         this.getMute = getMuteFactory(ctx, this);
         this.getOwnId = getOwnIdFactory(ctx, this);
         this.getPendingGroupMembers = getPendingGroupMembersFactory(ctx, this);

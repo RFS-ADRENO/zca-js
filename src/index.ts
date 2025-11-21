@@ -64,6 +64,7 @@ export type { GetHiddenConversationsResponse } from "./apis/getHiddenConversatio
 export type { GetLabelsResponse } from "./apis/getLabels.js";
 export type { BoardItem, GetListBoardResponse, ListBoardOptions } from "./apis/getListBoard.js";
 export type { GetListReminderResponse, ListReminderOptions, ReminderListGroup, ReminderListUser } from "./apis/getListReminder.js";
+export type { GetMultiUsersByPhoneResponse } from "./apis/getMultiUsersByPhone.js";
 export type { GetMuteResponse, MuteEntriesInfo } from "./apis/getMute.js";
 export type { GetPendingGroupMembersResponse, GetPendingGroupMembersUserInfo } from "./apis/getPendingGroupMembers.js";
 export type { GetPinConversationsResponse } from "./apis/getPinConversations.js";
