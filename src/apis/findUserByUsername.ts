@@ -22,7 +22,7 @@ export const findUserByUsernameFactory = apiFactory<FindUserByUsernameResponse>(
     /**
      * Find user by username
      *
-     * @param username username for find user
+     * @param username username for find
      *
      * @throws {ZaloApiError}
      */

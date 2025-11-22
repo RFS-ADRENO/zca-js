@@ -134,6 +134,7 @@ import { updateProductCatalogFactory } from "./apis/updateProductCatalog.js";
 import { updateProfileFactory } from "./apis/updateProfile.js";
 import { updateQuickMessageFactory } from "./apis/updateQuickMessage.js";
 import { updateSettingsFactory } from "./apis/updateSettings.js";
+import { upgradeGroupCommunityFactory } from "./apis/upgradeGroupCommunity.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 import { uploadProductPhotoFactory } from "./apis/uploadProductPhoto.js";
 import { votePollFactory } from "./apis/votePoll.js";
@@ -278,6 +279,7 @@ export class API {
     public updateProfile: ReturnType<typeof updateProfileFactory>;
     public updateQuickMessage: ReturnType<typeof updateQuickMessageFactory>;
     public updateSettings: ReturnType<typeof updateSettingsFactory>;
+    public upgradeGroupCommunity: ReturnType<typeof upgradeGroupCommunityFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
     public uploadProductPhoto: ReturnType<typeof uploadProductPhotoFactory>;
     public votePoll: ReturnType<typeof votePollFactory>;
@@ -422,6 +424,7 @@ export class API {
         this.updateProfile = updateProfileFactory(ctx, this);
         this.updateQuickMessage = updateQuickMessageFactory(ctx, this);
         this.updateSettings = updateSettingsFactory(ctx, this);
+        this.upgradeGroupCommunity = upgradeGroupCommunityFactory(ctx, this);
         this.uploadAttachment = uploadAttachmentFactory(ctx, this);
         this.uploadProductPhoto = uploadProductPhotoFactory(ctx, this);
         this.votePoll = votePollFactory(ctx, this);
