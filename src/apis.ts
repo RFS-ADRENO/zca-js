@@ -36,6 +36,7 @@ import { editReminderFactory } from "./apis/editReminder.js";
 import { enableGroupLinkFactory } from "./apis/enableGroupLink.js";
 import { fetchAccountInfoFactory } from "./apis/fetchAccountInfo.js";
 import { findUserFactory } from "./apis/findUser.js";
+import { findUserByUsernameFactory } from "./apis/findUserByUsername.js";
 import { forwardMessageFactory } from "./apis/forwardMessage.js";
 import { getAliasListFactory } from "./apis/getAliasList.js";
 import { getAllFriendsFactory } from "./apis/getAllFriends.js";
@@ -63,6 +64,7 @@ import { getHiddenConversationsFactory } from "./apis/getHiddenConversations.js"
 import { getLabelsFactory } from "./apis/getLabels.js";
 import { getListBoardFactory } from "./apis/getListBoard.js";
 import { getListReminderFactory } from "./apis/getListReminder.js";
+import { getMultiUsersByPhoneFactory } from "./apis/getMultiUsersByPhone.js";
 import { getMuteFactory } from "./apis/getMute.js";
 import { getOwnIdFactory } from "./apis/getOwnId.js";
 import { getPendingGroupMembersFactory } from "./apis/getPendingGroupMembers.js";
@@ -132,6 +134,7 @@ import { updateProductCatalogFactory } from "./apis/updateProductCatalog.js";
 import { updateProfileFactory } from "./apis/updateProfile.js";
 import { updateQuickMessageFactory } from "./apis/updateQuickMessage.js";
 import { updateSettingsFactory } from "./apis/updateSettings.js";
+import { upgradeGroupCommunityFactory } from "./apis/upgradeGroupCommunity.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 import { uploadProductPhotoFactory } from "./apis/uploadProductPhoto.js";
 import { votePollFactory } from "./apis/votePoll.js";
@@ -178,6 +181,7 @@ export class API {
     public enableGroupLink: ReturnType<typeof enableGroupLinkFactory>;
     public fetchAccountInfo: ReturnType<typeof fetchAccountInfoFactory>;
     public findUser: ReturnType<typeof findUserFactory>;
+    public findUserByUsername: ReturnType<typeof findUserByUsernameFactory>;
     public forwardMessage: ReturnType<typeof forwardMessageFactory>;
     public getAliasList: ReturnType<typeof getAliasListFactory>;
     public getAllFriends: ReturnType<typeof getAllFriendsFactory>;
@@ -205,6 +209,7 @@ export class API {
     public getLabels: ReturnType<typeof getLabelsFactory>;
     public getListBoard: ReturnType<typeof getListBoardFactory>;
     public getListReminder: ReturnType<typeof getListReminderFactory>;
+    public getMultiUsersByPhone: ReturnType<typeof getMultiUsersByPhoneFactory>;
     public getMute: ReturnType<typeof getMuteFactory>;
     public getOwnId: ReturnType<typeof getOwnIdFactory>;
     public getPendingGroupMembers: ReturnType<typeof getPendingGroupMembersFactory>;
@@ -274,6 +279,7 @@ export class API {
     public updateProfile: ReturnType<typeof updateProfileFactory>;
     public updateQuickMessage: ReturnType<typeof updateQuickMessageFactory>;
     public updateSettings: ReturnType<typeof updateSettingsFactory>;
+    public upgradeGroupCommunity: ReturnType<typeof upgradeGroupCommunityFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
     public uploadProductPhoto: ReturnType<typeof uploadProductPhotoFactory>;
     public votePoll: ReturnType<typeof votePollFactory>;
@@ -320,6 +326,7 @@ export class API {
         this.enableGroupLink = enableGroupLinkFactory(ctx, this);
         this.fetchAccountInfo = fetchAccountInfoFactory(ctx, this);
         this.findUser = findUserFactory(ctx, this);
+        this.findUserByUsername = findUserByUsernameFactory(ctx, this);
         this.forwardMessage = forwardMessageFactory(ctx, this);
         this.getAliasList = getAliasListFactory(ctx, this);
         this.getAllFriends = getAllFriendsFactory(ctx, this);
@@ -347,6 +354,7 @@ export class API {
         this.getLabels = getLabelsFactory(ctx, this);
         this.getListBoard = getListBoardFactory(ctx, this);
         this.getListReminder = getListReminderFactory(ctx, this);
+        this.getMultiUsersByPhone = getMultiUsersByPhoneFactory(ctx, this);
         this.getMute = getMuteFactory(ctx, this);
         this.getOwnId = getOwnIdFactory(ctx, this);
         this.getPendingGroupMembers = getPendingGroupMembersFactory(ctx, this);
@@ -416,6 +424,7 @@ export class API {
         this.updateProfile = updateProfileFactory(ctx, this);
         this.updateQuickMessage = updateQuickMessageFactory(ctx, this);
         this.updateSettings = updateSettingsFactory(ctx, this);
+        this.upgradeGroupCommunity = upgradeGroupCommunityFactory(ctx, this);
         this.uploadAttachment = uploadAttachmentFactory(ctx, this);
         this.uploadProductPhoto = uploadProductPhotoFactory(ctx, this);
         this.votePoll = votePollFactory(ctx, this);

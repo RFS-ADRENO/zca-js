@@ -41,6 +41,7 @@ export type { EditReminderGroup, EditReminderUser, EditReminderOptions, EditRemi
 export type { EnableGroupLinkResponse } from "./apis/enableGroupLink.js";
 export type { FetchAccountInfoResponse } from "./apis/fetchAccountInfo.js";
 export type { FindUserResponse } from "./apis/findUser.js";
+export type { FindUserByUsernameResponse } from "./apis/findUserByUsername.js";
 export type { ForwardMessageSuccess, ForwardMessageFail, ForwardMessagePayload, ForwardMessageResponse } from "./apis/forwardMessage.js";
 export type { GetAliasListResponse } from "./apis/getAliasList.js";
 export type { GetAllFriendsResponse } from "./apis/getAllFriends.js";
@@ -64,6 +65,7 @@ export type { GetHiddenConversationsResponse } from "./apis/getHiddenConversatio
 export type { GetLabelsResponse } from "./apis/getLabels.js";
 export type { BoardItem, GetListBoardResponse, ListBoardOptions } from "./apis/getListBoard.js";
 export type { GetListReminderResponse, ListReminderOptions, ReminderListGroup, ReminderListUser } from "./apis/getListReminder.js";
+export type { GetMultiUsersByPhoneResponse } from "./apis/getMultiUsersByPhone.js";
 export type { GetMuteResponse, MuteEntriesInfo } from "./apis/getMute.js";
 export type { GetPendingGroupMembersResponse, GetPendingGroupMembersUserInfo } from "./apis/getPendingGroupMembers.js";
 export type { GetPinConversationsResponse } from "./apis/getPinConversations.js";
@@ -134,6 +136,7 @@ export type { UpdateProductCatalogPayload, UpdateProductCatalogResponse } from "
 export type { UpdateProfilePayload, UpdateProfileResponse } from "./apis/updateProfile.js";
 export type { UpdateQuickMessagePayload, UpdateQuickMessageResponse } from "./apis/updateQuickMessage.js";
 export type { UpdateSettingsResponse } from "./apis/updateSettings.js";
+export type { UpgradeGroupCommunityResponse } from "./apis/upgradeGroupCommunity.js";
 export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType, UploadAttachmentImageResponse, UploadAttachmentVideoResponse, UploadAttachmentFileResponse } from "./apis/uploadAttachment.js";
 export type { UploadProductPhotoPayload, UploadProductPhotoResponse } from "./apis/uploadProductPhoto.js";
 export type { VotePollResponse } from "./apis/votePoll.js";
