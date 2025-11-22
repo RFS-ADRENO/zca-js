@@ -22,9 +22,9 @@ export const findUserByUsernameFactory = apiFactory<FindUserByUsernameResponse>(
     /**
      * Find user by username
      *
-     * @param username username
+     * @param username username for find user
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function findUserByUsername(username: string) {
         const params = {
