@@ -14,16 +14,16 @@ export const getAvatarUrlProfileFactory = apiFactory<GetAvatarUrlProfileResponse
      * Get avatar url profile
      *
      * @param friendId friend id(s)
-     * @param avatarSize avatar size default 240 and 120
+     * @param isAvatarSizeMax Is avatar size max (default: true)
      *
      * @throws {ZaloApiError}
      */
-    return async function getAvatarUrlProfile(friendIds: string | string[], avatarSize: number = 240) {
+    return async function getAvatarUrlProfile(friendIds: string | string[], isAvatarSizeMax: boolean = true) {
         if (!Array.isArray(friendIds)) friendIds = [friendIds];
 
         const params = {
             friend_ids: friendIds,
-            avatar_size: avatarSize ?? 120,
+            avatar_size: isAvatarSizeMax ? 240 : 120,
             srcReq: -1,
         };
 

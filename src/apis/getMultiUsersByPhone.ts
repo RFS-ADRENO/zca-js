@@ -25,11 +25,11 @@ export const getMultiUsersByPhoneFactory = apiFactory<GetMultiUsersByPhoneRespon
      * Get multiple user(s) by phone number
      *
      * @param phoneNumber Phone(s) number
-     * @param avatarSize Avatar size default 240 and 120
+     * @param isAvatarSizeMax Is avatar size max (default: true)
      *
      * @throws {ZaloApiError}
      */
-    return async function getMultiUsersByPhone(phoneNumbers: string | string[], avatarSize: number = 240) {
+    return async function getMultiUsersByPhone(phoneNumbers: string | string[], isAvatarSizeMax: boolean = true) {
         if (!phoneNumbers) throw new ZaloApiError("Missing phoneNumber");
         if (!Array.isArray(phoneNumbers)) phoneNumbers = [phoneNumbers];
 
@@ -42,7 +42,7 @@ export const getMultiUsersByPhoneFactory = apiFactory<GetMultiUsersByPhoneRespon
 
         const params = {
             phones: phoneNumbers,
-            avatar_size: avatarSize ?? 120,
+            avatar_size: isAvatarSizeMax ? 240 : 120,
             language: ctx.language,
         };
 

@@ -16,21 +16,21 @@ export type FindUserByUsernameResponse = {
     display_name: string;
 };
 
-export const findUserByUsernameFactory = apiFactory<FindUserByUsernameResponse>()((api, _, utils) => {
+export const findUserByUsernameFactory = apiFactory<FindUserByUsernameResponse>()((api, _ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/search/by-user-name`);
 
     /**
      * Find user by username
      *
      * @param username username for find
-     * @param avatarSize Avatar size default 240 and 120
+     * @param isAvatarSizeMax Is avatar size max (default: true)
      *
      * @throws {ZaloApiError}
      */
-    return async function findUserByUsername(username: string, avatarSize: number = 240) {
+    return async function findUserByUsername(username: string, isAvatarSizeMax: boolean = true) {
         const params = {
             user_name: username,
-            avatar_size: avatarSize ?? 120,
+            avatar_size: isAvatarSizeMax ? 240 : 120,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

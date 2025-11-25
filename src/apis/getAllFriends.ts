@@ -13,16 +13,16 @@ export const getAllFriendsFactory = apiFactory<GetAllFriendsResponse>()((api, ct
      *
      * @param count Page size (default: 20000)
      * @param page Page number (default: 1)
-     * @param avatarSize Avatar size (default: 120 or 240)
+     * @param isAvatarSizeMax Is avatar size max (default: false)
      *
      * @throws {ZaloApiError}
      */
-    return async function getAllFriends(count: number = 20000, page: number = 1, avatarSize: number = 120) {
+    return async function getAllFriends(count: number = 20000, page: number = 1, isAvatarSizeMax: boolean = false) {
         const params = {
             incInvalid: 1,
             page,
             count,
-            avatar_size: avatarSize ?? 240,
+            avatar_size: isAvatarSizeMax ? 240 : 120,
             actiontime: 0,
             imei: ctx.imei,
         };
