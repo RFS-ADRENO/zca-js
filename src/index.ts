@@ -80,9 +80,11 @@ export type { GetFriendRecommendationsResponse, FriendRecommendationsCollapseMsg
 export type { GetRelatedFriendGroupResponse } from "./apis/getRelatedFriendGroup.js";
 export type { GetReminderResponse } from "./apis/getReminder.js";
 export type { GetReminderResponsesResponse } from "./apis/getReminderResponses.js";
+export type { GetSearchStickerResponse } from "./apis/getSearchSticker.js";
 export type { GetSentFriendRequestResponse, SentFriendRequestInfo } from "./apis/getSentFriendRequest.js";
 export type { GetSettingsResponse } from "./apis/getSettings.js";
 export type { StickerDetail, StickerDetailResponse } from "./apis/getStickersDetail.js";
+export type { GetStickerSuggestionResponse } from "./apis/getStickerSuggestion.js";
 export type { GetUnreadMarkResponse, UnreadMark } from "./apis/getUnreadMark.js";
 export type { ProfileInfo, UserInfoResponse } from "./apis/getUserInfo.js";
 export type { InviteUserToGroupsResponse } from "./apis/inviteUserToGroups.js";
