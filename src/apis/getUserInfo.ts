@@ -17,11 +17,12 @@ export const getUserInfoFactory = apiFactory<UserInfoResponse>()((api, ctx, util
     /**
      * Get user info using user id
      *
-     * @param userId user id
+     * @param userId User id(s)
+     * @param avatarSize Avatar size (default: 120 or 240)
      *
      * @throws {ZaloApiError}
      */
-    return async function getUserInfo(userId: string | string[]) {
+    return async function getUserInfo(userId: string | string[], avatarSize: number = 120) {
         if (!userId) throw new ZaloApiError("Missing user id");
 
         if (!Array.isArray(userId)) userId = [userId];
@@ -36,7 +37,7 @@ export const getUserInfoFactory = apiFactory<UserInfoResponse>()((api, ctx, util
         const params = {
             phonebook_version: ctx.extraVer!.phonebook,
             friend_pversion_map: userId,
-            avatar_size: 120,
+            avatar_size: avatarSize ?? 240,
             language: ctx.language,
             show_online_status: 1,
             imei: ctx.imei,

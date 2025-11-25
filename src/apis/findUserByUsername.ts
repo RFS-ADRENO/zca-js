@@ -23,13 +23,14 @@ export const findUserByUsernameFactory = apiFactory<FindUserByUsernameResponse>(
      * Find user by username
      *
      * @param username username for find
+     * @param avatarSize Avatar size default 240 and 120
      *
      * @throws {ZaloApiError}
      */
-    return async function findUserByUsername(username: string) {
+    return async function findUserByUsername(username: string, avatarSize: number = 240) {
         const params = {
             user_name: username,
-            avatar_size: 240,
+            avatar_size: avatarSize ?? 120,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
