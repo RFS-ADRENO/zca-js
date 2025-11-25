@@ -56,6 +56,7 @@ import { getFriendRecommendationsFactory } from "./apis/getFriendRecommendations
 import { getFriendRequestStatusFactory } from "./apis/getFriendRequestStatus.js";
 import { getFullAvatarFactory } from "./apis/getFullAvatar.js";
 import { getGroupBlockedMemberFactory } from "./apis/getGroupBlockedMember.js";
+import { getGroupChatHistoryFactory } from "./apis/getGroupChatHistory.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
 import { getGroupInviteBoxInfoFactory } from "./apis/getGroupInviteBoxInfo.js";
 import { getGroupInviteBoxListFactory } from "./apis/getGroupInviteBoxList.js";
@@ -205,6 +206,7 @@ export class API {
     public getFriendRequestStatus: ReturnType<typeof getFriendRequestStatusFactory>;
     public getFullAvatar: ReturnType<typeof getFullAvatarFactory>;
     public getGroupBlockedMember: ReturnType<typeof getGroupBlockedMemberFactory>;
+    public getGroupChatHistory: ReturnType<typeof getGroupChatHistoryFactory>;
     public getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
     public getGroupInviteBoxInfo: ReturnType<typeof getGroupInviteBoxInfoFactory>;
     public getGroupInviteBoxList: ReturnType<typeof getGroupInviteBoxListFactory>;
@@ -354,6 +356,7 @@ export class API {
         this.getFriendRequestStatus = getFriendRequestStatusFactory(ctx, this);
         this.getFullAvatar = getFullAvatarFactory(ctx, this);
         this.getGroupBlockedMember = getGroupBlockedMemberFactory(ctx, this);
+        this.getGroupChatHistory = getGroupChatHistoryFactory(ctx, this);
         this.getGroupInfo = getGroupInfoFactory(ctx, this);
         this.getGroupInviteBoxInfo = getGroupInviteBoxInfoFactory(ctx, this);
         this.getGroupInviteBoxList = getGroupInviteBoxListFactory(ctx, this);
