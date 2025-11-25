@@ -50,11 +50,14 @@ export type { GetArchivedChatListResponse } from "./apis/getArchivedChatList.js"
 export type { GetAutoDeleteChatResponse } from "./apis/getAutoDeleteChat.js";
 export type { GetAutoReplyListResponse } from "./apis/getAutoReplyList.js";
 export type { GetAvatarListResponse } from "./apis/getAvatarList.js";
+export type { GetAvatarUrlProfileResponse } from "./apis/getAvatarUrlProfile.js";
 export type { GetBizAccountResponse } from "./apis/getBizAccount.js";
 export type { GetCatalogListPayload, GetCatalogListResponse } from "./apis/getCatalogList.js";
 export type { GetFriendBoardListResponse } from "./apis/getFriendBoardList.js";
 export type { GetFriendOnlinesResponse, GetFriendOnlinesStatus } from "./apis/getFriendOnlines.js";
 export type { GetGroupBlockedMemberPayload, GetGroupBlockedMemberResponse } from "./apis/getGroupBlockedMember.js";
+export type { GetFriendRequestStatusResponse } from "./apis/getFriendRequestStatus.js";
+export type { GetFullAvatarResponse } from "./apis/getFullAvatar.js";
 export type { GroupInfoPendingApprove, GroupInfoResponse } from "./apis/getGroupInfo.js";
 export type { GetGroupInviteBoxInfoPayload, GetGroupInviteBoxInfoResponse } from "./apis/getGroupInviteBoxInfo.js";
 export type { GetGroupInviteBoxListPayload, GetGroupInviteBoxListResponse } from "./apis/getGroupInviteBoxList.js";
@@ -77,7 +80,6 @@ export type { GetFriendRecommendationsResponse, FriendRecommendationsCollapseMsg
 export type { GetRelatedFriendGroupResponse } from "./apis/getRelatedFriendGroup.js";
 export type { GetReminderResponse } from "./apis/getReminder.js";
 export type { GetReminderResponsesResponse } from "./apis/getReminderResponses.js";
-export type { GetFriendRequestStatusResponse } from "./apis/getFriendRequestStatus.js";
 export type { GetSentFriendRequestResponse, SentFriendRequestInfo } from "./apis/getSentFriendRequest.js";
 export type { GetSettingsResponse } from "./apis/getSettings.js";
 export type { StickerDetail, StickerDetailResponse } from "./apis/getStickersDetail.js";

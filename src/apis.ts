@@ -45,6 +45,7 @@ import { getArchivedChatListFactory } from "./apis/getArchivedChatList.js";
 import { getAutoDeleteChatFactory } from "./apis/getAutoDeleteChat.js";
 import { getAutoReplyListFactory } from "./apis/getAutoReplyList.js";
 import { getAvatarListFactory } from "./apis/getAvatarList.js";
+import { getAvatarUrlProfileFactory } from "./apis/getAvatarUrlProfile.js";
 import { getBizAccountFactory } from "./apis/getBizAccount.js";
 import { getCatalogListFactory } from "./apis/getCatalogList.js";
 import { getContextFactory } from "./apis/getContext.js";
@@ -53,6 +54,7 @@ import { getFriendBoardListFactory } from "./apis/getFriendBoardList.js";
 import { getFriendOnlinesFactory } from "./apis/getFriendOnlines.js";
 import { getFriendRecommendationsFactory } from "./apis/getFriendRecommendations.js";
 import { getFriendRequestStatusFactory } from "./apis/getFriendRequestStatus.js";
+import { getFullAvatarFactory } from "./apis/getFullAvatar.js";
 import { getGroupBlockedMemberFactory } from "./apis/getGroupBlockedMember.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
 import { getGroupInviteBoxInfoFactory } from "./apis/getGroupInviteBoxInfo.js";
@@ -190,6 +192,7 @@ export class API {
     public getAutoDeleteChat: ReturnType<typeof getAutoDeleteChatFactory>;
     public getAutoReplyList: ReturnType<typeof getAutoReplyListFactory>;
     public getAvatarList: ReturnType<typeof getAvatarListFactory>;
+    public getAvatarUrlProfile: ReturnType<typeof getAvatarUrlProfileFactory>;
     public getBizAccount: ReturnType<typeof getBizAccountFactory>;
     public getCatalogList: ReturnType<typeof getCatalogListFactory>;
     public getContext: ReturnType<typeof getContextFactory>;
@@ -198,6 +201,7 @@ export class API {
     public getFriendOnlines: ReturnType<typeof getFriendOnlinesFactory>;
     public getFriendRecommendations: ReturnType<typeof getFriendRecommendationsFactory>;
     public getFriendRequestStatus: ReturnType<typeof getFriendRequestStatusFactory>;
+    public getFullAvatar: ReturnType<typeof getFullAvatarFactory>;
     public getGroupBlockedMember: ReturnType<typeof getGroupBlockedMemberFactory>;
     public getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
     public getGroupInviteBoxInfo: ReturnType<typeof getGroupInviteBoxInfoFactory>;
@@ -335,6 +339,7 @@ export class API {
         this.getAutoDeleteChat = getAutoDeleteChatFactory(ctx, this);
         this.getAutoReplyList = getAutoReplyListFactory(ctx, this);
         this.getAvatarList = getAvatarListFactory(ctx, this);
+        this.getAvatarUrlProfile = getAvatarUrlProfileFactory(ctx, this);
         this.getBizAccount = getBizAccountFactory(ctx, this);
         this.getCatalogList = getCatalogListFactory(ctx, this);
         this.getContext = getContextFactory(ctx, this);
@@ -343,6 +348,7 @@ export class API {
         this.getFriendOnlines = getFriendOnlinesFactory(ctx, this);
         this.getFriendRecommendations = getFriendRecommendationsFactory(ctx, this);
         this.getFriendRequestStatus = getFriendRequestStatusFactory(ctx, this);
+        this.getFullAvatar = getFullAvatarFactory(ctx, this);
         this.getGroupBlockedMember = getGroupBlockedMemberFactory(ctx, this);
         this.getGroupInfo = getGroupInfoFactory(ctx, this);
         this.getGroupInviteBoxInfo = getGroupInviteBoxInfoFactory(ctx, this);
