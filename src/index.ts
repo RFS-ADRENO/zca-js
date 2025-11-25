@@ -83,8 +83,8 @@ export type { GetReminderResponsesResponse } from "./apis/getReminderResponses.j
 export type { GetSearchStickerResponse } from "./apis/getSearchSticker.js";
 export type { GetSentFriendRequestResponse, SentFriendRequestInfo } from "./apis/getSentFriendRequest.js";
 export type { GetSettingsResponse } from "./apis/getSettings.js";
+export type { GetStickerCategoryDetailResponse } from "./apis/getStickerCategoryDetail.js";
 export type { StickerDetail, StickerDetailResponse } from "./apis/getStickersDetail.js";
-export type { GetStickerSuggestionResponse } from "./apis/getStickerSuggestion.js";
 export type { GetUnreadMarkResponse, UnreadMark } from "./apis/getUnreadMark.js";
 export type { ProfileInfo, UserInfoResponse } from "./apis/getUserInfo.js";
 export type { InviteUserToGroupsResponse } from "./apis/inviteUserToGroups.js";
