@@ -48,7 +48,7 @@ export const changeGroupAvatarFactory = apiFactory<ChangeGroupAvatarResponse>()(
             {
                 method: "POST",
                 headers: formData.getHeaders(),
-                body: formData.getBuffer() as unknown as BodyInit,
+                body: formData.getBuffer(),
             },
         );
 
