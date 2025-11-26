@@ -53,6 +53,7 @@ export type { GetAvatarListResponse } from "./apis/getAvatarList.js";
 export type { GetAvatarUrlProfileResponse } from "./apis/getAvatarUrlProfile.js";
 export type { GetBizAccountResponse } from "./apis/getBizAccount.js";
 export type { GetCatalogListPayload, GetCatalogListResponse } from "./apis/getCatalogList.js";
+export type { GetCloseFriendsResponse } from "./apis/getCloseFriends.js";
 export type { GetFriendBoardListResponse } from "./apis/getFriendBoardList.js";
 export type { GetFriendOnlinesResponse, GetFriendOnlinesStatus } from "./apis/getFriendOnlines.js";
 export type { GetFriendRecommendationsResponse, FriendRecommendationsCollapseMsgListConfig, FriendRecommendationsDataInfo, FriendRecommendationsRecommItem, FriendRecommendationsType } from "./apis/getFriendRecommendations.js";
@@ -141,6 +142,7 @@ export type { UpdateProductCatalogPayload, UpdateProductCatalogResponse } from "
 export type { UpdateProfilePayload, UpdateProfileResponse } from "./apis/updateProfile.js";
 export type { UpdateQuickMessagePayload, UpdateQuickMessageResponse } from "./apis/updateQuickMessage.js";
 export type { UpdateSettingsResponse } from "./apis/updateSettings.js";
+export type { UpdateStatusResponse } from "./apis/updateStatus.js";
 export type { UpgradeGroupCommunityResponse } from "./apis/upgradeGroupCommunity.js";
 export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType, UploadAttachmentImageResponse, UploadAttachmentVideoResponse, UploadAttachmentFileResponse } from "./apis/uploadAttachment.js";
 export type { UploadProductPhotoPayload, UploadProductPhotoResponse } from "./apis/uploadProductPhoto.js";

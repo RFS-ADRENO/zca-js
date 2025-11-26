@@ -48,6 +48,7 @@ import { getAvatarListFactory } from "./apis/getAvatarList.js";
 import { getAvatarUrlProfileFactory } from "./apis/getAvatarUrlProfile.js";
 import { getBizAccountFactory } from "./apis/getBizAccount.js";
 import { getCatalogListFactory } from "./apis/getCatalogList.js";
+import { getCloseFriendsFactory } from "./apis/getCloseFriends.js";
 import { getContextFactory } from "./apis/getContext.js";
 import { getCookieFactory } from "./apis/getCookie.js";
 import { getFriendBoardListFactory } from "./apis/getFriendBoardList.js";
@@ -139,6 +140,7 @@ import { updateProductCatalogFactory } from "./apis/updateProductCatalog.js";
 import { updateProfileFactory } from "./apis/updateProfile.js";
 import { updateQuickMessageFactory } from "./apis/updateQuickMessage.js";
 import { updateSettingsFactory } from "./apis/updateSettings.js";
+import { updateStatusFactory } from "./apis/updateStatus.js";
 import { upgradeGroupCommunityFactory } from "./apis/upgradeGroupCommunity.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 import { uploadProductPhotoFactory } from "./apis/uploadProductPhoto.js";
@@ -198,6 +200,7 @@ export class API {
     public getAvatarUrlProfile: ReturnType<typeof getAvatarUrlProfileFactory>;
     public getBizAccount: ReturnType<typeof getBizAccountFactory>;
     public getCatalogList: ReturnType<typeof getCatalogListFactory>;
+    public getCloseFriends: ReturnType<typeof getCloseFriendsFactory>;
     public getContext: ReturnType<typeof getContextFactory>;
     public getCookie: ReturnType<typeof getCookieFactory>;
     public getFriendBoardList: ReturnType<typeof getFriendBoardListFactory>;
@@ -289,6 +292,7 @@ export class API {
     public updateProfile: ReturnType<typeof updateProfileFactory>;
     public updateQuickMessage: ReturnType<typeof updateQuickMessageFactory>;
     public updateSettings: ReturnType<typeof updateSettingsFactory>;
+    public updateStatus: ReturnType<typeof updateStatusFactory>;
     public upgradeGroupCommunity: ReturnType<typeof upgradeGroupCommunityFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
     public uploadProductPhoto: ReturnType<typeof uploadProductPhotoFactory>;
@@ -348,6 +352,7 @@ export class API {
         this.getAvatarUrlProfile = getAvatarUrlProfileFactory(ctx, this);
         this.getBizAccount = getBizAccountFactory(ctx, this);
         this.getCatalogList = getCatalogListFactory(ctx, this);
+        this.getCloseFriends = getCloseFriendsFactory(ctx, this);
         this.getContext = getContextFactory(ctx, this);
         this.getCookie = getCookieFactory(ctx, this);
         this.getFriendBoardList = getFriendBoardListFactory(ctx, this);
@@ -439,6 +444,7 @@ export class API {
         this.updateProfile = updateProfileFactory(ctx, this);
         this.updateQuickMessage = updateQuickMessageFactory(ctx, this);
         this.updateSettings = updateSettingsFactory(ctx, this);
+        this.updateStatus = updateStatusFactory(ctx, this);
         this.upgradeGroupCommunity = upgradeGroupCommunityFactory(ctx, this);
         this.uploadAttachment = uploadAttachmentFactory(ctx, this);
         this.uploadProductPhoto = uploadProductPhotoFactory(ctx, this);
