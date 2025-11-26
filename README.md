@@ -43,7 +43,7 @@ bun add sharp # or npm install sharp
 ```javascript
 import { Zalo } from "zca-js";
 import sharp from "sharp";
-import fs from "fs";
+import fs from "node:fs";
 
 async function imageMetadataGetter(filePath) {
     const data = await fs.promises.readFile(filePath);
