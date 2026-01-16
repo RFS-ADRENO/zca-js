@@ -33,6 +33,13 @@ export const getGroupChatHistoryFactory = apiFactory<GetGroupChatHistoryResponse
             method: "GET",
         });
 
-        return utils.resolve(response);
+        return utils.resolve(response, (result) => {
+            const data = result.data as unknown as GetGroupChatHistoryResponse | string;
+            if (typeof data === "string") {
+                return JSON.parse(data);
+            }
+
+            return data;
+        });
     };
 });
