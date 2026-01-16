@@ -50,13 +50,16 @@ export class Zalo {
         const jar = new toughCookie.CookieJar();
         for (const each of cookieArr) {
             try {
-                jar.setCookieSync(
-                    toughCookie.Cookie.fromJSON({
-                        ...each,
-                        key: (each as toughCookie.SerializedCookie).key || each.name,
-                    }) ?? "",
-                    "https://chat.zalo.me",
-                );
+                // hotfix: set cookie with correct domain to avoid issues
+                const cookieObj = toughCookie.Cookie.fromJSON({
+                    ...each,
+                    key: (each as toughCookie.SerializedCookie).key || each.name,
+                });
+                if (cookieObj) {
+                    const domain = cookieObj.domain || "chat.zalo.me";
+                    const url = `https://${domain.startsWith(".") ? domain.slice(1) : domain}`;
+                    jar.setCookieSync(cookieObj, url);
+                }
             } catch (error: unknown) {
                 logger({
                     options: {
