@@ -50,7 +50,6 @@ export class Zalo {
         const jar = new toughCookie.CookieJar();
         for (const each of cookieArr) {
             try {
-                // hotfix: set cookie with correct domain to avoid issues
                 const cookieObj = toughCookie.Cookie.fromJSON({
                     ...each,
                     key: (each as toughCookie.SerializedCookie).key || each.name,
