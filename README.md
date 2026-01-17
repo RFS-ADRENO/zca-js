@@ -64,7 +64,7 @@ const zalo = new Zalo({
 
 ## Documentation
 
-See [API Documentation](https://tdung.gitbook.io/zca-js) for more details.
+See [API Documentation](https://zca-js.tdung.com) for more details.
 
 ---
 
