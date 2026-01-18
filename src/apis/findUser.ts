@@ -1,20 +1,9 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import type { Gender, ZBusinessPackage } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type FindUserResponse = {
-    avatar: string;
-    cover: string;
-    status: string;
-    gender: Gender;
-    dob: number;
-    sdob: string;
-    globalId: string;
-    bizPkg: ZBusinessPackage;
-    uid: string;
-    zalo_name: string;
-    display_name: string;
-};
+import type { UserBasic } from "../models/index.js";
+
+export type FindUserResponse = UserBasic;
 
 export const findUserFactory = apiFactory<FindUserResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/profile/get`);
