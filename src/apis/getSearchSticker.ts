@@ -1,11 +1,9 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type GetSearchStickerResponse = {
-    sticker_id: number;
-    cate_id: number;
-    type: number;
-}[];
+import type { StickerBasic } from "../models/index.js";
+
+export type GetSearchStickerResponse = StickerBasic[];
 
 export const getSearchStickerFactory = apiFactory<GetSearchStickerResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.sticker[0]}/api/message/sticker/search`);

@@ -1,28 +1,7 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory, resolveResponse } from "../utils.js";
 
-export type StickerDetail = {
-    id: number;
-    cateId: number;
-    type: number;
-    text: string;
-    uri: string;
-    fkey: number;
-    status: number;
-    stickerUrl: string;
-    stickerSpriteUrl: string;
-    stickerWebpUrl: unknown;
-    totalFrames: number;
-    duration: number;
-    effectId: number;
-    checksum: string;
-    ext: number;
-    source: number;
-    fss: unknown;
-    fssInfo: unknown;
-    version: number;
-    extInfo: unknown;
-};
+import type { StickerDetail } from "../models/index.js";
 
 export type StickerDetailResponse = StickerDetail[];
 

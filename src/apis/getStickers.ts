@@ -1,11 +1,7 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-interface StickerBasic {
-    type: number;
-    cate_id: number;
-    sticker_id: number;
-}
+import type { StickerBasic } from "../models/index.js";
 
 interface StickerSuggestions {
     sugg_sticker: StickerBasic[] | null;
