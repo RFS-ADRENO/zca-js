@@ -1,7 +1,7 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-import type { UserBasic } from "../models/index.js";
+import { AvatarSize, type UserBasic } from "../models/index.js";
 
 export type GetMultiUsersByPhoneResponse = {
     [phoneNumber: string]: UserBasic;
@@ -14,11 +14,11 @@ export const getMultiUsersByPhoneFactory = apiFactory<GetMultiUsersByPhoneRespon
      * Get multiple user(s) by phone number
      *
      * @param phoneNumber Phone(s) number
-     * @param isAvatarSizeMax Is avatar size max (default: true)
+     * @param avatarSize Avatar size (default: AvatarSize.Large)
      *
      * @throws {ZaloApiError}
      */
-    return async function getMultiUsersByPhone(phoneNumbers: string | string[], isAvatarSizeMax: boolean = true) {
+    return async function getMultiUsersByPhone(phoneNumbers: string | string[], avatarSize: AvatarSize = AvatarSize.Large) {
         if (!phoneNumbers) throw new ZaloApiError("Missing phoneNumber");
         if (!Array.isArray(phoneNumbers)) phoneNumbers = [phoneNumbers];
 
@@ -31,7 +31,7 @@ export const getMultiUsersByPhoneFactory = apiFactory<GetMultiUsersByPhoneRespon
 
         const params = {
             phones: phoneNumbers,
-            avatar_size: isAvatarSizeMax ? 240 : 120,
+            avatar_size: avatarSize,
             language: ctx.language,
         };
 
