@@ -15,6 +15,41 @@ type UploadEventData = {
     fileId: string;
 };
 
+// Sync message events from mobile
+export type SyncUserConfirmData = {
+    fromUid: string;
+    act: "user_confirm";
+    user_action?: number; // 0 = refuse, 1 = confirm
+    pc_name?: string;
+    public_key?: string;
+};
+
+export type SyncInfoData = {
+    url: string;
+    encrypted_key: string;
+    public_key: string;
+    file_name: string;
+    file_size: number;
+    checksum_code: string;
+    db_info: {
+        db_secret_sha256?: string;
+        compress_ratio?: number;
+        zdb_md5?: string;
+        db_format?: number;
+        min_time_msg_at_all?: number;
+        origin_db?: {
+            msg_thread: number;
+            msg_total: number;
+        };
+    };
+};
+
+export type SyncTransferErrorData = {
+    fromUid: string;
+    error_code?: number;
+    act: "transfer_error";
+};
+
 export type WsPayload<T = Record<string, unknown>> = {
     version: number;
     cmd: number;
@@ -50,6 +85,10 @@ interface ListenerEvents {
     friend_event: [data: FriendEvent];
     group_event: [data: GroupEvent];
     cipher_key: [key: string];
+    // Sync message events
+    sync_user_confirm: [data: SyncUserConfirmData];
+    sync_info: [data: SyncInfoData];
+    sync_transfer_error: [data: SyncTransferErrorData];
 }
 
 export class Listener extends EventEmitter<ListenerEvents> {
@@ -109,10 +148,10 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
         this.ws = null;
 
-        this.onConnectedCallback = () => {};
-        this.onClosedCallback = () => {};
-        this.onErrorCallback = () => {};
-        this.onMessageCallback = () => {};
+        this.onConnectedCallback = () => { };
+        this.onClosedCallback = () => { };
+        this.onErrorCallback = () => { };
+        this.onMessageCallback = () => { };
     }
 
     /**
@@ -353,6 +392,44 @@ export class Listener extends EventEmitter<ListenerEvents> {
                             );
                             if (friendEvent.isSelf && !this.selfListen) continue;
                             this.emit("friend_event", friendEvent);
+                        } else if (control.content.act_type == "syncmsgmb") {
+                            // Handle sync message events from mobile device
+                            const syncData =
+                                typeof control.content.data == "string"
+                                    ? JSON.parse(control.content.data)
+                                    : control.content.data;
+
+                            if (control.content.act == "user_confirm") {
+                                this.emit("sync_user_confirm", {
+                                    fromUid: control.content.fromUid || syncData.fromUid,
+                                    act: "user_confirm",
+                                    user_action: syncData.user_action,
+                                    pc_name: syncData.pc_name,
+                                    public_key: syncData.public_key,
+                                });
+                            } else if (control.content.act == "syncmsg_info") {
+                                // Parse db_info if it's a string
+                                const dbInfo =
+                                    typeof syncData.db_info === "string"
+                                        ? JSON.parse(syncData.db_info)
+                                        : syncData.db_info;
+
+                                this.emit("sync_info", {
+                                    url: syncData.url,
+                                    encrypted_key: syncData.encrypted_key,
+                                    public_key: syncData.public_key,
+                                    file_name: syncData.file_name,
+                                    file_size: syncData.file_size,
+                                    checksum_code: syncData.checksum_code,
+                                    db_info: dbInfo,
+                                });
+                            } else if (control.content.act == "transfer_error") {
+                                this.emit("sync_transfer_error", {
+                                    fromUid: control.content.fromUid || syncData.fromUid,
+                                    error_code: syncData.error_code,
+                                    act: "transfer_error",
+                                });
+                            }
                         }
                     }
                 }
