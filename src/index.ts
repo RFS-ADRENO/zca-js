@@ -149,9 +149,12 @@ export type { UploadProductPhotoPayload, UploadProductPhotoResponse } from "./ap
 export type { VotePollResponse } from "./apis/votePoll.js";
 
 export type { CustomAPICallback, CustomAPIProps } from "./apis/custom.js";
+export type { PullMobileMessageResponse } from "./apis/pullMobileMessage.js";
+export type { SyncMobileMessageResponse, SyncMobileMessageParams } from "./apis/syncMobileMessage.js";
 
 // Others (Enum)
 export { CloseReason } from "./apis/listen.js";
+export type { SyncUserConfirmData, SyncInfoData, SyncTransferErrorData } from "./apis/listen.js";
 export { LoginQRCallbackEventType } from "./apis/loginQR.js";
 export { ReviewPendingMemberRequestStatus } from "./apis/reviewPendingMemberRequest.js";
 export { TextStyle, Urgency } from "./apis/sendMessage.js";
