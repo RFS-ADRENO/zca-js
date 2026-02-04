@@ -41,6 +41,10 @@ export type SyncInfoData = {
             msg_thread: number;
             msg_total: number;
         };
+        backup_db?: {
+            msg_thread: number;
+            msg_total: number;
+        };
     };
 };
 
