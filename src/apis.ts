@@ -148,6 +148,10 @@ import { addGroupBlockedMemberFactory } from "./apis/addGroupBlockedMember.js";
 import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
 import { customFactory } from "./apis/custom.js";
+import { pinMessageFactory } from "./apis/pinMessage.js";
+import { unpinMessageFactory } from "./apis/unpinMessage.js";
+import { getPinnedMessagesFactory } from "./apis/getPinnedMessages.js";
+import { removePinnedMessagesFactory } from "./apis/removePinnedMessages.js";
 import type { ZPWServiceMap, ContextSession } from "./context.js";
 
 export class API {
@@ -301,6 +305,10 @@ export class API {
     public addGroupBlockedMember: ReturnType<typeof addGroupBlockedMemberFactory>;
     public getStickers: ReturnType<typeof getStickersFactory>;
     public getStickersDetail: ReturnType<typeof getStickersDetailFactory>;
+    public pinMessage: ReturnType<typeof pinMessageFactory>;
+    public unpinMessage: ReturnType<typeof unpinMessageFactory>;
+    public getPinnedMessages: ReturnType<typeof getPinnedMessagesFactory>;
+    public removePinnedMessages: ReturnType<typeof removePinnedMessagesFactory>;
 
     public custom: ReturnType<typeof customFactory>;
 
@@ -455,6 +463,10 @@ export class API {
         this.addGroupBlockedMember = addGroupBlockedMemberFactory(ctx, this);
         this.getStickers = getStickersFactory(ctx, this);
         this.getStickersDetail = getStickersDetailFactory(ctx, this);
+        this.pinMessage = pinMessageFactory(ctx, this);
+        this.unpinMessage = unpinMessageFactory(ctx, this);
+        this.getPinnedMessages = getPinnedMessagesFactory(ctx, this);
+        this.removePinnedMessages = removePinnedMessagesFactory(ctx, this);
 
         this.custom = customFactory(ctx, this);
     }
