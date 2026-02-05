@@ -76,6 +76,7 @@ export type { GetMuteResponse, MuteEntriesInfo } from "./apis/getMute.js";
 export type { GetPendingGroupMembersResponse, GetPendingGroupMembersUserInfo } from "./apis/getPendingGroupMembers.js";
 export type { GetPinConversationsResponse } from "./apis/getPinConversations.js";
 export type { GetPinnedMessagesResponse, PinnedMessageItem } from "./apis/getPinnedMessages.js";
+export type { GetFriendPinnedMessagesResponse } from "./apis/getFriendPinnedMessages.js";
 export type { PollDetailResponse } from "./apis/getPollDetail.js";
 export type { GetProductCatalogListPayload, GetProductCatalogListResponse } from "./apis/getProductCatalogList.js";
 export type { GetQRResponse } from "./apis/getQR.js";
@@ -118,6 +119,7 @@ export type {
     PinOptions,
     PinMessageResponse,
 } from "./apis/pinMessage.js";
+export type { PinFriendMessageResponse } from "./apis/pinFriendMessage.js";
 export type { RejectFriendRequestResponse } from "./apis/rejectFriendRequest.js";
 export type { RemoveFriendResponse } from "./apis/removeFriend.js";
 export type { RemoveFriendAliasResponse } from "./apis/removeFriendAlias.js";
@@ -125,6 +127,9 @@ export type { RemoveGroupBlockedMemberResponse } from "./apis/removeGroupBlocked
 export type { RemoveGroupDeputyResponse } from "./apis/removeGroupDeputy.js";
 export type { RemoveQuickMessageResponse } from "./apis/removeQuickMessage.js";
 export type { RemovePinnedMessagesResponse, UnpinTopic } from "./apis/removePinnedMessages.js";
+export type { ReorderPinnedMessagesResponse } from "./apis/reorderPinnedMessages.js";
+export type { RemoveFriendPinnedMessagesResponse } from "./apis/removeFriendPinnedMessages.js";
+export type { ReorderFriendPinnedMessagesResponse } from "./apis/reorderFriendPinnedMessages.js";
 export type { RemoveReminderResponse } from "./apis/removeReminder.js";
 export type { RemoveUnreadMarkResponse } from "./apis/removeUnreadMark.js";
 export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js";
