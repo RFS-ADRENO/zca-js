@@ -1,7 +1,6 @@
 import { ZaloApiError } from "../../Errors/ZaloApiError.js";
 import { apiFactory } from "../../utils/index.js";
-
-import type { UserBasic } from "../../models/index.js";
+import { AvatarSize, type UserBasic } from "../../models/index.js";
 
 export type FindUserByUsernameResponse = UserBasic;
 
@@ -12,14 +11,14 @@ export const findUserByUsernameFactory = apiFactory<FindUserByUsernameResponse>(
      * Find user by username
      *
      * @param username username for find
-     * @param isAvatarSizeMax Is avatar size max (default: true)
+     * @param avatarSize Avatar size (default: 120)
      *
      * @throws {ZaloApiError}
      */
-    return async function findUserByUsername(username: string, isAvatarSizeMax: boolean = true) {
+    return async function findUserByUsername(username: string, avatarSize: AvatarSize = AvatarSize.s120) {
         const params = {
             user_name: username,
-            avatar_size: isAvatarSizeMax ? 240 : 120,
+            avatar_size: avatarSize,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

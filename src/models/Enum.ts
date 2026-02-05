@@ -248,3 +248,9 @@ export enum BinBankCard {
      */
     Woori_Bank = 970457,
 }
+
+export enum AvatarSize {
+    s120 = 120,
+    s240 = 240,
+    s480 = 480,
+}

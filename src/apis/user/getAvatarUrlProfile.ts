@@ -1,5 +1,6 @@
 import { ZaloApiError } from "../../Errors/ZaloApiError.js";
 import { apiFactory } from "../../utils/index.js";
+import { AvatarSize } from "../../models/index.js";
 
 export type GetAvatarUrlProfileResponse = {
     [userId: string]: {
@@ -14,16 +15,16 @@ export const getAvatarUrlProfileFactory = apiFactory<GetAvatarUrlProfileResponse
      * Get avatar url profile
      *
      * @param friendId friend id(s)
-     * @param isAvatarSizeMax Is avatar size max (default: true)
+     * @param avatarSize Avatar size (default: 120)
      *
      * @throws {ZaloApiError}
      */
-    return async function getAvatarUrlProfile(friendIds: string | string[], isAvatarSizeMax: boolean = true) {
+    return async function getAvatarUrlProfile(friendIds: string | string[], avatarSize: AvatarSize = AvatarSize.s120) {
         if (!Array.isArray(friendIds)) friendIds = [friendIds];
 
         const params = {
             friend_ids: friendIds,
-            avatar_size: isAvatarSizeMax ? 240 : 120,
+            avatar_size: avatarSize,
             srcReq: -1,
         };
 

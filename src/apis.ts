@@ -36,6 +36,7 @@ import { addGroupDeputyFactory } from "./apis/group/addGroupDeputy.js";
 import { joinGroupLinkFactory } from "./apis/group/joinGroupLink.js";
 import { getGroupBlockedMemberFactory } from "./apis/group/getGroupBlockedMember.js";
 import { disperseGroupFactory } from "./apis/group/disperseGroup.js";
+import { upgradeGroupToCommunityFactory } from "./apis/group/upgradeGroupToCommunity.js";
 import { removeGroupBlockedMemberFactory } from "./apis/group/removeGroupBlockedMember.js";
 import { leaveGroupFactory } from "./apis/group/leaveGroup.js";
 import { createGroupFactory } from "./apis/group/createGroup.js";
@@ -115,6 +116,7 @@ import { getFullAvatarFactory } from "./apis/user/getFullAvatar.js";
 import { findUserByUsernameFactory } from "./apis/user/findUserByUsername.js";
 import { deleteAvatarFactory } from "./apis/user/deleteAvatar.js";
 import { getUserInfoFactory } from "./apis/user/getUserInfo.js";
+import { updateProfileBioFactory } from "./apis/user/updateProfileBio.js";
 import { blockUserFactory } from "./apis/user/blockUser.js";
 import { getAvatarUrlProfileFactory } from "./apis/user/getAvatarUrlProfile.js";
 import { updateProfileFactory } from "./apis/user/updateProfile.js";
@@ -144,6 +146,7 @@ import { getLabelsFactory } from "./apis/account/getLabels.js";
 import { keepAliveFactory } from "./apis/account/keepAlive.js";
 import { getBizAccountFactory } from "./apis/account/getBizAccount.js";
 import { fetchAccountInfoFactory } from "./apis/account/fetchAccountInfo.js";
+import { logoutFactory } from "./apis/account/logout.js";
 import { getSettingsFactory } from "./apis/account/getSettings.js";
 import { customFactory } from "./apis/other/custom.js";
 import type { ZPWServiceMap, ContextSession } from "./context.js";
@@ -188,6 +191,7 @@ export class API {
     public joinGroupLink: ReturnType<typeof joinGroupLinkFactory>;
     public getGroupBlockedMember: ReturnType<typeof getGroupBlockedMemberFactory>;
     public disperseGroup: ReturnType<typeof disperseGroupFactory>;
+    public upgradeGroupToCommunity: ReturnType<typeof upgradeGroupToCommunityFactory>;
     public removeGroupBlockedMember: ReturnType<typeof removeGroupBlockedMemberFactory>;
     public leaveGroup: ReturnType<typeof leaveGroupFactory>;
     public createGroup: ReturnType<typeof createGroupFactory>;
@@ -267,6 +271,7 @@ export class API {
     public findUserByUsername: ReturnType<typeof findUserByUsernameFactory>;
     public deleteAvatar: ReturnType<typeof deleteAvatarFactory>;
     public getUserInfo: ReturnType<typeof getUserInfoFactory>;
+    public updateProfileBio: ReturnType<typeof updateProfileBioFactory>;
     public blockUser: ReturnType<typeof blockUserFactory>;
     public getAvatarUrlProfile: ReturnType<typeof getAvatarUrlProfileFactory>;
     public updateProfile: ReturnType<typeof updateProfileFactory>;
@@ -296,6 +301,7 @@ export class API {
     public keepAlive: ReturnType<typeof keepAliveFactory>;
     public getBizAccount: ReturnType<typeof getBizAccountFactory>;
     public fetchAccountInfo: ReturnType<typeof fetchAccountInfoFactory>;
+    public logout: ReturnType<typeof logoutFactory>;
     public getSettings: ReturnType<typeof getSettingsFactory>;
 
     public custom: ReturnType<typeof customFactory>;
@@ -340,6 +346,7 @@ export class API {
         this.joinGroupLink = joinGroupLinkFactory(ctx, this);
         this.getGroupBlockedMember = getGroupBlockedMemberFactory(ctx, this);
         this.disperseGroup = disperseGroupFactory(ctx, this);
+        this.upgradeGroupToCommunity = upgradeGroupToCommunityFactory(ctx, this);
         this.removeGroupBlockedMember = removeGroupBlockedMemberFactory(ctx, this);
         this.leaveGroup = leaveGroupFactory(ctx, this);
         this.createGroup = createGroupFactory(ctx, this);
@@ -419,6 +426,7 @@ export class API {
         this.findUserByUsername = findUserByUsernameFactory(ctx, this);
         this.deleteAvatar = deleteAvatarFactory(ctx, this);
         this.getUserInfo = getUserInfoFactory(ctx, this);
+        this.updateProfileBio = updateProfileBioFactory(ctx, this);
         this.blockUser = blockUserFactory(ctx, this);
         this.getAvatarUrlProfile = getAvatarUrlProfileFactory(ctx, this);
         this.updateProfile = updateProfileFactory(ctx, this);
@@ -448,6 +456,7 @@ export class API {
         this.keepAlive = keepAliveFactory(ctx, this);
         this.getBizAccount = getBizAccountFactory(ctx, this);
         this.fetchAccountInfo = fetchAccountInfoFactory(ctx, this);
+        this.logout = logoutFactory(ctx, this);
         this.getSettings = getSettingsFactory(ctx, this);
 
         this.custom = customFactory(ctx, this);
