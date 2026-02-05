@@ -1,12 +1,13 @@
-import { describe, expect, test, mock, beforeAll } from "bun:test";
-import type { ZPWServiceMap, ContextSession } from "../../../src/context.js";
+import { describe, expect, test, mock } from "bun:test";
+import type { ContextSession } from "../../../src/context.js";
+import type { API } from "../../../src/apis.js";
 
 // Mock dependencies
-const mockMakeURL = mock((ctx: any, url: string) => url);
+const mockMakeURL = mock((ctx: unknown, url: string) => url);
 const mockRequest = mock(async () => ({
     data: { error_code: 0, data: "success" },
 }));
-const mockResolveResponse = mock((ctx: any, res: any) => res.data);
+const mockResolveResponse = mock((ctx: unknown, res: unknown) => (res as { data: unknown }).data);
 const mockEncodeAES = mock(() => "encrypted_params");
 
 mock.module("../../../src/utils/http.js", () => ({
@@ -35,11 +36,11 @@ const mockApi = {
     zpwServiceMap: {
         profile: ["https://profile.zolo.me"],
     },
-} as unknown as { zpwServiceMap: ZPWServiceMap; };
+} as unknown as API;
 
 describe("API: updateProfileBio", () => {
     test("should call request with correct params", async () => {
-        const updateProfileBio = updateProfileBioFactory(mockCtx, mockApi as any);
+        const updateProfileBio = updateProfileBioFactory(mockCtx, mockApi);
         const bio = "My new bio";
 
         await updateProfileBio(bio);

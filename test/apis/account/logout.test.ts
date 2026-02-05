@@ -1,12 +1,13 @@
 import { describe, expect, test, mock } from "bun:test";
-import type { ZPWServiceMap, ContextSession } from "../../../src/context.js";
+import type { ContextSession } from "../../../src/context.js";
+import type { API } from "../../../src/apis.js";
 
 // Mock dependencies
-const mockMakeURL = mock((ctx: any, url: string) => url);
+const mockMakeURL = mock((ctx: unknown, url: string) => url);
 const mockRequest = mock(async () => ({
     data: { error_code: 0, data: "success" },
 }));
-const mockResolveResponse = mock((ctx: any, res: any) => res.data);
+const mockResolveResponse = mock((ctx: unknown, res: unknown) => (res as { data: unknown }).data);
 const mockEncodeAES = mock(() => "encrypted_params");
 
 mock.module("../../../src/utils/http.js", () => ({
@@ -34,11 +35,11 @@ const mockApi = {
     zpwServiceMap: {
         login: ["https://login.zolo.me"],
     },
-} as unknown as { zpwServiceMap: ZPWServiceMap; };
+} as unknown as API;
 
 describe("API: logout", () => {
     test("should call request to logout endpoint", async () => {
-        const logout = logoutFactory(mockCtx, mockApi as any);
+        const logout = logoutFactory(mockCtx, mockApi);
 
         await logout();
 
