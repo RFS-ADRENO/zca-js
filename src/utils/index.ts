@@ -2,7 +2,6 @@ import type cryptojs from "crypto-js";
 import type { ContextBase, ContextSession } from "../context.js";
 import { isContextSession } from "../context.js";
 import { ZaloApiError } from "../Errors/index.js";
-import { type API } from "../zalo.js";
 import { logger } from "./common.js";
 import { encodeAES } from "./crypto.js";
 import { makeURL, request, resolveResponse } from "./http.js";
@@ -37,8 +36,10 @@ export type FactoryUtils<T> = {
 };
 
 export function apiFactory<T>() {
-    return <K extends (api: API, ctx: ContextSession, utils: FactoryUtils<T>) => unknown>(callback: K) => {
-        return (ctx: ContextBase, api: API) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return <K extends (api: any, ctx: ContextSession, utils: FactoryUtils<T>) => unknown>(callback: K) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return (ctx: ContextBase, api: any) => {
             if (!isContextSession(ctx)) throw new ZaloApiError("Invalid context " + JSON.stringify(ctx, null, 2));
 
             const utils = {

@@ -301,8 +301,7 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
                             {
                                 method: "POST",
                                 headers: data.chunkContent[i].getHeaders(),
-                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                body: data.chunkContent[i].getBuffer() as any,
+                                body: data.chunkContent[i].getBuffer() as unknown as BodyInit,
                             },
                         )
                         .then(async (response) => {

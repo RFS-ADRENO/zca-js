@@ -431,7 +431,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
         const isMultiFile = attachments.length > 1;
         let clientId = Date.now();
         for (const attachment of uploadAttachment) {
-            let data: AttachmentData;
+            let data: Exclude<AttachmentData, { fileType: "gif" }>;
             switch (attachment.fileType) {
                 case "image": {
                     data = {
@@ -516,6 +516,8 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
                     };
                     break;
                 }
+                default:
+                    throw new ZaloApiError("Unknown file type");
             }
 
             handleUrgency(data.params, urgency);

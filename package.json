@@ -18,6 +18,7 @@
         "build:cjs": "rollup -c rollup.config.js",
         "build": "bun run build:clean && bun run build:esm && bun run build:cjs",
         "test:feat": "bun ./test/feat.ts",
+        "test:unit": "bun test test/utils/",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
         "prepare": "husky"
@@ -31,7 +32,7 @@
         "url": "https://github.com/RFS-ADRENO/zca-js/issues"
     },
     "engines": {
-        "node": ">=18.0.0"
+        "node": ">=20.0.0"
     },
     "keywords": [
         "chatbot",

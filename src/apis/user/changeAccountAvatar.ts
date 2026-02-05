@@ -56,8 +56,7 @@ export const changeAccountAvatarFactory = apiFactory<ChangeAccountAvatarResponse
             {
                 method: "POST",
                 headers: formData.getHeaders(),
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                body: formData.getBuffer() as any,
+                body: formData.getBuffer() as unknown as BodyInit,
             },
         );
 
