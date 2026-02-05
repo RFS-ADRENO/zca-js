@@ -1,12 +1,12 @@
-import { loginQR, LoginQRCallbackEventType, type LoginQRCallback } from "./apis/loginQR.js";
-import { getServerInfo, login } from "./apis/login.js";
+import { loginQR, LoginQRCallbackEventType, type LoginQRCallback } from "./apis/account/loginQR.js";
+import { getServerInfo, login } from "./apis/account/login.js";
 import {
     createContext,
     isContextSession,
     type ContextBase,
     type Options,
 } from "./context.js";
-import { generateZaloUUID, logger } from "./utils.js";
+import { generateZaloUUID, logger } from "./utils/index.js";
 
 import toughCookie from "tough-cookie";
 
@@ -38,7 +38,7 @@ export type Credentials = {
 export class Zalo {
     private enableEncryptParam = true;
 
-    constructor(private options: Partial<Options> = {}) {}
+    constructor(private options: Partial<Options> = {}) { }
 
     private parseCookies(cookie: Credentials["cookie"]): toughCookie.CookieJar {
         const cookieArr = Array.isArray(cookie) ? cookie : cookie.cookies;

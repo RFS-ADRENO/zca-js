@@ -4,26 +4,41 @@ import path from "path";
 const apisDir = path.join(process.cwd(), "src", "apis");
 const outputFile = path.join(process.cwd(), "src", "apis.ts");
 
-function getAllApiFiles(dir) {
-    const ignoreFiles = ["listen.ts", "login.ts", "loginQR.ts", "custom.ts"];
-    return fs
-        .readdirSync(dir)
-        .filter((file) => file.endsWith(".ts") && !ignoreFiles.includes(file))
-        .map((file) => {
-            const nonExtension = file.slice(0, -3); // Remove .ts extension
+function getAllApiFiles(dir, relativePath = "") {
+    const ignoreFiles = ["listen.ts", "login.ts", "loginQR.ts", "custom.ts", "index.ts"];
+    let results = [];
+    const list = fs.readdirSync(dir);
+    list.forEach((file) => {
+        const filePath = path.join(dir, file);
+        const stat = fs.statSync(filePath);
+        if (stat && stat.isDirectory()) {
+            results = results.concat(getAllApiFiles(filePath, path.join(relativePath, file)));
+        } else {
+            if (file.endsWith(".ts") && !ignoreFiles.includes(file)) {
+                const nonExtension = file.slice(0, -3);
+                // Keep unique name if needed, or just use filename. Base code used filename as property name.
+                // Risk of collision if same filename in different folders?
+                // The original code used filename as property.
+                // If we have group/abc.ts and user/abc.ts, we have collision.
+                // Assuming unique filenames across project based on my moves.
+                // Import path needs to be relative to src/apis/
 
-            return {
-                name: nonExtension,
-                factoryName: `${nonExtension}Factory`,
-            };
-        });
+                results.push({
+                    name: nonExtension,
+                    factoryName: `${nonExtension}Factory`,
+                    importPath: relativePath ? `${relativePath}/${nonExtension}` : nonExtension
+                });
+            }
+        }
+    });
+    return results;
 }
 
 function generateAPIsFile() {
     const allApiFiles = getAllApiFiles(apisDir);
 
     const importLines = allApiFiles.map((file) => {
-        return `import { ${file.factoryName} } from "./apis/${file.name}.js";`;
+        return `import { ${file.factoryName} } from "./apis/${file.importPath}.js";`;
     });
 
     const propertyLines = allApiFiles.map((file) => {
@@ -38,11 +53,11 @@ function generateAPIsFile() {
 
     const content =
         "" +
-        'import { Listener } from "./apis/listen.js";\n' +
+        'import { Listener } from "./apis/message/listen.js";\n' +
         emptyNewLine +
         importLines.join("\n") +
         emptyNewLine +
-        'import { customFactory } from "./apis/custom.js";\n' +
+        'import { customFactory } from "./apis/other/custom.js";\n' +
         'import type { ZPWServiceMap, ContextSession } from "./context.js";\n' +
         emptyNewLine +
         "export class API {\n" +

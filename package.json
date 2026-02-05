@@ -12,13 +12,12 @@
         }
     },
     "scripts": {
-        "prebuild": "bun run scripts/buildAPI.js",
+        "prebuild": "bun scripts/buildAPI.js",
         "build:clean": "rimraf dist",
         "build:esm": "tsc",
         "build:cjs": "rollup -c rollup.config.js",
         "build": "bun run build:clean && bun run build:esm && bun run build:cjs",
-        "test:feat": "bun run test/feat.ts",
-        "prettier": "prettier --write .",
+        "test:feat": "bun ./test/feat.ts",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
         "prepare": "husky"

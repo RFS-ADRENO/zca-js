@@ -1,5 +1,5 @@
 import { compare } from "semver";
-import { isBun, logger } from "./utils.js";
+import { isBun, logger } from "./utils/index.js";
 import type { ContextBase } from "./context.js";
 
 const VERSION = "2.0.4";

@@ -6,7 +6,7 @@
 import fs from "node:fs";
 import { createInterface } from "node:readline";
 import { Zalo, type Credentials } from "../src/index.js";
-import { decodeAES, decodeEventData } from "../src/utils.js";
+import { decodeAES, decodeEventData } from "../src/utils/index.js";
 
 const CREDENTIALS_PATH = "./test/credentials.json";
 const SECRET_PATH = "./test/secret.test.txt";
