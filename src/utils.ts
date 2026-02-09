@@ -288,11 +288,13 @@ export async function request(ctx: ContextBase, url: string, options?: RequestIn
 
     const _options = {
         ...(options ?? {}),
-        ...(isBun ? { 
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            proxy: ctx.options.agent?.proxy?.href
-        } : { agent: ctx.options.agent }),
+        ...(isBun
+            ? {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
+                  proxy: ctx.options.agent?.proxy?.href,
+              }
+            : { agent: ctx.options.agent }),
     };
 
     const response = await ctx.options.polyfill(url, _options);
@@ -302,7 +304,11 @@ export async function request(ctx: ContextBase, url: string, options?: RequestIn
         for (const cookie of splitCookies) {
             const parsed = toughCookie.Cookie.parse(cookie);
             try {
-                if (parsed) await ctx.cookie.setCookie(parsed, parsed.domain != "zalo.me" ? `https://${parsed.domain}` : origin);
+                if (parsed)
+                    await ctx.cookie.setCookie(
+                        parsed,
+                        parsed.domain != "zalo.me" ? `https://${parsed.domain}` : origin,
+                    );
             } catch (error: unknown) {
                 logger(ctx).error(error);
             }
@@ -736,6 +742,29 @@ export function encryptPin(pin: string): string {
 export function validatePin(encryptedPin: string, pin: string): boolean {
     const hash = crypto.createHash("md5").update(pin).digest("hex");
     return hash === encryptedPin;
+}
+
+/**
+ * Generates an RSA key pair for mobile message synchronization
+ * @returns Object containing public and private keys in both PEM and Base64 formats
+ */
+export function generateRSAKeyPair() {
+    const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
+        modulusLength: 2048,
+        publicKeyEncoding: { type: "spki", format: "pem" },
+        privateKeyEncoding: { type: "pkcs8", format: "pem" },
+    });
+    const publicKeyBase64 = publicKey
+        .toString()
+        .replace(/-----BEGIN PUBLIC KEY-----/g, "")
+        .replace(/-----END PUBLIC KEY-----/g, "")
+        .replace(/\s+/g, "");
+    const privateKeyBase64 = privateKey
+        .toString()
+        .replace(/-----BEGIN PRIVATE KEY-----/g, "")
+        .replace(/-----END PRIVATE KEY-----/g, "")
+        .replace(/\s+/g, "");
+    return { publicKeyBase64, privateKeyBase64, publicKey, privateKey };
 }
 
 /**

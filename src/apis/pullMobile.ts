@@ -7,13 +7,11 @@ export type PullMobileResponse = {
 };
 
 export type PullMobileParams = {
-    pc_name: string;
     public_key: string;
-    from_seq_id: number;
-    is_retry: number;
-    min_seq_id: number;
-    temp_key: string;
-    imei: string;
+    from_seq_id?: number;
+    is_retry?: number;
+    min_seq_id?: number;
+    temp_key?: string;
 };
 // The response from this does not contain any meaningful fields, it returns empty encrypted data
 export const pullMobileFactory = apiFactory<PullMobileResponse>()((api, ctx, utils) => {
@@ -25,15 +23,21 @@ export const pullMobileFactory = apiFactory<PullMobileResponse>()((api, ctx, uti
      *
      * @throws {ZaloApiError}
      */
-    return async function pullMobile(params: PullMobileParams) {
+    return async function pullMobile({
+        public_key,
+        from_seq_id = 0,
+        is_retry = 0,
+        min_seq_id = 0,
+        temp_key = "",
+    }: PullMobileParams) {
         const Params = {
-            pc_name: params.pc_name,
-            public_key: params.public_key,
-            from_seq_id: params.from_seq_id,
-            is_retry: params.is_retry,
-            min_seq_id: params.min_seq_id,
-            temp_key: params.temp_key,
-            imei: params.imei,
+            pc_name: "Web", // This will not be changed
+            public_key,
+            from_seq_id,
+            is_retry,
+            min_seq_id,
+            temp_key,
+            imei: ctx.imei,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(Params));
