@@ -768,6 +768,34 @@ export function generateRSAKeyPair() {
 }
 
 /**
+ * Decrypt data using RSA private key with PKCS1 scheme
+ * Validates that the decrypted result is a 32-byte AES key
+ *
+ * @param privateKey - RSA private key in PEM format
+ * @param encryptedBase64 - Base64 encoded encrypted data
+ * @returns Decrypted buffer (32 bytes)
+ * @throws Error if decryption fails or result is not 32 bytes
+ */
+export function decryptWithPrivateKey(privateKey: string, encryptedBase64: string): Buffer {
+    const cleanKey = privateKey.replace(/\\n/g, "\n");
+
+    const encryptedBuffer = Buffer.from(encryptedBase64, "base64");
+    const decryptedBuffer = crypto.privateDecrypt(
+        {
+            key: cleanKey,
+            padding: crypto.constants.RSA_PKCS1_PADDING,
+        },
+        encryptedBuffer as unknown as NodeJS.ArrayBufferView,
+    );
+
+    if (decryptedBuffer.length !== 32) {
+        throw new Error(`Invalid AES key length: ${decryptedBuffer.length} bytes (expected 32 bytes)`);
+    }
+
+    return decryptedBuffer;
+}
+
+/**
  * Converts a hex color code to a negative color number used by Zalo API
  * @param hex Hex color code (e.g. '#00FF00' or '00FF00')
  * @returns Negative color number (e.g. -16711936)
