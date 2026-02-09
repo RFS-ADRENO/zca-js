@@ -1,12 +1,12 @@
 import { apiFactory } from "../utils.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-export type PullMobileMessageResponse = {
+export type PullMobileResponse = {
     error_code: string;
     error_message: string;
     data: string;
 };
 
-export type PullMobileMessageParams = {
+export type PullMobileParams = {
     pc_name: string;
     public_key: string;
     from_seq_id: number;
@@ -16,7 +16,7 @@ export type PullMobileMessageParams = {
     imei: string;
 };
 // The response from this does not contain any meaningful fields, it returns empty encrypted data
-export const pullMobileMessageFactory = apiFactory<PullMobileMessageResponse>()((api, ctx, utils) => {
+export const pullMobileFactory = apiFactory<PullMobileResponse>()((api, ctx, utils) => {
     const baseURL = utils.makeURL(`${api.zpwServiceMap.file[0]}/api/message/pull_mobile_msg`);
     /**
      * Pull mobile messages from the server
@@ -25,7 +25,7 @@ export const pullMobileMessageFactory = apiFactory<PullMobileMessageResponse>()(
      *
      * @throws {ZaloApiError}
      */
-    return async function pullMobileMessage(params: PullMobileMessageParams) {
+    return async function pullMobile(params: PullMobileParams) {
         const Params = {
             pc_name: params.pc_name,
             public_key: params.public_key,
