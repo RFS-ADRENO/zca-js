@@ -1,4 +1,5 @@
 import { Zalo } from "../src";
+import { generateRSAKeyPair } from "../src/utils";
 import { SyncEventType } from "../src/models/SyncEvent";
 
 const zalo = new Zalo();
@@ -10,3 +11,8 @@ api.listener.on("sync_event", (event) => {
     }
     // TODO handle the decryption of the encrypted key and download the file
 });
+const { publicKeyBase64 } = generateRSAKeyPair();
+api.pullMobile({
+    public_key: publicKeyBase64,
+});
+api.listener.start();

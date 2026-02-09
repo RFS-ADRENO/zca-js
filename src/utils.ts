@@ -754,12 +754,12 @@ export function generateRSAKeyPair() {
         publicKeyEncoding: { type: "spki", format: "pem" },
         privateKeyEncoding: { type: "pkcs8", format: "pem" },
     });
-    const publicKeyBase64 = publicKey
+    const publicKeyBase64: string = publicKey
         .toString()
         .replace(/-----BEGIN PUBLIC KEY-----/g, "")
         .replace(/-----END PUBLIC KEY-----/g, "")
         .replace(/\s+/g, "");
-    const privateKeyBase64 = privateKey
+    const privateKeyBase64: string = privateKey
         .toString()
         .replace(/-----BEGIN PRIVATE KEY-----/g, "")
         .replace(/-----END PRIVATE KEY-----/g, "")
