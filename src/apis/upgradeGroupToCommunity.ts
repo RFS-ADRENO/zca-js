@@ -1,9 +1,9 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type UpgradeGroupCommunityResponse = "";
+export type UpgradeGroupToCommunityResponse = "";
 
-export const upgradeGroupCommunityFactory = apiFactory<UpgradeGroupCommunityResponse>()((api, ctx, utils) => {
+export const upgradeGroupToCommunityFactory = apiFactory<UpgradeGroupToCommunityResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/upgrade/community`);
 
     /**
@@ -15,7 +15,7 @@ export const upgradeGroupCommunityFactory = apiFactory<UpgradeGroupCommunityResp
      * @code 185 The limit on the number of communities that can own has been reached
      * @throws {ZaloApiError}
      */
-    return async function upgradeGroupCommunity(groupId: string) {
+    return async function upgradeGroupToCommunity(groupId: string) {
         const params = {
             grId: groupId,
             language: ctx.language,

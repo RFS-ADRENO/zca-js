@@ -140,10 +140,10 @@ export type { UpdateLabelsPayload, UpdateLabelsResponse } from "./apis/updateLab
 export type { UpdateLangResponse } from "./apis/updateLang.js";
 export type { UpdateProductCatalogPayload, UpdateProductCatalogResponse } from "./apis/updateProductCatalog.js";
 export type { UpdateProfilePayload, UpdateProfileResponse } from "./apis/updateProfile.js";
+export type { UpdateProfileBioResponse } from "./apis/updateProfileBio.js";
 export type { UpdateQuickMessagePayload, UpdateQuickMessageResponse } from "./apis/updateQuickMessage.js";
 export type { UpdateSettingsResponse } from "./apis/updateSettings.js";
-export type { UpdateStatusResponse } from "./apis/updateStatus.js";
-export type { UpgradeGroupCommunityResponse } from "./apis/upgradeGroupCommunity.js";
+export type { UpgradeGroupToCommunityResponse } from "./apis/upgradeGroupToCommunity.js";
 export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType, UploadAttachmentImageResponse, UploadAttachmentVideoResponse, UploadAttachmentFileResponse } from "./apis/uploadAttachment.js";
 export type { UploadProductPhotoPayload, UploadProductPhotoResponse } from "./apis/uploadProductPhoto.js";
 export type { VotePollResponse } from "./apis/votePoll.js";

@@ -1,7 +1,7 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-import type { User } from "../models/index.js";
+import { AvatarSize, type User } from "../models/index.js";
 
 export type ProfileInfo = User;
 
@@ -18,11 +18,11 @@ export const getUserInfoFactory = apiFactory<UserInfoResponse>()((api, ctx, util
      * Get user info using user id
      *
      * @param userId User id(s)
-     * @param isAvatarSizeMax Is avatar size max (default: false)
+     * @param avatarSize Avatar size (default: AvatarSize.Small)
      *
      * @throws {ZaloApiError}
      */
-    return async function getUserInfo(userId: string | string[], isAvatarSizeMax: boolean = false) {
+    return async function getUserInfo(userId: string | string[], avatarSize: AvatarSize = AvatarSize.Small) {
         if (!userId) throw new ZaloApiError("Missing user id");
 
         if (!Array.isArray(userId)) userId = [userId];
@@ -37,7 +37,7 @@ export const getUserInfoFactory = apiFactory<UserInfoResponse>()((api, ctx, util
         const params = {
             phonebook_version: ctx.extraVer!.phonebook,
             friend_pversion_map: userId,
-            avatar_size: isAvatarSizeMax ? 240 : 120,
+            avatar_size: avatarSize,
             language: ctx.language,
             show_online_status: 1,
             imei: ctx.imei,
