@@ -289,7 +289,8 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
         const requests = [],
             results: UploadAttachmentType[] = [];
 
-        for (const data of attachmentsData) {
+        for (let atmIndex = 0; atmIndex < attachmentsData.length; atmIndex++) {
+            const data = attachmentsData[atmIndex];
             for (let i = 0; i < data.params.totalChunk; i++) {
                 const encryptedParams = utils.encodeAES(JSON.stringify(data.params));
                 if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
@@ -324,7 +325,7 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
                                                     await getMd5LargeFileObject(data.source, data.fileData.totalSize)
                                                 ).data,
                                             };
-                                            results.push(result);
+                                            results[atmIndex] = result;
                                             resolve();
                                         };
 
@@ -348,7 +349,7 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
                                             photoId: resData.photoId!,
                                             clientFileId: resData.clientFileId,
                                         };
-                                        results.push(result);
+                                        results[atmIndex] = result;
                                         resolve();
                                     }
                                 });
