@@ -418,9 +418,9 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
         const uploadAttachment = attachments.length == 0 ? [] : await api.uploadAttachment(attachments, threadId, type);
 
         const attachmentsData: AttachmentData[] = [];
-        let indexInGroupLayout = uploadAttachment.length - 1;
+        let indexInGroupLayout = 0;
 
-        const groupLayoutId = getGroupLayoutId();
+        const groupLayoutId = getGroupLayoutId().toString();
 
         const { mentionsFinal, msgFinal } = handleMentions(type, msg, mentions);
         msg = msgFinal;
@@ -455,8 +455,9 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
 
                             groupLayoutId: isMultiFile ? groupLayoutId : undefined,
                             isGroupLayout: isMultiFile ? 1 : undefined,
-                            idInGroup: isMultiFile ? indexInGroupLayout-- : undefined,
+                            idInGroup: isMultiFile ? indexInGroupLayout++ : undefined,
                             totalItemInGroup: isMultiFile ? uploadAttachment.length : undefined,
+                            extMsgProp: isMultiFile ? `{"groupMediaMsg":{"groupLayoutId":"${groupLayoutId}"}}` : undefined,
 
                             mentionInfo:
                                 isMentionsValid && canBeDesc && !quote ? JSON.stringify(mentionsFinal) : undefined,
