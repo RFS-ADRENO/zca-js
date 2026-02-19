@@ -86,6 +86,7 @@ import { getSettingsFactory } from "./apis/getSettings.js";
 import { getStickerCategoryDetailFactory } from "./apis/getStickerCategoryDetail.js";
 import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
+import { getSyncDataFactory } from "./apis/getSyncData.js";
 import { getUnreadMarkFactory } from "./apis/getUnreadMark.js";
 import { getUserInfoFactory } from "./apis/getUserInfo.js";
 import { inviteUserToGroupsFactory } from "./apis/inviteUserToGroups.js";
@@ -239,6 +240,7 @@ export class API {
     public getStickerCategoryDetail: ReturnType<typeof getStickerCategoryDetailFactory>;
     public getStickers: ReturnType<typeof getStickersFactory>;
     public getStickersDetail: ReturnType<typeof getStickersDetailFactory>;
+    public getSyncData: ReturnType<typeof getSyncDataFactory>;
     public getUnreadMark: ReturnType<typeof getUnreadMarkFactory>;
     public getUserInfo: ReturnType<typeof getUserInfoFactory>;
     public inviteUserToGroups: ReturnType<typeof inviteUserToGroupsFactory>;
@@ -392,6 +394,7 @@ export class API {
         this.getStickerCategoryDetail = getStickerCategoryDetailFactory(ctx, this);
         this.getStickers = getStickersFactory(ctx, this);
         this.getStickersDetail = getStickersDetailFactory(ctx, this);
+        this.getSyncData = getSyncDataFactory(ctx, this);
         this.getUnreadMark = getUnreadMarkFactory(ctx, this);
         this.getUserInfo = getUserInfoFactory(ctx, this);
         this.inviteUserToGroups = inviteUserToGroupsFactory(ctx, this);
