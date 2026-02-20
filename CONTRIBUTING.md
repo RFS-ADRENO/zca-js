@@ -439,7 +439,7 @@ npm publish
 
 ### Resources
 
-- [API Documentation](https://tdung.gitbook.io/zca-js)
+- [API Documentation](https://zca-js.tdung.com)
 - [Examples](examples/)
 - [Security Policy](SECURITY.md)
 - [Code of Conduct](CODE_OF_CONDUCT.md)
