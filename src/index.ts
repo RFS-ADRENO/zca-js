@@ -56,7 +56,7 @@ export type { GetCatalogListPayload, GetCatalogListResponse } from "./apis/getCa
 export type { GetCloseFriendsResponse } from "./apis/getCloseFriends.js";
 export type { GetFriendBoardListResponse } from "./apis/getFriendBoardList.js";
 export type { GetFriendOnlinesResponse, GetFriendOnlinesStatus } from "./apis/getFriendOnlines.js";
-export type { GetFriendRecommendationsResponse, FriendRecommendationsCollapseMsgListConfig, FriendRecommendationsDataInfo, FriendRecommendationsRecommItem, FriendRecommendationsType } from "./apis/getFriendRecommendations.js";
+export type { GetFriendRecommendationsResponse, FriendRecommendationsCollapseMsgListConfig, FriendRecommendationsDataInfo, FriendRecommendationsRecommItem } from "./apis/getFriendRecommendations.js";
 export type { GetFriendRequestStatusResponse } from "./apis/getFriendRequestStatus.js";
 export type { GetFullAvatarResponse } from "./apis/getFullAvatar.js";
 export type { GetGroupBlockedMemberPayload, GetGroupBlockedMemberResponse } from "./apis/getGroupBlockedMember.js";
@@ -153,6 +153,7 @@ export type { CustomAPICallback, CustomAPIProps } from "./apis/custom.js";
 // Others (Enum)
 export { CloseReason } from "./apis/listen.js";
 export { LoginQRCallbackEventType } from "./apis/loginQR.js";
+export { FriendRecommendationsType } from "./apis/getFriendRecommendations.js";
 export { ReviewPendingMemberRequestStatus } from "./apis/reviewPendingMemberRequest.js";
 export { TextStyle, Urgency } from "./apis/sendMessage.js";
 export { ReportReason } from "./apis/sendReport.js";
