@@ -3,20 +3,20 @@ import { apiFactory } from "../utils.js";
 
 import type { StickerBasic } from "../models/index.js";
 
-export type GetSearchStickerResponse = StickerBasic[];
+export type SearchStickerResponse = StickerBasic[];
 
-export const getSearchStickerFactory = apiFactory<GetSearchStickerResponse>()((api, ctx, utils) => {
+export const searchStickerFactory = apiFactory<SearchStickerResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.sticker[0]}/api/message/sticker/search`);
 
     /**
-     * Get search sticker
+     * Search stickers
      *
-     * @param keyword Keyword to search sticker
+     * @param keyword Keyword to search stickers
      * @param limit Limit of stickers to return (default: 50)
      *
      * @throws {ZaloApiError}
      */
-    return async function getSearchSticker(keyword: string, limit: number = 50) {
+    return async function searchSticker(keyword: string, limit: number = 50) {
         const params = {
             keyword: keyword,
             limit: limit,

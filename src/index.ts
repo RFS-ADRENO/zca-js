@@ -71,7 +71,7 @@ export type { GetHiddenConversationsResponse } from "./apis/getHiddenConversatio
 export type { GetLabelsResponse } from "./apis/getLabels.js";
 export type { BoardItem, GetListBoardResponse, ListBoardOptions } from "./apis/getListBoard.js";
 export type { GetListReminderResponse, ListReminderOptions, ReminderListGroup, ReminderListUser } from "./apis/getListReminder.js";
-export type { GetMultiUsersByPhoneResponse } from "./apis/getMultiUsersByPhone.js";
+export type { GetMultiUsersByPhonesResponse } from "./apis/getMultiUsersByPhones.js";
 export type { GetMuteResponse, MuteEntriesInfo } from "./apis/getMute.js";
 export type { GetPendingGroupMembersResponse, GetPendingGroupMembersUserInfo } from "./apis/getPendingGroupMembers.js";
 export type { GetPinConversationsResponse } from "./apis/getPinConversations.js";
@@ -82,7 +82,6 @@ export type { GetQuickMessageListResponse } from "./apis/getQuickMessageList.js"
 export type { GetRelatedFriendGroupResponse } from "./apis/getRelatedFriendGroup.js";
 export type { GetReminderResponse } from "./apis/getReminder.js";
 export type { GetReminderResponsesResponse } from "./apis/getReminderResponses.js";
-export type { GetSearchStickerResponse } from "./apis/getSearchSticker.js";
 export type { GetSentFriendRequestResponse, SentFriendRequestInfo } from "./apis/getSentFriendRequest.js";
 export type { GetSettingsResponse } from "./apis/getSettings.js";
 export type { GetStickerCategoryDetailResponse } from "./apis/getStickerCategoryDetail.js";
@@ -110,6 +109,7 @@ export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js"
 export type { ResetHiddenConversPinResponse } from "./apis/resetHiddenConversPin.js";
 export type { ReuseAvatarResponse } from "./apis/reuseAvatar.js";
 export type { ReviewPendingMemberRequestPayload, ReviewPendingMemberRequestResponse } from "./apis/reviewPendingMemberRequest.js";
+export type { SearchStickerResponse } from "./apis/searchSticker.js";
 export type { SendBankCardPayload, SendBankCardResponse } from "./apis/sendBankCard.js";
 export type { SendCardOptions, SendCardResponse } from "./apis/sendCard.js";
 export type { SendDeliveredEventMessageParams, SendDeliveredEventResponse } from "./apis/sendDeliveredEvent.js";
@@ -122,7 +122,6 @@ export type { SendStickerResponse, SendStickerPayload } from "./apis/sendSticker
 export type { SendTypingEventResponse } from "./apis/sendTypingEvent.js";
 export type { SendVideoOptions, SendVideoResponse } from "./apis/sendVideo.js";
 export type { SendVoiceOptions, SendVoiceResponse } from "./apis/sendVoice.js";
-export type { SetArchivedConversationsTarget, SetArchivedConversationsResponse } from "./apis/setArchivedConversations.js";
 export type { SetHiddenConversationsResponse } from "./apis/setHiddenConversations.js";
 export type { SetMuteParams, SetMuteResponse } from "./apis/setMute.js";
 export type { SetPinnedConversationsResponse } from "./apis/setPinnedConversations.js";
@@ -131,6 +130,7 @@ export type { UnBlockUserResponse } from "./apis/unblockUser.js";
 export type { UndoPayload, UndoResponse } from "./apis/undo.js";
 export type { UndoFriendRequestResponse } from "./apis/undoFriendRequest.js";
 export type { UpdateActiveStatusResponse } from "./apis/updateActiveStatus.js";
+export type { UpdateArchivedChatListTarget, UpdateArchivedChatListResponse } from "./apis/updateArchivedChatList.js";
 export type { UpdateAutoDeleteChatResponse } from "./apis/updateAutoDeleteChat.js";
 export type { UpdateAutoReplyPayload, UpdateAutoReplyResponse } from "./apis/updateAutoReply.js";
 export type { UpdateCatalogPayload, UpdateCatalogResponse } from "./apis/updateCatalog.js";

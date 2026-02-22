@@ -3,11 +3,11 @@ import { apiFactory } from "../utils.js";
 
 import type { ThreadType } from "../models/Enum.js";
 
-export type SetArchivedConversationsTarget = { id: string; type: ThreadType };
+export type UpdateArchivedChatListTarget = { id: string; type: ThreadType };
 
-export type SetArchivedConversationsResponse = { needResync: boolean; version: number };
+export type UpdateArchivedChatListResponse = { needResync: boolean; version: number };
 
-export const setArchivedConversationsFactory = apiFactory<SetArchivedConversationsResponse>()((api, ctx, utils) => {
+export const updateArchivedChatListFactory = apiFactory<UpdateArchivedChatListResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.label[0]}/api/archivedchat/update`);
 
     /**
@@ -18,7 +18,7 @@ export const setArchivedConversationsFactory = apiFactory<SetArchivedConversatio
      *
      * @throws {ZaloApiError}
      */
-    return async function setArchivedConversations(isArchived: boolean, conversations: SetArchivedConversationsTarget | SetArchivedConversationsTarget[]) {
+    return async function updateArchivedChatList(isArchived: boolean, conversations: UpdateArchivedChatListTarget | UpdateArchivedChatListTarget[]) {
         if (!Array.isArray(conversations)) {
             conversations = [conversations];
         }
