@@ -104,6 +104,7 @@ import { removeQuickMessageFactory } from "./apis/removeQuickMessage.js";
 import { removeReminderFactory } from "./apis/removeReminder.js";
 import { removeUnreadMarkFactory } from "./apis/removeUnreadMark.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
+import { requestCallFactory } from "./apis/requestCall.js";
 import { resetHiddenConversPinFactory } from "./apis/resetHiddenConversPin.js";
 import { reuseAvatarFactory } from "./apis/reuseAvatar.js";
 import { reviewPendingMemberRequestFactory } from "./apis/reviewPendingMemberRequest.js";
@@ -256,6 +257,7 @@ export class API {
     public removeReminder: ReturnType<typeof removeReminderFactory>;
     public removeUnreadMark: ReturnType<typeof removeUnreadMarkFactory>;
     public removeUserFromGroup: ReturnType<typeof removeUserFromGroupFactory>;
+    public requestCall: ReturnType<typeof requestCallFactory>;
     public resetHiddenConversPin: ReturnType<typeof resetHiddenConversPinFactory>;
     public reuseAvatar: ReturnType<typeof reuseAvatarFactory>;
     public reviewPendingMemberRequest: ReturnType<typeof reviewPendingMemberRequestFactory>;
@@ -408,6 +410,7 @@ export class API {
         this.removeReminder = removeReminderFactory(ctx, this);
         this.removeUnreadMark = removeUnreadMarkFactory(ctx, this);
         this.removeUserFromGroup = removeUserFromGroupFactory(ctx, this);
+        this.requestCall = requestCallFactory(ctx, this);
         this.resetHiddenConversPin = resetHiddenConversPinFactory(ctx, this);
         this.reuseAvatar = reuseAvatarFactory(ctx, this);
         this.reviewPendingMemberRequest = reviewPendingMemberRequestFactory(ctx, this);
