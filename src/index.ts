@@ -106,6 +106,7 @@ export type { RemoveQuickMessageResponse } from "./apis/removeQuickMessage.js";
 export type { RemoveReminderResponse } from "./apis/removeReminder.js";
 export type { RemoveUnreadMarkResponse } from "./apis/removeUnreadMark.js";
 export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js";
+export type { RequestCallResponse } from "./apis/requestCall.js";
 export type { ResetHiddenConversPinResponse } from "./apis/resetHiddenConversPin.js";
 export type { ReuseAvatarResponse } from "./apis/reuseAvatar.js";
 export type { ReviewPendingMemberRequestPayload, ReviewPendingMemberRequestResponse } from "./apis/reviewPendingMemberRequest.js";
