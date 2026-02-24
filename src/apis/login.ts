@@ -55,6 +55,25 @@ export async function getServerInfo(ctx: ContextBase, encryptParams: boolean) {
     return data.data;
 }
 
+export async function getApiVersion(ctx: ContextBase) {
+    const response = await request(ctx, "https://chat.zalo.me/");
+    if (!response.ok) throw new ZaloApiError("Failed to fetch api version: " + response.statusText);
+    const text = await response.text();
+    const match = text.match(/https:\/\/zalo-chat-static\.zadn\.vn\/v1\/lazy\/default-embed-render\.(\w+)\.js/);
+    if (match && match[1]) {
+        const defaultEmbedRenderURL = match[0];
+        const defaultEmbedRenderResponse = await request(ctx, defaultEmbedRenderURL, undefined, true);
+        if (!defaultEmbedRenderResponse.ok) throw new ZaloApiError("Failed to fetch api version from default embed render: " + defaultEmbedRenderResponse.statusText);
+        const defaultEmbedRenderText = await defaultEmbedRenderResponse.text();
+        const versionMatch = defaultEmbedRenderText.match(/apiVersion:\s*(\d+)/);
+        if (versionMatch && versionMatch[1]) {
+            return parseInt(versionMatch[1], 10);
+        }
+    }
+
+    return 670; // default to 670 if not found
+}
+
 async function getEncryptParam(ctx: ContextBase, encryptParams: boolean, type: string) {
     const params = {} as Record<string, unknown>;
     const data = {
