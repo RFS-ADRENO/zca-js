@@ -9,6 +9,7 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import type { ContextSession } from "../context.js";
 import { type SeenMessage, GroupSeenMessage, UserSeenMessage } from "../models/SeenMessage.js";
 import { type DeliveredMessage, UserDeliveredMessage, GroupDeliveredMessage } from "../models/DeliveredMessage.js";
+import { initializeSyncEvent, type SyncEvent, type TSyncEvent } from "../models/SyncEvent.js";
 
 type UploadEventData = {
     fileUrl: string;
@@ -50,6 +51,7 @@ interface ListenerEvents {
     friend_event: [data: FriendEvent];
     group_event: [data: GroupEvent];
     cipher_key: [key: string];
+    sync_event: [data: SyncEvent];
 }
 
 export class Listener extends EventEmitter<ListenerEvents> {
@@ -188,7 +190,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                 "user-agent": this.userAgent,
                 cookie: this.cookie,
             },
-            agent: this.ctx.options.agent
+            agent: this.ctx.options.agent,
         });
         this.ws = ws;
 
@@ -320,7 +322,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                                 this.ctx.uid,
                                 groupEventData,
                                 getGroupEventType(control.content.act),
-                                control.content.act
+                                control.content.act,
                             );
                             if (groupEvent.isSelf && !this.selfListen) continue;
                             this.emit("group_event", groupEvent);
@@ -353,6 +355,20 @@ export class Listener extends EventEmitter<ListenerEvents> {
                             );
                             if (friendEvent.isSelf && !this.selfListen) continue;
                             this.emit("friend_event", friendEvent);
+                            // Handle sync event
+                        } else if (control.content.act_type == "syncmsgmb") {
+                            // I do think that you should put this in a big switch statement and refactor the act_type into a dict or something
+                            const syncEventData: TSyncEvent =
+                                typeof control.content.data == "string"
+                                    ? JSON.parse(control.content.data)
+                                    : control.content.data;
+                            const syncEvent = initializeSyncEvent(
+                                syncEventData,
+                                control.content.act,
+                                control.content.act_type,
+                            );
+                            // This return different sync events, for the data info the event.act_type == syncmsgmb_info
+                            this.emit("sync_event", syncEvent);
                         }
                     }
                 }
