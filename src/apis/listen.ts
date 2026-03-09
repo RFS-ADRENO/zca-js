@@ -10,6 +10,15 @@ import type { ContextSession } from "../context.js";
 import { type SeenMessage, GroupSeenMessage, UserSeenMessage } from "../models/SeenMessage.js";
 import { type DeliveredMessage, UserDeliveredMessage, GroupDeliveredMessage } from "../models/DeliveredMessage.js";
 
+export type PollUpdate = {
+    groupId: string;
+    lastMsgId: string;
+    pollId?: number;
+    selfAction?: boolean;
+    action?: string;
+    newOptions?: unknown[];
+};
+
 type UploadEventData = {
     fileUrl: string;
     fileId: string;
@@ -50,6 +59,12 @@ interface ListenerEvents {
     friend_event: [data: FriendEvent];
     group_event: [data: GroupEvent];
     cipher_key: [key: string];
+    /**
+     * Emitted when Zalo signals that a group has had poll activity (CMD 524).
+     * Actions like "change vote" or "add poll option" trigger this.
+     * Use `getPollDetail` to fetch the updated poll state.
+     */
+    poll_update: [data: PollUpdate];
 }
 
 export class Listener extends EventEmitter<ListenerEvents> {
@@ -78,6 +93,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
     private pingInterval?: Timer;
 
     private id = 0;
+    private packetCounter = 0;
 
     constructor(
         private ctx: ContextSession,
@@ -223,6 +239,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
         ws.onmessage = async (event) => {
             const { data } = event;
             if (!(data instanceof Buffer)) return;
+            this.packetCounter++;
 
             const encodedHeader = data.subarray(0, 4);
             const [version, cmd, subCmd] = getHeader(encodedHeader);
@@ -458,10 +475,29 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     }
                 }
 
+                if (cmd == 524 && subCmd == 0) {
+                    const parsedData = (await decodeEventData(parsed, this.cipherKey))?.data;
+                    const clearUnreads = parsedData?.clearUnreads as Array<{
+                        idTo: string;
+                        lastMsgId: string;
+                        isGroup: number;
+                    }> | undefined;
+
+                    if (Array.isArray(clearUnreads)) {
+                        for (const entry of clearUnreads) {
+                            if (entry.isGroup === 1) {
+                                const pollUpdate: PollUpdate = {
+                                    groupId: String(entry.idTo),
+                                    lastMsgId: String(entry.lastMsgId),
+                                };
+                                this.emit("poll_update", pollUpdate);
+                            }
+                        }
+                    }
+                }
+
                 if (version == 1 && cmd == 3000 && subCmd == 0) {
-                    logger(this.ctx).error();
                     logger(this.ctx).error("Another connection is opened, closing this one");
-                    logger(this.ctx).error();
                     if (ws.readyState !== WebSocket.CLOSED) ws.close(CloseReason.DuplicateConnection);
                 }
             } catch (error) {

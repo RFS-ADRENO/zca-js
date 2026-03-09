@@ -33,6 +33,17 @@ export const votePollFactory = apiFactory<VotePollResponse>()((api, ctx, utils) 
             method: "GET",
         });
 
-        return utils.resolve(response);
+        const result = await utils.resolve(response);
+        if (api.listener) {
+            api.listener.emit("poll_update", {
+                groupId: String(ctx.uid),
+                lastMsgId: String(Date.now()),
+                pollId: pollId,
+                selfAction: true,
+                action: optionId.length > 0 ? "vote_or_update" : "unvote",
+            });
+        }
+
+        return result;
     };
 });

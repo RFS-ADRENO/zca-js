@@ -41,6 +41,19 @@ export const addPollOptionsFactory = apiFactory<AddPollOptionsResponse>()((api, 
             method: "GET",
         });
 
-        return utils.resolve(response);
+        const result = await utils.resolve(response);
+
+        if (api.listener) {
+            api.listener.emit("poll_update", {
+                groupId: String(_ctx.uid),
+                lastMsgId: String(Date.now()),
+                pollId: payload.pollId,
+                selfAction: true,
+                action: "add_option",
+                newOptions: result?.options,
+            });
+        }
+
+        return result;
     };
 });
