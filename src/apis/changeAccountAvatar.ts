@@ -56,7 +56,7 @@ export const changeAccountAvatarFactory = apiFactory<ChangeAccountAvatarResponse
             {
                 method: "POST",
                 headers: formData.getHeaders(),
-                body: formData.getBuffer(),
+                body: new Uint8Array(formData.getBuffer()),
             },
         );
 

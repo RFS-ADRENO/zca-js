@@ -302,7 +302,7 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
                             {
                                 method: "POST",
                                 headers: data.chunkContent[i].getHeaders(),
-                                body: data.chunkContent[i].getBuffer(),
+                                body: new Uint8Array(data.chunkContent[i].getBuffer()),
                             },
                         )
                         .then(async (response) => {

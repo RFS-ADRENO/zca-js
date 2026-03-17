@@ -53,6 +53,7 @@ import { getContextFactory } from "./apis/getContext.js";
 import { getCookieFactory } from "./apis/getCookie.js";
 import { getFriendBoardListFactory } from "./apis/getFriendBoardList.js";
 import { getFriendOnlinesFactory } from "./apis/getFriendOnlines.js";
+import { getFriendProfileFactory } from "./apis/getFriendProfile.js";
 import { getFriendRecommendationsFactory } from "./apis/getFriendRecommendations.js";
 import { getFriendRequestStatusFactory } from "./apis/getFriendRequestStatus.js";
 import { getFullAvatarFactory } from "./apis/getFullAvatar.js";
@@ -69,6 +70,7 @@ import { getLabelsFactory } from "./apis/getLabels.js";
 import { getListBoardFactory } from "./apis/getListBoard.js";
 import { getListReminderFactory } from "./apis/getListReminder.js";
 import { getMultiUsersByPhonesFactory } from "./apis/getMultiUsersByPhones.js";
+import { getMultiUsersByPhoneFactory } from "./apis/getMultiUsersByPhone.js";
 import { getMuteFactory } from "./apis/getMute.js";
 import { getOwnIdFactory } from "./apis/getOwnId.js";
 import { getPendingGroupMembersFactory } from "./apis/getPendingGroupMembers.js";
@@ -205,6 +207,7 @@ export class API {
     public getCookie: ReturnType<typeof getCookieFactory>;
     public getFriendBoardList: ReturnType<typeof getFriendBoardListFactory>;
     public getFriendOnlines: ReturnType<typeof getFriendOnlinesFactory>;
+    public getFriendProfile: ReturnType<typeof getFriendProfileFactory>;
     public getFriendRecommendations: ReturnType<typeof getFriendRecommendationsFactory>;
     public getFriendRequestStatus: ReturnType<typeof getFriendRequestStatusFactory>;
     public getFullAvatar: ReturnType<typeof getFullAvatarFactory>;
@@ -221,6 +224,7 @@ export class API {
     public getListBoard: ReturnType<typeof getListBoardFactory>;
     public getListReminder: ReturnType<typeof getListReminderFactory>;
     public getMultiUsersByPhones: ReturnType<typeof getMultiUsersByPhonesFactory>;
+    public getMultiUsersByPhone: ReturnType<typeof getMultiUsersByPhoneFactory>;
     public getMute: ReturnType<typeof getMuteFactory>;
     public getOwnId: ReturnType<typeof getOwnIdFactory>;
     public getPendingGroupMembers: ReturnType<typeof getPendingGroupMembersFactory>;
@@ -357,6 +361,7 @@ export class API {
         this.getCookie = getCookieFactory(ctx, this);
         this.getFriendBoardList = getFriendBoardListFactory(ctx, this);
         this.getFriendOnlines = getFriendOnlinesFactory(ctx, this);
+        this.getFriendProfile = getFriendProfileFactory(ctx, this);
         this.getFriendRecommendations = getFriendRecommendationsFactory(ctx, this);
         this.getFriendRequestStatus = getFriendRequestStatusFactory(ctx, this);
         this.getFullAvatar = getFullAvatarFactory(ctx, this);
@@ -373,6 +378,7 @@ export class API {
         this.getListBoard = getListBoardFactory(ctx, this);
         this.getListReminder = getListReminderFactory(ctx, this);
         this.getMultiUsersByPhones = getMultiUsersByPhonesFactory(ctx, this);
+        this.getMultiUsersByPhone = getMultiUsersByPhoneFactory(ctx, this);
         this.getMute = getMuteFactory(ctx, this);
         this.getOwnId = getOwnIdFactory(ctx, this);
         this.getPendingGroupMembers = getPendingGroupMembersFactory(ctx, this);
