@@ -1,6 +1,6 @@
 {
     "name": "zca-js-vnzl",
-    "version": "2.0.4-5",
+    "version": "2.1.2",
     "description": "Unofficial Zalo API for JavaScript (Forked from zca-js)",
     "main": "dist/index.js",
     "type": "module",
