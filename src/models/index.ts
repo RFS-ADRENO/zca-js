@@ -19,3 +19,4 @@ export * from "./User.js";
 export * from "./ZBusiness.js";
 export * from "./Label.js";
 export * from "./Sticker.js";
+export * from "./SyncData.js";
