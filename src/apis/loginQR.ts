@@ -60,6 +60,7 @@ export type LoginQRCallbackEvent =
                   enabledCheckOCR: boolean;
                   enabledMultiLayer: boolean;
               };
+              token: string;
           };
           actions: {
               saveToFile: (qrPath?: string) => Promise<unknown>;
@@ -197,6 +198,7 @@ async function generate(
             enabledCheckOCR: boolean;
             enabledMultiLayer: boolean;
         };
+        token: string;
     } | null;
     error_code: number;
     error_message: string;
