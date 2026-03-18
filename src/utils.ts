@@ -259,6 +259,42 @@ export function decodeAES(secretKey: string, data: string, t = 0): string | null
     }
 }
 
+/**
+ * Suy luận nền tảng hệ điều hành (OS) từ chuỗi User-Agent.
+ *
+ * Hàm này được sinh ra để giải quyết vấn đề cốt lõi: thư viện zca-js trước đây
+ * hardcode `sec-ch-ua-platform: "Windows"` ở 8 chỗ trong loginQR, trong khi
+ * User-Agent có thể là Mac/Linux — tạo ra Browser Mismatch khiến Zalo ban session.
+ *
+ * Thứ tự ưu tiên nhận diện: Windows → macOS → Linux → mặc định Windows (an toàn nhất)
+ *
+ * @returns Chuỗi platform theo định dạng Sec-CH-UA-Platform, ví dụ: "Windows", "macOS", "Linux"
+ */
+export function getPlatformFromUA(userAgent: string | undefined): string {
+    if (!userAgent) return "Windows"; // Không có UA → mặc định Windows
+    if (/Windows/i.test(userAgent)) return "Windows";
+    if (/Macintosh|Mac OS X/i.test(userAgent)) return "macOS";
+    if (/Linux|X11/i.test(userAgent)) return "Linux";
+    return "Windows"; // Không nhận diện được → fallback an toàn về Windows
+}
+
+/**
+ * Trích xuất phiên bản Chrome major từ chuỗi User-Agent.
+ *
+ * Dùng để điền vào header `sec-ch-ua` một cách động, đảm bảo Chrome version
+ * trong header khớp với Chrome version trong User-Agent (tránh fingerprint anomaly).
+ *
+ * Lưu ý: Nếu UA không phải Chrome/Chromium (ví dụ Firefox, Safari thuần),
+ * hàm trả về "130" làm giá trị mặc định an toàn thay vì throw error.
+ *
+ * @returns Phiên bản Chrome major dạng string, ví dụ: "130", "133"
+ */
+export function getChromeVersionFromUA(userAgent: string | undefined): string {
+    if (!userAgent) return "130"; // Không có UA → dùng version ổn định
+    const match = userAgent.match(/Chrome\/(\d+)/);
+    return match ? match[1] : "130"; // Không phải Chrome → fallback về "130"
+}
+
 export async function getDefaultHeaders(ctx: ContextBase, origin: string = "https://chat.zalo.me") {
     if (!ctx.cookie) throw new ZaloApiError("Cookie is not available");
     if (!ctx.userAgent) throw new ZaloApiError("User agent is not available");
