@@ -334,15 +334,25 @@ export async function request(ctx: ContextBase, url: string, options?: RequestIn
     const response = await ctx.options.polyfill(url, _options);
     const setCookieRaw = response.headers.get("set-cookie");
     if (setCookieRaw && !raw) {
-        // Use getSetCookie() (Node.js 18+) to properly parse multi-cookie headers.
-        // The split(", ") method breaks cookies containing Expires dates with commas
-        // (e.g., "Expires=Wed, 18 Mar 2026..."), causing critical cookies like
-        // zpsid and zpw_sek to be lost during QR login flow.
-        let cookieStrings: string[];
-        if (typeof response.headers.getSetCookie === "function") {
-            cookieStrings = response.headers.getSetCookie();
-        } else {
-            cookieStrings = setCookieRaw.split(", ");
+        let cookieStrings: string[] = [];
+        const headers = response.headers as Headers & {
+            raw?: () => Record<string, string[]>;
+            getSetCookie?: () => string[];
+        };
+        // Cách 1: Ưu tiên lấy Mảng Raw chuẩn gốc (Array) của thư viện node-fetch
+        if (typeof headers.raw === "function") {
+            const rawHeaders = headers.raw();
+            if (rawHeaders && rawHeaders["set-cookie"]) {
+                cookieStrings = rawHeaders["set-cookie"];
+            }
+        } 
+        // Cách 2: Nếu dùng Fetch API Native của NodeJS 18+
+        else if (typeof headers.getSetCookie === "function") {
+            cookieStrings = headers.getSetCookie();
+        } 
+        // Cách 3: Fallback dùng Regex Lookahead an toàn (Không bao giờ tách nhầm dấu phẩy của Expires date)
+        else {
+            cookieStrings = setCookieRaw.split(/,\s*(?=[a-zA-Z0-9_-]+\s*=)/);
         }
         for (const cookie of cookieStrings) {
             const parsed = toughCookie.Cookie.parse(cookie);
