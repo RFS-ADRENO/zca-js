@@ -259,6 +259,42 @@ export function decodeAES(secretKey: string, data: string, t = 0): string | null
     }
 }
 
+/**
+ * Suy luận nền tảng hệ điều hành (OS) từ chuỗi User-Agent.
+ *
+ * Hàm này được sinh ra để giải quyết vấn đề cốt lõi: thư viện zca-js trước đây
+ * hardcode `sec-ch-ua-platform: "Windows"` ở 8 chỗ trong loginQR, trong khi
+ * User-Agent có thể là Mac/Linux — tạo ra Browser Mismatch khiến Zalo ban session.
+ *
+ * Thứ tự ưu tiên nhận diện: Windows → macOS → Linux → mặc định Windows (an toàn nhất)
+ *
+ * @returns Chuỗi platform theo định dạng Sec-CH-UA-Platform, ví dụ: "Windows", "macOS", "Linux"
+ */
+export function getPlatformFromUA(userAgent: string | undefined): string {
+    if (!userAgent) return "Windows"; // Không có UA → mặc định Windows
+    if (/Windows/i.test(userAgent)) return "Windows";
+    if (/Macintosh|Mac OS X/i.test(userAgent)) return "macOS";
+    if (/Linux|X11/i.test(userAgent)) return "Linux";
+    return "Windows"; // Không nhận diện được → fallback an toàn về Windows
+}
+
+/**
+ * Trích xuất phiên bản Chrome major từ chuỗi User-Agent.
+ *
+ * Dùng để điền vào header `sec-ch-ua` một cách động, đảm bảo Chrome version
+ * trong header khớp với Chrome version trong User-Agent (tránh fingerprint anomaly).
+ *
+ * Lưu ý: Nếu UA không phải Chrome/Chromium (ví dụ Firefox, Safari thuần),
+ * hàm trả về "130" làm giá trị mặc định an toàn thay vì throw error.
+ *
+ * @returns Phiên bản Chrome major dạng string, ví dụ: "130", "133"
+ */
+export function getChromeVersionFromUA(userAgent: string | undefined): string {
+    if (!userAgent) return "130"; // Không có UA → dùng version ổn định
+    const match = userAgent.match(/Chrome\/(\d+)/);
+    return match ? match[1] : "130"; // Không phải Chrome → fallback về "130"
+}
+
 export async function getDefaultHeaders(ctx: ContextBase, origin: string = "https://chat.zalo.me") {
     if (!ctx.cookie) throw new ZaloApiError("Cookie is not available");
     if (!ctx.userAgent) throw new ZaloApiError("User agent is not available");
@@ -298,15 +334,25 @@ export async function request(ctx: ContextBase, url: string, options?: RequestIn
     const response = await ctx.options.polyfill(url, _options);
     const setCookieRaw = response.headers.get("set-cookie");
     if (setCookieRaw && !raw) {
-        // Use getSetCookie() (Node.js 18+) to properly parse multi-cookie headers.
-        // The split(", ") method breaks cookies containing Expires dates with commas
-        // (e.g., "Expires=Wed, 18 Mar 2026..."), causing critical cookies like
-        // zpsid and zpw_sek to be lost during QR login flow.
-        let cookieStrings: string[];
-        if (typeof response.headers.getSetCookie === "function") {
-            cookieStrings = response.headers.getSetCookie();
-        } else {
-            cookieStrings = setCookieRaw.split(", ");
+        let cookieStrings: string[] = [];
+        const headers = response.headers as Headers & {
+            raw?: () => Record<string, string[]>;
+            getSetCookie?: () => string[];
+        };
+        // Cách 1: Ưu tiên lấy Mảng Raw chuẩn gốc (Array) của thư viện node-fetch
+        if (typeof headers.raw === "function") {
+            const rawHeaders = headers.raw();
+            if (rawHeaders && rawHeaders["set-cookie"]) {
+                cookieStrings = rawHeaders["set-cookie"];
+            }
+        } 
+        // Cách 2: Nếu dùng Fetch API Native của NodeJS 18+
+        else if (typeof headers.getSetCookie === "function") {
+            cookieStrings = headers.getSetCookie();
+        } 
+        // Cách 3: Fallback dùng Regex Lookahead an toàn (Không bao giờ tách nhầm dấu phẩy của Expires date)
+        else {
+            cookieStrings = setCookieRaw.split(/,\s*(?=[a-zA-Z0-9_-]+\s*=)/);
         }
         for (const cookie of cookieStrings) {
             const parsed = toughCookie.Cookie.parse(cookie);
