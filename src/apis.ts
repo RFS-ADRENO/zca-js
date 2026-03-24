@@ -85,6 +85,7 @@ import { getSettingsFactory } from "./apis/getSettings.js";
 import { getStickerCategoryDetailFactory } from "./apis/getStickerCategoryDetail.js";
 import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
+import { getSyncDataFactory } from "./apis/getSyncData.js";
 import { getUnreadMarkFactory } from "./apis/getUnreadMark.js";
 import { getUserInfoFactory } from "./apis/getUserInfo.js";
 import { inviteUserToGroupsFactory } from "./apis/inviteUserToGroups.js";
@@ -94,6 +95,7 @@ import { keepAliveFactory } from "./apis/keepAlive.js";
 import { lastOnlineFactory } from "./apis/lastOnline.js";
 import { leaveGroupFactory } from "./apis/leaveGroup.js";
 import { lockPollFactory } from "./apis/lockPoll.js";
+import { pullMobileFactory } from "./apis/pullMobile.js";
 import { parseLinkFactory } from "./apis/parseLink.js";
 import { rejectFriendRequestFactory } from "./apis/rejectFriendRequest.js";
 import { removeFriendFactory } from "./apis/removeFriend.js";
@@ -237,6 +239,7 @@ export class API {
     public getStickerCategoryDetail: ReturnType<typeof getStickerCategoryDetailFactory>;
     public getStickers: ReturnType<typeof getStickersFactory>;
     public getStickersDetail: ReturnType<typeof getStickersDetailFactory>;
+    public getSyncData: ReturnType<typeof getSyncDataFactory>;
     public getUnreadMark: ReturnType<typeof getUnreadMarkFactory>;
     public getUserInfo: ReturnType<typeof getUserInfoFactory>;
     public inviteUserToGroups: ReturnType<typeof inviteUserToGroupsFactory>;
@@ -246,6 +249,7 @@ export class API {
     public lastOnline: ReturnType<typeof lastOnlineFactory>;
     public leaveGroup: ReturnType<typeof leaveGroupFactory>;
     public lockPoll: ReturnType<typeof lockPollFactory>;
+    public pullMobile: ReturnType<typeof pullMobileFactory>;
     public parseLink: ReturnType<typeof parseLinkFactory>;
     public rejectFriendRequest: ReturnType<typeof rejectFriendRequestFactory>;
     public removeFriend: ReturnType<typeof removeFriendFactory>;
@@ -389,6 +393,7 @@ export class API {
         this.getStickerCategoryDetail = getStickerCategoryDetailFactory(ctx, this);
         this.getStickers = getStickersFactory(ctx, this);
         this.getStickersDetail = getStickersDetailFactory(ctx, this);
+        this.getSyncData = getSyncDataFactory(ctx, this);
         this.getUnreadMark = getUnreadMarkFactory(ctx, this);
         this.getUserInfo = getUserInfoFactory(ctx, this);
         this.inviteUserToGroups = inviteUserToGroupsFactory(ctx, this);
@@ -398,6 +403,7 @@ export class API {
         this.lastOnline = lastOnlineFactory(ctx, this);
         this.leaveGroup = leaveGroupFactory(ctx, this);
         this.lockPoll = lockPollFactory(ctx, this);
+        this.pullMobile = pullMobileFactory(ctx, this);
         this.parseLink = parseLinkFactory(ctx, this);
         this.rejectFriendRequest = rejectFriendRequestFactory(ctx, this);
         this.removeFriend = removeFriendFactory(ctx, this);
