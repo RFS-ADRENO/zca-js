@@ -1,22 +1,11 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { BankAccount } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type GetBankAccountsResponse = {
     hasMore: boolean;
     total: number;
-    myBanks: {
-        id: string;
-        bin: number;
-        default: boolean;
-        bank_number: string;
-        bank_logo: string;
-        holder_name: string;
-        created_at: number;
-        updated_at: number;
-        account_id: number;
-        bank_name: string;
-        is_default: boolean;
-    }[];
+    myBanks: BankAccount[];
 };
 
 export const getBankAccountsFactory = apiFactory<GetBankAccountsResponse>()((api, _ctx, utils) => {

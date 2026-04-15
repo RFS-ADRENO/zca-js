@@ -1,15 +1,9 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { BankInfo } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type GetSupportedBanksResponse = {
-    banks: {
-        bin: number;
-        logo: string;
-        name: string;
-        name_eng: string;
-        short_name: string;
-        search_key_word: string;
-    }[];
+    banks: BankInfo[];
 };
 
 export const getSupportedBanksFactory = apiFactory<GetSupportedBanksResponse>()((api, _ctx, utils) => {
