@@ -46,6 +46,7 @@ import { getAutoDeleteChatFactory } from "./apis/getAutoDeleteChat.js";
 import { getAutoReplyListFactory } from "./apis/getAutoReplyList.js";
 import { getAvatarListFactory } from "./apis/getAvatarList.js";
 import { getAvatarUrlProfileFactory } from "./apis/getAvatarUrlProfile.js";
+import { getBankAccountsFactory } from "./apis/getBankAccounts.js";
 import { getBizAccountFactory } from "./apis/getBizAccount.js";
 import { getCatalogListFactory } from "./apis/getCatalogList.js";
 import { getCloseFriendsFactory } from "./apis/getCloseFriends.js";
@@ -85,6 +86,7 @@ import { getSettingsFactory } from "./apis/getSettings.js";
 import { getStickerCategoryDetailFactory } from "./apis/getStickerCategoryDetail.js";
 import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
+import { getSupportedBanksFactory } from "./apis/getSupportedBanks.js";
 import { getUnreadMarkFactory } from "./apis/getUnreadMark.js";
 import { getUserInfoFactory } from "./apis/getUserInfo.js";
 import { inviteUserToGroupsFactory } from "./apis/inviteUserToGroups.js";
@@ -198,6 +200,7 @@ export class API {
     public getAutoReplyList: ReturnType<typeof getAutoReplyListFactory>;
     public getAvatarList: ReturnType<typeof getAvatarListFactory>;
     public getAvatarUrlProfile: ReturnType<typeof getAvatarUrlProfileFactory>;
+    public getBankAccounts: ReturnType<typeof getBankAccountsFactory>;
     public getBizAccount: ReturnType<typeof getBizAccountFactory>;
     public getCatalogList: ReturnType<typeof getCatalogListFactory>;
     public getCloseFriends: ReturnType<typeof getCloseFriendsFactory>;
@@ -237,6 +240,7 @@ export class API {
     public getStickerCategoryDetail: ReturnType<typeof getStickerCategoryDetailFactory>;
     public getStickers: ReturnType<typeof getStickersFactory>;
     public getStickersDetail: ReturnType<typeof getStickersDetailFactory>;
+    public getSupportedBanks: ReturnType<typeof getSupportedBanksFactory>;
     public getUnreadMark: ReturnType<typeof getUnreadMarkFactory>;
     public getUserInfo: ReturnType<typeof getUserInfoFactory>;
     public inviteUserToGroups: ReturnType<typeof inviteUserToGroupsFactory>;
@@ -350,6 +354,7 @@ export class API {
         this.getAutoReplyList = getAutoReplyListFactory(ctx, this);
         this.getAvatarList = getAvatarListFactory(ctx, this);
         this.getAvatarUrlProfile = getAvatarUrlProfileFactory(ctx, this);
+        this.getBankAccounts = getBankAccountsFactory(ctx, this);
         this.getBizAccount = getBizAccountFactory(ctx, this);
         this.getCatalogList = getCatalogListFactory(ctx, this);
         this.getCloseFriends = getCloseFriendsFactory(ctx, this);
@@ -389,6 +394,7 @@ export class API {
         this.getStickerCategoryDetail = getStickerCategoryDetailFactory(ctx, this);
         this.getStickers = getStickersFactory(ctx, this);
         this.getStickersDetail = getStickersDetailFactory(ctx, this);
+        this.getSupportedBanks = getSupportedBanksFactory(ctx, this);
         this.getUnreadMark = getUnreadMarkFactory(ctx, this);
         this.getUserInfo = getUserInfoFactory(ctx, this);
         this.inviteUserToGroups = inviteUserToGroupsFactory(ctx, this);
