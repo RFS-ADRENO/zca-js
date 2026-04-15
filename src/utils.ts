@@ -789,3 +789,16 @@ export function negativeColorToHex(negativeColor: number): string {
     // return "#" + positiveColor.toString(16).padStart(6, "0"); // rgb no alpha
     return "#" + positiveColor.toString(16).slice(-6).padStart(6, "0"); // rgb with alpha
 }
+
+export function normalizeHolderName(input?: string) {
+    if (!input) return undefined;
+    return input
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/đ/g, "d")
+        .replace(/Đ/g, "D")
+        .toUpperCase()
+        .replace(/[^A-Z0-9 ]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
