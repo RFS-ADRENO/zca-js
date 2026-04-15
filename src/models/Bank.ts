@@ -25,7 +25,7 @@ export type BankAccount = {
 };
 
 /**
- * @note Bank codes list after Mitm on Mobile and Bank's supported by Zalo
+ * @note Bank codes list after Mitm on Mobile, WEB and Bank's supported by Zalo
  * @documents https://developers.zalo.me/docs/zalo-notification-service/phu-luc/danh-sach-bin-code - docs missing bin code and short_name bank
  */
 export enum BinBankCard {
@@ -46,6 +46,14 @@ export enum BinBankCard {
      */
     BIDV = 970418,
     /**
+     * Ngân hàng BNP Paribas - CN TP. Hồ Chí Minh
+     */
+    BNP_Paribas_HCM = 963666,
+    /**
+     * Ngân hàng BNP Paribas - CN Hà Nội
+     */
+    BNP_Paribas_HN = 963668,
+    /**
      * NH TMCP Bản Việt
      */
     BVBank = 970454,
@@ -62,9 +70,15 @@ export enum BinBankCard {
      */
     CAKE = 546034,
     /**
-     * NH Thương mại TNHH MTV Xây dựng Việt Nam
+     * Ngân hàng Cathay United - CN TP. Hồ Chí Minh
      */
-    CB_Bank = 970444,
+    Cathay_United_HCM = 168999,
+    /**
+     * NH Thương mại TNHH MTV Xây dựng Việt Nam
+     *
+     * @note Also observed as "VCBNeo" in supported banks list (same bin) - Old is bank: CB_Bank
+     */
+    VCBNeo = 970444,
     /**
      * NH TNHH MTV CIMB Việt Nam
      */
@@ -85,6 +99,10 @@ export enum BinBankCard {
      * NH TMCP Xuất Nhập khẩu Việt Nam
      */
     Eximbank = 970431,
+    /**
+     * Ngân hàng Citibank Việt Nam
+     */
+    Citibank = 533948,
     /**
      * NH TMCP Dầu khí Toàn cầu
      */
@@ -130,6 +148,10 @@ export enum BinBankCard {
      */
     Kookmin_Bank_HN = 970462,
     /**
+     * Liobank by OCB
+     */
+    Liobank = 963369,
+    /**
      * NH TMCP Lộc Phát Việt Nam
      */
     LPBank = 970449,
@@ -141,6 +163,10 @@ export enum BinBankCard {
      * NH TMCP Hàng Hải
      */
     MSB = 970426,
+    /**
+     * MoMo
+     */
+    MoMo = 971025,
     /**
      * NH TMCP Quốc Dân
      */
@@ -204,7 +230,7 @@ export enum BinBankCard {
     /**
      * NH số TNEX
      */
-    TNEX = 9704261,
+    TNEX = 963326,
     /**
      * NH TMCP Tiên Phong
      */
