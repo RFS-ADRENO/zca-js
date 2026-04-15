@@ -792,7 +792,7 @@ export function negativeColorToHex(negativeColor: number): string {
 
 export function normalizeHolderName(input?: string) {
     if (!input) return undefined;
-    return input
+    const normalized = input
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
         .replace(/đ/g, "d")
@@ -801,4 +801,6 @@ export function normalizeHolderName(input?: string) {
         .replace(/[^A-Z0-9 ]+/g, " ")
         .replace(/\s+/g, " ")
         .trim();
+
+    return normalized.length >= 5 ? normalized : undefined;
 }
