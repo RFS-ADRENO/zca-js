@@ -101,6 +101,7 @@ export type { LastOnlineResponse } from "./apis/lastOnline.js";
 export type { LeaveGroupResponse } from "./apis/leaveGroup.js";
 export type { LockPollResponse } from "./apis/lockPoll.js";
 export type { LoginQRCallback, LoginQRCallbackEvent } from "./apis/loginQR.js";
+export type { LostFocusResponse } from "./apis/lostFocus.js";
 export type { ParseLinkErrorMaps, ParseLinkResponse } from "./apis/parseLink.js";
 export type { RejectFriendRequestResponse } from "./apis/rejectFriendRequest.js";
 export type { RemoveFriendResponse } from "./apis/removeFriend.js";
