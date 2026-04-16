@@ -74,6 +74,7 @@ export type { GetLabelsResponse } from "./apis/getLabels.js";
 export type { GetListBankResponse } from "./apis/getListBank.js";
 export type { GetListBankCardResponse } from "./apis/getListBankCard.js";
 export type { BoardItem, GetListBoardResponse, ListBoardOptions } from "./apis/getListBoard.js";
+export type { GetListDeviceResponse } from "./apis/getListDevice.js";
 export type { GetListReminderResponse, ListReminderOptions, ReminderListGroup, ReminderListUser } from "./apis/getListReminder.js";
 export type { GetMultiUsersByPhonesResponse } from "./apis/getMultiUsersByPhones.js";
 export type { GetMuteResponse, MuteEntriesInfo } from "./apis/getMute.js";

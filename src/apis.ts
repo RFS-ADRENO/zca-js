@@ -71,6 +71,7 @@ import { getLabelsFactory } from "./apis/getLabels.js";
 import { getListBankFactory } from "./apis/getListBank.js";
 import { getListBankCardFactory } from "./apis/getListBankCard.js";
 import { getListBoardFactory } from "./apis/getListBoard.js";
+import { getListDeviceFactory } from "./apis/getListDevice.js";
 import { getListReminderFactory } from "./apis/getListReminder.js";
 import { getMultiUsersByPhonesFactory } from "./apis/getMultiUsersByPhones.js";
 import { getMuteFactory } from "./apis/getMute.js";
@@ -228,6 +229,7 @@ export class API {
     public getListBank: ReturnType<typeof getListBankFactory>;
     public getListBankCard: ReturnType<typeof getListBankCardFactory>;
     public getListBoard: ReturnType<typeof getListBoardFactory>;
+    public getListDevice: ReturnType<typeof getListDeviceFactory>;
     public getListReminder: ReturnType<typeof getListReminderFactory>;
     public getMultiUsersByPhones: ReturnType<typeof getMultiUsersByPhonesFactory>;
     public getMute: ReturnType<typeof getMuteFactory>;
@@ -385,6 +387,7 @@ export class API {
         this.getListBank = getListBankFactory(ctx, this);
         this.getListBankCard = getListBankCardFactory(ctx, this);
         this.getListBoard = getListBoardFactory(ctx, this);
+        this.getListDevice = getListDeviceFactory(ctx, this);
         this.getListReminder = getListReminderFactory(ctx, this);
         this.getMultiUsersByPhones = getMultiUsersByPhonesFactory(ctx, this);
         this.getMute = getMuteFactory(ctx, this);
