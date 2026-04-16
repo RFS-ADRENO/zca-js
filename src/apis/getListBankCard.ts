@@ -2,24 +2,24 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import type { BankAccount } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type GetBankAccountsResponse = {
+export type GetListBankCardResponse = {
     hasMore: boolean;
     total: number;
     myBanks: BankAccount[];
 };
 
-export const getBankAccountsFactory = apiFactory<GetBankAccountsResponse>()((api, _ctx, utils) => {
+export const getListBankCardFactory = apiFactory<GetListBankCardResponse>()((api, _ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.zimsg[0]}/api/transfer/list`);
 
     /**
-     * Get bank accounts
+     * Get list bank card
      *
      * @param page Page number (default: 0)
      * @param limit Number of items to retrieve (default: 20)
      *
      * @throws {ZaloApiError}
      */
-    return async function getBankAccounts(page: number = 0, limit: number = 20) {
+    return async function getListBankCard(page: number = 0, limit: number = 20) {
         const params = {
             page: page,
             limit: limit,

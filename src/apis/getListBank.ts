@@ -2,19 +2,19 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import type { BankInfo } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type GetSupportedBanksResponse = {
+export type GetListBankResponse = {
     banks: BankInfo[];
 };
 
-export const getSupportedBanksFactory = apiFactory<GetSupportedBanksResponse>()((api, _ctx, utils) => {
+export const getListBankFactory = apiFactory<GetListBankResponse>()((api, _ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.zimsg[0]}/api/transfer/conf`);
 
     /**
-     * Get supported banks
+     * Get list bank
      *
      * @throws {ZaloApiError}
      */
-    return async function getSupportedBanks() {
+    return async function getListBank() {
         const params = {};
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

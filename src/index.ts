@@ -52,7 +52,6 @@ export type { GetAutoDeleteChatResponse } from "./apis/getAutoDeleteChat.js";
 export type { GetAutoReplyListResponse } from "./apis/getAutoReplyList.js";
 export type { GetAvatarListResponse } from "./apis/getAvatarList.js";
 export type { GetAvatarUrlProfileResponse } from "./apis/getAvatarUrlProfile.js";
-export type { GetBankAccountsResponse } from "./apis/getBankAccounts.js";
 export type { GetBizAccountResponse } from "./apis/getBizAccount.js";
 export type { GetCatalogListPayload, GetCatalogListResponse } from "./apis/getCatalogList.js";
 export type { GetCloseFriendsResponse } from "./apis/getCloseFriends.js";
@@ -71,6 +70,8 @@ export type { GetGroupLinkInfoPayload, GetGroupLinkInfoResponse } from "./apis/g
 export type { GetGroupMembersInfoResponse, GroupMemberProfile } from "./apis/getGroupMembersInfo.js";
 export type { GetHiddenConversationsResponse } from "./apis/getHiddenConversations.js";
 export type { GetLabelsResponse } from "./apis/getLabels.js";
+export type { GetListBankResponse } from "./apis/getListBank.js";
+export type { GetListBankCardResponse } from "./apis/getListBankCard.js";
 export type { BoardItem, GetListBoardResponse, ListBoardOptions } from "./apis/getListBoard.js";
 export type { GetListReminderResponse, ListReminderOptions, ReminderListGroup, ReminderListUser } from "./apis/getListReminder.js";
 export type { GetMultiUsersByPhonesResponse } from "./apis/getMultiUsersByPhones.js";
@@ -88,7 +89,6 @@ export type { GetSentFriendRequestResponse, SentFriendRequestInfo } from "./apis
 export type { GetSettingsResponse } from "./apis/getSettings.js";
 export type { GetStickerCategoryDetailResponse } from "./apis/getStickerCategoryDetail.js";
 export type { StickerDetailResponse } from "./apis/getStickersDetail.js";
-export type { GetSupportedBanksResponse } from "./apis/getSupportedBanks.js";
 export type { GetUnreadMarkResponse, UnreadMark } from "./apis/getUnreadMark.js";
 export type { ProfileInfo, UserInfoResponse } from "./apis/getUserInfo.js";
 export type { InviteUserToGroupsResponse } from "./apis/inviteUserToGroups.js";
