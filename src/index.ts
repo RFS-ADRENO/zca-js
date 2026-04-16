@@ -30,6 +30,7 @@ export type { CreateProductCatalogPayload, CreateProductCatalogResponse } from "
 export type { CreateReminderOptions, CreateReminderResponse, CreateReminderUser, CreateReminderGroup } from "./apis/createReminder.js";
 export type { DeleteAutoReplyResponse } from "./apis/deleteAutoReply.js";
 export type { DeleteAvatarResponse } from "./apis/deleteAvatar.js";
+export type { DeleteBankAccountPayload, DeleteBankAccountResponse } from "./apis/deleteBankAccount.js";
 export type { DeleteCatalogResponse } from "./apis/deleteCatalog.js";
 export type { DeleteChatLastMessage, DeleteChatResponse } from "./apis/deleteChat.js";
 export type { DeleteGroupInviteBoxResponse } from "./apis/deleteGroupInviteBox.js";
@@ -136,6 +137,7 @@ export type { UpdateActiveStatusResponse } from "./apis/updateActiveStatus.js";
 export type { UpdateArchivedChatListTarget, UpdateArchivedChatListResponse } from "./apis/updateArchivedChatList.js";
 export type { UpdateAutoDeleteChatResponse } from "./apis/updateAutoDeleteChat.js";
 export type { UpdateAutoReplyPayload, UpdateAutoReplyResponse } from "./apis/updateAutoReply.js";
+export type { UpdateBankAccountPayload, UpdateBankAccountResponse } from "./apis/updateBankAccount.js";
 export type { UpdateCatalogPayload, UpdateCatalogResponse } from "./apis/updateCatalog.js";
 export type { UpdateGroupSettingsOptions, UpdateGroupSettingsResponse } from "./apis/updateGroupSettings.js";
 export type { UpdateHiddenConversPinResponse } from "./apis/updateHiddenConversPin.js";

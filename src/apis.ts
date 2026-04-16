@@ -25,6 +25,7 @@ import { createProductCatalogFactory } from "./apis/createProductCatalog.js";
 import { createReminderFactory } from "./apis/createReminder.js";
 import { deleteAutoReplyFactory } from "./apis/deleteAutoReply.js";
 import { deleteAvatarFactory } from "./apis/deleteAvatar.js";
+import { deleteBankAccountFactory } from "./apis/deleteBankAccount.js";
 import { deleteCatalogFactory } from "./apis/deleteCatalog.js";
 import { deleteChatFactory } from "./apis/deleteChat.js";
 import { deleteGroupInviteBoxFactory } from "./apis/deleteGroupInviteBox.js";
@@ -134,6 +135,7 @@ import { updateActiveStatusFactory } from "./apis/updateActiveStatus.js";
 import { updateArchivedChatListFactory } from "./apis/updateArchivedChatList.js";
 import { updateAutoDeleteChatFactory } from "./apis/updateAutoDeleteChat.js";
 import { updateAutoReplyFactory } from "./apis/updateAutoReply.js";
+import { updateBankAccountFactory } from "./apis/updateBankAccount.js";
 import { updateCatalogFactory } from "./apis/updateCatalog.js";
 import { updateGroupSettingsFactory } from "./apis/updateGroupSettings.js";
 import { updateHiddenConversPinFactory } from "./apis/updateHiddenConversPin.js";
@@ -180,6 +182,7 @@ export class API {
     public createReminder: ReturnType<typeof createReminderFactory>;
     public deleteAutoReply: ReturnType<typeof deleteAutoReplyFactory>;
     public deleteAvatar: ReturnType<typeof deleteAvatarFactory>;
+    public deleteBankAccount: ReturnType<typeof deleteBankAccountFactory>;
     public deleteCatalog: ReturnType<typeof deleteCatalogFactory>;
     public deleteChat: ReturnType<typeof deleteChatFactory>;
     public deleteGroupInviteBox: ReturnType<typeof deleteGroupInviteBoxFactory>;
@@ -289,6 +292,7 @@ export class API {
     public updateArchivedChatList: ReturnType<typeof updateArchivedChatListFactory>;
     public updateAutoDeleteChat: ReturnType<typeof updateAutoDeleteChatFactory>;
     public updateAutoReply: ReturnType<typeof updateAutoReplyFactory>;
+    public updateBankAccount: ReturnType<typeof updateBankAccountFactory>;
     public updateCatalog: ReturnType<typeof updateCatalogFactory>;
     public updateGroupSettings: ReturnType<typeof updateGroupSettingsFactory>;
     public updateHiddenConversPin: ReturnType<typeof updateHiddenConversPinFactory>;
@@ -335,6 +339,7 @@ export class API {
         this.createReminder = createReminderFactory(ctx, this);
         this.deleteAutoReply = deleteAutoReplyFactory(ctx, this);
         this.deleteAvatar = deleteAvatarFactory(ctx, this);
+        this.deleteBankAccount = deleteBankAccountFactory(ctx, this);
         this.deleteCatalog = deleteCatalogFactory(ctx, this);
         this.deleteChat = deleteChatFactory(ctx, this);
         this.deleteGroupInviteBox = deleteGroupInviteBoxFactory(ctx, this);
@@ -444,6 +449,7 @@ export class API {
         this.updateArchivedChatList = updateArchivedChatListFactory(ctx, this);
         this.updateAutoDeleteChat = updateAutoDeleteChatFactory(ctx, this);
         this.updateAutoReply = updateAutoReplyFactory(ctx, this);
+        this.updateBankAccount = updateBankAccountFactory(ctx, this);
         this.updateCatalog = updateCatalogFactory(ctx, this);
         this.updateGroupSettings = updateGroupSettingsFactory(ctx, this);
         this.updateHiddenConversPin = updateHiddenConversPinFactory(ctx, this);

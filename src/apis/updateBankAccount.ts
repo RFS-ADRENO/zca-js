@@ -2,26 +2,28 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import type { BankAccount, BinBankCard } from "../models/index.js";
 import { apiFactory, normalizeHolderName } from "../utils.js";
 
-export type CreateBankAccountPayload = {
+export type UpdateBankAccountPayload = {
+    accountId: number;
     binBank: BinBankCard;
     numAccBank: string;
     nameAccBank: string;
 };
 
-export type CreateBankAccountResponse = BankAccount;
+export type UpdateBankAccountResponse = BankAccount;
 
-export const createBankAccountFactory = apiFactory<CreateBankAccountResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.zimsg[0]}/api/transfer/create`);
+export const updateBankAccountFactory = apiFactory<UpdateBankAccountResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.zimsg[0]}/api/transfer/update`);
 
     /**
-     * Create bank account
+     * Update bank account
      *
-     * @param payload The payload containing the bank account information
+     * @param payload The payload containing the bank account information to update
      *
      * @throws {ZaloApiError}
      */
-    return async function createBankAccount(payload: CreateBankAccountPayload) {
+    return async function updateBankAccount(payload: UpdateBankAccountPayload) {
         const params = {
+            account_id: payload.accountId,
             bin: payload.binBank,
             bank_number: payload.numAccBank,
             holder_name: normalizeHolderName(payload.nameAccBank),
