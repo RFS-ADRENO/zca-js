@@ -101,6 +101,7 @@ import { leaveGroupFactory } from "./apis/leaveGroup.js";
 import { lockPollFactory } from "./apis/lockPoll.js";
 import { lostFocusFactory } from "./apis/lostFocus.js";
 import { parseLinkFactory } from "./apis/parseLink.js";
+import { registerCatalogFactory } from "./apis/registerCatalog.js";
 import { rejectFriendRequestFactory } from "./apis/rejectFriendRequest.js";
 import { removeFriendFactory } from "./apis/removeFriend.js";
 import { removeFriendAliasFactory } from "./apis/removeFriendAlias.js";
@@ -260,6 +261,7 @@ export class API {
     public lockPoll: ReturnType<typeof lockPollFactory>;
     public lostFocus: ReturnType<typeof lostFocusFactory>;
     public parseLink: ReturnType<typeof parseLinkFactory>;
+    public registerCatalog: ReturnType<typeof registerCatalogFactory>;
     public rejectFriendRequest: ReturnType<typeof rejectFriendRequestFactory>;
     public removeFriend: ReturnType<typeof removeFriendFactory>;
     public removeFriendAlias: ReturnType<typeof removeFriendAliasFactory>;
@@ -419,6 +421,7 @@ export class API {
         this.lockPoll = lockPollFactory(ctx, this);
         this.lostFocus = lostFocusFactory(ctx, this);
         this.parseLink = parseLinkFactory(ctx, this);
+        this.registerCatalog = registerCatalogFactory(ctx, this);
         this.rejectFriendRequest = rejectFriendRequestFactory(ctx, this);
         this.removeFriend = removeFriendFactory(ctx, this);
         this.removeFriendAlias = removeFriendAliasFactory(ctx, this);
