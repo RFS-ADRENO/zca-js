@@ -2,7 +2,7 @@ export * from "./Errors/index.js";
 export * from "./models/index.js";
 export * from "./zalo.js";
 
-export type { ContextSession, ContextBase, AppContextExtended, AppContextBase, Options, ZPWServiceMap, ImageMetadataGetter,ImageMetadataGetterResponse } from "./context.js";
+export type { ContextSession, ContextBase, AppContextExtended, AppContextBase, Options, ZPWServiceMap, ImageMetadataGetter, ImageMetadataGetterResponse } from "./context.js";
 
 // API TYPES
 export type { AcceptFriendRequestResponse } from "./apis/acceptFriendRequest.js";
@@ -21,6 +21,7 @@ export type { ChangeGroupAvatarResponse } from "./apis/changeGroupAvatar.js";
 export type { ChangeGroupNameResponse } from "./apis/changeGroupName.js";
 export type { ChangeGroupOwnerResponse } from "./apis/changeGroupOwner.js";
 export type { CreateAutoReplyPayload, CreateAutoReplyResponse } from "./apis/createAutoReply.js";
+export type { CreateBankAccountPayload, CreateBankAccountResponse } from "./apis/createBankAccount.js";
 export type { CreateCatalogResponse } from "./apis/createCatalog.js";
 export type { CreateGroupOptions, CreateGroupResponse } from "./apis/createGroup.js";
 export type { CreateNoteOptions, CreateNoteResponse } from "./apis/createNote.js";
@@ -29,6 +30,7 @@ export type { CreateProductCatalogPayload, CreateProductCatalogResponse } from "
 export type { CreateReminderOptions, CreateReminderResponse, CreateReminderUser, CreateReminderGroup } from "./apis/createReminder.js";
 export type { DeleteAutoReplyResponse } from "./apis/deleteAutoReply.js";
 export type { DeleteAvatarResponse } from "./apis/deleteAvatar.js";
+export type { DeleteBankAccountPayload, DeleteBankAccountResponse } from "./apis/deleteBankAccount.js";
 export type { DeleteCatalogResponse } from "./apis/deleteCatalog.js";
 export type { DeleteChatLastMessage, DeleteChatResponse } from "./apis/deleteChat.js";
 export type { DeleteGroupInviteBoxResponse } from "./apis/deleteGroupInviteBox.js";
@@ -69,7 +71,10 @@ export type { GetGroupLinkInfoPayload, GetGroupLinkInfoResponse } from "./apis/g
 export type { GetGroupMembersInfoResponse, GroupMemberProfile } from "./apis/getGroupMembersInfo.js";
 export type { GetHiddenConversationsResponse } from "./apis/getHiddenConversations.js";
 export type { GetLabelsResponse } from "./apis/getLabels.js";
+export type { GetListBankResponse } from "./apis/getListBank.js";
+export type { GetListBankCardResponse } from "./apis/getListBankCard.js";
 export type { BoardItem, GetListBoardResponse, ListBoardOptions } from "./apis/getListBoard.js";
+export type { GetListDeviceResponse } from "./apis/getListDevice.js";
 export type { GetListReminderResponse, ListReminderOptions, ReminderListGroup, ReminderListUser } from "./apis/getListReminder.js";
 export type { GetMultiUsersByPhonesResponse } from "./apis/getMultiUsersByPhones.js";
 export type { GetMuteResponse, MuteEntriesInfo } from "./apis/getMute.js";
@@ -96,7 +101,9 @@ export type { LastOnlineResponse } from "./apis/lastOnline.js";
 export type { LeaveGroupResponse } from "./apis/leaveGroup.js";
 export type { LockPollResponse } from "./apis/lockPoll.js";
 export type { LoginQRCallback, LoginQRCallbackEvent } from "./apis/loginQR.js";
+export type { LostFocusResponse } from "./apis/lostFocus.js";
 export type { ParseLinkErrorMaps, ParseLinkResponse } from "./apis/parseLink.js";
+export type { RegisterCatalogResponse } from "./apis/registerCatalog.js";
 export type { RejectFriendRequestResponse } from "./apis/rejectFriendRequest.js";
 export type { RemoveFriendResponse } from "./apis/removeFriend.js";
 export type { RemoveFriendAliasResponse } from "./apis/removeFriendAlias.js";
@@ -109,6 +116,7 @@ export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js"
 export type { ResetHiddenConversPinResponse } from "./apis/resetHiddenConversPin.js";
 export type { ReuseAvatarResponse } from "./apis/reuseAvatar.js";
 export type { ReviewPendingMemberRequestPayload, ReviewPendingMemberRequestResponse } from "./apis/reviewPendingMemberRequest.js";
+export type { ScanURLResponse } from "./apis/scanURL.js";
 export type { SearchStickerResponse } from "./apis/searchSticker.js";
 export type { SendBankCardPayload, SendBankCardResponse } from "./apis/sendBankCard.js";
 export type { SendCardOptions, SendCardResponse } from "./apis/sendCard.js";
@@ -133,6 +141,7 @@ export type { UpdateActiveStatusResponse } from "./apis/updateActiveStatus.js";
 export type { UpdateArchivedChatListTarget, UpdateArchivedChatListResponse } from "./apis/updateArchivedChatList.js";
 export type { UpdateAutoDeleteChatResponse } from "./apis/updateAutoDeleteChat.js";
 export type { UpdateAutoReplyPayload, UpdateAutoReplyResponse } from "./apis/updateAutoReply.js";
+export type { UpdateBankAccountPayload, UpdateBankAccountResponse } from "./apis/updateBankAccount.js";
 export type { UpdateCatalogPayload, UpdateCatalogResponse } from "./apis/updateCatalog.js";
 export type { UpdateGroupSettingsOptions, UpdateGroupSettingsResponse } from "./apis/updateGroupSettings.js";
 export type { UpdateHiddenConversPinResponse } from "./apis/updateHiddenConversPin.js";
