@@ -298,8 +298,17 @@ export async function request(ctx: ContextBase, url: string, options?: RequestIn
     const response = await ctx.options.polyfill(url, _options);
     const setCookieRaw = response.headers.get("set-cookie");
     if (setCookieRaw && !raw) {
-        const splitCookies = setCookieRaw.split(", ");
-        for (const cookie of splitCookies) {
+        // Use getSetCookie() (Node.js 18+) to properly parse multi-cookie headers.
+        // The split(", ") method breaks cookies containing Expires dates with commas
+        // (e.g., "Expires=Wed, 18 Mar 2026..."), causing critical cookies like
+        // zpsid and zpw_sek to be lost during QR login flow.
+        let cookieStrings: string[];
+        if (typeof response.headers.getSetCookie === "function") {
+            cookieStrings = response.headers.getSetCookie();
+        } else {
+            cookieStrings = setCookieRaw.split(", ");
+        }
+        for (const cookie of cookieStrings) {
             const parsed = toughCookie.Cookie.parse(cookie);
             try {
                 if (parsed) await ctx.cookie.setCookie(parsed, parsed.domain != "zalo.me" ? `https://${parsed.domain}` : origin);
@@ -310,6 +319,7 @@ export async function request(ctx: ContextBase, url: string, options?: RequestIn
     }
 
     const redirectURL = response.headers.get("location");
+
     if (redirectURL) {
         const redirectOptions = { ...options };
         redirectOptions.method = "GET";
@@ -778,4 +788,17 @@ export function negativeColorToHex(negativeColor: number): string {
 
     // return "#" + positiveColor.toString(16).padStart(6, "0"); // rgb no alpha
     return "#" + positiveColor.toString(16).slice(-6).padStart(6, "0"); // rgb with alpha
+}
+
+export function normalizeHolderName(input?: string) {
+    if (!input) return undefined;
+    const normalized = input
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[đĐ]/g, "d")
+        .toUpperCase()
+        .replace(/[^A-Z0-9]+/g, " ")
+        .trim();
+
+    return normalized.length >= 5 ? normalized : undefined;
 }

@@ -11,7 +11,7 @@ export type SendBankCardPayload = {
 
 export type SendBankCardResponse = "";
 
-export const sendBankCardFactory = apiFactory<SendBankCardResponse>()((api, ctx, utils) => {
+export const sendBankCardFactory = apiFactory<SendBankCardResponse>()((api, _, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.zimsg[0]}/api/transfer/card`);
 
     /**
