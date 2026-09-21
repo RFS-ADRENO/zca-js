@@ -1,0 +1,107 @@
+import { loginQR, LoginQRCallbackEventType } from "./apis/loginQR.js";
+import { getServerInfo, login } from "./apis/login.js";
+import { createContext, isContextSession, } from "./context.js";
+import { generateZaloUUID, logger } from "./utils.js";
+import toughCookie from "tough-cookie";
+import { ZaloApiError } from "./Errors/ZaloApiError.js";
+import { checkUpdate } from "./update.js";
+import { API } from "./apis.js";
+export class Zalo {
+    constructor(options = {}) {
+        this.options = options;
+        this.enableEncryptParam = true;
+    }
+    parseCookies(cookie) {
+        const cookieArr = Array.isArray(cookie) ? cookie : cookie.cookies;
+        cookieArr.forEach((e, i) => {
+            if (typeof e.domain == "string" && e.domain.startsWith("."))
+                cookieArr[i].domain = e.domain.slice(1);
+        });
+        const jar = new toughCookie.CookieJar();
+        for (const each of cookieArr) {
+            try {
+                const cookieObj = toughCookie.Cookie.fromJSON(Object.assign(Object.assign({}, each), { key: each.key || each.name }));
+                if (cookieObj) {
+                    const domain = cookieObj.domain || "chat.zalo.me";
+                    const url = `https://${domain.startsWith(".") ? domain.slice(1) : domain}`;
+                    jar.setCookieSync(cookieObj, url);
+                }
+            }
+            catch (error) {
+                logger({
+                    options: {
+                        logging: this.options.logging,
+                    },
+                }).error("Failed to set cookie:", error);
+            }
+        }
+        return jar;
+    }
+    validateParams(credentials) {
+        if (!credentials.imei || !credentials.cookie || !credentials.userAgent) {
+            throw new ZaloApiError("Missing required params");
+        }
+    }
+    async login(credentials) {
+        const ctx = createContext(this.options.apiType, this.options.apiVersion);
+        Object.assign(ctx.options, this.options);
+        return this.loginCookie(ctx, credentials);
+    }
+    async loginCookie(ctx, credentials) {
+        await checkUpdate(ctx);
+        this.validateParams(credentials);
+        ctx.imei = credentials.imei;
+        ctx.cookie = this.parseCookies(credentials.cookie);
+        ctx.userAgent = credentials.userAgent;
+        ctx.language = credentials.language || "vi";
+        const loginData = await login(ctx, this.enableEncryptParam);
+        const serverInfo = await getServerInfo(ctx, this.enableEncryptParam);
+        const loginInfo = loginData === null || loginData === void 0 ? void 0 : loginData.data;
+        if (!loginData || !loginInfo || !serverInfo)
+            throw new ZaloApiError("Đăng nhập thất bại");
+        ctx.secretKey = loginInfo.zpw_enk;
+        ctx.uid = loginInfo.uid;
+        // Zalo currently responds with setttings instead of settings
+        // they might fix this in the future, so we should have a fallback just in case
+        ctx.settings = serverInfo.setttings || serverInfo.settings;
+        ctx.extraVer = serverInfo.extra_ver;
+        ctx.loginInfo = loginInfo;
+        if (!isContextSession(ctx))
+            throw new ZaloApiError("Khởi tạo ngữ cảnh thất bại.");
+        logger(ctx).info("Logged in as", loginInfo.uid);
+        return new API(ctx, loginInfo.zpw_service_map_v3, loginInfo.zpw_ws);
+    }
+    async loginQR(options, callback) {
+        if (!options)
+            options = {};
+        if (!options.userAgent)
+            options.userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0";
+        if (!options.language)
+            options.language = "vi";
+        const ctx = createContext(this.options.apiType, this.options.apiVersion);
+        Object.assign(ctx.options, this.options);
+        const loginQRResult = await loginQR(ctx, options, callback);
+        if (!loginQRResult)
+            throw new ZaloApiError("Unable to login with QRCode");
+        const imei = generateZaloUUID(options.userAgent);
+        if (callback) {
+            // Thanks to @YanCastle for this great suggestion!
+            callback({
+                type: LoginQRCallbackEventType.GotLoginInfo,
+                data: {
+                    cookie: loginQRResult.cookies,
+                    imei,
+                    userAgent: options.userAgent,
+                },
+                actions: null,
+            });
+        }
+        return this.loginCookie(ctx, {
+            cookie: loginQRResult.cookies,
+            imei,
+            userAgent: options.userAgent,
+            language: options.language,
+        });
+    }
+}
+export { API };
