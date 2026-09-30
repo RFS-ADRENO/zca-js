@@ -132,5 +132,6 @@ dist
 bun.lockb
 cookies.json
 credentials.json
+credentials.qr.json
 /.dev
 test/**/*.test.*
