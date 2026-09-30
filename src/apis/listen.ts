@@ -255,7 +255,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     }, this.ctx.settings.features.socket.ping_interval);
                 }
 
-                if (version == 1 && cmd == 501 && subCmd == 0) {
+                if (version == 1 && ([501, 551].includes(cmd)) && subCmd == 0) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { msgs } = parsedData;
                     for (const msg of msgs) {
@@ -463,6 +463,11 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     logger(this.ctx).error("Another connection is opened, closing this one");
                     logger(this.ctx).error();
                     if (ws.readyState !== WebSocket.CLOSED) ws.close(CloseReason.DuplicateConnection);
+                }
+
+                // keep in sync with the cmd handlers above — log only when no branch processed the frame
+                if (![1, 501, 521, 551, 601, 602, 610, 611, 612, 502, 510, 511, 522, 3000].includes(cmd)) {
+                    logger(this.ctx).info(`Unhandle cmd ${cmd}`);
                 }
             } catch (error) {
                 this.onErrorCallback(error);
