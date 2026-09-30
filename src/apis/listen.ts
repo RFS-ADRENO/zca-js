@@ -465,7 +465,10 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     if (ws.readyState !== WebSocket.CLOSED) ws.close(CloseReason.DuplicateConnection);
                 }
 
-                logger(this.ctx).info(`Unhandle cmd ${cmd}`);
+                // keep in sync with the cmd handlers above — log only when no branch processed the frame
+                if (![1, 501, 521, 551, 601, 602, 610, 611, 612, 502, 510, 511, 522, 3000].includes(cmd)) {
+                    logger(this.ctx).info(`Unhandle cmd ${cmd}`);
+                }
             } catch (error) {
                 this.onErrorCallback(error);
                 this.emit("error", error);
