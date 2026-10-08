@@ -463,9 +463,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     logger(this.ctx).error("Another connection is opened, closing this one");
                     logger(this.ctx).error();
                     if (ws.readyState !== WebSocket.CLOSED) ws.close(CloseReason.DuplicateConnection);
-                }
-
-                logger(this.ctx).info(`Unhandle cmd ${cmd}`);
+                }                
             } catch (error) {
                 this.onErrorCallback(error);
                 this.emit("error", error);
