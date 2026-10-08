@@ -1,23 +1,24 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-import type { StickerDetail } from "../models/index.js";
+import type { TenorSticker } from "../models/index.js";
 
-export type GetStickerCategoryDetailResponse = StickerDetail[];
+export type GetTenorStickerMappingResponse = {
+    tenor_sticker_map: Record<string, TenorSticker>;
+    expired_time: number;
+};
 
-export const getStickerCategoryDetailFactory = apiFactory<GetStickerCategoryDetailResponse>()((api, _, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.sticker[0]}/api/message/sticker/category/sticker_detail`);
+export const getTenorStickerMappingFactory = apiFactory<GetTenorStickerMappingResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.sticker[0]}/api/message/sticker/tenor/mapping`);
 
     /**
-     * Get sticker category detail
-     *
-     * @param categoryId Sticker category ID
+     * Get tenor sticker mapping
      *
      * @throws {ZaloApiError}
      */
-    return async function getStickerCategoryDetail(categoryId: number) {
+    return async function getTenorStickerMapping() {
         const params = {
-            cid: categoryId,
+            imei: ctx.imei,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

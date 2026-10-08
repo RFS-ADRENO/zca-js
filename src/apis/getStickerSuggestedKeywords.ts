@@ -1,23 +1,23 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-import type { StickerDetail } from "../models/index.js";
+export type GetStickerSuggestedKeywordsResponse = {
+    keywords: string[];
+    expired_time: number;
+    word_search: number;
+};
 
-export type GetStickerCategoryDetailResponse = StickerDetail[];
-
-export const getStickerCategoryDetailFactory = apiFactory<GetStickerCategoryDetailResponse>()((api, _, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.sticker[0]}/api/message/sticker/category/sticker_detail`);
+export const getStickerSuggestedKeywordsFactory = apiFactory<GetStickerSuggestedKeywordsResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.sticker[0]}/api/message/sticker/suggest/keywords`);
 
     /**
-     * Get sticker category detail
-     *
-     * @param categoryId Sticker category ID
+     * Get sticker suggested keywords
      *
      * @throws {ZaloApiError}
      */
-    return async function getStickerCategoryDetail(categoryId: number) {
+    return async function getStickerSuggestedKeywords() {
         const params = {
-            cid: categoryId,
+            imei: ctx.imei
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

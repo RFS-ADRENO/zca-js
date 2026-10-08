@@ -1,21 +1,21 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-import type { StickerDetail } from "../models/index.js";
+import type { CategoryDetail } from "../models/index.js";
 
-export type GetStickerCategoryDetailResponse = StickerDetail[];
+export type GetCategoryDetailResponse = CategoryDetail;
 
-export const getStickerCategoryDetailFactory = apiFactory<GetStickerCategoryDetailResponse>()((api, _, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.sticker[0]}/api/message/sticker/category/sticker_detail`);
+export const getCategoryDetailFactory = apiFactory<GetCategoryDetailResponse>()((api, _, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.sticker[0]}/api/message/sticker/category/detail`);
 
     /**
-     * Get sticker category detail
+     * Get category detail
      *
-     * @param categoryId Sticker category ID
+     * @param categoryId Category ID
      *
      * @throws {ZaloApiError}
      */
-    return async function getStickerCategoryDetail(categoryId: number) {
+    return async function getCategoryDetail(categoryId: number) {
         const params = {
             cid: categoryId,
         };
