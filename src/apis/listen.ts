@@ -36,6 +36,7 @@ export enum CloseReason {
 interface ListenerEvents {
     connected: [];
     disconnected: [code: CloseReason, reason: string];
+    reconnecting: [code: CloseReason];
     closed: [code: CloseReason, reason: string];
     error: [error: unknown];
     typing: [typing: Typing];
@@ -143,27 +144,46 @@ export class Listener extends EventEmitter<ListenerEvents> {
         this.onMessageCallback = cb;
     }
 
-    private canRetry(code: CloseReason) {
-        if (!this.ctx.settings.features.socket.close_and_retry_codes.includes(code)) return false;
-        if (this.retryCount[code.toString()].count >= this.retryCount[code.toString()].max) return false;
-        this.retryCount[code.toString()].count++;
+    private isRetryable(code: CloseReason) {
+        return (
+            code === CloseReason.AbnormalClosure ||
+            this.ctx.settings.features.socket.close_and_retry_codes.includes(code)
+        );
+    }
 
-        const { count, max, times } = this.retryCount[code.toString()];
+    private canRetry(code: CloseReason) {
+        if (!this.isRetryable(code)) return false;
+
+        const retry = this.retryCount[code.toString()] ?? this.retryCount["internal"];
+        if (!retry || retry.count >= retry.max) return false;
+        retry.count++;
+
+        const { count, max, times } = retry;
         const retryTime = count - 1 < times.length ? times[count - 1] : times[times.length - 1];
         logger(this.ctx).verbose(`Retry for code ${code} in ${retryTime}ms (${count}/${max})`);
 
         return retryTime;
     }
 
+    private resetRetryCount() {
+        for (const retry of Object.values(this.retryCount)) {
+            retry.count = 0;
+        }
+    }
+
     private shouldRotate(code: CloseReason) {
-        if (!this.ctx.settings.features.socket.rotate_error_codes.includes(code)) return false;
-        if (this.rotateCount >= this.urls.length - 1) return false;
+        if (
+            code !== CloseReason.AbnormalClosure &&
+            !this.ctx.settings.features.socket.rotate_error_codes.includes(code)
+        ) {
+            return false;
+        }
 
         return true;
     }
 
     private rotateEndpoint() {
-        this.rotateCount++;
+        this.rotateCount = (this.rotateCount + 1) % this.urls.length;
         this.wsURL = makeURL(this.ctx, this.urls[this.rotateCount], {
             t: Date.now(),
         });
@@ -193,6 +213,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
         this.ws = ws;
 
         ws.onopen = () => {
+            this.resetRetryCount();
             this.onConnectedCallback();
             this.emit("connected");
         };
@@ -200,12 +221,16 @@ export class Listener extends EventEmitter<ListenerEvents> {
         ws.onclose = (event) => {
             this.reset();
             this.emit("disconnected", event.code as CloseReason, event.reason);
-            const retry = retryOnClose && this.canRetry(event.code as CloseReason);
+            const retry =
+                retryOnClose &&
+                this.isRetryable(event.code as CloseReason) &&
+                this.canRetry(event.code as CloseReason);
             if (retry && retryOnClose) {
                 const shouldRotate = this.shouldRotate(event.code as CloseReason);
                 if (shouldRotate) {
                     this.rotateEndpoint();
                 }
+                this.emit("reconnecting", event.code as CloseReason);
                 setTimeout(() => {
                     this.start({ retryOnClose: true });
                 }, retry);
