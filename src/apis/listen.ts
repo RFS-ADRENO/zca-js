@@ -50,6 +50,8 @@ interface ListenerEvents {
     friend_event: [data: FriendEvent];
     group_event: [data: GroupEvent];
     cipher_key: [key: string];
+    ping: [];
+    pong: [];
 }
 
 export class Listener extends EventEmitter<ListenerEvents> {
@@ -76,6 +78,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
     private selfListen;
     private pingInterval?: Timer;
+    private retryTimeout?: Timer;
 
     private id = 0;
 
@@ -206,7 +209,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                 if (shouldRotate) {
                     this.rotateEndpoint();
                 }
-                setTimeout(() => {
+                this.retryTimeout = setTimeout(() => {
                     this.start({ retryOnClose: true });
                 }, retry);
             } else {
@@ -221,6 +224,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
         };
 
         ws.onmessage = async (event) => {
+            this.emit("pong"); // Pulse event to notify watchdog that socket is alive
             const { data } = event;
             if (!(data instanceof Buffer)) return;
 
@@ -248,6 +252,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                             data: { eventId: Date.now() },
                         };
                         this.sendWs(payload, false);
+                        this.emit("ping");
                     };
 
                     this.pingInterval = setInterval(() => {
@@ -465,6 +470,10 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     if (ws.readyState !== WebSocket.CLOSED) ws.close(CloseReason.DuplicateConnection);
                 }
             } catch (error) {
+                if (error instanceof ZaloApiError && error.message.includes("Invalid data length or missing cipher key")) {
+                    logger(this.ctx).verbose("Ignored undecryptable Zalo packet. This is normal for some reaction/system events.");
+                    return;
+                }
                 this.onErrorCallback(error);
                 this.emit("error", error);
             }
@@ -472,10 +481,13 @@ export class Listener extends EventEmitter<ListenerEvents> {
     }
 
     public stop() {
+        if (this.retryTimeout) clearTimeout(this.retryTimeout);
         if (this.ws) {
-            this.ws.close(CloseReason.ManualClosure);
-            this.reset();
+            if (this.ws.readyState !== WebSocket.CLOSED) {
+                this.ws.close(CloseReason.ManualClosure);
+            }
         }
+        this.reset();
     }
 
     public sendWs(payload: WsPayload, requireId: boolean = true) {
