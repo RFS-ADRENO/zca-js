@@ -38,9 +38,11 @@ export const getStickersDetailFactory = apiFactory<StickerDetailResponse>()((api
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
-        const response = await utils.request(utils.makeURL(serviceURL, { params: encryptedParams }), {
-            method: "GET",
-        });
+        const response = await utils.request(
+            utils.makeURL(serviceURL, {
+                params: encryptedParams,
+            }),
+        );
 
         return resolveResponse<StickerDetail>(ctx, response);
     }

@@ -5,19 +5,19 @@ import type { StickerDetail } from "../models/index.js";
 
 export type GetStickerCategoryDetailResponse = StickerDetail[];
 
-export const getStickerCategoryDetailFactory = apiFactory<GetStickerCategoryDetailResponse>()((api, _, utils) => {
+export const getStickerCategoryDetailFactory = apiFactory<GetStickerCategoryDetailResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.sticker[0]}/api/message/sticker/category/sticker_detail`);
 
     /**
      * Get sticker category detail
      *
-     * @param categoryId Sticker category ID
+     * @param cateId Sticker category ID
      *
      * @throws {ZaloApiError}
      */
-    return async function getStickerCategoryDetail(categoryId: number) {
+    return async function getStickerCategoryDetail(cateId: number) {
         const params = {
-            cid: categoryId,
+            cid: cateId,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
