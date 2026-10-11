@@ -3,12 +3,21 @@ import { apiFactory } from "../utils.js";
 
 import { AvatarSize, type ZBusinessPackage } from "../models/index.js";
 
+export enum MiniProfileType {
+	/** Normal user */
+	User = 0,
+	/** Official Account */
+	OA = 5,
+	/** Official Account owned by Zalo, for example: Zalo To-Do, zCloud */
+	ZOA = 7,
+}
+
 export type GetMiniProfilesResponse = {
     [userId: string]: {
         userId: string;
         avatar: string;
         globalId: string;
-        type: 0;
+        type: MiniProfileType;
         bizPkg: ZBusinessPackage;
         oaInfo: null; // @TODO: check type
         zaloName: string;
