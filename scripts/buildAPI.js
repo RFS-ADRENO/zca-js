@@ -9,6 +9,7 @@ function getAllApiFiles(dir) {
     return fs
         .readdirSync(dir)
         .filter((file) => file.endsWith(".ts") && !ignoreFiles.includes(file))
+        .sort() // readdir order is OS/filesystem dependent; sort for identical output everywhere
         .map((file) => {
             const nonExtension = file.slice(0, -3); // Remove .ts extension
 
