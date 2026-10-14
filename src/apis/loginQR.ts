@@ -3,9 +3,44 @@ import { CookieJar, type SerializedCookie, type SerializedCookieJar } from "toug
 import { writeFile } from "node:fs/promises";
 import type { ContextBase } from "../context.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { logger, request } from "../utils.js";
+import { logger, request, getPlatformFromUA, getChromeVersionFromUA } from "../utils.js";
 import { ZaloApiLoginQRAborted } from "../Errors/ZaloApiLoginQRAborted.js";
 import { ZaloApiLoginQRDeclined } from "../Errors/ZaloApiLoginQRDeclined.js";
+
+/**
+ * Tạo bộ header Sec-CH-UA dùng chung cho toàn bộ các request trong luồng đăng nhập QR.
+ *
+ * Trước đây 8 hàm con trong loginQR đều copy-paste cùng một bộ header với giá trị
+ * `sec-ch-ua-platform: "Windows"` bị hardcode cứng. Điều này gây ra mâu thuẫn fingerprint
+ * (Browser Mismatch) khi người dùng truyền vào User-Agent của Mac hoặc Linux,
+ * khiến hệ thống chống bot của Zalo phát hiện và ban session ngay lập tức.
+ *
+ * Giải pháp: Tất cả giá trị sec-ch-ua-* đều được suy luận ĐỘNG từ ctx.userAgent,
+ * đảm bảo nhất quán 100% giữa User-Agent và các Client Hint headers.
+ *
+ * @param ctx - Context chứa ctx.userAgent đã được gán trước khi gọi hàm này
+ * @param extra - Các header bổ sung đặc thù cho từng request (sec-fetch-dest, Referer...)
+ */
+function getLoginHeaders(
+    ctx: ContextBase,
+    extra?: Record<string, string>,
+): Record<string, string> {
+    // Suy luận platform từ UA: "Windows" | "macOS" | "Linux" (mặc định "Windows" nếu không nhận ra)
+    const platform = getPlatformFromUA(ctx.userAgent);
+    // Trích xuất phiên bản Chrome major từ UA (ví dụ: "130"), fallback về "130" nếu không phải Chrome
+    const chromeVer = getChromeVersionFromUA(ctx.userAgent);
+    return {
+        "accept-language": "vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5",
+        // sec-ch-ua phải khớp với phiên bản Chrome trong User-Agent
+        "sec-ch-ua": `"Chromium";v="${chromeVer}", "Google Chrome";v="${chromeVer}", "Not?A_Brand";v="99"`,
+        // Luôn là desktop (?0) vì Zalo Web không hỗ trợ mobile
+        "sec-ch-ua-mobile": "?0",
+        // sec-ch-ua-platform PHẢI nhất quán với User-Agent — đây là nguyên nhân gốc rễ gây ban session
+        "sec-ch-ua-platform": `"${platform}"`,
+        ...extra,
+    };
+}
+
 
 export enum LoginQRCallbackEventType {
     QRCodeGenerated,
@@ -78,19 +113,17 @@ async function loadLoginPage(ctx: ContextBase) {
     const response = await request(ctx, "https://id.zalo.me/account?continue=https%3A%2F%2Fchat.zalo.me%2F", {
         headers: {
             accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-            "accept-language": "vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5",
             "cache-control": "max-age=0",
             priority: "u=0, i",
-            "sec-ch-ua": '"Chromium";v="130", "Google Chrome";v="130", "Not?A_Brand";v="99"',
-            "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": '"Windows"',
-            "sec-fetch-dest": "document",
-            "sec-fetch-mode": "navigate",
-            "sec-fetch-site": "same-site",
-            "sec-fetch-user": "?1",
-            "upgrade-insecure-requests": "1",
-            Referer: "https://chat.zalo.me/",
-            "Referrer-Policy": "strict-origin-when-cross-origin",
+            ...getLoginHeaders(ctx, {
+                "sec-fetch-dest": "document",
+                "sec-fetch-mode": "navigate",
+                "sec-fetch-site": "same-site",
+                "sec-fetch-user": "?1",
+                "upgrade-insecure-requests": "1",
+                Referer: "https://chat.zalo.me/",
+                "Referrer-Policy": "strict-origin-when-cross-origin",
+            }),
         },
         method: "GET",
     });
@@ -111,17 +144,15 @@ async function getLoginInfo(ctx: ContextBase, version: string) {
     return await request(ctx, "https://id.zalo.me/account/logininfo", {
         headers: {
             accept: "*/*",
-            "accept-language": "vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5",
             "content-type": "application/x-www-form-urlencoded",
             priority: "u=1, i",
-            "sec-ch-ua": '"Chromium";v="130", "Google Chrome";v="130", "Not?A_Brand";v="99"',
-            "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": '"Windows"',
-            "sec-fetch-dest": "empty",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-site": "same-origin",
-            Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fzalo.me%2Fpc",
-            "Referrer-Policy": "strict-origin-when-cross-origin",
+            ...getLoginHeaders(ctx, {
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "same-origin",
+                Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fzalo.me%2Fpc",
+                "Referrer-Policy": "strict-origin-when-cross-origin",
+            }),
         },
         body: form,
         method: "POST",
@@ -139,17 +170,15 @@ async function verifyClient(ctx: ContextBase, version: string) {
     return await request(ctx, "https://id.zalo.me/account/verify-client", {
         headers: {
             accept: "*/*",
-            "accept-language": "vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5",
             "content-type": "application/x-www-form-urlencoded",
             priority: "u=1, i",
-            "sec-ch-ua": '"Chromium";v="130", "Google Chrome";v="130", "Not?A_Brand";v="99"',
-            "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": '"Windows"',
-            "sec-fetch-dest": "empty",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-site": "same-origin",
-            Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fzalo.me%2Fpc",
-            "Referrer-Policy": "strict-origin-when-cross-origin",
+            ...getLoginHeaders(ctx, {
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "same-origin",
+                Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fzalo.me%2Fpc",
+                "Referrer-Policy": "strict-origin-when-cross-origin",
+            }),
         },
         body: form,
         method: "POST",
@@ -181,17 +210,15 @@ async function generate(
     return await request(ctx, "https://id.zalo.me/account/authen/qr/generate", {
         headers: {
             accept: "*/*",
-            "accept-language": "vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5",
             "content-type": "application/x-www-form-urlencoded",
             priority: "u=1, i",
-            "sec-ch-ua": '"Chromium";v="130", "Google Chrome";v="130", "Not?A_Brand";v="99"',
-            "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": '"Windows"',
-            "sec-fetch-dest": "empty",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-site": "same-origin",
-            Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fzalo.me%2Fpc",
-            "Referrer-Policy": "strict-origin-when-cross-origin",
+            ...getLoginHeaders(ctx, {
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "same-origin",
+                Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fzalo.me%2Fpc",
+                "Referrer-Policy": "strict-origin-when-cross-origin",
+            }),
         },
         body: form,
         method: "POST",
@@ -228,17 +255,15 @@ async function waitingScan(
     return await request(ctx, "https://id.zalo.me/account/authen/qr/waiting-scan", {
         headers: {
             accept: "*/*",
-            "accept-language": "vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5",
             "content-type": "application/x-www-form-urlencoded",
             priority: "u=1, i",
-            "sec-ch-ua": '"Chromium";v="130", "Google Chrome";v="130", "Not?A_Brand";v="99"',
-            "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": '"Windows"',
-            "sec-fetch-dest": "empty",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-site": "same-origin",
-            Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fchat.zalo.me%2F",
-            "Referrer-Policy": "strict-origin-when-cross-origin",
+            ...getLoginHeaders(ctx, {
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "same-origin",
+                Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fchat.zalo.me%2F",
+                "Referrer-Policy": "strict-origin-when-cross-origin",
+            }),
         },
         body: form,
         method: "POST",
@@ -282,17 +307,15 @@ async function waitingConfirm(
     return await request(ctx, "https://id.zalo.me/account/authen/qr/waiting-confirm", {
         headers: {
             accept: "*/*",
-            "accept-language": "vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5",
             "content-type": "application/x-www-form-urlencoded",
             priority: "u=1, i",
-            "sec-ch-ua": '"Chromium";v="130", "Google Chrome";v="130", "Not?A_Brand";v="99"',
-            "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": '"Windows"',
-            "sec-fetch-dest": "empty",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-site": "same-origin",
-            Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fchat.zalo.me%2F",
-            "Referrer-Policy": "strict-origin-when-cross-origin",
+            ...getLoginHeaders(ctx, {
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "same-origin",
+                Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fchat.zalo.me%2F",
+                "Referrer-Policy": "strict-origin-when-cross-origin",
+            }),
         },
         body: form,
         method: "POST",
@@ -318,17 +341,15 @@ async function checkSession(ctx: ContextBase) {
         {
             headers: {
                 accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-                "accept-language": "vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5",
                 priority: "u=0, i",
-                "sec-ch-ua": '"Chromium";v="130", "Google Chrome";v="130", "Not?A_Brand";v="99"',
-                "sec-ch-ua-mobile": "?0",
-                "sec-ch-ua-platform": '"Windows"',
-                "sec-fetch-dest": "document",
-                "sec-fetch-mode": "navigate",
-                "sec-fetch-site": "same-origin",
-                "upgrade-insecure-requests": "1",
-                Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fchat.zalo.me%2F",
-                "Referrer-Policy": "strict-origin-when-cross-origin",
+                ...getLoginHeaders(ctx, {
+                    "sec-fetch-dest": "document",
+                    "sec-fetch-mode": "navigate",
+                    "sec-fetch-site": "same-origin",
+                    "upgrade-insecure-requests": "1",
+                    Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fchat.zalo.me%2F",
+                    "Referrer-Policy": "strict-origin-when-cross-origin",
+                }),
             },
             redirect: "manual",
             method: "GET",
@@ -354,16 +375,14 @@ async function getUserInfo(ctx: ContextBase): Promise<
     return await request(ctx, "https://jr.chat.zalo.me/jr/userinfo", {
         headers: {
             accept: "*/*",
-            "accept-language": "vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5",
             priority: "u=1, i",
-            "sec-ch-ua": '"Chromium";v="130", "Google Chrome";v="130", "Not?A_Brand";v="99"',
-            "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": '"Windows"',
-            "sec-fetch-dest": "empty",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-site": "same-site",
-            Referer: "https://chat.zalo.me/",
-            "Referrer-Policy": "strict-origin-when-cross-origin",
+            ...getLoginHeaders(ctx, {
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "same-site",
+                Referer: "https://chat.zalo.me/",
+                "Referrer-Policy": "strict-origin-when-cross-origin",
+            }),
         },
         method: "GET",
     })
