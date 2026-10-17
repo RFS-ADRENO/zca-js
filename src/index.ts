@@ -127,6 +127,7 @@ export type { Mention, MessageContent, SendMessageQuote, SendMessageResponse, Se
 export type { SendReportOptions, SendReportResponse } from "./apis/sendReport.js";
 export type { SendSeenEventMessageParams, SendSeenEventResponse } from "./apis/sendSeenEvent.js";
 export type { SendStickerResponse, SendStickerPayload } from "./apis/sendSticker.js";
+export type { SendCustomStickerOptions, SendCustomStickerResponse } from "./apis/sendCustomSticker.js";
 export type { SendTypingEventResponse } from "./apis/sendTypingEvent.js";
 export type { SendVideoOptions, SendVideoResponse } from "./apis/sendVideo.js";
 export type { SendVoiceOptions, SendVoiceResponse } from "./apis/sendVoice.js";
