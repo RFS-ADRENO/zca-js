@@ -1,5 +1,6 @@
 export * from "./Attachment.js";
 export * from "./AutoReply.js";
+export * from "./Bank.js";
 export * from "./Board.js";
 export * from "./Catalog.js";
 export * from "./DeliveredMessage.js";
