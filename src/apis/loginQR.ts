@@ -3,40 +3,26 @@ import { CookieJar, type SerializedCookie, type SerializedCookieJar } from "toug
 import { writeFile } from "node:fs/promises";
 import type { ContextBase } from "../context.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { logger, request, getPlatformFromUA, getChromeVersionFromUA } from "../utils.js";
+import { logger, request, getBrowserLanguage, getSecChUaHeaders } from "../utils.js";
 import { ZaloApiLoginQRAborted } from "../Errors/ZaloApiLoginQRAborted.js";
 import { ZaloApiLoginQRDeclined } from "../Errors/ZaloApiLoginQRDeclined.js";
 
 /**
- * Tạo bộ header Sec-CH-UA dùng chung cho toàn bộ các request trong luồng đăng nhập QR.
+ * Tạo bộ header Sec-CH-UA và ngôn ngữ dùng chung cho toàn bộ các request trong luồng đăng nhập QR.
  *
- * Trước đây 8 hàm con trong loginQR đều copy-paste cùng một bộ header với giá trị
- * `sec-ch-ua-platform: "Windows"` bị hardcode cứng. Điều này gây ra mâu thuẫn fingerprint
- * (Browser Mismatch) khi người dùng truyền vào User-Agent của Mac hoặc Linux,
- * khiến hệ thống chống bot của Zalo phát hiện và ban session ngay lập tức.
+ * Tất cả giá trị sec-ch-ua-* đều được suy luận ĐỘNG từ ctx.userAgent (chỉ khi là Chromium)
+ * và accept-language theo ctx.language, đảm bảo nhất quán 100% với môi trường trình duyệt thật.
  *
- * Giải pháp: Tất cả giá trị sec-ch-ua-* đều được suy luận ĐỘNG từ ctx.userAgent,
- * đảm bảo nhất quán 100% giữa User-Agent và các Client Hint headers.
- *
- * @param ctx - Context chứa ctx.userAgent đã được gán trước khi gọi hàm này
+ * @param ctx - Context chứa ctx.userAgent và ctx.language
  * @param extra - Các header bổ sung đặc thù cho từng request (sec-fetch-dest, Referer...)
  */
 function getLoginHeaders(
     ctx: ContextBase,
     extra?: Record<string, string>,
 ): Record<string, string> {
-    // Suy luận platform từ UA: "Windows" | "macOS" | "Linux" (mặc định "Windows" nếu không nhận ra)
-    const platform = getPlatformFromUA(ctx.userAgent);
-    // Trích xuất phiên bản Chrome major từ UA (ví dụ: "130"), fallback về "130" nếu không phải Chrome
-    const chromeVer = getChromeVersionFromUA(ctx.userAgent);
     return {
-        "accept-language": "vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5",
-        // sec-ch-ua phải khớp với phiên bản Chrome trong User-Agent
-        "sec-ch-ua": `"Chromium";v="${chromeVer}", "Google Chrome";v="${chromeVer}", "Not?A_Brand";v="99"`,
-        // Luôn là desktop (?0) vì Zalo Web không hỗ trợ mobile
-        "sec-ch-ua-mobile": "?0",
-        // sec-ch-ua-platform PHẢI nhất quán với User-Agent — đây là nguyên nhân gốc rễ gây ban session
-        "sec-ch-ua-platform": `"${platform}"`,
+        "accept-language": getBrowserLanguage(ctx.language),
+        ...getSecChUaHeaders(ctx.userAgent),
         ...extra,
     };
 }

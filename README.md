@@ -1,6 +1,8 @@
-# ZCA-JS
+# ZCA-JS (Forked Version)
 
 > [!NOTE]
+> **This is a forked version of the original [zca-js](https://github.com/RFS-ADRENO/zca-js) project by RFS-ADRENO.** This package (`@softtynet/zca-js`) is maintained separately for quick hotfixes.
+> 
 > This is an unofficial Zalo API for personal account. It work by simulating the browser to interact with Zalo Web.
 
 > [!WARNING]
@@ -16,6 +18,7 @@
 -   [Basic Usages](#basic-usages)
     -   [Login](#login)
     -   [Listen for new messages](#listen-for-new-messages)
+    -   [Synchronize Messages from Mobile](#synchronize-messages-from-mobile)
     -   [Send a message](#send-a-message)
     -   [Get/Send a sticker](#getsend-a-sticker)
 -   [Example](#example)
@@ -111,6 +114,44 @@ api.listener.start();
 
 > [!IMPORTANT]
 > Only one web listener can run per account at a time. If you open Zalo in the browser while the listener is active, the listener will be automatically stopped.
+
+### Synchronize Messages from Mobile
+
+`zca-js` supports cross-device message synchronization from the official Zalo mobile app:
+
+#### Case 1: Auto-Sync on QR Login
+When logging in via `loginQR`, check the **"Sync message with your phone"** checkbox on your phone before confirming:
+
+```javascript
+import { Zalo, LoginQRCallbackEventType } from "zca-js";
+
+const zalo = new Zalo({ selfListen: true });
+const api = await zalo.loginQR({ qrPath: "./qr.png" });
+
+// Listen for historical messages pushed from phone
+api.listener.on("old_messages", (messages, type) => {
+    console.log(`Received ${messages.length} historical synced messages!`);
+});
+
+api.listener.start();
+```
+
+#### Case 2: Manual Trigger Sync (from existing session)
+To request message synchronization from your phone at any time:
+
+```javascript
+api.listener.on("connected", async () => {
+    // Send sync request signal to mobile phone
+    await api.requestSyncFromPhone();
+    console.log("Please tap 'Sync now' on your phone!");
+});
+
+api.listener.on("old_messages", (messages, type) => {
+    console.log(`Received ${messages.length} synced messages from phone!`);
+});
+
+api.listener.start();
+```
 
 ### Send a message
 

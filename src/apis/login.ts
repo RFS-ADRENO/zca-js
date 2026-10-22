@@ -8,10 +8,15 @@ export async function login(ctx: ContextBase, encryptParams: boolean) {
     try {
         const response = await request(
             ctx,
-            makeURL(ctx, "https://wpa.chat.zalo.me/api/login/getLoginInfo", {
-                ...encryptedParams.params,
-                nretry: 0,
-            }),
+            makeURL(
+                ctx,
+                "https://wpa.chat.zalo.me/api/login/getLoginInfo",
+                {
+                    ...encryptedParams.params,
+                    nretry: 0,
+                },
+                false,
+            ),
         );
         if (!response.ok) throw new ZaloApiError("Failed to fetch login info: " + response.statusText);
         const data = await response.json();

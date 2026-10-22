@@ -290,24 +290,66 @@ export function getPlatformFromUA(userAgent: string | undefined): string {
  * @returns Phiên bản Chrome major dạng string, ví dụ: "130", "133"
  */
 export function getChromeVersionFromUA(userAgent: string | undefined): string {
-    if (!userAgent) return "130"; // Không có UA → dùng version ổn định
+    if (!userAgent) return "133"; // Không có UA → dùng version ổn định hiện đại
     const match = userAgent.match(/Chrome\/(\d+)/);
-    return match ? match[1] : "130"; // Không phải Chrome → fallback về "130"
+    return match ? match[1] : "133"; // Không phải Chrome → fallback về "133"
+}
+
+/**
+ * Chuẩn hóa chuỗi Accept-Language dựa theo thiết lập ngôn ngữ ngữ cảnh.
+ *
+ * @param language Mã ngôn ngữ ("vi", "en", ...)
+ * @returns Chuỗi Accept-Language chuẩn theo hành vi trình duyệt
+ */
+export function getBrowserLanguage(language: string | undefined): string {
+    if (language === "en") {
+        return "en-US,en;q=0.9,vi;q=0.8";
+    }
+    return "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7";
+}
+
+/**
+ * Sinh bộ header Sec-CH-UA nhất quán theo User-Agent (chỉ khi là Chromium/Chrome).
+ *
+ * Nếu User-Agent là Firefox/Safari, hàm sẽ trả về object rỗng nhằm tránh
+ * tạo ra dị thường Browser Mismatch.
+ *
+ * @param userAgent Chuỗi User-Agent của client
+ * @returns Record chứa các header sec-ch-ua-* hoặc object rỗng
+ */
+export function getSecChUaHeaders(userAgent: string | undefined): Record<string, string> {
+    if (!userAgent || !/Chrome\//i.test(userAgent)) return {};
+
+    const platform = getPlatformFromUA(userAgent);
+    const chromeVer = getChromeVersionFromUA(userAgent);
+
+    return {
+        "sec-ch-ua": `"Not=A?Brand";v="99", "Google Chrome";v="${chromeVer}", "Chromium";v="${chromeVer}"`,
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": `"${platform}"`,
+    };
 }
 
 export async function getDefaultHeaders(ctx: ContextBase, origin: string = "https://chat.zalo.me") {
     if (!ctx.cookie) throw new ZaloApiError("Cookie is not available");
     if (!ctx.userAgent) throw new ZaloApiError("User agent is not available");
 
+    const secChUa = getSecChUaHeaders(ctx.userAgent);
+
     return {
-        Accept: "application/json, text/plain, */*",
-        "Accept-Encoding": "gzip, deflate, br, zstd",
-        "Accept-Language": "en-US,en;q=0.9",
+        accept: "*/*",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": getBrowserLanguage(ctx.language),
         "content-type": "application/x-www-form-urlencoded",
-        Cookie: await ctx.cookie.getCookieString(origin),
-        Origin: "https://chat.zalo.me",
-        Referer: "https://chat.zalo.me/",
-        "User-Agent": ctx.userAgent,
+        cookie: await ctx.cookie.getCookieString(origin),
+        origin: origin,
+        priority: "u=1, i",
+        referer: `${origin}/`,
+        "user-agent": ctx.userAgent,
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": origin === "https://id.zalo.me" ? "same-origin" : "same-site",
+        ...secChUa,
     };
 }
 
@@ -317,18 +359,37 @@ export async function request(ctx: ContextBase, url: string, options?: RequestIn
 
     const defaultHeaders = await getDefaultHeaders(ctx, origin);
     if (!raw) {
-        if (options) {
-            options.headers = Object.assign(defaultHeaders, options.headers || {});
-        } else options = { headers: defaultHeaders };
+        if (options && options.headers) {
+            const mergedHeaders: Record<string, string> = { ...defaultHeaders };
+            const inputHeaders = options.headers as Record<string, string>;
+            for (const [key, value] of Object.entries(inputHeaders)) {
+                const lowerKey = key.toLowerCase();
+                for (const existingKey of Object.keys(mergedHeaders)) {
+                    if (existingKey.toLowerCase() === lowerKey && existingKey !== key) {
+                        delete mergedHeaders[existingKey];
+                    }
+                }
+                mergedHeaders[key] = value;
+            }
+            options.headers = mergedHeaders;
+        } else {
+            options = { ...(options || {}), headers: defaultHeaders };
+        }
     }
 
     const _options = {
         ...(options ?? {}),
-        ...(isBun ? { 
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            proxy: ctx.options.agent?.proxy?.href
-        } : { agent: ctx.options.agent }),
+        ...(isBun
+            ? {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
+                  proxy: ctx.options.agent?.proxy?.href,
+              }
+            : {
+                  agent: ctx.options.agent,
+                  // Hỗ trợ Undici Dispatcher cho Node.js 18+ native fetch
+                  dispatcher: ctx.options.agent,
+              }),
     };
 
     const response = await ctx.options.polyfill(url, _options);

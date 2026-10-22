@@ -1,0 +1,77 @@
+name: Auto Publish to npm
+
+on:
+  push:
+    branches:
+      - lib
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Cho phép action push commit version lên Github
+      id-token: write # Thêm quyền để NPM xác thực Provenance (Tiêu chuẩn Publish Package mới)
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm' # [💡 CHUẨN MỚI] Bổ sung caching để cài đặt package nhanh hơn cho các lần sau
+
+      - name: Setup Git user
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint Code
+        run: npm run lint # [💡 CHUẨN MỚI] Check lỗi typing trước khi build
+
+      - name: Build project
+        run: npm run build
+
+      - name: Bump version
+        # Tắt Husky hooks bằng biến môi trường HUSKY=0 để tránh đụng lỗi thiếu Bun khi tạo commit
+        run: >
+          npm version patch -m "chore: bump version to %s [skip ci]"
+        env:
+          HUSKY: 0
+
+      - name: Push new version to GitHub
+        run: git push origin lib --follow-tags
+
+      - name: Publish to npm
+        # Tạm tắt --provenance do URL chạy Action (LyVanBong) bị lệch với URL khai báo trong package.json (RFS-ADRENO)
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Get current version
+        run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        run: gh release create v${{ env.VERSION }} --title "Release v${{ env.VERSION }}" --generate-notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send Telegram Notification
+        if: always() # Luôn luôn chạy bước này bất kể các bước trên thành công hay thất bại
+        uses: appleboy/telegram-action@v1.0.1 # Nâng cấp lên v1.0.1 mới nhất để tránh cảnh báo Github cũ
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            🚀 [ZCA-JS] Pipeline Status: ${{ job.status }}
+            🌿 Branch: ${{ github.ref_name }}
+            👤 Triggered by: ${{ github.actor }}
+            📦 Tag Version: v${{ env.VERSION || 'N/A' }}
+            🔗 Link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}

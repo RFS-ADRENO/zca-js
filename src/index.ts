@@ -36,6 +36,8 @@ export type { DeleteChatLastMessage, DeleteChatResponse } from "./apis/deleteCha
 export type { DeleteGroupInviteBoxResponse } from "./apis/deleteGroupInviteBox.js";
 export type { DeleteMessageDestination, DeleteMessageResponse } from "./apis/deleteMessage.js";
 export type { DeleteProductCatalogPayload, DeleteProductCatalogResponse } from "./apis/deleteProductCatalog.js";
+export type { DecryptGidsResponse } from "./apis/decryptGids.js";
+export type { DownloadTransferSyncOptions } from "./apis/downloadTransferSync.js";
 export type { DisableGroupLinkResponse } from "./apis/disableGroupLink.js";
 export type { DisperseGroupResponse } from "./apis/disperseGroup.js";
 export type { EditNoteOptions, EditNoteResponse } from "./apis/editNote.js";
@@ -113,6 +115,7 @@ export type { RemoveQuickMessageResponse } from "./apis/removeQuickMessage.js";
 export type { RemoveReminderResponse } from "./apis/removeReminder.js";
 export type { RemoveUnreadMarkResponse } from "./apis/removeUnreadMark.js";
 export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js";
+export type { RequestSyncFromPhoneResponse } from "./apis/requestSyncFromPhone.js";
 export type { ResetHiddenConversPinResponse } from "./apis/resetHiddenConversPin.js";
 export type { ReuseAvatarResponse } from "./apis/reuseAvatar.js";
 export type { ReviewPendingMemberRequestPayload, ReviewPendingMemberRequestResponse } from "./apis/reviewPendingMemberRequest.js";

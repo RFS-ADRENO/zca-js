@@ -4,7 +4,7 @@ import { type FriendEvent, initializeFriendEvent, type TFriendEvent } from "../m
 import { type GroupEvent, initializeGroupEvent, type TGroupEvent } from "../models/GroupEvent.js";
 import type { Message, TGroupMessage, TMessage, TReaction, Typing } from "../models/index.js";
 import { GroupMessage, UserMessage, Reaction, Undo, ThreadType, GroupTyping, UserTyping } from "../models/index.js";
-import { decodeEventData, getFriendEventType, getGroupEventType, hasOwn, logger, makeURL } from "../utils.js";
+import { decodeEventData, getBrowserLanguage, getFriendEventType, getGroupEventType, hasOwn, logger, makeURL } from "../utils.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import type { ContextSession } from "../context.js";
 import { type SeenMessage, GroupSeenMessage, UserSeenMessage } from "../models/SeenMessage.js";
@@ -36,6 +36,7 @@ export enum CloseReason {
 interface ListenerEvents {
     connected: [];
     disconnected: [code: CloseReason, reason: string];
+    reconnecting: [code: CloseReason];
     closed: [code: CloseReason, reason: string];
     error: [error: unknown];
     typing: [typing: Typing];
@@ -79,6 +80,8 @@ export class Listener extends EventEmitter<ListenerEvents> {
     private selfListen;
     private pingInterval?: Timer;
     private retryTimeout?: Timer;
+    private watchdogTimeout?: Timer;
+    private consecutive1006Count = 0;
 
     private id = 0;
 
@@ -146,27 +149,76 @@ export class Listener extends EventEmitter<ListenerEvents> {
         this.onMessageCallback = cb;
     }
 
-    private canRetry(code: CloseReason) {
-        if (!this.ctx.settings.features.socket.close_and_retry_codes.includes(code)) return false;
-        if (this.retryCount[code.toString()].count >= this.retryCount[code.toString()].max) return false;
-        this.retryCount[code.toString()].count++;
+    private isRetryable(code: CloseReason) {
+        return (
+            code === CloseReason.AbnormalClosure ||
+            this.ctx.settings.features.socket.close_and_retry_codes.includes(code)
+        );
+    }
 
-        const { count, max, times } = this.retryCount[code.toString()];
-        const retryTime = count - 1 < times.length ? times[count - 1] : times[times.length - 1];
+    private canRetry(code: CloseReason) {
+        if (!this.isRetryable(code)) return false;
+
+        const retry = this.retryCount[code.toString()] ?? this.retryCount["internal"];
+        if (!retry || retry.count >= retry.max) return false;
+        retry.count++;
+
+        const { count, max, times } = retry;
+        let retryTime: number;
+        if (count - 1 < times.length) {
+            retryTime = times[count - 1];
+        } else {
+            const lastTime = times[times.length - 1] || 1000;
+            const multiplier = Math.min(Math.pow(1.5, count - times.length), 10);
+            const jitter = Math.floor(Math.random() * 1000);
+            retryTime = Math.min(Math.floor(lastTime * multiplier) + jitter, 30000);
+        }
+
         logger(this.ctx).verbose(`Retry for code ${code} in ${retryTime}ms (${count}/${max})`);
 
         return retryTime;
     }
 
-    private shouldRotate(code: CloseReason) {
-        if (!this.ctx.settings.features.socket.rotate_error_codes.includes(code)) return false;
-        if (this.rotateCount >= this.urls.length - 1) return false;
+    private resetRetryCount() {
+        for (const retry of Object.values(this.retryCount)) {
+            retry.count = 0;
+        }
+    }
 
-        return true;
+    private resetWatchdog() {
+        if (this.watchdogTimeout) clearTimeout(this.watchdogTimeout);
+        this.watchdogTimeout = setTimeout(() => {
+            logger(this.ctx).verbose("Watchdog timeout: no packet/pong received from Zalo WebSocket in 50s. Forcing reconnect...");
+            if (this.ws) {
+                try {
+                    if (typeof this.ws.terminate === "function") {
+                        this.ws.terminate();
+                    } else if (typeof this.ws.close === "function") {
+                        this.ws.close(CloseReason.AbnormalClosure);
+                    }
+                } catch {
+                    // Ignore if already terminated
+                }
+            }
+        }, 50000);
+    }
+
+    private shouldRotate(code: CloseReason) {
+        if (code === CloseReason.AbnormalClosure) {
+            this.consecutive1006Count++;
+            if (this.consecutive1006Count >= 2) {
+                this.consecutive1006Count = 0;
+                return true;
+            }
+            return false;
+        }
+
+        this.consecutive1006Count = 0;
+        return this.ctx.settings.features.socket.rotate_error_codes.includes(code);
     }
 
     private rotateEndpoint() {
-        this.rotateCount++;
+        this.rotateCount = (this.rotateCount + 1) % this.urls.length;
         this.wsURL = makeURL(this.ctx, this.urls[this.rotateCount], {
             t: Date.now(),
         });
@@ -174,28 +226,53 @@ export class Listener extends EventEmitter<ListenerEvents> {
     }
 
     public start({ retryOnClose = false }: { retryOnClose?: boolean } = {}) {
-        if (this.ws) throw new ZaloApiError("Already started");
+        if (this.retryTimeout) {
+            clearTimeout(this.retryTimeout);
+            this.retryTimeout = undefined;
+        }
 
+        if (this.ws) {
+            const state = this.ws.readyState;
+            if (state === WebSocket.CONNECTING || state === WebSocket.OPEN) {
+                logger(this.ctx).warn("Listener is already active or connecting. Skipping duplicate start().");
+                return;
+            }
+            try {
+                this.ws.removeAllListeners();
+                this.ws.close();
+            } catch {
+                // ignore
+            }
+            this.ws = null;
+        }
+
+        this.wsURL = makeURL(this.ctx, this.urls[this.rotateCount], {
+            t: Date.now(),
+        });
+
+        const cookie = this.ctx.cookie.getCookieStringSync("https://chat.zalo.me");
         const ws = new WebSocket(this.wsURL, {
             headers: {
-                "accept-encoding": "gzip, deflate, br, zstd",
-                "accept-language": "en-US,en;q=0.9",
+                "accept-language": getBrowserLanguage(this.ctx.language),
                 "cache-control": "no-cache",
                 connection: "Upgrade",
                 host: new URL(this.wsURL).host,
                 origin: "https://chat.zalo.me",
-                prgama: "no-cache",
+                pragma: "no-cache",
                 "sec-websocket-extensions": "permessage-deflate; client_max_window_bits",
                 "sec-websocket-version": "13",
                 upgrade: "websocket",
                 "user-agent": this.userAgent,
-                cookie: this.cookie,
+                cookie,
             },
-            agent: this.ctx.options.agent
+            agent: this.ctx.options.agent,
         });
         this.ws = ws;
 
         ws.onopen = () => {
+            this.consecutive1006Count = 0;
+            this.resetRetryCount();
+            this.resetWatchdog();
             this.onConnectedCallback();
             this.emit("connected");
         };
@@ -203,14 +280,22 @@ export class Listener extends EventEmitter<ListenerEvents> {
         ws.onclose = (event) => {
             this.reset();
             this.emit("disconnected", event.code as CloseReason, event.reason);
-            const retry = retryOnClose && this.canRetry(event.code as CloseReason);
+            const retry =
+                retryOnClose &&
+                this.isRetryable(event.code as CloseReason) &&
+                this.canRetry(event.code as CloseReason);
             if (retry && retryOnClose) {
                 const shouldRotate = this.shouldRotate(event.code as CloseReason);
                 if (shouldRotate) {
                     this.rotateEndpoint();
                 }
+                this.emit("reconnecting", event.code as CloseReason);
                 this.retryTimeout = setTimeout(() => {
-                    this.start({ retryOnClose: true });
+                    try {
+                        this.start({ retryOnClose: true });
+                    } catch (error) {
+                        logger(this.ctx).error("Failed to auto-restart listener on retry timeout:", error);
+                    }
                 }, retry);
             } else {
                 this.onClosedCallback(event.code, event.reason);
@@ -224,6 +309,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
         };
 
         ws.onmessage = async (event) => {
+            this.resetWatchdog();
             this.emit("pong"); // Pulse event to notify watchdog that socket is alive
             const { data } = event;
             if (!(data instanceof Buffer)) return;
@@ -255,9 +341,14 @@ export class Listener extends EventEmitter<ListenerEvents> {
                         this.emit("ping");
                     };
 
+                    const pingIntervalTime = Math.min(
+                        Math.max(this.ctx.settings?.features?.socket?.ping_interval || 25000, 10000),
+                        25000,
+                    );
+
                     this.pingInterval = setInterval(() => {
                         ping();
-                    }, this.ctx.settings.features.socket.ping_interval);
+                    }, pingIntervalTime);
                 }
 
                 if (version == 1 && ([501, 551].includes(cmd)) && subCmd == 0) {
@@ -482,6 +573,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
     public stop() {
         if (this.retryTimeout) clearTimeout(this.retryTimeout);
+        if (this.watchdogTimeout) clearTimeout(this.watchdogTimeout);
         if (this.ws) {
             if (this.ws.readyState !== WebSocket.CLOSED) {
                 this.ws.close(CloseReason.ManualClosure);
@@ -544,6 +636,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
         this.ws = null;
         this.cipherKey = undefined;
         if (this.pingInterval) clearInterval(this.pingInterval);
+        if (this.watchdogTimeout) clearTimeout(this.watchdogTimeout);
     }
 }
 
