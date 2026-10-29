@@ -4,17 +4,27 @@ import { apiFactory } from "../utils.js";
 import { GroupMessage, type TGroupMessage } from "../models/index.js";
 
 export type GetGroupChatHistoryResponse = {
-    lastActionId: string;
-    lastActionIdOther: string;
-    more: number;
+    error?: number;
+    lastMsgId?: number;
+    minMsgId?: number;
+    maxMsgId?: number;
+    msgJumpId?: number;
+    hasMore?: boolean;
+    isOld?: boolean;
+    isFiltered?: boolean;
+    rootMsgId?: number;
+    isRootDel?: boolean;
     groupMsgs: GroupMessage[];
+    tsJoinGroup?: number;
+    isFilteredByPhase?: boolean;
+    isFilteredByTimeJoin?: boolean;
 };
 
 export const getGroupChatHistoryFactory = apiFactory<GetGroupChatHistoryResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/history`);
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group_cloud_message[0]}/api/cm/getrecentv2`);
 
     /**
-     * Get group chat history
+     * Get group chat history from cloud (newest first)
      *
      * @param groupId group id
      * @param count count of messages to return (default: 50)
@@ -22,30 +32,53 @@ export const getGroupChatHistoryFactory = apiFactory<GetGroupChatHistoryResponse
      * @throws {ZaloApiError}
      */
     return async function getGroupChatHistory(groupId: string, count: number = 50) {
-        const params = {
-            grid: groupId,
-            count: count,
-        };
+        if (groupId.startsWith("g")) groupId = groupId.slice(1);
 
-        const encryptedParams = utils.encodeAES(JSON.stringify(params));
-        if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
+        const messages: TGroupMessage[] = [];
+        let cursor = 0;
+        let lastPage: GetGroupChatHistoryResponse | null = null;
 
-        const response = await utils.request(utils.makeURL(serviceURL, { params: encryptedParams }), {
-            method: "GET",
-        });
+        while (messages.length < count) {
+            const params = {
+                groupId,
+                globalMsgId: cursor,
+                count: Math.min(50, count - messages.length),
+                msgIds: [],
+                imei: ctx.imei,
+                src: 3,
+            };
 
-        return utils.resolve(response, (result) => {
-            let data = result.data as unknown as GetGroupChatHistoryResponse | string;
+            const encryptedParams = utils.encodeAES(JSON.stringify(params));
+            if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");
 
-            if (typeof data === "string") {
-                data = JSON.parse(data) as GetGroupChatHistoryResponse;
+            const response = await utils.request(utils.makeURL(serviceURL, { params: encryptedParams, nretry: 0 }), {
+                method: "GET",
+            });
+
+            lastPage = await utils.resolve(response, (result) => {
+                let data = result.data as unknown as GetGroupChatHistoryResponse | string;
+
+                if (typeof data === "string") {
+                    data = JSON.parse(data) as GetGroupChatHistoryResponse;
+                }
+
+                return data;
+            });
+
+            if (!lastPage || !Array.isArray(lastPage.groupMsgs)) break;
+
+            for (const rawMsg of lastPage.groupMsgs as unknown as TGroupMessage[]) {
+                if (messages.length >= count) break;
+                if (messages.some((m) => m.msgId === rawMsg.msgId)) continue;
+                messages.push(rawMsg);
             }
 
-            for (let i = 0; i < data.groupMsgs.length; i++) {
-                data.groupMsgs[i] = new GroupMessage(ctx.uid, data.groupMsgs[i] as unknown as TGroupMessage);
-            }
+            const nextCursor = Number(lastPage.lastMsgId);
+            if (!lastPage.hasMore || !nextCursor || nextCursor === cursor) break;
+            cursor = nextCursor;
+        }
 
-            return data;
-        });
+        const groupMsgs: GroupMessage[] = messages.map((data) => new GroupMessage(ctx.uid, data));
+        return Object.assign({}, lastPage || {}, { groupMsgs }) as GetGroupChatHistoryResponse;
     };
 });
