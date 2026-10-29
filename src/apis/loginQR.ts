@@ -470,6 +470,10 @@ export async function loginQR(
             const scanResult = await waitingScan(ctx, loginVersion, qrGenResult.data.code, controller.signal);
             if (!scanResult || !scanResult.data) throw new ZaloApiError("Cannot get scan result");
 
+            // The QR lifetime ends at scan; the confirm wait must not be cut by it.
+            clearTimeout(qrTimeout);
+            qrTimeout = null;
+
             if (callback) {
                 callback({
                     type: LoginQRCallbackEventType.QRCodeScanned,
@@ -483,8 +487,6 @@ export async function loginQR(
 
             const confirmResult = await waitingConfirm(ctx, loginVersion, qrGenResult.data.code, controller.signal);
             if (!confirmResult) throw new ZaloApiError("Cannot get confirm result");
-
-            clearTimeout(qrTimeout);
 
             if (confirmResult.error_code == -13) {
                 if (callback) {
