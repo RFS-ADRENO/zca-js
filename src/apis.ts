@@ -99,6 +99,7 @@ import { keepAliveFactory } from "./apis/keepAlive.js";
 import { lastOnlineFactory } from "./apis/lastOnline.js";
 import { leaveGroupFactory } from "./apis/leaveGroup.js";
 import { lockPollFactory } from "./apis/lockPoll.js";
+import { logoutFactory } from "./apis/logout.js";
 import { lostFocusFactory } from "./apis/lostFocus.js";
 import { parseLinkFactory } from "./apis/parseLink.js";
 import { registerCatalogFactory } from "./apis/registerCatalog.js";
@@ -260,6 +261,7 @@ export class API {
     public lastOnline: ReturnType<typeof lastOnlineFactory>;
     public leaveGroup: ReturnType<typeof leaveGroupFactory>;
     public lockPoll: ReturnType<typeof lockPollFactory>;
+    public logout: ReturnType<typeof logoutFactory>;
     public lostFocus: ReturnType<typeof lostFocusFactory>;
     public parseLink: ReturnType<typeof parseLinkFactory>;
     public registerCatalog: ReturnType<typeof registerCatalogFactory>;
@@ -421,6 +423,7 @@ export class API {
         this.lastOnline = lastOnlineFactory(ctx, this);
         this.leaveGroup = leaveGroupFactory(ctx, this);
         this.lockPoll = lockPollFactory(ctx, this);
+        this.logout = logoutFactory(ctx, this);
         this.lostFocus = lostFocusFactory(ctx, this);
         this.parseLink = parseLinkFactory(ctx, this);
         this.registerCatalog = registerCatalogFactory(ctx, this);
