@@ -129,6 +129,9 @@ const urlType = {
     others: "asyncfile/upload",
 };
 
+// same as the default TTL of ctx.uploadCallbacks
+const UPLOAD_TIMEOUT = 5 * 60 * 1000;
+
 export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
     const serviceURL = `${api.zpwServiceMap.file[0]}/api`;
     const { sharefile } = ctx.settings!.features;
@@ -312,9 +315,15 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
                             const resData = await resolveResponse<RawResponse>(ctx, response);
 
                             if (resData && resData.fileId != "-1" && resData.photoId != "-1")
-                                await new Promise<void>((resolve) => {
+                                await new Promise<void>((resolve, reject) => {
                                     if (data.fileType == "video" || data.fileType == "others") {
+                                        // resolved by the listener, so reject instead of waiting forever
+                                        const timeout = setTimeout(() => {
+                                            reject(new ZaloApiError("Upload timed out, is the listener started?"));
+                                        }, UPLOAD_TIMEOUT);
+
                                         const uploadCallback: UploadCallback = async (wsData) => {
+                                            clearTimeout(timeout);
                                             const result = {
                                                 fileType: data.fileType,
                                                 ...resData,
