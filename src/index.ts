@@ -63,6 +63,7 @@ export type { GetFriendRequestStatusResponse } from "./apis/getFriendRequestStat
 export type { GetFullAvatarResponse } from "./apis/getFullAvatar.js";
 export type { GetGroupBlockedMemberPayload, GetGroupBlockedMemberResponse } from "./apis/getGroupBlockedMember.js";
 export type { GetGroupChatHistoryResponse } from "./apis/getGroupChatHistory.js";
+export type { GetGroupCloudChatHistoryResponse } from "./apis/getGroupCloudChatHistory.js";
 export type { GroupInfoPendingApprove, GroupInfoResponse } from "./apis/getGroupInfo.js";
 export type { GetGroupInviteBoxInfoPayload, GetGroupInviteBoxInfoResponse } from "./apis/getGroupInviteBoxInfo.js";
 export type { GetGroupInviteBoxListPayload, GetGroupInviteBoxListResponse } from "./apis/getGroupInviteBoxList.js";

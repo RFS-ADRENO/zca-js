@@ -16,6 +16,9 @@ export const getGroupChatHistoryFactory = apiFactory<GetGroupChatHistoryResponse
     /**
      * Get group chat history
      *
+     * @deprecated Zalo removed the `/api/group/history` endpoint (see #356).
+     * Use {@link getGroupCloudChatHistory} instead, which uses the cloud message service.
+     *
      * @param groupId group id
      * @param count count of messages to return (default: 50)
      *
