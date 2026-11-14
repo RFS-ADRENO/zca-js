@@ -51,6 +51,7 @@ import { getAvatarUrlProfileFactory } from "./apis/getAvatarUrlProfile.js";
 import { getBizAccountFactory } from "./apis/getBizAccount.js";
 import { getCatalogListFactory } from "./apis/getCatalogList.js";
 import { getCloseFriendsFactory } from "./apis/getCloseFriends.js";
+import { getCloudMessageFactory } from "./apis/getCloudMessage.js";
 import { getContextFactory } from "./apis/getContext.js";
 import { getCookieFactory } from "./apis/getCookie.js";
 import { getFriendBoardListFactory } from "./apis/getFriendBoardList.js";
@@ -60,7 +61,6 @@ import { getFriendRequestStatusFactory } from "./apis/getFriendRequestStatus.js"
 import { getFullAvatarFactory } from "./apis/getFullAvatar.js";
 import { getGroupBlockedMemberFactory } from "./apis/getGroupBlockedMember.js";
 import { getGroupChatHistoryFactory } from "./apis/getGroupChatHistory.js";
-import { getGroupCloudChatHistoryFactory } from "./apis/getGroupCloudChatHistory.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
 import { getGroupInviteBoxInfoFactory } from "./apis/getGroupInviteBoxInfo.js";
 import { getGroupInviteBoxListFactory } from "./apis/getGroupInviteBoxList.js";
@@ -214,6 +214,7 @@ export class API {
     public getBizAccount: ReturnType<typeof getBizAccountFactory>;
     public getCatalogList: ReturnType<typeof getCatalogListFactory>;
     public getCloseFriends: ReturnType<typeof getCloseFriendsFactory>;
+    public getCloudMessage: ReturnType<typeof getCloudMessageFactory>;
     public getContext: ReturnType<typeof getContextFactory>;
     public getCookie: ReturnType<typeof getCookieFactory>;
     public getFriendBoardList: ReturnType<typeof getFriendBoardListFactory>;
@@ -223,7 +224,6 @@ export class API {
     public getFullAvatar: ReturnType<typeof getFullAvatarFactory>;
     public getGroupBlockedMember: ReturnType<typeof getGroupBlockedMemberFactory>;
     public getGroupChatHistory: ReturnType<typeof getGroupChatHistoryFactory>;
-    public getGroupCloudChatHistory: ReturnType<typeof getGroupCloudChatHistoryFactory>;
     public getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
     public getGroupInviteBoxInfo: ReturnType<typeof getGroupInviteBoxInfoFactory>;
     public getGroupInviteBoxList: ReturnType<typeof getGroupInviteBoxListFactory>;
@@ -377,6 +377,7 @@ export class API {
         this.getBizAccount = getBizAccountFactory(ctx, this);
         this.getCatalogList = getCatalogListFactory(ctx, this);
         this.getCloseFriends = getCloseFriendsFactory(ctx, this);
+        this.getCloudMessage = getCloudMessageFactory(ctx, this);
         this.getContext = getContextFactory(ctx, this);
         this.getCookie = getCookieFactory(ctx, this);
         this.getFriendBoardList = getFriendBoardListFactory(ctx, this);
@@ -386,7 +387,6 @@ export class API {
         this.getFullAvatar = getFullAvatarFactory(ctx, this);
         this.getGroupBlockedMember = getGroupBlockedMemberFactory(ctx, this);
         this.getGroupChatHistory = getGroupChatHistoryFactory(ctx, this);
-        this.getGroupCloudChatHistory = getGroupCloudChatHistoryFactory(ctx, this);
         this.getGroupInfo = getGroupInfoFactory(ctx, this);
         this.getGroupInviteBoxInfo = getGroupInviteBoxInfoFactory(ctx, this);
         this.getGroupInviteBoxList = getGroupInviteBoxListFactory(ctx, this);

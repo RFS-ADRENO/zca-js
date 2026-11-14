@@ -56,6 +56,7 @@ export type { GetAvatarUrlProfileResponse } from "./apis/getAvatarUrlProfile.js"
 export type { GetBizAccountResponse } from "./apis/getBizAccount.js";
 export type { GetCatalogListPayload, GetCatalogListResponse } from "./apis/getCatalogList.js";
 export type { GetCloseFriendsResponse } from "./apis/getCloseFriends.js";
+export type { GetCloudMessageResponse } from "./apis/getCloudMessage.js";
 export type { GetFriendBoardListResponse } from "./apis/getFriendBoardList.js";
 export type { GetFriendOnlinesResponse, GetFriendOnlinesStatus } from "./apis/getFriendOnlines.js";
 export type { GetFriendRecommendationsResponse, FriendRecommendationsCollapseMsgListConfig, FriendRecommendationsDataInfo, FriendRecommendationsRecommItem } from "./apis/getFriendRecommendations.js";
@@ -63,7 +64,6 @@ export type { GetFriendRequestStatusResponse } from "./apis/getFriendRequestStat
 export type { GetFullAvatarResponse } from "./apis/getFullAvatar.js";
 export type { GetGroupBlockedMemberPayload, GetGroupBlockedMemberResponse } from "./apis/getGroupBlockedMember.js";
 export type { GetGroupChatHistoryResponse } from "./apis/getGroupChatHistory.js";
-export type { GetGroupCloudChatHistoryResponse } from "./apis/getGroupCloudChatHistory.js";
 export type { GroupInfoPendingApprove, GroupInfoResponse } from "./apis/getGroupInfo.js";
 export type { GetGroupInviteBoxInfoPayload, GetGroupInviteBoxInfoResponse } from "./apis/getGroupInviteBoxInfo.js";
 export type { GetGroupInviteBoxListPayload, GetGroupInviteBoxListResponse } from "./apis/getGroupInviteBoxList.js";

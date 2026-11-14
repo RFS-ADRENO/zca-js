@@ -3,7 +3,7 @@ import { apiFactory } from "../utils.js";
 
 import { GroupMessage, type TGroupMessage } from "../models/index.js";
 
-export type GetGroupCloudChatHistoryResponse = {
+export type GetCloudMessageResponse = {
     groupMsgs: GroupMessage[];
     /**
      * Whether there are older messages in the current storage.
@@ -17,7 +17,7 @@ export type GetGroupCloudChatHistoryResponse = {
     /**
      * Set by the server when the next (older) page lives in the old-message storage
      * (`getoldv2`). It can be `true` while `hasMore` is `false`: the recent storage is exhausted
-     * but older messages remain. Pass it back to `getGroupCloudChatHistory` so the next
+     * but older messages remain. Pass it back to `getCloudMessage` so the next
      * request goes to the right endpoint, as Zalo Web does.
      */
     isOld: boolean;
@@ -37,7 +37,7 @@ type RawGroupCloudChatHistoryResponse = {
     isFiltered?: number | boolean;
 };
 
-export const getGroupCloudChatHistoryFactory = apiFactory<GetGroupCloudChatHistoryResponse>()((api, ctx, utils) => {
+export const getCloudMessageFactory = apiFactory<GetCloudMessageResponse>()((api, ctx, utils) => {
     const recentURL = utils.makeURL(`${api.zpwServiceMap.group_cloud_message[0]}/api/cm/getrecentv2`);
     const oldURL = utils.makeURL(`${api.zpwServiceMap.group_cloud_message[0]}/api/cm/getoldv2`);
 
@@ -50,9 +50,9 @@ export const getGroupCloudChatHistoryFactory = apiFactory<GetGroupCloudChatHisto
      * pages are loaded from `getrecentv2`, and only from `getoldv2` once the server answers `isOld`.
      *
      * @example
-     * let page = await api.getGroupCloudChatHistory(groupId);
+     * let page = await api.getCloudMessage(groupId);
      * while (page.hasMore || page.isOld) {
-     *     page = await api.getGroupCloudChatHistory(groupId, page.lastMsgId, page.isOld);
+     *     page = await api.getCloudMessage(groupId, page.lastMsgId, page.isOld);
      * }
      *
      * @param groupId group id
@@ -61,7 +61,7 @@ export const getGroupCloudChatHistoryFactory = apiFactory<GetGroupCloudChatHisto
      *
      * @throws {ZaloApiError}
      */
-    return async function getGroupCloudChatHistory(groupId: string, lastMsgId?: string, isOld: boolean = false) {
+    return async function getCloudMessage(groupId: string, lastMsgId?: string, isOld: boolean = false) {
         if (!groupId) throw new ZaloApiError("Missing groupId");
 
         const params = {
