@@ -10,7 +10,9 @@ import {
     getFileSize,
     getImageMetaData,
     getMd5LargeFileObject,
+    openAttachmentReader,
     resolveResponse,
+    type AttachmentReader,
 } from "../utils.js";
 
 export type UploadAttachmentImageResponse = {
@@ -87,7 +89,6 @@ type AttachmentData =
     | {
           filePath: string;
           fileType: "image";
-          chunkContent: FormData[];
           fileData: ImageData;
           params: {
               toid?: string;
@@ -99,14 +100,12 @@ type AttachmentData =
               imei: string;
               isE2EE: number;
               jxl: number;
-              chunkId: number;
           };
           source: AttachmentSource;
       }
     | {
           filePath: string;
           fileType: "video" | "others";
-          chunkContent: FormData[];
           fileData: FileData;
           params: {
               toid?: string;
@@ -118,7 +117,6 @@ type AttachmentData =
               imei: string;
               isE2EE: number;
               jxl: number;
-              chunkId: number;
           };
           source: AttachmentSource;
       };
@@ -128,6 +126,11 @@ const urlType = {
     video: "asyncfile/upload",
     others: "asyncfile/upload",
 };
+
+/** Chunk requests in flight at once: each holds one chunk in memory, so a large file never does. */
+const CHUNK_REQUESTS_IN_FLIGHT = 4;
+/** The failure when the socket closes before Zalo confirms an upload: a closed socket never delivers file_done. */
+const SOCKET_CLOSED = "The connection closed before Zalo confirmed the upload";
 
 export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
     const serviceURL = `${api.zpwServiceMap.file[0]}/api`;
@@ -189,7 +192,6 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
 
             const data: AttachmentData = {
                 filePath: isFilePath ? source : source.filename,
-                chunkContent: [] as FormData[],
                 params: {},
                 source,
             } as AttachmentData;
@@ -218,7 +220,6 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
                     data.params.imei = ctx.imei;
                     data.params.isE2EE = 0;
                     data.params.jxl = 0;
-                    data.params.chunkId = 1;
 
                     break;
                 }
@@ -242,7 +243,6 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
                     data.params.imei = ctx.imei;
                     data.params.isE2EE = 0;
                     data.params.jxl = 0;
-                    data.params.chunkId = 1;
 
                     break;
                 }
@@ -266,100 +266,118 @@ export const uploadAttachmentFactory = apiFactory()((api, ctx, utils) => {
                     data.params.imei = ctx.imei;
                     data.params.isE2EE = 0;
                     data.params.jxl = 0;
-                    data.params.chunkId = 1;
 
                     break;
                 }
             }
 
-            const fileBuffer = isFilePath ? await fs.promises.readFile(source) : source.data;
-            for (let i = 0; i < data.params.totalChunk; i++) {
-                const formData = new FormData();
-                const slicedBuffer = fileBuffer.subarray(i * chunkSize, (i + 1) * chunkSize);
-                formData.append("chunkContent", slicedBuffer, {
-                    filename: fileName,
-                    contentType: "application/octet-stream",
-                });
-
-                data.chunkContent[i] = formData;
-            }
             attachmentsData.push(data);
         }
 
-        const requests = [],
-            results: UploadAttachmentType[] = [];
+        const jobs = attachmentsData.flatMap((data, atmIndex) =>
+            Array.from({ length: data.params.totalChunk }, (_, index) => ({ atmIndex, index })),
+        );
+        const results: UploadAttachmentType[] = [];
+        const readers: AttachmentReader[] = [];
+        try {
+            for (const data of attachmentsData) readers.push(await openAttachmentReader(data.source));
 
-        for (let atmIndex = 0; atmIndex < attachmentsData.length; atmIndex++) {
-            const data = attachmentsData[atmIndex];
-            for (let i = 0; i < data.params.totalChunk; i++) {
-                const encryptedParams = utils.encodeAES(JSON.stringify(data.params));
+            let next = 0;
+            let failed = false;
+            const sendChunk = async ({ atmIndex, index }: { atmIndex: number; index: number }) => {
+                const data = attachmentsData[atmIndex];
+                if ((data.fileType == "video" || data.fileType == "others") && ctx.socketOpen === false)
+                    throw new ZaloApiError(SOCKET_CLOSED);
+                const encryptedParams = utils.encodeAES(JSON.stringify({ ...data.params, chunkId: index + 1 }));
                 if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");
 
-                requests.push(
-                    utils
-                        .request(
-                            utils.makeURL(url + urlType[data.fileType], { type: typeParam, params: encryptedParams }),
-                            {
-                                method: "POST",
-                                headers: data.chunkContent[i].getHeaders(),
-                                body: data.chunkContent[i].getBuffer(),
-                            },
-                        )
-                        .then(async (response) => {
-                            /**
-                             * @TODO: better type rather than any
-                             */
-                            const resData = await resolveResponse<RawResponse>(ctx, response);
-
-                            if (resData && resData.fileId != "-1" && resData.photoId != "-1")
-                                await new Promise<void>((resolve) => {
-                                    if (data.fileType == "video" || data.fileType == "others") {
-                                        const uploadCallback: UploadCallback = async (wsData) => {
-                                            const result = {
-                                                fileType: data.fileType,
-                                                ...resData,
-                                                ...wsData,
-                                                totalSize: data.fileData.totalSize,
-                                                fileName: data.fileData.fileName,
-                                                checksum: (
-                                                    await getMd5LargeFileObject(data.source, data.fileData.totalSize)
-                                                ).data,
-                                            };
-                                            results[atmIndex] = result;
-                                            resolve();
-                                        };
-
-                                        ctx.uploadCallbacks.set(resData.fileId!.toString(), uploadCallback);
-                                    }
-
-                                    if (data.fileType == "image") {
-                                        const result = {
-                                            fileType: "image" as const,
-                                            width: data.fileData.width!,
-                                            height: data.fileData.height!,
-                                            totalSize: data.fileData.totalSize!,
-                                            hdSize: data.fileData.totalSize!,
-
-                                            finished: resData.finished,
-                                            normalUrl: resData.normalUrl!,
-                                            hdUrl: resData.hdUrl!,
-                                            thumbUrl: resData.thumbUrl!,
-                                            chunkId: resData.chunkId,
-
-                                            photoId: resData.photoId!,
-                                            clientFileId: resData.clientFileId,
-                                        };
-                                        results[atmIndex] = result;
-                                        resolve();
-                                    }
-                                });
-                        }),
+                const start = index * chunkSize;
+                const formData = new FormData();
+                formData.append(
+                    "chunkContent",
+                    await readers[atmIndex].read(start, Math.min(chunkSize, data.params.totalSize - start)),
+                    {
+                        filename: data.params.fileName,
+                        contentType: "application/octet-stream",
+                    },
                 );
-                data.params.chunkId++;
-            }
-        }
 
-        await Promise.all(requests);
+                const response = await utils.request(
+                    utils.makeURL(url + urlType[data.fileType], { type: typeParam, params: encryptedParams }),
+                    {
+                        method: "POST",
+                        headers: formData.getHeaders(),
+                        body: formData.getBuffer(),
+                    },
+                );
+
+                /**
+                 * @TODO: better type rather than any
+                 */
+                const resData = await resolveResponse<RawResponse>(ctx, response);
+
+                if (resData && resData.fileId != "-1" && resData.photoId != "-1")
+                    await new Promise<void>((resolve, reject) => {
+                        if (data.fileType == "video" || data.fileType == "others") {
+                            if (ctx.socketOpen === false) return reject(new ZaloApiError(SOCKET_CLOSED));
+
+                            const uploadCallback: UploadCallback = async (wsData) => {
+                                if ("closed" in wsData) return reject(new ZaloApiError(SOCKET_CLOSED));
+                                try {
+                                    const md5 = await getMd5LargeFileObject(data.source, data.fileData.totalSize);
+                                    const result = {
+                                        fileType: data.fileType,
+                                        ...resData,
+                                        ...wsData,
+                                        totalSize: data.fileData.totalSize,
+                                        fileName: data.fileData.fileName,
+                                        checksum: md5.data,
+                                    };
+                                    results[atmIndex] = result;
+                                    resolve();
+                                } catch (error) {
+                                    reject(error);
+                                }
+                            };
+
+                            ctx.uploadCallbacks.set(resData.fileId!.toString(), uploadCallback);
+                        }
+
+                        if (data.fileType == "image") {
+                            const result = {
+                                fileType: "image" as const,
+                                width: data.fileData.width!,
+                                height: data.fileData.height!,
+                                totalSize: data.fileData.totalSize!,
+                                hdSize: data.fileData.totalSize!,
+
+                                finished: resData.finished,
+                                normalUrl: resData.normalUrl!,
+                                hdUrl: resData.hdUrl!,
+                                thumbUrl: resData.thumbUrl!,
+                                chunkId: resData.chunkId,
+
+                                photoId: resData.photoId!,
+                                clientFileId: resData.clientFileId,
+                            };
+                            results[atmIndex] = result;
+                            resolve();
+                        }
+                    });
+            };
+
+            const worker = async () => {
+                while (!failed && next < jobs.length) {
+                    await sendChunk(jobs[next++]).catch((error) => {
+                        failed = true;
+                        throw error;
+                    });
+                }
+            };
+            await Promise.all(Array.from({ length: Math.min(CHUNK_REQUESTS_IN_FLIGHT, jobs.length) }, worker));
+        } finally {
+            await Promise.all(readers.map((reader) => reader.close()));
+        }
 
         return results;
     };
