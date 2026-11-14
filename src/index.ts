@@ -56,7 +56,7 @@ export type { GetAvatarUrlProfileResponse } from "./apis/getAvatarUrlProfile.js"
 export type { GetBizAccountResponse } from "./apis/getBizAccount.js";
 export type { GetCatalogListPayload, GetCatalogListResponse } from "./apis/getCatalogList.js";
 export type { GetCloseFriendsResponse } from "./apis/getCloseFriends.js";
-export type { GetCloudMessageResponse } from "./apis/getCloudMessage.js";
+export type { GetCloudMessageOptions, GetCloudMessageResponse } from "./apis/getCloudMessage.js";
 export type { GetFriendBoardListResponse } from "./apis/getFriendBoardList.js";
 export type { GetFriendOnlinesResponse, GetFriendOnlinesStatus } from "./apis/getFriendOnlines.js";
 export type { GetFriendRecommendationsResponse, FriendRecommendationsCollapseMsgListConfig, FriendRecommendationsDataInfo, FriendRecommendationsRecommItem } from "./apis/getFriendRecommendations.js";
