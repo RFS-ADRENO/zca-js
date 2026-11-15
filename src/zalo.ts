@@ -2,6 +2,8 @@ import { loginQR, LoginQRCallbackEventType, type LoginQRCallback } from "./apis/
 import { getServerInfo, login } from "./apis/login.js";
 import {
     createContext,
+    DEFAULT_API_TYPE,
+    DEFAULT_API_VERSION,
     isContextSession,
     type ContextBase,
     type Options,
@@ -12,6 +14,7 @@ import toughCookie from "tough-cookie";
 
 import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { checkUpdate } from "./update.js";
+import { fetchApiVersion } from "./apiVersion.js";
 import { API } from "./apis.js";
 
 export type Cookie = {
@@ -92,6 +95,27 @@ export class Zalo {
         ctx.cookie = this.parseCookies(credentials.cookie);
         ctx.userAgent = credentials.userAgent;
         ctx.language = credentials.language || "vi";
+
+        const isValid = (value: unknown) => Number.isInteger(value) && (value as number) > 0;
+        const hasApiType = isValid(this.options.apiType);
+        const hasApiVersion = isValid(this.options.apiVersion);
+
+        // bad user provided value, fallback to default
+        if (!hasApiType) ctx.API_TYPE = DEFAULT_API_TYPE;
+        if (!hasApiVersion) ctx.API_VERSION = DEFAULT_API_VERSION;
+
+        if (!hasApiType || !hasApiVersion) {
+            const detected = await fetchApiVersion(ctx);
+            if (detected) {
+                if (!hasApiType) ctx.API_TYPE = detected.apiType;
+                if (!hasApiVersion) ctx.API_VERSION = detected.apiVersion;
+                logger(ctx).info(`Zalo API type: ${ctx.API_TYPE}, version: ${ctx.API_VERSION}`);
+            } else {
+                logger(ctx).warn(
+                    `Cannot detect Zalo API version, using type: ${ctx.API_TYPE}, version: ${ctx.API_VERSION}`,
+                );
+            }
+        }
 
         const loginData = await login(ctx, this.enableEncryptParam);
         const serverInfo = await getServerInfo(ctx, this.enableEncryptParam);
