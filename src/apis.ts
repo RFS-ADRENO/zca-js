@@ -127,6 +127,7 @@ import { sendMessageFactory } from "./apis/sendMessage.js";
 import { sendReportFactory } from "./apis/sendReport.js";
 import { sendSeenEventFactory } from "./apis/sendSeenEvent.js";
 import { sendStickerFactory } from "./apis/sendSticker.js";
+import { sendCustomStickerFactory } from "./apis/sendCustomSticker.js";
 import { sendTypingEventFactory } from "./apis/sendTypingEvent.js";
 import { sendVideoFactory } from "./apis/sendVideo.js";
 import { sendVoiceFactory } from "./apis/sendVoice.js";
@@ -290,6 +291,7 @@ export class API {
     public sendReport: ReturnType<typeof sendReportFactory>;
     public sendSeenEvent: ReturnType<typeof sendSeenEventFactory>;
     public sendSticker: ReturnType<typeof sendStickerFactory>;
+    public sendCustomSticker: ReturnType<typeof sendCustomStickerFactory>;
     public sendTypingEvent: ReturnType<typeof sendTypingEventFactory>;
     public sendVideo: ReturnType<typeof sendVideoFactory>;
     public sendVoice: ReturnType<typeof sendVoiceFactory>;
@@ -453,6 +455,7 @@ export class API {
         this.sendReport = sendReportFactory(ctx, this);
         this.sendSeenEvent = sendSeenEventFactory(ctx, this);
         this.sendSticker = sendStickerFactory(ctx, this);
+        this.sendCustomSticker = sendCustomStickerFactory(ctx, this);
         this.sendTypingEvent = sendTypingEventFactory(ctx, this);
         this.sendVideo = sendVideoFactory(ctx, this);
         this.sendVoice = sendVoiceFactory(ctx, this);
