@@ -420,36 +420,50 @@ export async function decodeEventData(parsed: Record<string, unknown>, cipherKey
     return JSONBig.parse(decodedData);
 }
 
+/** Reads byte ranges of an attachment on demand: a file is read from disk, so the whole file is never held in memory. */
+export type AttachmentReader = {
+    read(start: number, length: number): Promise<Buffer>;
+    close(): Promise<void>;
+};
+
+export async function openAttachmentReader(source: AttachmentSource): Promise<AttachmentReader> {
+    if (typeof source != "string") {
+        const buffer = source.data;
+        return {
+            read: async (start, length) => buffer.subarray(start, start + length),
+            close: async () => {},
+        };
+    }
+
+    const handle = await fs.promises.open(source, "r");
+    return {
+        read: async (start, length) => {
+            const bytes = Buffer.alloc(length);
+            const { bytesRead } = await handle.read(bytes, 0, length, start);
+            if (bytesRead !== length) throw new ZaloApiError(`File ${source} changed while it was read`);
+            return bytes;
+        },
+        close: async () => {
+            await handle.close();
+        },
+    };
+}
+
 export async function getMd5LargeFileObject(source: AttachmentSource, fileSize: number) {
-    const buffer = typeof source == "string" ? await fs.promises.readFile(source) : source.data;
-    return new Promise<{
-        currentChunk: number;
-        data: string;
-    }>((resolve) => {
+    const chunkSize = 2097152; // Read in chunks of 2MB
+    const reader = await openAttachmentReader(source);
+    try {
+        const spark = new SparkMD5.ArrayBuffer();
         let currentChunk = 0;
-        const chunkSize = 2097152, // Read in chunks of 2MB
-            chunks = Math.ceil(fileSize / chunkSize),
-            spark = new SparkMD5.ArrayBuffer();
-
-        function loadNext() {
-            const start = currentChunk * chunkSize,
-                end = start + chunkSize >= fileSize ? fileSize : start + chunkSize;
-
-            spark.append(new Uint8Array(buffer.subarray(start, end)).buffer as ArrayBuffer);
+        for (let start = 0; start < fileSize; start += chunkSize) {
+            const bytes = await reader.read(start, Math.min(chunkSize, fileSize - start));
+            spark.append(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer);
             currentChunk++;
-
-            if (currentChunk < chunks) {
-                loadNext();
-            } else {
-                resolve({
-                    currentChunk,
-                    data: spark.end(),
-                });
-            }
         }
-
-        loadNext();
-    });
+        return { currentChunk, data: spark.end() };
+    } finally {
+        await reader.close();
+    }
 }
 
 export const logger = (ctx: { options: { logging?: boolean } }) => ({

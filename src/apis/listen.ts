@@ -193,12 +193,19 @@ export class Listener extends EventEmitter<ListenerEvents> {
         this.ws = ws;
 
         ws.onopen = () => {
+            this.ctx.socketOpen = true;
             this.onConnectedCallback();
             this.emit("connected");
         };
 
         ws.onclose = (event) => {
             this.reset();
+            this.ctx.socketOpen = false;
+            // Zalo confirms an upload only over this socket, so a closed socket fails every upload still waiting for it.
+            for (const [key, callback] of this.ctx.uploadCallbacks) {
+                this.ctx.uploadCallbacks.delete(key);
+                callback({ closed: true });
+            }
             this.emit("disconnected", event.code as CloseReason, event.reason);
             const retry = retryOnClose && this.canRetry(event.code as CloseReason);
             if (retry && retryOnClose) {
