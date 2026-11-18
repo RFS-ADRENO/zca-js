@@ -76,6 +76,9 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
     private selfListen;
     private pingInterval?: Timer;
+    private retryTimeout?: ReturnType<typeof setTimeout>;
+    private connectionId = 0;
+    private stopped = false;
 
     private id = 0;
 
@@ -173,6 +176,10 @@ export class Listener extends EventEmitter<ListenerEvents> {
     public start({ retryOnClose = false }: { retryOnClose?: boolean } = {}) {
         if (this.ws) throw new ZaloApiError("Already started");
 
+        this.clearRetryTimeout();
+        const connectionId = ++this.connectionId;
+        this.stopped = false;
+
         const ws = new WebSocket(this.wsURL, {
             headers: {
                 "accept-encoding": "gzip, deflate, br, zstd",
@@ -193,20 +200,27 @@ export class Listener extends EventEmitter<ListenerEvents> {
         this.ws = ws;
 
         ws.onopen = () => {
+            if (this.ws !== ws) return;
             this.onConnectedCallback();
+            if (this.ws !== ws) return;
             this.emit("connected");
         };
 
         ws.onclose = (event) => {
+            if (this.connectionId !== connectionId) return;
             this.reset();
             this.emit("disconnected", event.code as CloseReason, event.reason);
-            const retry = retryOnClose && this.canRetry(event.code as CloseReason);
+            // A disconnected handler may stop the listener or start a new connection.
+            if (this.connectionId !== connectionId) return;
+            const retry = !this.stopped && retryOnClose && this.canRetry(event.code as CloseReason);
             if (retry && retryOnClose) {
                 const shouldRotate = this.shouldRotate(event.code as CloseReason);
                 if (shouldRotate) {
                     this.rotateEndpoint();
                 }
-                setTimeout(() => {
+                this.retryTimeout = setTimeout(() => {
+                    if (this.stopped || this.connectionId !== connectionId) return;
+                    this.retryTimeout = undefined;
                     this.start({ retryOnClose: true });
                 }, retry);
             } else {
@@ -216,11 +230,14 @@ export class Listener extends EventEmitter<ListenerEvents> {
         };
 
         ws.onerror = (event) => {
+            if (this.ws !== ws) return;
             this.onErrorCallback(event);
+            if (this.ws !== ws) return;
             this.emit("error", event);
         };
 
         ws.onmessage = async (event) => {
+            if (this.ws !== ws) return;
             const { data } = event;
             if (!(data instanceof Buffer)) return;
 
@@ -237,6 +254,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                 if (version == 1 && cmd == 1 && subCmd == 1 && hasOwn(parsed, "key")) {
                     this.cipherKey = parsed.key;
                     this.emit("cipher_key", parsed.key);
+                    if (this.ws !== ws) return;
 
                     if (this.pingInterval) clearInterval(this.pingInterval);
 
@@ -257,8 +275,10 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
                 if (version == 1 && ([501, 551].includes(cmd)) && subCmd == 0) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    if (this.ws !== ws) return;
                     const { msgs } = parsedData;
                     for (const msg of msgs) {
+                        if (this.ws !== ws) return;
                         if (typeof msg.content == "object" && hasOwn(msg.content, "deleteMsg")) {
                             const undoObject = new Undo(this.ctx.uid, msg, false);
                             if (undoObject.isSelf && !this.selfListen) continue;
@@ -267,6 +287,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                             const messageObject = new UserMessage(this.ctx.uid, msg);
                             if (messageObject.isSelf && !this.selfListen) continue;
                             this.onMessageCallback(messageObject);
+                            if (this.ws !== ws) return;
                             this.emit("message", messageObject);
                         }
                     }
@@ -274,8 +295,10 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
                 if (version == 1 && cmd == 521 && subCmd == 0) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    if (this.ws !== ws) return;
                     const { groupMsgs } = parsedData;
                     for (const msg of groupMsgs) {
+                        if (this.ws !== ws) return;
                         if (typeof msg.content == "object" && hasOwn(msg.content, "deleteMsg")) {
                             const undoObject = new Undo(this.ctx.uid, msg, true);
                             if (undoObject.isSelf && !this.selfListen) continue;
@@ -284,6 +307,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                             const messageObject = new GroupMessage(this.ctx.uid, msg);
                             if (messageObject.isSelf && !this.selfListen) continue;
                             this.onMessageCallback(messageObject);
+                            if (this.ws !== ws) return;
                             this.emit("message", messageObject);
                         }
                     }
@@ -291,8 +315,10 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
                 if (version == 1 && cmd == 601 && subCmd == 0) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    if (this.ws !== ws) return;
                     const { controls } = parsedData;
                     for (const control of controls) {
+                        if (this.ws !== ws) return;
                         if (control.content.act_type == "file_done") {
                             const data = {
                                 fileUrl: control.content.data.url,
@@ -302,6 +328,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                             const uploadCallback = this.ctx.uploadCallbacks.get(String(control.content.fileId));
                             if (uploadCallback) uploadCallback(data);
                             this.ctx.uploadCallbacks.delete(String(control.content.fileId));
+                            if (this.ws !== ws) return;
 
                             this.emit("upload_attachment", data);
                         } else if (control.content.act_type == "group") {
@@ -359,9 +386,11 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
                 if (cmd == 612) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    if (this.ws !== ws) return;
                     const { reacts, reactGroups } = parsedData;
 
                     for (const react of reacts) {
+                        if (this.ws !== ws) return;
                         react.content = JSON.parse(react.content);
                         const reactionObject = new Reaction(this.ctx.uid, react, false);
                         if (reactionObject.isSelf && !this.selfListen) continue;
@@ -370,6 +399,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     }
 
                     for (const reactGroup of reactGroups) {
+                        if (this.ws !== ws) return;
                         reactGroup.content = JSON.parse(reactGroup.content);
                         const reactionObject = new Reaction(this.ctx.uid, reactGroup, true);
                         if (reactionObject.isSelf && !this.selfListen) continue;
@@ -380,6 +410,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
                 if (cmd == 610 || cmd == 611) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    if (this.ws !== ws) return;
                     const isGroup = cmd == 611;
 
                     const reacts = parsedData[isGroup ? "reactGroups" : "reacts"] as TReaction[];
@@ -390,6 +421,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
                 if (cmd == 510 && subCmd == 1) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    if (this.ws !== ws) return;
                     const msgs = parsedData.msgs as TMessage[];
                     const responseMsgs = msgs.map((msg) => new UserMessage(this.ctx.uid, msg));
                     this.emit("old_messages", responseMsgs, ThreadType.User);
@@ -397,6 +429,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
                 if (cmd == 511 && subCmd == 1) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    if (this.ws !== ws) return;
                     const groupMsgs = parsedData.groupMsgs as TGroupMessage[];
                     const responseMsgs = groupMsgs.map((msg) => new GroupMessage(this.ctx.uid, msg));
                     this.emit("old_messages", responseMsgs, ThreadType.Group);
@@ -404,9 +437,11 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
                 if (cmd == 602 && subCmd == 0) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    if (this.ws !== ws) return;
                     const { actions } = parsedData;
 
                     for (const action of actions) {
+                        if (this.ws !== ws) return;
                         if (action.act_type == "typing") {
                             const data = JSON.parse(`{${action.data}}`);
                             if (action.act == "typing") {
@@ -425,6 +460,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
                 if (cmd == 502 && subCmd == 0) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    if (this.ws !== ws) return;
                     const { delivereds: deliveredMsgs, seens: seenMsgs } = parsedData;
 
                     if (Array.isArray(deliveredMsgs) && deliveredMsgs.length > 0) {
@@ -432,6 +468,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                         this.emit("delivered_messages", deliveredObjects);
                     }
 
+                    if (this.ws !== ws) return;
                     if (Array.isArray(seenMsgs) && seenMsgs.length > 0) {
                         const seenObjects = seenMsgs.map((seen) => new UserSeenMessage(seen));
                         this.emit("seen_messages", seenObjects);
@@ -440,6 +477,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
                 if (cmd == 522 && subCmd == 0) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
+                    if (this.ws !== ws) return;
                     const { delivereds: deliveredMsgs, groupSeens: groupSeenMsgs } = parsedData;
 
                     if (Array.isArray(deliveredMsgs) && deliveredMsgs.length > 0) {
@@ -451,6 +489,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
                         this.emit("delivered_messages", deliveredObjects);
                     }
 
+                    if (this.ws !== ws) return;
                     if (Array.isArray(groupSeenMsgs) && groupSeenMsgs.length > 0) {
                         let seenObjects = groupSeenMsgs.map((seen) => new GroupSeenMessage(this.ctx.uid, seen));
                         if (!this.selfListen) seenObjects = seenObjects.filter((seen) => !seen.isSelf);
@@ -465,17 +504,20 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     if (ws.readyState !== WebSocket.CLOSED) ws.close(CloseReason.DuplicateConnection);
                 }
             } catch (error) {
+                if (this.ws !== ws) return;
                 this.onErrorCallback(error);
+                if (this.ws !== ws) return;
                 this.emit("error", error);
             }
         };
     }
 
     public stop() {
-        if (this.ws) {
-            this.ws.close(CloseReason.ManualClosure);
-            this.reset();
-        }
+        this.stopped = true;
+        this.clearRetryTimeout();
+        const ws = this.ws;
+        this.reset();
+        if (ws) ws.close(CloseReason.ManualClosure);
     }
 
     public sendWs(payload: WsPayload, requireId: boolean = true) {
@@ -528,10 +570,16 @@ export class Listener extends EventEmitter<ListenerEvents> {
         this.sendWs(payload);
     }
 
+    private clearRetryTimeout() {
+        if (this.retryTimeout !== undefined) clearTimeout(this.retryTimeout);
+        this.retryTimeout = undefined;
+    }
+
     private reset() {
         this.ws = null;
         this.cipherKey = undefined;
         if (this.pingInterval) clearInterval(this.pingInterval);
+        this.pingInterval = undefined;
     }
 }
 
