@@ -179,6 +179,7 @@ export type MessageContent = {
     attachments?: AttachmentSource | AttachmentSource[];
     /**
      * Time to live in milliseconds
+     * @deprecated Zalo no longer applies it
      */
     ttl?: number;
 };
