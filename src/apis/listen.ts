@@ -2,7 +2,7 @@ import EventEmitter from "events";
 import WebSocket from "ws";
 import { type FriendEvent, initializeFriendEvent, type TFriendEvent } from "../models/FriendEvent.js";
 import { type GroupEvent, initializeGroupEvent, type TGroupEvent } from "../models/GroupEvent.js";
-import type { Message, TGroupMessage, TMessage, TReaction, Typing } from "../models/index.js";
+import type { Message, TGroupMessage, TMessage, TReaction, TUndo, Typing } from "../models/index.js";
 import { GroupMessage, UserMessage, Reaction, Undo, ThreadType, GroupTyping, UserTyping } from "../models/index.js";
 import { decodeEventData, getFriendEventType, getGroupEventType, hasOwn, logger, makeURL } from "../utils.js";
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
@@ -390,16 +390,38 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
                 if (cmd == 510 && subCmd == 1) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
-                    const msgs = parsedData.msgs as TMessage[];
-                    const responseMsgs = msgs.map((msg) => new UserMessage(this.ctx.uid, msg));
+                    const msgs = parsedData.msgs as (TMessage | TUndo)[];
+                    const responseMsgs: UserMessage[] = [];
+                    const undos: Undo[] = [];
+                    for (const msg of msgs) {
+                        if (isUndo(msg)) {
+                            const undoObject = new Undo(this.ctx.uid, msg, false);
+                            if (undoObject.isSelf && !this.selfListen) continue;
+                            undos.push(undoObject);
+                        } else {
+                            responseMsgs.push(new UserMessage(this.ctx.uid, msg));
+                        }
+                    }
                     this.emit("old_messages", responseMsgs, ThreadType.User);
+                    for (const undo of undos) this.emit("undo", undo);
                 }
 
                 if (cmd == 511 && subCmd == 1) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
-                    const groupMsgs = parsedData.groupMsgs as TGroupMessage[];
-                    const responseMsgs = groupMsgs.map((msg) => new GroupMessage(this.ctx.uid, msg));
+                    const groupMsgs = parsedData.groupMsgs as (TGroupMessage | TUndo)[];
+                    const responseMsgs: GroupMessage[] = [];
+                    const undos: Undo[] = [];
+                    for (const msg of groupMsgs) {
+                        if (isUndo(msg)) {
+                            const undoObject = new Undo(this.ctx.uid, msg, true);
+                            if (undoObject.isSelf && !this.selfListen) continue;
+                            undos.push(undoObject);
+                        } else {
+                            responseMsgs.push(new GroupMessage(this.ctx.uid, msg));
+                        }
+                    }
                     this.emit("old_messages", responseMsgs, ThreadType.Group);
+                    for (const undo of undos) this.emit("undo", undo);
                 }
 
                 if (cmd == 602 && subCmd == 0) {
@@ -533,6 +555,18 @@ export class Listener extends EventEmitter<ListenerEvents> {
         this.cipherKey = undefined;
         if (this.pingInterval) clearInterval(this.pingInterval);
     }
+}
+
+/**
+ * A recall travels as a message whose content carries `deleteMsg`, both live (cmd 501/551/521)
+ * and when missed messages are replayed after a reconnect (cmd 510/511).
+ */
+function isUndo(msg: TMessage | TGroupMessage | TUndo): msg is TUndo {
+    return (
+        typeof msg.content == "object" &&
+        msg.content !== null &&
+        hasOwn(msg.content as Record<string, unknown>, "deleteMsg")
+    );
 }
 
 function getHeader(buffer: Buffer) {
