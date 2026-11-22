@@ -100,11 +100,13 @@ type LoginInfo = {
         sticker: string[];
         label: string[];
         consent: string[];
+        ai_features: string[];
         zcloud: string[];
+        emoji_stt: string[];
         chat: string[];
-        todoUrl: string[];
         recent_search: string[];
         group_e2e: string[];
+        backuppcmobile: string[];
         quick_message: string[];
     };
 };
