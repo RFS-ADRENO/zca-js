@@ -39,7 +39,7 @@ export type GifMedia = {
     url: string;
 }
 
-export type CategoryDetail = {
+export type StickerCategoryInfo = {
     id: number;
     name: string;
     desc: string;

@@ -1,9 +1,9 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-import type { CategoryDetail } from "../models/index.js";
+import type { StickerCategoryInfo } from "../models/index.js";
 
-export type GetStickerCategoryInfoResponse = CategoryDetail;
+export type GetStickerCategoryInfoResponse = StickerCategoryInfo;
 
 export const getStickerCategoryInfoFactory = apiFactory<GetStickerCategoryInfoResponse>()((api, _, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.sticker[0]}/api/message/sticker/category/detail`);
