@@ -53,6 +53,7 @@ import { getAvatarUrlProfileFactory } from "./apis/getAvatarUrlProfile.js";
 import { getBizAccountFactory } from "./apis/getBizAccount.js";
 import { getCatalogListFactory } from "./apis/getCatalogList.js";
 import { getCloseFriendsFactory } from "./apis/getCloseFriends.js";
+import { getCloudMessageFactory } from "./apis/getCloudMessage.js";
 import { getContextFactory } from "./apis/getContext.js";
 import { getCookieFactory } from "./apis/getCookie.js";
 import { getExtraFriendInfoFactory } from "./apis/getExtraFriendInfo.js";
@@ -111,6 +112,7 @@ import { keepAliveFactory } from "./apis/keepAlive.js";
 import { lastOnlineFactory } from "./apis/lastOnline.js";
 import { leaveGroupFactory } from "./apis/leaveGroup.js";
 import { lockPollFactory } from "./apis/lockPoll.js";
+import { logoutFactory } from "./apis/logout.js";
 import { lostFocusFactory } from "./apis/lostFocus.js";
 import { parseLinkFactory } from "./apis/parseLink.js";
 import { registerCatalogFactory } from "./apis/registerCatalog.js";
@@ -227,6 +229,7 @@ export class API {
     public getBizAccount: ReturnType<typeof getBizAccountFactory>;
     public getCatalogList: ReturnType<typeof getCatalogListFactory>;
     public getCloseFriends: ReturnType<typeof getCloseFriendsFactory>;
+    public getCloudMessage: ReturnType<typeof getCloudMessageFactory>;
     public getContext: ReturnType<typeof getContextFactory>;
     public getCookie: ReturnType<typeof getCookieFactory>;
     public getExtraFriendInfo: ReturnType<typeof getExtraFriendInfoFactory>;
@@ -285,6 +288,7 @@ export class API {
     public lastOnline: ReturnType<typeof lastOnlineFactory>;
     public leaveGroup: ReturnType<typeof leaveGroupFactory>;
     public lockPoll: ReturnType<typeof lockPollFactory>;
+    public logout: ReturnType<typeof logoutFactory>;
     public lostFocus: ReturnType<typeof lostFocusFactory>;
     public parseLink: ReturnType<typeof parseLinkFactory>;
     public registerCatalog: ReturnType<typeof registerCatalogFactory>;
@@ -401,6 +405,7 @@ export class API {
         this.getBizAccount = getBizAccountFactory(ctx, this);
         this.getCatalogList = getCatalogListFactory(ctx, this);
         this.getCloseFriends = getCloseFriendsFactory(ctx, this);
+        this.getCloudMessage = getCloudMessageFactory(ctx, this);
         this.getContext = getContextFactory(ctx, this);
         this.getCookie = getCookieFactory(ctx, this);
         this.getExtraFriendInfo = getExtraFriendInfoFactory(ctx, this);
@@ -459,6 +464,7 @@ export class API {
         this.lastOnline = lastOnlineFactory(ctx, this);
         this.leaveGroup = leaveGroupFactory(ctx, this);
         this.lockPoll = lockPollFactory(ctx, this);
+        this.logout = logoutFactory(ctx, this);
         this.lostFocus = lostFocusFactory(ctx, this);
         this.parseLink = parseLinkFactory(ctx, this);
         this.registerCatalog = registerCatalogFactory(ctx, this);

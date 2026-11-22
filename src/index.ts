@@ -58,6 +58,7 @@ export type { GetAvatarUrlProfileResponse } from "./apis/getAvatarUrlProfile.js"
 export type { GetBizAccountResponse } from "./apis/getBizAccount.js";
 export type { GetCatalogListPayload, GetCatalogListResponse } from "./apis/getCatalogList.js";
 export type { GetCloseFriendsResponse } from "./apis/getCloseFriends.js";
+export type { GetCloudMessageOptions, GetCloudMessageResponse } from "./apis/getCloudMessage.js";
 export type { GetExtraFriendInfoResponse } from "./apis/getExtraFriendInfo.js";
 export type { GetExtraGroupInfoResponse } from "./apis/getExtraGroupInfo.js";
 export type { GetFriendBoardListResponse } from "./apis/getFriendBoardList.js";
@@ -113,6 +114,7 @@ export type { LastOnlineResponse } from "./apis/lastOnline.js";
 export type { LeaveGroupResponse } from "./apis/leaveGroup.js";
 export type { LockPollResponse } from "./apis/lockPoll.js";
 export type { LoginQRCallback, LoginQRCallbackEvent } from "./apis/loginQR.js";
+export type { LogoutResponse } from "./apis/logout.js";
 export type { LostFocusResponse } from "./apis/lostFocus.js";
 export type { ParseLinkErrorMaps, ParseLinkResponse } from "./apis/parseLink.js";
 export type { RegisterCatalogResponse } from "./apis/registerCatalog.js";
