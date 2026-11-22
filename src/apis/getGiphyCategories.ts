@@ -1,15 +1,10 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
+import type { GiphyCategory } from "../models/index.js";
+
 export type GetGiphyCategoriesResponse = {
-    data_list: {
-        id: number;
-        name: string;
-        enName: string;
-        icon: string;
-        type: number;
-        keywords: string[];
-    }[];
+    data_list: GiphyCategory[];
     has_more: number;
 };
 

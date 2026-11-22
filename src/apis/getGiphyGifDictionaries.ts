@@ -1,12 +1,10 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
+import type { GiphyDictionary } from "../models/index.js";
+
 export type GetGiphyGifDictionariesResponse = {
-    data_list: {
-        id: string;
-        enKeywords: string[];
-        viKeywords: string[];
-    }[];
+    data_list: GiphyDictionary[];
     has_more: number;
 };
 

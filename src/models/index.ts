@@ -6,6 +6,7 @@ export * from "./Catalog.js";
 export * from "./DeliveredMessage.js";
 export * from "./Enum.js";
 export * from "./FriendEvent.js";
+export * from "./Giphy.js"
 export * from "./Group.js";
 export * from "./GroupEvent.js";
 export * from "./Label.js";

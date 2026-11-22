@@ -33,12 +33,6 @@ export type TenorSticker = {
   eid: number;
 };
 
-export type GifMedia = {
-    width: number;
-    height: number;
-    url: string;
-}
-
 export type StickerCategoryInfo = {
     id: number;
     name: string;

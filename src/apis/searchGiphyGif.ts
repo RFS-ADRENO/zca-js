@@ -1,16 +1,10 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-import type { GifMedia } from "../models/index.js";
+import type { GiphyGif } from "../models/index.js";
 
 export type SearchGiphyGifResponse = {
-    data_list: {
-        id: string;
-        original: GifMedia;
-        normal: GifMedia;
-        hd: GifMedia;
-        preview: GifMedia;
-    }[];
+    data_list: GiphyGif[];
     has_more: number;
 };
 
@@ -26,7 +20,7 @@ export const searchGiphyGifFactory = apiFactory<SearchGiphyGifResponse>()((api, 
      *
      * @throws {ZaloApiError}
      */
-    return async function searchGiphyGifs(keyword: string, offset: number = 0, limit: number = 10) {
+    return async function searchGiphyGif(keyword: string, offset: number = 0, limit: number = 10) {
         const params = {
             keyword: keyword,
             offset: offset,
