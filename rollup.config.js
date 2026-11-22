@@ -17,6 +17,7 @@ export default {
         "node:fs",
         "node:fs/promises",
         "node:path",
+        "node:zlib",
         "pako",
         "semver",
         "sharp",

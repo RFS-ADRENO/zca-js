@@ -99,9 +99,9 @@ import { getSettingsFactory } from "./apis/getSettings.js";
 import { getStickerCategoriesFactory } from "./apis/getStickerCategories.js";
 import { getStickerCategoryDetailFactory } from "./apis/getStickerCategoryDetail.js";
 import { getStickerCategoryInfoFactory } from "./apis/getStickerCategoryInfo.js";
+import { getStickerSuggestedKeywordsFactory } from "./apis/getStickerSuggestedKeywords.js";
 import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
-import { getStickerSuggestedKeywordsFactory } from "./apis/getStickerSuggestedKeywords.js";
 import { getTenorStickerMappingFactory } from "./apis/getTenorStickerMapping.js";
 import { getUnreadMarkFactory } from "./apis/getUnreadMark.js";
 import { getUserInfoFactory } from "./apis/getUserInfo.js";
@@ -147,6 +147,7 @@ import { setHiddenConversationsFactory } from "./apis/setHiddenConversations.js"
 import { setMuteFactory } from "./apis/setMute.js";
 import { setPinnedConversationsFactory } from "./apis/setPinnedConversations.js";
 import { sharePollFactory } from "./apis/sharePoll.js";
+import { syncMessagesFactory } from "./apis/syncMessages.js";
 import { unblockUserFactory } from "./apis/unblockUser.js";
 import { undoFactory } from "./apis/undo.js";
 import { undoFriendRequestFactory } from "./apis/undoFriendRequest.js";
@@ -275,9 +276,9 @@ export class API {
     public getStickerCategories: ReturnType<typeof getStickerCategoriesFactory>;
     public getStickerCategoryDetail: ReturnType<typeof getStickerCategoryDetailFactory>;
     public getStickerCategoryInfo: ReturnType<typeof getStickerCategoryInfoFactory>;
+    public getStickerSuggestedKeywords: ReturnType<typeof getStickerSuggestedKeywordsFactory>;
     public getStickers: ReturnType<typeof getStickersFactory>;
     public getStickersDetail: ReturnType<typeof getStickersDetailFactory>;
-    public getStickerSuggestedKeywords: ReturnType<typeof getStickerSuggestedKeywordsFactory>;
     public getTenorStickerMapping: ReturnType<typeof getTenorStickerMappingFactory>;
     public getUnreadMark: ReturnType<typeof getUnreadMarkFactory>;
     public getUserInfo: ReturnType<typeof getUserInfoFactory>;
@@ -323,6 +324,7 @@ export class API {
     public setMute: ReturnType<typeof setMuteFactory>;
     public setPinnedConversations: ReturnType<typeof setPinnedConversationsFactory>;
     public sharePoll: ReturnType<typeof sharePollFactory>;
+    public syncMessages: ReturnType<typeof syncMessagesFactory>;
     public unblockUser: ReturnType<typeof unblockUserFactory>;
     public undo: ReturnType<typeof undoFactory>;
     public undoFriendRequest: ReturnType<typeof undoFriendRequestFactory>;
@@ -451,9 +453,9 @@ export class API {
         this.getStickerCategories = getStickerCategoriesFactory(ctx, this);
         this.getStickerCategoryDetail = getStickerCategoryDetailFactory(ctx, this);
         this.getStickerCategoryInfo = getStickerCategoryInfoFactory(ctx, this);
+        this.getStickerSuggestedKeywords = getStickerSuggestedKeywordsFactory(ctx, this);
         this.getStickers = getStickersFactory(ctx, this);
         this.getStickersDetail = getStickersDetailFactory(ctx, this);
-        this.getStickerSuggestedKeywords = getStickerSuggestedKeywordsFactory(ctx, this);
         this.getTenorStickerMapping = getTenorStickerMappingFactory(ctx, this);
         this.getUnreadMark = getUnreadMarkFactory(ctx, this);
         this.getUserInfo = getUserInfoFactory(ctx, this);
@@ -499,6 +501,7 @@ export class API {
         this.setMute = setMuteFactory(ctx, this);
         this.setPinnedConversations = setPinnedConversationsFactory(ctx, this);
         this.sharePoll = sharePollFactory(ctx, this);
+        this.syncMessages = syncMessagesFactory(ctx, this);
         this.unblockUser = unblockUserFactory(ctx, this);
         this.undo = undoFactory(ctx, this);
         this.undoFriendRequest = undoFriendRequestFactory(ctx, this);
