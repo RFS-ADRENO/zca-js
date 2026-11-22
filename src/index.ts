@@ -57,7 +57,6 @@ export type { GetAvatarListResponse } from "./apis/getAvatarList.js";
 export type { GetAvatarUrlProfileResponse } from "./apis/getAvatarUrlProfile.js";
 export type { GetBizAccountResponse } from "./apis/getBizAccount.js";
 export type { GetCatalogListPayload, GetCatalogListResponse } from "./apis/getCatalogList.js";
-export type { GetCategoryDetailResponse } from "./apis/getCategoryDetail.js";
 export type { GetCloseFriendsResponse } from "./apis/getCloseFriends.js";
 export type { GetExtraFriendInfoResponse } from "./apis/getExtraFriendInfo.js";
 export type { GetExtraGroupInfoResponse } from "./apis/getExtraGroupInfo.js";
@@ -100,6 +99,7 @@ export type { GetSentFriendRequestResponse, SentFriendRequestInfo } from "./apis
 export type { GetSettingsResponse } from "./apis/getSettings.js";
 export type { GetStickerCategoryiesResponse } from "./apis/getStickerCategories.js";
 export type { GetStickerCategoryDetailResponse } from "./apis/getStickerCategoryDetail.js";
+export type { GetStickerCategoryInfoResponse } from "./apis/getStickerCategoryInfo.js";
 export type { StickerDetailResponse } from "./apis/getStickersDetail.js";
 export type { GetStickerSuggestedKeywordsResponse } from "./apis/getStickerSuggestedKeywords.js";
 export type { GetTenorStickerMappingResponse } from "./apis/getTenorStickerMapping.js";
