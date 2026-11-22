@@ -14,6 +14,8 @@ export const getTenorStickerMappingFactory = apiFactory<GetTenorStickerMappingRe
     /**
      * Get tenor sticker mapping
      *
+     * @deprecated no longer supported
+     * 
      * @throws {ZaloApiError}
      */
     return async function getTenorStickerMapping() {
