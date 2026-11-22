@@ -147,6 +147,7 @@ import { setHiddenConversationsFactory } from "./apis/setHiddenConversations.js"
 import { setMuteFactory } from "./apis/setMute.js";
 import { setPinnedConversationsFactory } from "./apis/setPinnedConversations.js";
 import { sharePollFactory } from "./apis/sharePoll.js";
+import { syncMessagesFactory } from "./apis/syncMessages.js";
 import { unblockUserFactory } from "./apis/unblockUser.js";
 import { undoFactory } from "./apis/undo.js";
 import { undoFriendRequestFactory } from "./apis/undoFriendRequest.js";
@@ -323,6 +324,7 @@ export class API {
     public setMute: ReturnType<typeof setMuteFactory>;
     public setPinnedConversations: ReturnType<typeof setPinnedConversationsFactory>;
     public sharePoll: ReturnType<typeof sharePollFactory>;
+    public syncMessages: ReturnType<typeof syncMessagesFactory>;
     public unblockUser: ReturnType<typeof unblockUserFactory>;
     public undo: ReturnType<typeof undoFactory>;
     public undoFriendRequest: ReturnType<typeof undoFriendRequestFactory>;
@@ -499,6 +501,7 @@ export class API {
         this.setMute = setMuteFactory(ctx, this);
         this.setPinnedConversations = setPinnedConversationsFactory(ctx, this);
         this.sharePoll = sharePollFactory(ctx, this);
+        this.syncMessages = syncMessagesFactory(ctx, this);
         this.unblockUser = unblockUserFactory(ctx, this);
         this.undo = undoFactory(ctx, this);
         this.undoFriendRequest = undoFriendRequestFactory(ctx, this);

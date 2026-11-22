@@ -22,6 +22,28 @@ export type WsPayload<T = Record<string, unknown>> = {
     data: T;
 };
 
+export type WsResponse<T = Record<string, unknown>> = {
+    /** 0 when the server accepted the request */
+    code: number;
+    message: string;
+    data: T;
+};
+
+/**
+ * Raw control event of the "sync from another device" feature (`act_type: "transfer_sync2"`)
+ */
+export type SyncControlEvent = {
+    act: string;
+    data: Record<string, unknown>;
+};
+
+type PendingRequest = {
+    cmd: number;
+    resolve: (response: WsResponse) => void;
+    reject: (error: Error) => void;
+    timer: ReturnType<typeof setTimeout>;
+};
+
 export type OnMessageCallback = (message: Message) => unknown;
 export type OnClosedCallback = (code: CloseReason, reason: string) => unknown;
 export type OnErrorCallback = (error: unknown) => unknown;
@@ -50,6 +72,7 @@ interface ListenerEvents {
     friend_event: [data: FriendEvent];
     group_event: [data: GroupEvent];
     cipher_key: [key: string];
+    sync_event: [event: SyncControlEvent];
 }
 
 export class Listener extends EventEmitter<ListenerEvents> {
@@ -78,6 +101,7 @@ export class Listener extends EventEmitter<ListenerEvents> {
     private pingInterval?: Timer;
 
     private id = 0;
+    private pendingRequests = new Map<string, PendingRequest>();
 
     constructor(
         private ctx: ContextSession,
@@ -255,6 +279,8 @@ export class Listener extends EventEmitter<ListenerEvents> {
                     }, this.ctx.settings.features.socket.ping_interval);
                 }
 
+                if (this.pendingRequests.size > 0) await this.resolvePendingRequest(cmd, parsed);
+
                 if (version == 1 && ([501, 551].includes(cmd)) && subCmd == 0) {
                     const parsedData = (await decodeEventData(parsed, this.cipherKey)).data;
                     const { msgs } = parsedData;
@@ -353,6 +379,13 @@ export class Listener extends EventEmitter<ListenerEvents> {
                             );
                             if (friendEvent.isSelf && !this.selfListen) continue;
                             this.emit("friend_event", friendEvent);
+                        } else if (control.content.act_type == "transfer_sync2") {
+                            const syncData =
+                                typeof control.content.data == "string"
+                                    ? JSON.parse(control.content.data)
+                                    : control.content.data;
+
+                            this.emit("sync_event", { act: control.content.act, data: syncData ?? {} });
                         }
                     }
                 }
@@ -499,6 +532,76 @@ export class Listener extends EventEmitter<ListenerEvents> {
     }
 
     /**
+     * Send a request through the websocket and wait for the response of the server.
+     *
+     * Only for commands that Zalo answers with the same `cmd` and echoes the request id back
+     * (e.g. 590, 591, 592 of the sync feature).
+     *
+     * @param cmd command number
+     * @param subCmd sub command number
+     * @param data request data
+     * @param timeout time to wait for the response, in milliseconds
+     *
+     * @throws {ZaloApiError} if the listener is not started, the request timed out or the connection closed
+     */
+    public sendRequest<T = Record<string, unknown>>(
+        cmd: number,
+        subCmd: number,
+        data: Record<string, unknown>,
+        timeout: number = 10_000,
+    ): Promise<WsResponse<T>> {
+        return new Promise((resolve, reject) => {
+            if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+                return reject(new ZaloApiError("Listener is not connected, call `api.listener.start()` first"));
+            }
+
+            const reqId = `req_${this.id++}`;
+            const timer = setTimeout(() => {
+                this.pendingRequests.delete(reqId);
+                reject(new ZaloApiError(`Request timed out (cmd ${cmd})`));
+            }, timeout);
+
+            this.pendingRequests.set(reqId, {
+                cmd,
+                resolve: resolve as (response: WsResponse) => void,
+                reject,
+                timer,
+            });
+            this.sendWs({ version: 1, cmd, subCmd, data: { data, reqId } }, false);
+        });
+    }
+
+    private async resolvePendingRequest(cmd: number, parsed: Record<string, unknown>) {
+        const candidates = [...this.pendingRequests.entries()].filter(([, pending]) => pending.cmd == cmd);
+        if (candidates.length == 0) return;
+
+        let decoded: Record<string, unknown> = parsed;
+        if (typeof parsed.data == "string" && typeof parsed.encrypt == "number") {
+            decoded = (await decodeEventData(parsed, this.cipherKey)) ?? {};
+        }
+
+        const inner = (typeof decoded.data == "object" && decoded.data !== null ? decoded.data : decoded) as Record<
+            string,
+            unknown
+        >;
+        const reqId = [inner.reqId, decoded.reqId, parsed.reqId].find((id) => typeof id == "string") as
+            | string
+            | undefined;
+
+        // responses normally echo the request id, fall back to the oldest request of this command otherwise
+        const entry = reqId ? candidates.find(([id]) => id == reqId) : candidates[0];
+        if (!entry) return;
+
+        const [id, pending] = entry;
+        clearTimeout(pending.timer);
+        this.pendingRequests.delete(id);
+
+        const code = Number(decoded.error_code ?? parsed.error_code ?? 0) || 0;
+        const message = String(decoded.error_message ?? parsed.error_message ?? "");
+        pending.resolve({ code, message, data: inner });
+    }
+
+    /**
      * Request old messages
      *
      * @param lastMsgId
@@ -532,6 +635,12 @@ export class Listener extends EventEmitter<ListenerEvents> {
         this.ws = null;
         this.cipherKey = undefined;
         if (this.pingInterval) clearInterval(this.pingInterval);
+
+        for (const [id, pending] of this.pendingRequests) {
+            clearTimeout(pending.timer);
+            pending.reject(new ZaloApiError(`Connection closed before the response arrived (cmd ${pending.cmd})`));
+            this.pendingRequests.delete(id);
+        }
     }
 }
 
