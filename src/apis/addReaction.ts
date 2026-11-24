@@ -36,6 +36,10 @@ export const addReactionFactory = apiFactory<AddReactionResponse>()((api, ctx, u
      * @throws {ZaloApiError}
      */
     return async function addReaction(icon: Reactions | CustomReaction, dest: AddReactionDestination) {
+        if (dest.type !== ThreadType.User && dest.type !== ThreadType.Group) {
+            throw new ZaloApiError("Thread type is invalid");
+        }
+
         const serviceURL = serviceURLs[dest.type];
         let rType, source;
 

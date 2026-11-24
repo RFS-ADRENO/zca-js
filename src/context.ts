@@ -100,11 +100,13 @@ type LoginInfo = {
         sticker: string[];
         label: string[];
         consent: string[];
+        ai_features: string[];
         zcloud: string[];
+        emoji_stt: string[];
         chat: string[];
-        todoUrl: string[];
         recent_search: string[];
         group_e2e: string[];
+        backuppcmobile: string[];
         quick_message: string[];
     };
 };
@@ -157,7 +159,13 @@ export type Options = {
     checkUpdate: boolean;
     logging: boolean;
 
+    /**
+     * Zalo API type. Automatically detected from Zalo Web at login when omitted.
+     */
     apiType: number;
+    /**
+     * Zalo API version. Automatically detected from Zalo Web at login when omitted.
+     */
     apiVersion: number;
 
     agent?: Agent;
@@ -187,13 +195,17 @@ class CallbacksMap extends Map<string, UploadCallback> {
 export type AppContextExtended = {
     uploadCallbacks: CallbacksMap;
     options: Options;
-    readonly API_TYPE: number;
-    readonly API_VERSION: number;
+    API_TYPE: number;
+    API_VERSION: number;
 };
 
 export type ContextBase = Partial<AppContextBase> & AppContextExtended;
 
-export const createContext = (apiType = 30, apiVersion = 671) =>
+// Fallback values, used when the API type/version cannot be detected from Zalo Web
+export const DEFAULT_API_TYPE = 30;
+export const DEFAULT_API_VERSION = 695;
+
+export const createContext = (apiType = DEFAULT_API_TYPE, apiVersion = DEFAULT_API_VERSION) =>
     ({
         API_TYPE: apiType,
         API_VERSION: apiVersion,

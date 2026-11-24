@@ -25,6 +25,7 @@ export type LoginQRCallbackEvent =
                   enabledCheckOCR: boolean;
                   enabledMultiLayer: boolean;
               };
+              token: string;
           };
           actions: {
               saveToFile: (qrPath?: string) => Promise<unknown>;
@@ -104,7 +105,7 @@ async function loadLoginPage(ctx: ContextBase) {
 
 async function getLoginInfo(ctx: ContextBase, version: string) {
     const form = new URLSearchParams();
-    form.append("continue", "https://zalo.me/pc");
+    form.append("continue", "https://chat.zalo.me/");
     form.append("v", version);
 
     return await request(ctx, "https://id.zalo.me/account/logininfo", {
@@ -119,35 +120,7 @@ async function getLoginInfo(ctx: ContextBase, version: string) {
             "sec-fetch-dest": "empty",
             "sec-fetch-mode": "cors",
             "sec-fetch-site": "same-origin",
-            Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fzalo.me%2Fpc",
-            "Referrer-Policy": "strict-origin-when-cross-origin",
-        },
-        body: form,
-        method: "POST",
-    })
-        .then((res) => res.json())
-        .catch(logger(ctx).error);
-}
-
-async function verifyClient(ctx: ContextBase, version: string) {
-    const form = new URLSearchParams();
-    form.append("type", "device");
-    form.append("continue", "https://zalo.me/pc");
-    form.append("v", version);
-
-    return await request(ctx, "https://id.zalo.me/account/verify-client", {
-        headers: {
-            accept: "*/*",
-            "accept-language": "vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5",
-            "content-type": "application/x-www-form-urlencoded",
-            priority: "u=1, i",
-            "sec-ch-ua": '"Chromium";v="130", "Google Chrome";v="130", "Not?A_Brand";v="99"',
-            "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": '"Windows"',
-            "sec-fetch-dest": "empty",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-site": "same-origin",
-            Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fzalo.me%2Fpc",
+            Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fchat.zalo.me%2F",
             "Referrer-Policy": "strict-origin-when-cross-origin",
         },
         body: form,
@@ -168,12 +141,15 @@ async function generate(
             enabledCheckOCR: boolean;
             enabledMultiLayer: boolean;
         };
+        token: string;
     } | null;
     error_code: number;
     error_message: string;
 }> {
     const form = new URLSearchParams();
-    form.append("continue", "https://zalo.me/pc");
+    // 1 = client builds the QR itself (web's trusted device flow), 0 = use the server's QR image
+    form.append("cliGenQR", "0");
+    form.append("continue", "https://chat.zalo.me/");
     form.append("v", version);
 
     return await request(ctx, "https://id.zalo.me/account/authen/qr/generate", {
@@ -188,7 +164,7 @@ async function generate(
             "sec-fetch-dest": "empty",
             "sec-fetch-mode": "cors",
             "sec-fetch-site": "same-origin",
-            Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fzalo.me%2Fpc",
+            Referer: "https://id.zalo.me/account?continue=https%3A%2F%2Fchat.zalo.me%2F",
             "Referrer-Policy": "strict-origin-when-cross-origin",
         },
         body: form,
@@ -212,6 +188,12 @@ async function waitingScan(
           data: {
               avatar: string;
               display_name: string;
+              // 4: required second scan, 5: failed
+              status?: number;
+              // new QR code, present when a second scan is required
+              code?: string;
+              token?: string;
+              image?: string;
           } | null;
           error_code: number;
           error_message: string;
@@ -242,7 +224,7 @@ async function waitingScan(
         method: "POST",
         signal,
     })
-        .then((res) => res.json())
+        .then((res) => (res.status == 502 || res.status == 504 ? { error_code: 8 } : res.json()))
         .then((data) => {
             if (data.error_code == 8) {
                 return waitingScan(ctx, version, code, signal);
@@ -262,7 +244,7 @@ async function waitingConfirm(
     signal: AbortSignal,
 ): Promise<
     | {
-          data: null;
+          data: { url?: string } | null;
           error_code: number;
           error_message: string;
       }
@@ -270,8 +252,6 @@ async function waitingConfirm(
 > {
     const form = new URLSearchParams();
     form.append("code", code);
-    form.append("gToken", "");
-    form.append("gAction", "CONFIRM_QR");
     form.append("continue", "https://chat.zalo.me/");
     form.append("v", version);
 
@@ -296,7 +276,7 @@ async function waitingConfirm(
         method: "POST",
         signal,
     })
-        .then((res) => res.json())
+        .then((res) => (res.status == 502 || res.status == 504 ? { error_code: 8 } : res.json()))
         .then((data) => {
             if (data.error_code == 8) {
                 return waitingConfirm(ctx, version, code, signal);
@@ -309,10 +289,10 @@ async function waitingConfirm(
         });
 }
 
-async function checkSession(ctx: ContextBase) {
+async function checkSession(ctx: ContextBase, url?: string) {
     return await request(
         ctx,
-        "https://id.zalo.me/account/checksession?continue=https%3A%2F%2Fchat.zalo.me%2Findex.html",
+        url ?? "https://id.zalo.me/account/checksession?continue=https%3A%2F%2Fchat.zalo.me%2Findex.html",
         {
             headers: {
                 accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -416,37 +396,14 @@ export async function loginQR(
             logger(ctx).info("Got login version:", loginVersion);
 
             await getLoginInfo(ctx, loginVersion);
-            await verifyClient(ctx, loginVersion);
             const qrGenResult = await generate(ctx, loginVersion);
             if (!qrGenResult || !qrGenResult.data)
                 throw new ZaloApiError(`Unable to generate QRCode\nResponse: ${JSON.stringify(qrGenResult, null, 2)}`);
 
-            const qrData = qrGenResult.data;
+            let qrData = qrGenResult.data;
+            let scanResult: Awaited<ReturnType<typeof waitingScan>>;
 
-            if (callback) {
-                callback({
-                    type: LoginQRCallbackEventType.QRCodeGenerated,
-                    data: {
-                        ...qrGenResult.data,
-                        image: qrGenResult.data.image.replace(/^data:image\/png;base64,/, ""),
-                    },
-                    actions: {
-                        async saveToFile(qrPath = options.qrPath ?? "qr.png") {
-                            await saveQRCodeToFile(qrPath, qrData.image.replace(/^data:image\/png;base64,/, ""));
-                            logger(ctx).info("Scan the QR code at", `'${qrPath}'`, "to proceed with login");
-                        },
-                        retry,
-                        abort,
-                    },
-                });
-            } else {
-                const qrPath = options.qrPath ?? "qr.png";
-
-                await saveQRCodeToFile(qrPath, qrData.image.replace(/^data:image\/png;base64,/, ""));
-                logger(ctx).info("Scan the QR code at", `'${qrPath}'`, "to proceed with login");
-            }
-
-            qrTimeout = setTimeout(() => {
+            async function handleQrTimeout() {
                 cleanUp();
 
                 logger(ctx).info("QR expired!");
@@ -463,10 +420,51 @@ export async function loginQR(
                 } else {
                     retry();
                 }
-            }, 100_000);
+            }
 
-            const scanResult = await waitingScan(ctx, loginVersion, qrGenResult.data.code, controller.signal);
-            if (!scanResult || !scanResult.data) throw new ZaloApiError("Cannot get scan result");
+            while (true) {
+                if (callback) {
+                    callback({
+                        type: LoginQRCallbackEventType.QRCodeGenerated,
+                        data: {
+                            ...qrData,
+                            image: qrData.image.replace(/^data:image\/png;base64,/, ""),
+                        },
+                        actions: {
+                            async saveToFile(qrPath = options.qrPath ?? "qr.png") {
+                                await saveQRCodeToFile(qrPath, qrData.image.replace(/^data:image\/png;base64,/, ""));
+                                logger(ctx).info("Scan the QR code at", `'${qrPath}'`, "to proceed with login");
+                            },
+                            retry,
+                            abort,
+                        },
+                    });
+                } else {
+                    const qrPath = options.qrPath ?? "qr.png";
+
+                    await saveQRCodeToFile(qrPath, qrData.image.replace(/^data:image\/png;base64,/, ""));
+                    logger(ctx).info("Scan the QR code at", `'${qrPath}'`, "to proceed with login");
+                }
+
+                qrTimeout = setTimeout(handleQrTimeout, 100_000);
+
+                scanResult = await waitingScan(ctx, loginVersion, qrData.code, controller.signal);
+                if (!scanResult || !scanResult.data) throw new ZaloApiError("Cannot get scan result");
+                if (scanResult.data.status == 5)
+                    throw new ZaloApiError(`QRCode login failed.\nResponse: ${JSON.stringify(scanResult, null, 2)}`);
+                if (scanResult.data.status != 4) break;
+
+                // second scan required: show the new QR code and wait for the scan again
+                const { code, token, image } = scanResult.data;
+                if (!code || !token || (!image && !callback))
+                    throw new ZaloApiError(
+                        `A second scan is required but no QR code was returned.\nResponse: ${JSON.stringify(scanResult, null, 2)}`,
+                    );
+
+                logger(ctx).info("A second scan is required");
+                qrData = { ...qrData, code, token, image: image ?? "" };
+                clearTimeout(qrTimeout);
+            }
 
             if (callback) {
                 callback({
@@ -479,10 +477,11 @@ export async function loginQR(
                 });
             }
 
-            const confirmResult = await waitingConfirm(ctx, loginVersion, qrGenResult.data.code, controller.signal);
+            clearTimeout(qrTimeout);
+
+            const confirmResult = await waitingConfirm(ctx, loginVersion, qrData.code, controller.signal);
             if (!confirmResult) throw new ZaloApiError("Cannot get confirm result");
 
-            clearTimeout(qrTimeout);
 
             if (confirmResult.error_code == -13) {
                 if (callback) {
@@ -502,11 +501,13 @@ export async function loginQR(
                 }
 
                 return;
+            } else if (confirmResult.error_code == -14) {
+                return handleQrTimeout();
             } else if (confirmResult.error_code != 0) {
                 throw new ZaloApiError(`An error has occurred.\nResponse: ${JSON.stringify(confirmResult, null, 2)}`);
             }
 
-            const checkSessionResult = await checkSession(ctx);
+            const checkSessionResult = await checkSession(ctx, confirmResult.data?.url);
             if (!checkSessionResult) throw new ZaloApiError("Cannot get session, login failed");
 
             logger(ctx).info("Successfully logged into the account", scanResult.data.display_name);
