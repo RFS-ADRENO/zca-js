@@ -6,7 +6,10 @@ type UploadEventData = {
     fileId: string;
 };
 
-export type UploadCallback = (data: UploadEventData) => unknown;
+/** Passed to an upload's callback when the socket closes before Zalo confirms it. */
+type UploadSocketClosed = { closed: true };
+
+export type UploadCallback = (data: UploadEventData | UploadSocketClosed) => unknown;
 
 type ShareFileSettings = {
     big_file_domain_list: string[];
@@ -194,6 +197,8 @@ class CallbacksMap extends Map<string, UploadCallback> {
 
 export type AppContextExtended = {
     uploadCallbacks: CallbacksMap;
+    /** false while the listener's socket is closed; undefined until it first opens. */
+    socketOpen?: boolean;
     options: Options;
     API_TYPE: number;
     API_VERSION: number;
