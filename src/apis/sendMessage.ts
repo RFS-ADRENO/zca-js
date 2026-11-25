@@ -159,6 +159,7 @@ export type MessageContent = {
     msg: string;
     /**
      * Text styles
+     * Styled text is sent separately before attachments.
      */
     styles?: Style[];
     /**
@@ -647,7 +648,7 @@ export const sendMessageFactory = apiFactory()((api, ctx, utils) => {
             const isSingleFile = attachments.length == 1;
 
             const canBeDesc = isSingleFile && ["jpg", "jpeg", "png", "webp"].includes(firstExtFile);
-            if ((!canBeDesc && msg.length > 0) || (msg.length > 0 && quote)) {
+            if (msg.length > 0 && (!canBeDesc || quote || styles?.length)) {
                 // send message and attachment separately
                 await handleMessage(message, threadId, type).then(async (data) => {
                     responses.message = (await send(data))[0];
