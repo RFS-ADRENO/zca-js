@@ -20,4 +20,5 @@ export * from "./Sticker.js";
 export * from "./Typing.js";
 export * from "./Undo.js";
 export * from "./User.js";
+export * from "./VoiceEvent.js";
 export * from "./ZBusiness.js";

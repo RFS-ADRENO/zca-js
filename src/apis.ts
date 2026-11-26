@@ -168,6 +168,7 @@ import { updateSettingsFactory } from "./apis/updateSettings.js";
 import { upgradeGroupToCommunityFactory } from "./apis/upgradeGroupToCommunity.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 import { uploadProductPhotoFactory } from "./apis/uploadProductPhoto.js";
+import { voiceToTextFactory } from "./apis/voiceToText.js";
 import { votePollFactory } from "./apis/votePoll.js";
 import { customFactory } from "./apis/custom.js";
 import type { ZPWServiceMap, ContextSession } from "./context.js";
@@ -344,6 +345,7 @@ export class API {
     public upgradeGroupToCommunity: ReturnType<typeof upgradeGroupToCommunityFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
     public uploadProductPhoto: ReturnType<typeof uploadProductPhotoFactory>;
+    public voiceToText: ReturnType<typeof voiceToTextFactory>;
     public votePoll: ReturnType<typeof votePollFactory>;
 
     public custom: ReturnType<typeof customFactory>;
@@ -520,6 +522,7 @@ export class API {
         this.upgradeGroupToCommunity = upgradeGroupToCommunityFactory(ctx, this);
         this.uploadAttachment = uploadAttachmentFactory(ctx, this);
         this.uploadProductPhoto = uploadProductPhotoFactory(ctx, this);
+        this.voiceToText = voiceToTextFactory(ctx, this);
         this.votePoll = votePollFactory(ctx, this);
 
         this.custom = customFactory(ctx, this);

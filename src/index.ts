@@ -170,6 +170,7 @@ export type { UpdateSettingsResponse } from "./apis/updateSettings.js";
 export type { UpgradeGroupToCommunityResponse } from "./apis/upgradeGroupToCommunity.js";
 export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType, UploadAttachmentImageResponse, UploadAttachmentVideoResponse, UploadAttachmentFileResponse } from "./apis/uploadAttachment.js";
 export type { UploadProductPhotoPayload, UploadProductPhotoResponse } from "./apis/uploadProductPhoto.js";
+export type { VoiceToTextResponse } from "./apis/voiceToText.js";
 export type { VotePollResponse } from "./apis/votePoll.js";
 
 export type { CustomAPICallback, CustomAPIProps } from "./apis/custom.js";
