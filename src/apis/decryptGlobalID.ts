@@ -2,7 +2,9 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
 export type DecryptGlobalIDResponse = {
-    [globalID: string]: string;
+    data: {
+        [globalID: string]: string;
+    };
 };
 
 export const decryptGlobalIDFactory = apiFactory<DecryptGlobalIDResponse>()((api, _, utils) => {

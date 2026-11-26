@@ -218,6 +218,20 @@ export function decodeBase64ToBuffer(data: string) {
     return Buffer.from(data, "base64");
 }
 
+export function encodeBase64(data: Uint8Array) {
+    return Buffer.from(data).toString("base64");
+}
+
+const ALPHANUMERIC = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+/**
+ * Random string of letters and digits with an exact length
+ * (`ParamsEncryptor.randomString` gives hex characters only)
+ */
+export function randomAlphanumeric(length: number) {
+    return Array.from(crypto.randomBytes(length), (byte) => ALPHANUMERIC[byte % ALPHANUMERIC.length]).join("");
+}
+
 export function decodeUnit8Array(data: Uint8Array) {
     try {
         return new TextDecoder().decode(data);

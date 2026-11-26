@@ -2,7 +2,9 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
 export type EncryptGlobalIDResponse = {
-    [userID: string]: string;
+    data: {
+        [userID: string]: string;
+    };
 };
 
 export const encryptGlobalIDFactory = apiFactory<EncryptGlobalIDResponse>()((api, _, utils) => {
