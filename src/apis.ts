@@ -91,6 +91,7 @@ import { getPollDetailFactory } from "./apis/getPollDetail.js";
 import { getProductCatalogListFactory } from "./apis/getProductCatalogList.js";
 import { getQRFactory } from "./apis/getQR.js";
 import { getQuickMessageListFactory } from "./apis/getQuickMessageList.js";
+import { getQuotaCommunityFactory } from "./apis/getQuotaCommunity.js";
 import { getRelatedFriendGroupFactory } from "./apis/getRelatedFriendGroup.js";
 import { getReminderFactory } from "./apis/getReminder.js";
 import { getReminderResponsesFactory } from "./apis/getReminderResponses.js";
@@ -269,6 +270,7 @@ export class API {
     public getProductCatalogList: ReturnType<typeof getProductCatalogListFactory>;
     public getQR: ReturnType<typeof getQRFactory>;
     public getQuickMessageList: ReturnType<typeof getQuickMessageListFactory>;
+    public getQuotaCommunity: ReturnType<typeof getQuotaCommunityFactory>;
     public getRelatedFriendGroup: ReturnType<typeof getRelatedFriendGroupFactory>;
     public getReminder: ReturnType<typeof getReminderFactory>;
     public getReminderResponses: ReturnType<typeof getReminderResponsesFactory>;
@@ -447,6 +449,7 @@ export class API {
         this.getProductCatalogList = getProductCatalogListFactory(ctx, this);
         this.getQR = getQRFactory(ctx, this);
         this.getQuickMessageList = getQuickMessageListFactory(ctx, this);
+        this.getQuotaCommunity = getQuotaCommunityFactory(ctx, this);
         this.getRelatedFriendGroup = getRelatedFriendGroupFactory(ctx, this);
         this.getReminder = getReminderFactory(ctx, this);
         this.getReminderResponses = getReminderResponsesFactory(ctx, this);
