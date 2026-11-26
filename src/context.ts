@@ -98,6 +98,7 @@ type LoginInfo = {
         voice_call: string[];
         profile: string[];
         sticker: string[];
+        banner: string[];
         label: string[];
         consent: string[];
         ai_features: string[];
