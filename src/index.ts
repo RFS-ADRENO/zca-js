@@ -92,6 +92,7 @@ export type { GetPinConversationsResponse } from "./apis/getPinConversations.js"
 export type { PollDetailResponse } from "./apis/getPollDetail.js";
 export type { GetProductCatalogListPayload, GetProductCatalogListResponse } from "./apis/getProductCatalogList.js";
 export type { GetProfileExtraResponse, PhotoMeta } from "./apis/getProfileExtra.js";
+export type { GetProfileRankResponse } from "./apis/getProfileRank.js";
 export type { GetQRResponse } from "./apis/getQR.js";
 export type { GetQuickMessageListResponse } from "./apis/getQuickMessageList.js";
 export type { GetQuotaCommunityResponse } from "./apis/getQuotaCommunity.js";
