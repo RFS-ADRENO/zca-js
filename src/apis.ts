@@ -89,6 +89,7 @@ import { getPendingGroupMembersFactory } from "./apis/getPendingGroupMembers.js"
 import { getPinConversationsFactory } from "./apis/getPinConversations.js";
 import { getPollDetailFactory } from "./apis/getPollDetail.js";
 import { getProductCatalogListFactory } from "./apis/getProductCatalogList.js";
+import { getProfileExtraFactory } from "./apis/getProfileExtra.js";
 import { getQRFactory } from "./apis/getQR.js";
 import { getQuickMessageListFactory } from "./apis/getQuickMessageList.js";
 import { getQuotaCommunityFactory } from "./apis/getQuotaCommunity.js";
@@ -268,6 +269,7 @@ export class API {
     public getPinConversations: ReturnType<typeof getPinConversationsFactory>;
     public getPollDetail: ReturnType<typeof getPollDetailFactory>;
     public getProductCatalogList: ReturnType<typeof getProductCatalogListFactory>;
+    public getProfileExtra: ReturnType<typeof getProfileExtraFactory>;
     public getQR: ReturnType<typeof getQRFactory>;
     public getQuickMessageList: ReturnType<typeof getQuickMessageListFactory>;
     public getQuotaCommunity: ReturnType<typeof getQuotaCommunityFactory>;
@@ -447,6 +449,7 @@ export class API {
         this.getPinConversations = getPinConversationsFactory(ctx, this);
         this.getPollDetail = getPollDetailFactory(ctx, this);
         this.getProductCatalogList = getProductCatalogListFactory(ctx, this);
+        this.getProfileExtra = getProfileExtraFactory(ctx, this);
         this.getQR = getQRFactory(ctx, this);
         this.getQuickMessageList = getQuickMessageListFactory(ctx, this);
         this.getQuotaCommunity = getQuotaCommunityFactory(ctx, this);
