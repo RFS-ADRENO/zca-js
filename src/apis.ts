@@ -16,6 +16,7 @@ import { changeFriendAliasFactory } from "./apis/changeFriendAlias.js";
 import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
 import { changeGroupNameFactory } from "./apis/changeGroupName.js";
 import { changeGroupOwnerFactory } from "./apis/changeGroupOwner.js";
+import { convertOAIDFactory } from "./apis/convertOAID.js";
 import { createAutoReplyFactory } from "./apis/createAutoReply.js";
 import { createBankAccountFactory } from "./apis/createBankAccount.js";
 import { createCatalogFactory } from "./apis/createCatalog.js";
@@ -199,6 +200,7 @@ export class API {
     public changeGroupAvatar: ReturnType<typeof changeGroupAvatarFactory>;
     public changeGroupName: ReturnType<typeof changeGroupNameFactory>;
     public changeGroupOwner: ReturnType<typeof changeGroupOwnerFactory>;
+    public convertOAID: ReturnType<typeof convertOAIDFactory>;
     public createAutoReply: ReturnType<typeof createAutoReplyFactory>;
     public createBankAccount: ReturnType<typeof createBankAccountFactory>;
     public createCatalog: ReturnType<typeof createCatalogFactory>;
@@ -382,6 +384,7 @@ export class API {
         this.changeGroupAvatar = changeGroupAvatarFactory(ctx, this);
         this.changeGroupName = changeGroupNameFactory(ctx, this);
         this.changeGroupOwner = changeGroupOwnerFactory(ctx, this);
+        this.convertOAID = convertOAIDFactory(ctx, this);
         this.createAutoReply = createAutoReplyFactory(ctx, this);
         this.createBankAccount = createBankAccountFactory(ctx, this);
         this.createCatalog = createCatalogFactory(ctx, this);
