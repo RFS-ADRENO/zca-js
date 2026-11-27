@@ -8,6 +8,7 @@ import { addQuickMessageFactory } from "./apis/addQuickMessage.js";
 import { addReactionFactory } from "./apis/addReaction.js";
 import { addUnreadMarkFactory } from "./apis/addUnreadMark.js";
 import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
+import { blockOAFactory } from "./apis/blockOA.js";
 import { blockUserFactory } from "./apis/blockUser.js";
 import { blockViewFeedFactory } from "./apis/blockViewFeed.js";
 import { changeAccountAvatarFactory } from "./apis/changeAccountAvatar.js";
@@ -151,6 +152,7 @@ import { setMuteFactory } from "./apis/setMute.js";
 import { setPinnedConversationsFactory } from "./apis/setPinnedConversations.js";
 import { sharePollFactory } from "./apis/sharePoll.js";
 import { syncMessagesFactory } from "./apis/syncMessages.js";
+import { unblockOAFactory } from "./apis/unblockOA.js";
 import { unblockUserFactory } from "./apis/unblockUser.js";
 import { undoFactory } from "./apis/undo.js";
 import { undoFriendRequestFactory } from "./apis/undoFriendRequest.js";
@@ -189,6 +191,7 @@ export class API {
     public addReaction: ReturnType<typeof addReactionFactory>;
     public addUnreadMark: ReturnType<typeof addUnreadMarkFactory>;
     public addUserToGroup: ReturnType<typeof addUserToGroupFactory>;
+    public blockOA: ReturnType<typeof blockOAFactory>;
     public blockUser: ReturnType<typeof blockUserFactory>;
     public blockViewFeed: ReturnType<typeof blockViewFeedFactory>;
     public changeAccountAvatar: ReturnType<typeof changeAccountAvatarFactory>;
@@ -332,6 +335,7 @@ export class API {
     public setPinnedConversations: ReturnType<typeof setPinnedConversationsFactory>;
     public sharePoll: ReturnType<typeof sharePollFactory>;
     public syncMessages: ReturnType<typeof syncMessagesFactory>;
+    public unblockOA: ReturnType<typeof unblockOAFactory>;
     public unblockUser: ReturnType<typeof unblockUserFactory>;
     public undo: ReturnType<typeof undoFactory>;
     public undoFriendRequest: ReturnType<typeof undoFriendRequestFactory>;
@@ -370,6 +374,7 @@ export class API {
         this.addReaction = addReactionFactory(ctx, this);
         this.addUnreadMark = addUnreadMarkFactory(ctx, this);
         this.addUserToGroup = addUserToGroupFactory(ctx, this);
+        this.blockOA = blockOAFactory(ctx, this);
         this.blockUser = blockUserFactory(ctx, this);
         this.blockViewFeed = blockViewFeedFactory(ctx, this);
         this.changeAccountAvatar = changeAccountAvatarFactory(ctx, this);
@@ -513,6 +518,7 @@ export class API {
         this.setPinnedConversations = setPinnedConversationsFactory(ctx, this);
         this.sharePoll = sharePollFactory(ctx, this);
         this.syncMessages = syncMessagesFactory(ctx, this);
+        this.unblockOA = unblockOAFactory(ctx, this);
         this.unblockUser = unblockUserFactory(ctx, this);
         this.undo = undoFactory(ctx, this);
         this.undoFriendRequest = undoFriendRequestFactory(ctx, this);

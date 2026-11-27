@@ -13,6 +13,7 @@ export type { AddQuickMessagePayload, AddQuickMessageResponse } from "./apis/add
 export type { AddReactionDestination, AddReactionResponse, CustomReaction } from "./apis/addReaction.js";
 export type { AddUnreadMarkResponse } from "./apis/addUnreadMark.js";
 export type { AddUserToGroupResponse } from "./apis/addUserToGroup.js";
+export type { BlockOAResponse } from "./apis/blockOA.js";
 export type { BlockUserResponse } from "./apis/blockUser.js";
 export type { BlockViewFeedResponse } from "./apis/blockViewFeed.js";
 export type { ChangeAccountAvatarResponse } from "./apis/changeAccountAvatar.js";
@@ -153,6 +154,7 @@ export type { SetMuteParams, SetMuteResponse } from "./apis/setMute.js";
 export type { SetPinnedConversationsResponse } from "./apis/setPinnedConversations.js";
 export type { SharePollResponse } from "./apis/sharePoll.js";
 export type { SyncMessagesOptions, SyncMessagesResponse, SyncProgress, SyncedConversation, SyncedMessage } from "./apis/syncMessages.js";
+export type { UnBlockOAResponse } from "./apis/unblockOA.js";
 export type { UnBlockUserResponse } from "./apis/unblockUser.js";
 export type { UndoPayload, UndoResponse } from "./apis/undo.js";
 export type { UndoFriendRequestResponse } from "./apis/undoFriendRequest.js";
