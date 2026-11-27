@@ -32,10 +32,16 @@ export type Cookie = {
 };
 
 export type Credentials = {
+    /** Zalo Web's `localStorage.z_uuid` */
     imei: string;
     cookie: Cookie[] | toughCookie.SerializedCookie[] | { url: string; cookies: Cookie[] };
     userAgent: string;
     language?: string;
+    /**
+     * `viewerkey` from a previous login (`api.getContext().loginInfo.viewerkey`).
+     * Optional, sent with the pre-session server info request like Zalo Web does.
+     */
+    viewerKey?: string;
 };
 
 export class Zalo {
@@ -117,8 +123,22 @@ export class Zalo {
             }
         }
 
+        // Zalo Web fetches server info before the session to get the disaster recovery config (sp_mtn/bkt)
+        let spMtn: number | undefined;
+        let bkt: number | undefined;
+        try {
+            const preSessionInfo = await getServerInfo(ctx, { viewerKey: credentials.viewerKey });
+            const drConfig = (preSessionInfo?.setttings || preSessionInfo?.settings)?.features?.dr_config;
+            if (drConfig) {
+                spMtn = Number(drConfig.supportMaintenance ?? -1);
+                bkt = Number(drConfig.bucketId ?? -1);
+            }
+        } catch (error) {
+            logger(ctx).warn("Failed to fetch pre-session server info:", error);
+        }
+
         const loginData = await login(ctx, this.enableEncryptParam);
-        const serverInfo = await getServerInfo(ctx, this.enableEncryptParam);
+        const serverInfo = await getServerInfo(ctx, { spMtn, bkt, floatMenuPos: "null" });
 
         const loginInfo = loginData?.data as typeof ctx.loginInfo;
 

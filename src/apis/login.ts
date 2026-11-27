@@ -28,26 +28,32 @@ export async function login(ctx: ContextBase, encryptParams: boolean) {
     }
 }
 
-export async function getServerInfo(ctx: ContextBase, encryptParams: boolean) {
-    const encryptedParams = await getEncryptParam(ctx, encryptParams, "getserverinfo");
-    if (!encryptedParams.params.signkey || typeof encryptedParams.params.signkey !== "string")
-        throw new ZaloApiError("Missing signkey");
+export type ServerInfoOptions = {
+    /** `dr_config.supportMaintenance` from a previous server info response, -1 if unknown */
+    spMtn?: number;
+    /** `dr_config.bucketId` from a previous server info response, -1 if unknown */
+    bkt?: number;
+    /** Zalo Web sends the string "null" after login */
+    floatMenuPos?: string;
+    /** `viewerkey` from a previous getLoginInfo response, only sent before the session is established */
+    viewerKey?: string;
+};
 
-    const response = await request(
-        ctx,
-        makeURL(
-            ctx,
-            "https://wpa.chat.zalo.me/api/login/getServerInfo",
-            {
-                imei: ctx.imei as string,
-                type: ctx.API_TYPE,
-                client_version: ctx.API_VERSION,
-                computer_name: "Web",
-                signkey: encryptedParams.params.signkey,
-            },
-            false,
-        ),
-    );
+export async function getServerInfo(ctx: ContextBase, options: ServerInfoOptions = {}) {
+    const params: Record<string, string | number> = {
+        imei: ctx.imei as string,
+        type: ctx.API_TYPE,
+        client_version: ctx.API_VERSION,
+        computer_name: "Web",
+        sp_mtn: options.spMtn ?? -1,
+        bkt: options.bkt ?? -1,
+    };
+    if (options.floatMenuPos !== undefined) params.floatMenuPos = options.floatMenuPos;
+    if (options.viewerKey) params.viewerKey = options.viewerKey;
+    // the web client signs every param it sends
+    params.signkey = getSignKey("getserverinfo", params);
+
+    const response = await request(ctx, makeURL(ctx, "https://wpa.chat.zalo.me/api/login/getServerInfo", params, false));
     if (!response.ok) throw new ZaloApiError("Failed to fetch server info: " + response.statusText);
     const data = await response.json();
 
@@ -74,15 +80,7 @@ async function getEncryptParam(ctx: ContextBase, encryptParams: boolean, type: s
 
     params.type = ctx.API_TYPE;
     params.client_version = ctx.API_VERSION;
-    params.signkey =
-        type == "getserverinfo"
-            ? getSignKey(type, {
-                  imei: ctx.imei,
-                  type: ctx.API_TYPE,
-                  client_version: ctx.API_VERSION,
-                  computer_name: "Web",
-              })
-            : getSignKey(type, params);
+    params.signkey = getSignKey(type, params);
 
     return {
         params,
