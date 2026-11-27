@@ -26,12 +26,16 @@ export type User = {
     isValid: number;
     userKey: string;
     accountStatus: number;
-    oaInfo: unknown;
+    oaInfo: {
+        group_msg: number;
+    };
     user_mode: number;
     globalId: string;
     bizPkg: ZBusinessPackage;
     createdTs: number;
-    oa_status: unknown;
+    oa_status: {
+        blocked: number;
+    };
 };
 
 export type UserBasic = {
