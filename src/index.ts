@@ -98,6 +98,7 @@ export type { GetProfileRankResponse } from "./apis/getProfileRank.js";
 export type { GetQRResponse } from "./apis/getQR.js";
 export type { GetQuickMessageListResponse } from "./apis/getQuickMessageList.js";
 export type { GetQuotaCommunityResponse } from "./apis/getQuotaCommunity.js";
+export type { GetRecentSearchListResponse, RecentSearchItem } from "./apis/getRecentSearchList.js";
 export type { GetRelatedFriendGroupResponse } from "./apis/getRelatedFriendGroup.js";
 export type { GetReminderResponse } from "./apis/getReminder.js";
 export type { GetReminderResponsesResponse } from "./apis/getReminderResponses.js";

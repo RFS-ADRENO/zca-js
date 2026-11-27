@@ -96,6 +96,7 @@ import { getProfileRankFactory } from "./apis/getProfileRank.js";
 import { getQRFactory } from "./apis/getQR.js";
 import { getQuickMessageListFactory } from "./apis/getQuickMessageList.js";
 import { getQuotaCommunityFactory } from "./apis/getQuotaCommunity.js";
+import { getRecentSearchListFactory } from "./apis/getRecentSearchList.js";
 import { getRelatedFriendGroupFactory } from "./apis/getRelatedFriendGroup.js";
 import { getReminderFactory } from "./apis/getReminder.js";
 import { getReminderResponsesFactory } from "./apis/getReminderResponses.js";
@@ -280,6 +281,7 @@ export class API {
     public getQR: ReturnType<typeof getQRFactory>;
     public getQuickMessageList: ReturnType<typeof getQuickMessageListFactory>;
     public getQuotaCommunity: ReturnType<typeof getQuotaCommunityFactory>;
+    public getRecentSearchList: ReturnType<typeof getRecentSearchListFactory>;
     public getRelatedFriendGroup: ReturnType<typeof getRelatedFriendGroupFactory>;
     public getReminder: ReturnType<typeof getReminderFactory>;
     public getReminderResponses: ReturnType<typeof getReminderResponsesFactory>;
@@ -464,6 +466,7 @@ export class API {
         this.getQR = getQRFactory(ctx, this);
         this.getQuickMessageList = getQuickMessageListFactory(ctx, this);
         this.getQuotaCommunity = getQuotaCommunityFactory(ctx, this);
+        this.getRecentSearchList = getRecentSearchListFactory(ctx, this);
         this.getRelatedFriendGroup = getRelatedFriendGroupFactory(ctx, this);
         this.getReminder = getReminderFactory(ctx, this);
         this.getReminderResponses = getReminderResponsesFactory(ctx, this);
