@@ -20,7 +20,7 @@ export type GetMiniProfilesResponse = {
         type: MiniProfileType;
         bizPkg: ZBusinessPackage;
         oaInfo: {
-            group_msg: number;
+            group_msg?: number;
         }
         zaloName: string;
     };

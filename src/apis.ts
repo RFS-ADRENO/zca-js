@@ -55,6 +55,7 @@ import { getAvatarUrlProfileFactory } from "./apis/getAvatarUrlProfile.js";
 import { getBizAccountFactory } from "./apis/getBizAccount.js";
 import { getBlockListFactory } from "./apis/getBlockList.js";
 import { getCatalogListFactory } from "./apis/getCatalogList.js";
+import { getCloseFriendsFactory } from "./apis/getCloseFriends.js";
 import { getCloudMessageFactory } from "./apis/getCloudMessage.js";
 import { getContextFactory } from "./apis/getContext.js";
 import { getCookieFactory } from "./apis/getCookie.js";
@@ -241,6 +242,7 @@ export class API {
     public getBizAccount: ReturnType<typeof getBizAccountFactory>;
     public getBlockList: ReturnType<typeof getBlockListFactory>;
     public getCatalogList: ReturnType<typeof getCatalogListFactory>;
+    public getCloseFriends: ReturnType<typeof getCloseFriendsFactory>;
     public getCloudMessage: ReturnType<typeof getCloudMessageFactory>;
     public getContext: ReturnType<typeof getContextFactory>;
     public getCookie: ReturnType<typeof getCookieFactory>;
@@ -427,6 +429,7 @@ export class API {
         this.getBizAccount = getBizAccountFactory(ctx, this);
         this.getBlockList = getBlockListFactory(ctx, this);
         this.getCatalogList = getCatalogListFactory(ctx, this);
+        this.getCloseFriends = getCloseFriendsFactory(ctx, this);
         this.getCloudMessage = getCloudMessageFactory(ctx, this);
         this.getContext = getContextFactory(ctx, this);
         this.getCookie = getCookieFactory(ctx, this);

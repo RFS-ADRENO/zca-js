@@ -12,7 +12,6 @@ export const getLastReadContactTabFactory = apiFactory<GetLastReadContactTabResp
      * Get the contact tab for the last read from the contacts
      *
      * @throws {ZaloApiError}
-     *
      */
     return async function getLastReadContactTab() {
         const params = {};

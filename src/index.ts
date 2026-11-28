@@ -60,6 +60,7 @@ export type { GetAvatarUrlProfileResponse } from "./apis/getAvatarUrlProfile.js"
 export type { GetBizAccountResponse } from "./apis/getBizAccount.js";
 export type { GetBlockListResponse } from "./apis/getBlockList.js";
 export type { GetCatalogListPayload, GetCatalogListResponse } from "./apis/getCatalogList.js";
+export type { GetCloseFriendsResponse } from "./apis/getCloseFriends.js";
 export type { GetCloudMessageOptions, GetCloudMessageResponse } from "./apis/getCloudMessage.js";
 export type { GetExtraFriendInfoResponse } from "./apis/getExtraFriendInfo.js";
 export type { GetExtraGroupInfoResponse } from "./apis/getExtraGroupInfo.js";
