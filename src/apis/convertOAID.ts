@@ -1,7 +1,9 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type ConvertOAIDResponse = Record<string, unknown>; // @TODO: check type
+export type ConvertOAIDResponse = {
+    [oaId: string]: string;
+};
 
 export const convertOAIDFactory = apiFactory<ConvertOAIDResponse>()((api, _ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/oa/convertid`);
@@ -11,11 +13,11 @@ export const convertOAIDFactory = apiFactory<ConvertOAIDResponse>()((api, _ctx, 
      *
      * @throws {ZaloApiError}
      */
-    return async function convertOAID(OAId: string | string[]) {
-        if (!Array.isArray(OAId)) OAId = [OAId];
+    return async function convertOAID(oaId: string | string[]) {
+        if (!Array.isArray(oaId)) oaId = [oaId];
 
         const params = {
-            oa_ids: OAId,
+            oa_ids: oaId,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
