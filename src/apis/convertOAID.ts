@@ -11,6 +11,8 @@ export const convertOAIDFactory = apiFactory<ConvertOAIDResponse>()((api, _ctx, 
     /**
      * Convert OA ID(s)
      *
+     * @param oaId The OA ID(s) to convert
+     * 
      * @throws {ZaloApiError}
      */
     return async function convertOAID(oaId: string | string[]) {
