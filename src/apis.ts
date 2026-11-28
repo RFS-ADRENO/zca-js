@@ -90,6 +90,7 @@ import { getMultiUsersByPhonesFactory } from "./apis/getMultiUsersByPhones.js";
 import { getMuteFactory } from "./apis/getMute.js";
 import { getOwnIdFactory } from "./apis/getOwnId.js";
 import { getPendingGroupMembersFactory } from "./apis/getPendingGroupMembers.js";
+import { getPhonebookFactory } from "./apis/getPhonebook.js";
 import { getPinConversationsFactory } from "./apis/getPinConversations.js";
 import { getPollDetailFactory } from "./apis/getPollDetail.js";
 import { getProductCatalogListFactory } from "./apis/getProductCatalogList.js";
@@ -123,6 +124,7 @@ import { lockPollFactory } from "./apis/lockPoll.js";
 import { logoutFactory } from "./apis/logout.js";
 import { lostFocusFactory } from "./apis/lostFocus.js";
 import { parseLinkFactory } from "./apis/parseLink.js";
+import { readContactTabFactory } from "./apis/readContactTab.js";
 import { registerCatalogFactory } from "./apis/registerCatalog.js";
 import { rejectFriendRequestFactory } from "./apis/rejectFriendRequest.js";
 import { removeFriendFactory } from "./apis/removeFriend.js";
@@ -277,6 +279,7 @@ export class API {
     public getMute: ReturnType<typeof getMuteFactory>;
     public getOwnId: ReturnType<typeof getOwnIdFactory>;
     public getPendingGroupMembers: ReturnType<typeof getPendingGroupMembersFactory>;
+    public getPhonebook: ReturnType<typeof getPhonebookFactory>;
     public getPinConversations: ReturnType<typeof getPinConversationsFactory>;
     public getPollDetail: ReturnType<typeof getPollDetailFactory>;
     public getProductCatalogList: ReturnType<typeof getProductCatalogListFactory>;
@@ -310,6 +313,7 @@ export class API {
     public logout: ReturnType<typeof logoutFactory>;
     public lostFocus: ReturnType<typeof lostFocusFactory>;
     public parseLink: ReturnType<typeof parseLinkFactory>;
+    public readContactTab: ReturnType<typeof readContactTabFactory>;
     public registerCatalog: ReturnType<typeof registerCatalogFactory>;
     public rejectFriendRequest: ReturnType<typeof rejectFriendRequestFactory>;
     public removeFriend: ReturnType<typeof removeFriendFactory>;
@@ -464,6 +468,7 @@ export class API {
         this.getMute = getMuteFactory(ctx, this);
         this.getOwnId = getOwnIdFactory(ctx, this);
         this.getPendingGroupMembers = getPendingGroupMembersFactory(ctx, this);
+        this.getPhonebook = getPhonebookFactory(ctx, this);
         this.getPinConversations = getPinConversationsFactory(ctx, this);
         this.getPollDetail = getPollDetailFactory(ctx, this);
         this.getProductCatalogList = getProductCatalogListFactory(ctx, this);
@@ -497,6 +502,7 @@ export class API {
         this.logout = logoutFactory(ctx, this);
         this.lostFocus = lostFocusFactory(ctx, this);
         this.parseLink = parseLinkFactory(ctx, this);
+        this.readContactTab = readContactTabFactory(ctx, this);
         this.registerCatalog = registerCatalogFactory(ctx, this);
         this.rejectFriendRequest = rejectFriendRequestFactory(ctx, this);
         this.removeFriend = removeFriendFactory(ctx, this);

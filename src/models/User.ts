@@ -28,14 +28,14 @@ export type User = {
     accountStatus: number;
     oaInfo: {
         group_msg?: number;
-    };
+    } | null;
     user_mode: number;
     globalId: string;
     bizPkg: ZBusinessPackage;
     createdTs: number;
     oa_status: {
         blocked?: number;
-    };
+    } | null;
 };
 
 export type UserBasic = {
