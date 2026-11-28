@@ -8,17 +8,19 @@ export type GetPhoneBookResponse = {
     version: number;
 };
 
-export const getPhonebookFactory = apiFactory<GetPhoneBookResponse>()((api, _ctx, utils) => {
+export const getPhonebookFactory = apiFactory<GetPhoneBookResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/friend/phonebook/v2`);
 
     /**
      * Get phonebook
+     * 
+     * @param phoneBookVer Phonebook version you already have (default: the version from login). You can pass in parameter 0 or ctx
      *
      * @throws {ZaloApiError}
      */
-    return async function getPhonebook() {
+    return async function getPhonebook(phoneBookVer: number = ctx.extraVer!.phonebook) {
         const params = {
-            phonebook_version: 0
+            phonebook_version: phoneBookVer
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
