@@ -53,6 +53,7 @@ import { getAutoReplyListFactory } from "./apis/getAutoReplyList.js";
 import { getAvatarListFactory } from "./apis/getAvatarList.js";
 import { getAvatarUrlProfileFactory } from "./apis/getAvatarUrlProfile.js";
 import { getBizAccountFactory } from "./apis/getBizAccount.js";
+import { getBlockListFactory } from "./apis/getBlockList.js";
 import { getCatalogListFactory } from "./apis/getCatalogList.js";
 import { getCloudMessageFactory } from "./apis/getCloudMessage.js";
 import { getContextFactory } from "./apis/getContext.js";
@@ -238,6 +239,7 @@ export class API {
     public getAvatarList: ReturnType<typeof getAvatarListFactory>;
     public getAvatarUrlProfile: ReturnType<typeof getAvatarUrlProfileFactory>;
     public getBizAccount: ReturnType<typeof getBizAccountFactory>;
+    public getBlockList: ReturnType<typeof getBlockListFactory>;
     public getCatalogList: ReturnType<typeof getCatalogListFactory>;
     public getCloudMessage: ReturnType<typeof getCloudMessageFactory>;
     public getContext: ReturnType<typeof getContextFactory>;
@@ -423,6 +425,7 @@ export class API {
         this.getAvatarList = getAvatarListFactory(ctx, this);
         this.getAvatarUrlProfile = getAvatarUrlProfileFactory(ctx, this);
         this.getBizAccount = getBizAccountFactory(ctx, this);
+        this.getBlockList = getBlockListFactory(ctx, this);
         this.getCatalogList = getCatalogListFactory(ctx, this);
         this.getCloudMessage = getCloudMessageFactory(ctx, this);
         this.getContext = getContextFactory(ctx, this);

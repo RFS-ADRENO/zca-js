@@ -27,14 +27,14 @@ export type User = {
     userKey: string;
     accountStatus: number;
     oaInfo: {
-        group_msg: number;
+        group_msg?: number;
     };
     user_mode: number;
     globalId: string;
     bizPkg: ZBusinessPackage;
     createdTs: number;
     oa_status: {
-        blocked: number;
+        blocked?: number;
     };
 };
 
@@ -76,3 +76,28 @@ export type UnchangedProfileInfo = {
     isBlocked: boolean;
     lastActionTime: number;
 };
+
+export type ProfileInfo = {
+    userId: string;
+    username: string;
+    displayName: string;
+    zaloName: string;
+    avatar: string;
+    bgavatar: string;
+    cover: string;
+    gender: Gender;
+    dob: number;
+    sdob: string;
+    status: string;
+    phoneNumber: string;
+    isFr: number;
+    lastActionTime: number;
+    lastUpdateTime: number;
+    isActive: number;
+    key: number;
+    type: number;
+    isActivePC: number;
+    isActiveWeb: number;
+    isValid: number;
+    userKey: string;
+}
