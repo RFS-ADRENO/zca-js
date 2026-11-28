@@ -81,6 +81,7 @@ export type { GetGroupLinkInfoPayload, GetGroupLinkInfoResponse } from "./apis/g
 export type { GetGroupMembersInfoResponse, GroupMemberProfile } from "./apis/getGroupMembersInfo.js";
 export type { GetHiddenConversationsResponse } from "./apis/getHiddenConversations.js";
 export type { GetLabelsResponse } from "./apis/getLabels.js";
+export type { GetLastReadContactTabResponse } from "./apis/getLastReadContactTab.js";
 export type { GetListBankResponse } from "./apis/getListBank.js";
 export type { GetListBankAccountResponse } from "./apis/getListBankAccount.js";
 export type { BoardItem, GetListBoardResponse, ListBoardOptions } from "./apis/getListBoard.js";

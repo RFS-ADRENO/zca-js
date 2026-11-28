@@ -78,6 +78,7 @@ import { getGroupLinkInfoFactory } from "./apis/getGroupLinkInfo.js";
 import { getGroupMembersInfoFactory } from "./apis/getGroupMembersInfo.js";
 import { getHiddenConversationsFactory } from "./apis/getHiddenConversations.js";
 import { getLabelsFactory } from "./apis/getLabels.js";
+import { getLastReadContactTabFactory } from "./apis/getLastReadContactTab.js";
 import { getListBankFactory } from "./apis/getListBank.js";
 import { getListBankAccountFactory } from "./apis/getListBankAccount.js";
 import { getListBoardFactory } from "./apis/getListBoard.js";
@@ -263,6 +264,7 @@ export class API {
     public getGroupMembersInfo: ReturnType<typeof getGroupMembersInfoFactory>;
     public getHiddenConversations: ReturnType<typeof getHiddenConversationsFactory>;
     public getLabels: ReturnType<typeof getLabelsFactory>;
+    public getLastReadContactTab: ReturnType<typeof getLastReadContactTabFactory>;
     public getListBank: ReturnType<typeof getListBankFactory>;
     public getListBankAccount: ReturnType<typeof getListBankAccountFactory>;
     public getListBoard: ReturnType<typeof getListBoardFactory>;
@@ -448,6 +450,7 @@ export class API {
         this.getGroupMembersInfo = getGroupMembersInfoFactory(ctx, this);
         this.getHiddenConversations = getHiddenConversationsFactory(ctx, this);
         this.getLabels = getLabelsFactory(ctx, this);
+        this.getLastReadContactTab = getLastReadContactTabFactory(ctx, this);
         this.getListBank = getListBankFactory(ctx, this);
         this.getListBankAccount = getListBankAccountFactory(ctx, this);
         this.getListBoard = getListBoardFactory(ctx, this);
