@@ -9,6 +9,7 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import type { ContextSession } from "../context.js";
 import { type SeenMessage, GroupSeenMessage, UserSeenMessage } from "../models/SeenMessage.js";
 import { type DeliveredMessage, UserDeliveredMessage, GroupDeliveredMessage } from "../models/DeliveredMessage.js";
+import { type TVoiceEvent, type VoiceEvent, VoiceEventType, initializeVoiceEvent } from "../models/VoiceEvent.js";
 
 type UploadEventData = {
     fileUrl: string;
@@ -71,6 +72,7 @@ interface ListenerEvents {
     undo: [data: Undo];
     friend_event: [data: FriendEvent];
     group_event: [data: GroupEvent];
+    voice_event: [data: VoiceEvent];
     cipher_key: [key: string];
     sync_event: [event: SyncControlEvent];
 }
@@ -379,6 +381,18 @@ export class Listener extends EventEmitter<ListenerEvents> {
                             );
                             if (friendEvent.isSelf && !this.selfListen) continue;
                             this.emit("friend_event", friendEvent);
+                        } else if (control.content.act_type == "voice2text") {
+                            const voiceEventData: TVoiceEvent =
+                                typeof control.content.data == "string"
+                                    ? JSON.parse(control.content.data)
+                                    : control.content.data;
+                            const voiceEvent = initializeVoiceEvent(
+                                voiceEventData,
+                                control.content.act == "convert_finish"
+                                    ? VoiceEventType.CONVERT_FINISH
+                                    : VoiceEventType.UNKNOWN,
+                            );
+                            this.emit("voice_event", voiceEvent);
                         } else if (control.content.act_type == "transfer_sync2") {
                             const syncData =
                                 typeof control.content.data == "string"

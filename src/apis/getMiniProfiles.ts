@@ -19,7 +19,9 @@ export type GetMiniProfilesResponse = {
         globalId: string;
         type: MiniProfileType;
         bizPkg: ZBusinessPackage;
-        oaInfo: null; // @TODO: check type
+        oaInfo: {
+            group_msg?: number;
+        }
         zaloName: string;
     };
 };

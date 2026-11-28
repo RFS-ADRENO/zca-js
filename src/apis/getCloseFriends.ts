@@ -10,6 +10,7 @@ export const getCloseFriendsFactory = apiFactory<GetCloseFriendsResponse>()((api
     /**
      * Get close friends
      *
+     * @deprecated Close friends feature was discontinued by Zalo.
      * @throws {ZaloApiError}
      */
     return async function getCloseFriends() {
